@@ -24,7 +24,8 @@ class Clerk
 
     public static function publishableKey()
     {
-        return getenv('CLERK_PUBLISHABLE_KEY') ?: '';
+        // aceita também o nome usado nos exemplos do Clerk para Next.js
+        return getenv('CLERK_PUBLISHABLE_KEY') ?: (getenv('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY') ?: '');
     }
 
     private static function secretKey()

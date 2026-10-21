@@ -28,7 +28,7 @@ class TeacherPortalController extends Action
         $Teacher = Container::getModel('Teacher\\Teacher');
         $Tool = new Tools();
 
-        $Teacher->__set('accessCode', $Tool->formatElement($_POST['accessCode']));
+        $Teacher->__set('accessCode', preg_replace('/\D/', '', $_POST['accessCode'] ?? '') ?: '0');
         $Teacher->__set('name', $_POST['name']);
 
         $auth = $Teacher->login();

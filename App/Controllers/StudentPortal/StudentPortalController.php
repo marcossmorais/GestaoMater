@@ -28,7 +28,7 @@ class StudentPortalController extends Action
         $Student = Container::getModel('Student\\Student');
         $Tool = new Tools();
 
-        $Student->__set('accessCode', $Tool->formatElement($_POST['accessCode']));
+        $Student->__set('accessCode', preg_replace('/\D/', '', $_POST['accessCode'] ?? '') ?: '0');
         $Student->__set('name', $_POST['name']);
 
         $auth = $Student->login();

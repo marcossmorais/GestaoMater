@@ -25,7 +25,7 @@ class AdminController extends Action
         $Admin = Container::getModel('Admin\\Admin');
         $Tool = new Tools();
 
-        $Admin->__set('accessCode', $Tool->formatElement($_POST['accessCode']));
+        $Admin->__set('accessCode', preg_replace('/\D/', '', $_POST['accessCode'] ?? '') ?: '0');
         $Admin->__set('name', $_POST['name']);
 
         $auth = $Admin->login();
