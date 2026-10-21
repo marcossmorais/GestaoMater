@@ -1,0 +1,43 @@
+#pagina {
+
+    form {
+
+        border-radius: 10px;
+
+        input:disabled,
+        select:disabled,
+        textarea:disabled {
+            background-color: $color-pure-gray;
+            cursor: no-drop;
+            border: none;    
+            color: #09023B;
+        }
+
+        .form-control:valid {
+            border: 2px solid $color-extra-light-blue;
+        }
+
+        .form-control:invalid {
+            border: 2px solid $color-extra-light-red;
+        }
+
+        textarea{
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+
+        label,.input-group-text{
+            font-size: 1.1vw;
+        }
+
+        label {
+            font-weight: bold;          
+        }
+
+        select,input{
+            font-size: 1.1vw;
+            color: $color-dark-blue;
+        }
+
+    }
+}

@@ -1,0 +1,457 @@
+#table-print {
+
+    background: white;
+
+    .header {
+
+        .logo-site {
+            width: 15vw;
+        }
+
+        .logo-school{
+            width: 8vw;
+        }
+
+        h4 {
+            font-family: Bold;
+            font-size: 20px;
+        }
+
+        h5 {
+            font-family: Semi-bold;
+            font-size: 18px;
+            color: black;
+        }
+    }
+
+    
+    .sub-header {
+
+        p,div {
+            font-family: Semi-bold;
+            color: $color-dark-blue;
+            margin-bottom: 5px;
+        }
+
+        span {
+            font-family: Bold;
+            color: black;
+        }
+    }
+
+    small{
+        font-family: Bold;
+    }
+
+    #table-bulletin thead {
+        background: #E8F0FE;
+    }
+}
+
+
+
+#admin,
+#teacherPortal,
+#studentPortal {
+    background-color:#F2F2F2;
+
+    #pagina {
+
+        .input-group-accessCode .fa-eye, .input-group-accessCode .fa-eye-slash{
+            cursor: pointer;
+        }
+
+        #table-bulletin-print thead {
+            background: #E8F0FE;
+        }
+
+        .avaliacoes-agendadas{
+            overflow: auto;
+            overflow-x: hidden;
+            height: 63vh;
+
+            .row .card{
+                border: none;
+                box-shadow: none;
+            }
+
+
+            p{
+                font-family: Bold;
+                font-size: 12px;
+                margin-bottom: 5px;
+            }
+
+            .class-and-value{
+                font-family: Semi-bold;
+                font-size: 12px;
+            }
+        }
+
+        #note-table-class {
+            overflow: auto;
+
+            td,
+            th {
+                text-align: left;
+            }
+        }
+
+        #note-table {
+
+            td,
+            th {
+                text-align: left;
+            }
+        }
+
+        #profileStudentModal {
+
+            #table-bulletin {
+                font-size: 13px;
+                width: 1000px;
+                font-family: Bold;
+
+                th {
+                    color: black;
+                }
+            }
+        }
+
+        #tableListExam {
+            font-size: 15px;
+
+            td,
+            th {
+                margin: 3px;
+                text-align: left;
+            }
+        }
+
+        span.box-icon {
+            width: 30px;
+            display: inline-block;
+        }
+
+        .limited-text-description {
+            max-width: 50ch;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #class-discipline-accordion {
+            img {
+                width: 20vw;
+            }
+        }
+
+        #class-rematrug,
+        .illustrations {
+            img {
+                width: 30vw;
+            }
+        }
+
+        section#home {
+
+            .enrollment-null{
+                height: 15vw;
+                margin-top: 15px;
+            }
+
+            .card {
+                border-radius: 5px;
+
+                td {
+                    font-size: 12px;
+                    font-family: Semi-bold;
+                    vertical-align: middle;
+                }
+
+                .miniature-photo {
+                    height: 30px;
+                    width: 30px;
+                }
+
+                .card-title {
+                    font-size: 13px;
+                    color: $color-dark-gray;
+                }
+
+                .total-student-enrolled {
+                    font-size: 14px;
+                    font-family: Bold;
+                }
+
+                .total-students-enrolled-today {
+                    font-size: 14px;
+                    color: $color-green;
+                    font-family: Semi-bold;
+                }
+            }
+
+            #finalized-rematrecules {
+                img {
+                    width: 3vw;
+                }
+            }
+
+            .recently-enrolled {
+                height: 61vh;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            .recent-activities {
+                height: 79vh;
+                overflow-y: auto;
+                overflow-x: hidden;
+
+                .teacher-name {
+                    font-family: Bold;
+                    font-size: 13px;
+                }
+
+                .badge {
+                    font-size: 11px;
+                }
+
+                p {
+                    font-family: Semi-bold;
+                    font-size: 12px;
+                }
+            }
+        }
+
+        .text-description {
+            font-family: Semi-bold;
+            font-size: 13px;
+        }
+
+        .main-container {
+            margin-top: 80px;
+        }
+
+        .side-exams,
+        .side-mural,
+        .side-students,
+        .side-teachers,
+        .recent-activities,
+        .recently-enrolled,
+        .main-content,
+        .container-list-group,
+        .avaliacoes-agendadas {
+
+            &::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background-color: #EAEDED;
+                -webkit-border-radius: 10px;
+                border-radius: 10px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                -webkit-border-radius: 10px;
+                border-radius: 10px;
+                background: #ACBECC;
+            }
+        }
+
+        p {
+            font-size: 1.0vw;
+        }
+
+        .miniature-photo {
+            width: 3vw;
+            object-position: top;
+            object-fit: cover;
+            border: none;
+            border-radius: 50%;
+        }
+
+        #navbarBottom,
+        #navbarBottomStudentPortal {
+            display: none;
+        }
+
+        .school-term-active {
+            border-left: 8px solid $color-green !important;
+        }
+
+        .school-term-finished {
+            border-left: 8px solid $color-smooth-gray !important;
+        }
+
+        .school-term-scheduled {
+            border-left: 8px solid $color-blue !important;
+        }
+
+        .option-icon-group {
+            span {
+                transition: 0.5s;
+            }
+        }
+
+        .registration-in-stages {
+
+            label {
+                text-align: left;
+                display: block;
+            }
+
+            form [data-toggle="collapse"] {
+                background-color: $color-blue;
+
+                .fa-angle-right {
+                    margin-left: 10px;
+                }
+            }
+
+            .connection-line {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 6vh;
+                height: 3px;
+                margin: auto;
+                width: 75%;
+                background-color: $color-extra-light-blue;
+            }
+
+            .registration-header-by-step .row {
+                display: flex;
+                justify-content: space-around;
+
+                .container-option {
+
+                    z-index: 2;
+
+                    >.collapsed {
+                        background-color: $color-extra-light-blue;
+                        color: $color-black;
+                    }
+
+                    a {
+                        color: white;
+                        width: 35px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 35px;
+                        margin: auto;
+                        background-color: $color-blue;
+                        border-radius: 50%;
+
+                        span {
+                            text-align: center;
+                            font-weight: 500;
+                        }
+                    }
+
+                    p {
+                        display: block;
+                        color: $color-black;
+                        font-weight: 500;
+                        margin-top: 5px;
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+
+        #teacher-registration {
+            .connection-line {
+                width: 68%;
+            }
+
+        }
+
+        // Accordion container ( Recipiente do acordeão) 
+
+        .accordion-container {
+            height: 87vh;
+
+            &::-webkit-scrollbar {
+                width: 0;
+                background: transparent;
+            }
+        }
+
+        #seekNoteExam a {
+            border: 1px solid $color-smooth-gray;
+        }
+
+        // Collapse options container ( Recipiente das opções de colapso )
+
+        .collapse-options-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+            margin-right: 1px;
+
+            span {
+                @include icon-card(none, #091954, $color-white, 5px);
+                padding-left: 20px;
+                padding-right: 20px;
+                font-size: 1vw;
+                border: 1px solid $color-smooth-gray;
+                color: $color-dark-gray;
+            }
+        }
+
+        .collapse-options-container {
+            [aria-expanded="true"] {
+                span {
+                    background: #091954;
+                    color: $color-white;
+                    border: none;
+                }
+            }
+        }
+
+        // All edges of images ( Todas as bordas das imagens )
+
+        .horizontal-control-list {
+
+            background-color: $color-smooth-gray;
+            margin: 10px;
+            display: none;
+
+            .list-group-item {
+                border: 0px;
+                padding: 10px;
+            }
+
+            a {
+                font-size: 2vw;
+            }
+
+            @include aria-expanded-false-and-true($color-blue, $color-white, $color-smooth-gray, $color-black, 5px);
+
+        }
+
+        .gif-loading {
+            img {
+                width: 20%;
+            }
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            margin-top: -10px;
+
+            .breadcrumb-item {
+                font-weight: bold;
+                font-size: 14px;
+            }
+        }
+
+        [containerRegistrationSuccess],
+        [containerRegistrationError] {
+            display: none;
+        }
+    }
+}

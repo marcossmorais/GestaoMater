@@ -1,0 +1,283 @@
+#pagina {
+
+    #profileStudentModal,
+    #settingsModal {
+
+        .container-list-group {
+            height: 48vh;
+            overflow: auto;
+        }
+    }
+
+    .modal-full {
+        min-width: 100%;
+        margin: 0px;
+        margin-right: 0px;
+    }
+
+    .modal-full .modal-content {
+        min-height: 100vh;
+        z-index: 9999;
+    }
+
+    .modal {
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(5px);
+        background-color: rgba(255, 255, 255, 0.3);
+        z-index: 10000000000000;
+    }
+
+    .card-title {
+        font-family: Bold;
+    }
+
+    .link_discipline{
+        width: 30vw;
+    }
+
+    .modal-backdrop {
+        display: none !important;
+    }
+
+    .modal-profile {
+        overflow-y: hidden;
+
+        button {
+            outline: none;
+        }
+
+        #class-profile-assessments {
+            overflow-y: hidden;
+        }
+
+        .main-sheet {
+
+            span {
+                text-align: center;
+                font-family: Bold;
+                font-size: 1vw;
+            }
+
+            img {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        #profilePhotoModal {
+
+            img {
+                width: 400px;
+                height: 400px;
+
+                &:hover {
+                    transform: none;
+                }
+            }
+
+            .modal-content {
+                border-radius: 15px;
+                border: 2px solid #e5e5e5;
+                background-color: white;
+            }
+
+            input[type="file"] {
+                display: none;
+            }
+
+        }
+
+        .modal-content {
+            background-color: #e9ebfa;
+
+            .card {
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+                .teacher-class-title {
+                    font-family: Semi-bold;
+                    margin-bottom: 15px;
+                    font-size: 15px;
+                }
+            }
+
+            span.badge {
+                background-color: $color-blue;
+            }
+        }
+
+        h5 {
+            font-family: Bold;
+            font-size: 1.6vw;
+        }
+
+        .container-list-group {
+            border-radius: 15px;
+            padding: 10px;
+            padding-top: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            nav {
+                padding: 10px 15px;
+                padding-bottom: 0;
+                width: 97%;
+                margin: auto;
+
+                ul {
+
+                    a {
+                        padding: 10px 15px;
+                        color: #7F8C8D;
+                        font-size: 0.9vw;
+                        text-align: left;
+                        display: block;
+                        margin-bottom: 7px;
+                        font-family: Bold;
+                        transition: all 0.2s ease;
+                        border-left: 4px solid white;
+                        border-top-right-radius: 10px;
+                        border-bottom-right-radius: 10px;
+
+                        &:hover {
+                            background: #E8F0FE;
+                            color: $color-blue;
+                        }
+                    }
+
+                    [aria-expanded="true"] {
+                        background: #E8F0FE;
+                        color: $color-blue;
+                    }
+                }
+            }
+
+        }
+
+        .modal-sidebar img {
+            border-radius: 50%;
+            width: 95px;
+            height: 95px;
+            margin-top: 10px;
+            transition: all 0.9s ease;
+            object-position: top;
+            object-fit: cover;
+            cursor: pointer;
+            border: 5px solid #E8F0FE;
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+
+        .main-content {
+            border-radius: 15px;
+            background-color: white;
+            height: 87vh;
+            overflow-x: auto;
+            border: 1px solid #e5e5e5;
+
+            td {
+                font-size: 1vw;
+            }
+
+            th {
+                font-size: 1.1vw;
+                font-weight: bold;
+            }
+
+            .row:nth-child(1) {
+                margin-top: 15px;
+            }
+
+            .card {
+                border: 2px solid $color-pure-gray;
+            }
+
+            #accordion-data-student,
+            #accordion-data-teacher,
+            #accordion-data-admin {
+
+                form input,
+                form select {
+
+                    background-color: transparent;
+                    border: none;
+                    border-bottom: 3px solid $color-extra-light-blue;
+
+                    &:disabled {
+
+                        border: none;
+                        font-weight: 500;
+                        padding-left: 0;
+                        cursor: context-menu;
+                        color: $color-dark-gray;
+                    }
+                }
+
+            }
+
+
+            form {
+
+                .input-group {
+                    margin-bottom: 10px;
+                }
+
+                .font-weight-bold {
+                    font-size: 1.2vw;
+                }
+
+                .input-group-text {
+                    background-color: white;
+                    border: none;
+                    font-weight: bold;
+                }
+            }
+        }
+
+
+        .modal-sidebar {
+            height: 87vh;
+            background-color: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 15px;
+            @include card(10px, white, 1px solid #e5e5e5);
+
+        }
+
+    }
+
+
+    .simple-modal {
+
+        .modal-content {
+            border-radius: 15px;
+        }
+
+    }
+
+    #profileClassModal {
+
+        img {
+            margin-top: 0px;
+        }
+
+        #accordion-data-student {
+
+            form input,
+            form select {
+
+                background-color: $color-white;
+                border-bottom: none;
+                border: 2px solid $color-extra-light-blue;
+
+                &:disabled {
+                    background-color: $color-pure-gray;
+                    border-bottom: none;
+                    padding-left: 10px;
+                }
+            }
+        }
+
+    }
+}

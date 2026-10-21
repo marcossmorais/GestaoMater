@@ -1,0 +1,373 @@
+.nightMode {
+
+    body#admin,
+    body#teacherPortal,
+    body#studentPortal {
+        background-color: $color-main-night-mode;
+
+        h5,
+        h4,
+        h3,
+        h2,
+        h1,
+        p {
+            color: $color-white;
+        }
+
+        .tooltip-inner {
+            background-color: $color-white;
+            color: $color-black;
+        }
+
+        .bs-tooltip-left .arrow::before,
+        .bs-tooltip-auto[x-placement^="left"] .arrow::before {
+            border-left-color: $color-white;
+        }
+
+        .bs-tooltip-top .arrow::before,
+        .bs-tooltip-auto[x-placement^="top"] .arrow::before {
+            border-top-color: $color-white;
+        }
+
+        .bs-tooltip-right .arrow::before,
+        .bs-tooltip-auto[x-placement^="right"] .arrow::before {
+            border-right-color: $color-white;
+        }
+
+
+        .bs-tooltip-bottom .arrow::before,
+        .bs-tooltip-auto[x-placement^="bottom"] .arrow::before {
+            border-bottom-color: $color-white;
+        }
+
+        #mural {
+
+            .side-mural {
+
+                p,
+                .text-important {
+                    color: $color-white;
+                }
+
+            }
+
+            .side-exams {
+
+                .exam-description,
+                .exam-description-footer,
+                .name-teacher {
+                    color: $color-white;
+                }
+            }
+        }
+
+        #bulletin {
+            table {
+                th {
+                    color: $color-black !important;
+                }
+            }
+        }
+
+        #left-panel {
+
+            #sidebar {
+                background-color: $color-secondary-night-mode;
+                border-right: 2px solid #424549;
+                box-shadow: none;
+            }
+
+        }
+
+        #studentsTeachersAccordion,
+        #averageAndNotes {
+            [aria-expanded="true"] {
+                background-color: $color-white;
+                color: $color-black;
+            }
+
+            a {
+                background-color: $color-tertiary-night-mode;
+                border: none;
+                color: $color-white;
+            }
+        }
+
+        nav#studentPortalNavbar {
+            background-color: $color-secondary-night-mode;
+
+            a {
+                color: $color-white;
+            }
+        }
+
+        .posts-null {
+            color: $color-white;
+        }
+
+        #navbar-top {
+            background-color: $color-secondary-night-mode;
+            border-left: 2px solid #424549;
+            border-bottom: 2px solid #424549;
+
+            .fa-bars,
+            .nav-item,
+            .fa-sign-out-alt {
+                color: $color-white;
+            }
+        }
+
+
+        #pagina {
+
+            background-color: $color-main-night-mode;
+
+            form {
+
+                label,
+                .font-weight-bold {
+                    color: $color-white;
+                }
+
+                .custom-file-label{
+                    color: $color-black;
+                }
+
+                hr {
+                    background-color: $color-white;
+                }
+
+                .fa-ellipsis-h {
+                    color: $color-white;
+                }
+
+            }
+
+            @media (max-width:576px) {
+
+                #navbar-top {
+                    border: none;
+                }
+
+                .modal-profile {
+
+                    #main-accordion,
+                    #main-accordion-settings,
+                    #main-accordion-class,
+                    #main-accordion-student {
+                        background-color: $color-secondary-night-mode;
+
+                        .modal-sidebar {
+                            background-color: $color-secondary-night-mode;
+
+                            .main-sheet span {
+                                color: $color-secondary-night-mode;
+                            }
+
+                            .container-list-group {
+                                nav {
+                                    ul {
+                                        [aria-expanded="true"] {
+                                            color: $color-white;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            #navbarBottom,
+            #navbarBottomStudentPortal {
+                background-color: $color-secondary-night-mode;
+
+                ul {
+                    a {
+                        color: $color-white;
+                    }
+
+                    i.fas,
+                    i.bi {
+                        color: $color-white;
+                    }
+
+                    a[aria-expanded="true"],
+                    .link-active {
+                        color: $color-white;
+                    }
+                }
+            }
+
+            label {
+                color: $color-white;
+            }
+
+            .table-striped>tbody>tr:nth-child(2n+1)>td,
+            .table-striped>tbody>tr:nth-child(2n+1)>th {
+                background-color: $color-quaternary-night-mode;
+            }
+
+            .registration-in-stages {
+
+                .registration-header-by-step .row {
+                    .container-option {
+                        p {
+                            color: $color-white;
+                        }
+                    }
+                }
+
+            }
+
+            .modal-content {
+                background-color: $color-quaternary-night-mode;
+
+                .main-content {
+
+                    [containerListDisciplineClass] form,
+                    [containerDisciplineAverageList] form {
+                        border: 1px solid $color-white;
+                    }
+
+                    .teacher-class-title {
+                        color: $color-white;
+                    }
+
+                    form {
+
+                        .input-group-text {
+                            color: $color-white;
+                            background-color: transparent;
+                        }
+
+
+                        input,
+                        select {
+                            color: $color-quaternary-night-mode;
+                        }
+
+                    }
+
+                    #accordion-data-student,
+                    #accordion-data-teacher,
+                    #accordion-data-admin {
+
+                        form input,
+                        form select {
+                            color: #7F8C8D;
+                            font-weight: bold;
+                        }
+                    }
+
+
+                }
+            }
+
+            .modal-sidebar {
+                background-color: $color-secondary-night-mode;
+                border: none;
+
+                .container-list-group {
+
+                    nav {
+                        ul {
+                            a {
+                                border-left: 4px solid $color-secondary-night-mode;
+                            }
+                        }
+                    }
+
+                }
+
+                .main-sheet span {
+                    color: $color-white;
+                }
+            }
+
+            table {
+                tr {
+
+                    td,
+                    th {
+                        color: $color-white;
+                    }
+                }
+            }
+
+            .card {
+                background-color: $color-secondary-night-mode;
+                border: 1px solid $color-quaternary-night-mode;
+            }
+
+            .table tbody tr:hover td,
+            .table tbody tr:hover th {
+                background-color: $color-tertiary-night-mode;
+            }
+
+            .collapse-options-container {
+                [aria-expanded="true"] {
+                    span {
+                        background-color: $color-white;
+                        color: $color-tertiary-night-mode !important;
+                    }
+                }
+
+                span {
+                    background-color: $color-tertiary-night-mode;
+                    color: $color-white;
+                    border: none;
+
+                    &:hover {
+                        background-color: $color-white;
+                        color: $color-tertiary-night-mode;
+                    }
+                }
+            }
+
+            section#home {
+
+                .class-and-value {
+                    color: $color-white;
+                }
+
+                hr {
+                    background-color: $color-smooth-gray;
+                }
+
+                .card {
+                    .card-title {
+                        color: $color-white;
+                    }
+
+                    .total-student-enrolled {
+                        color: $color-extra-light-blue;
+                    }
+                }
+
+                .recently-enrolled {
+                    table {
+                        td {
+                            color: $color-white;
+                        }
+                    }
+                }
+
+                .recent-activities {
+                    .teacher-name {
+                        color: $color-white;
+                    }
+
+                    p {
+                        color: $color-pure-gray;
+                    }
+
+                    hr {
+                        background-color: $color-smooth-gray;
+                    }
+                }
+
+            }
+        }
+    }
+}

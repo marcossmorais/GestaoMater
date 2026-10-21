@@ -1,0 +1,79 @@
+@media (max-width:992px) {
+
+    body {
+
+        .sidebar-primary {
+            .portal i.fas {
+                display: none;
+            }
+        }
+
+        #index{
+            &::-webkit-scrollbar{
+                display: hidden;
+            }
+        }
+
+        #home {
+            .index-disciplines {
+                margin-bottom: 20px;
+            }
+        }
+
+        #navbar-top {
+
+            #bars {
+                display: none;
+            }
+
+            a.bars-xs {
+                display: block;
+            }
+
+            .navbar-toggler {
+                display: none;
+            }
+
+        }
+
+        #left-panel {
+
+            #sidebar {
+
+                .sidebar-header span {
+                    display: block;
+                }
+
+                .sidebar-lists {
+
+                    a {
+                        font-size: 0.8vw;
+                    }
+
+                    p {
+                        font-size: 1vw;
+                    }
+
+                }
+
+                .fa-angle-down {
+                    display: none;
+                }
+            }
+        }
+
+        .side-panel {
+            display: block;
+        }
+    }
+
+    #studentPortal {
+
+        nav#studentPortalNavbar {
+            a {
+                padding: 5px;
+            }
+        }
+    }
+
+}

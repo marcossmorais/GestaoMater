@@ -1,0 +1,118 @@
+body {
+
+    #navbar-top {
+
+        background-color: $color-white;
+        transition: 0.7s;
+        position: fixed;
+        z-index: 3;
+        padding: 10px 15px;
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        .fa-sign-out-alt{
+            color: black;
+        }
+
+        ul {
+            margin-right: 20px;
+        }
+
+        .fa-cog {
+            font-size: 20px;
+            color: $color-dark-gray;
+        }
+
+        .fa-bars {
+            color: $color-black;
+        }
+
+        a.bars-xs {
+            display: none;
+        }
+
+        .foto-perfil {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            object-position: top;
+            object-fit: cover;
+            cursor: pointer;
+            border: 1px solid $color-smooth-gray;
+        }
+
+        .logo{
+            display: none;
+        }
+
+        #navbarDropdown {
+            color: $color-dark-gray;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+    }
+
+    nav#navbarBottom,
+    #navbarBottomStudentPortal {
+        border-radius: 0px;
+        border: none;
+
+        li {
+            padding-top: 5px;
+        }
+
+        a {
+            font-size: 12px;
+            font-family: Bold;
+            display: flex;
+            align-items: center;
+            padding-top: 10px; 
+            border-bottom: 3px solid white;        
+        }
+
+        i.fas {
+            font-size: 10px;
+        }
+
+        a:hover {
+            span {
+                display: inline;
+                color: $color-dark-blue;
+            }
+        }
+
+        span {
+            display: none;
+            margin-left: 10px;
+            transition: 1s ease-in-out infinite alternate-reverse both;
+        }       
+
+        .navbar-collapse {
+            margin-top: -18px;
+        }
+
+        .navbar-nav {
+
+            a[aria-expanded="true"],
+            .link-active {
+                border-bottom: 3px solid #5C4CFF;
+                padding: 10px;
+                color: $color-dark-blue;
+
+                span {
+                    display: inline-block;
+                }
+
+                i.fas {
+                    color: $color-dark-blue;
+                }
+
+            }
+        }
+
+    }
+
+}

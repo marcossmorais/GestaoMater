@@ -1,0 +1,10 @@
+
+@mixin modal-content($background,$border-radius) {
+
+    .modal-content {
+        border: none;
+        background-color: $background;
+        border-radius: $border-radius;
+    }
+
+}

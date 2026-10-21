@@ -1,0 +1,45 @@
+services:
+  db:
+    image: mariadb:10.11
+    container_name: mater-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-mater}
+      MARIADB_USER: ${DB_USER:-mater}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-mater}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mater-db-data:/var/lib/mysql
+      - ./database_creation_script.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./initial_data_insertion_script.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: mater-app
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-mater}
+      DB_USER: ${DB_USER:-mater}
+      DB_PASSWORD: ${DB_PASSWORD:-mater}
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mater-db-data:

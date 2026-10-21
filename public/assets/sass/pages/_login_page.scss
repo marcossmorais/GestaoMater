@@ -1,0 +1,142 @@
+#login {
+
+    background: #3F3D56;
+
+    .container-login {
+        border-radius: 15px;
+        border-bottom-right-radius: 50px;
+        border-top-right-radius: 50px;
+        margin-top: 40px;
+        background-image: linear-gradient(to bottom, white 0, white 50%, #F2F2F2 50%);
+        height: 86.4vh;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+        .sidebar-primary {
+            background-color: white;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 50px;
+            height: 86.4vh;
+
+            img {
+                width: 30vw;
+                margin-top: 30px;
+            }
+
+            .portal {
+                cursor: pointer;
+                padding: 10px;
+                border-radius: 5px;
+                border: none;
+            }
+
+            .logo img {
+                width: 12vw;
+                margin: auto;
+            }
+
+            .portal-disabled {
+                background-color: #F2F2F2;
+                color: black;
+                border: 1px solid #00D8C3;
+            }
+
+            .portal-active {
+                background-color: #00D8C3;
+                border: 1px solid #00D8C3;
+                color: white;
+            }
+
+            .portal a {
+                font-size: 9px;
+                font-family: Bold;
+            }
+        }
+
+        .sidebar-secondary {
+            background-color: #F2F2F2;
+            border-bottom-right-radius: 15px;
+            border-top-left-radius: 50px;
+            border-top-right-radius: 15px;
+            height: 86.4vh;
+
+            form {
+                padding: 5px;
+                border: 1px solid #00D8C3;
+                background-color: white;
+                border-radius: 15px;
+
+                .form-control:focus {
+                    border: none;
+                    border-bottom: 2px solid #536DFE;
+                    box-shadow: none;
+                    transition: all 0.6s ease;
+                }
+            
+
+                .input-group-text {
+                    border: none;
+                    border-radius: 0px;
+                    border-bottom: 2px solid $color-blue;
+                    color: #3F3D56;
+                }
+
+                input {
+                    border: none;
+                    border-radius: 0px;
+                    transition: 0.9s;
+                    border-bottom: 2px solid $color-extra-light-blue;
+
+                    &:hover {
+                        border-bottom: 2px solid $color-blue;
+                    }
+                }
+
+                .portal a {
+                    font-size: 9px;
+                    font-family: Bold;
+                }
+
+                .portal-active {
+                    color: white;
+                    background-color: #2ECC71;
+                    border-radius: 5px;
+                }
+
+                .portal-disabled {
+                    background-color: white;
+                    color: black;
+                }
+
+                h5 {
+                    color: $color-dark-gray;
+                    font-size: 20px;
+                    margin-left: 20px;
+                    padding: 15px;
+                }
+
+                label {
+                    font-size: 17px;
+                    font-family: Semi-bold;
+                }
+
+                .form-body {
+
+                    border-radius: 25px;
+                    padding: 20px 15px;
+
+                    button {
+                        background-color: #00D8C3;
+                        font-weight: bold;
+                        color: white;
+                        transition: all 0.5s ease;
+
+                        &:hover{
+                            background-color: #5B5583;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

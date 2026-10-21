@@ -1,0 +1,35 @@
+
+
+@mixin aria-expanded-false-and-true($aria-background-true,$aria-color-true,$aria-background-false,$aria-color-false,$border-radius){
+
+    [aria-expanded="true"] {
+        background: $aria-background-true;
+        border-radius: $border-radius;
+        color: $aria-color-true;
+
+        a {
+            color: $aria-color-true;
+            font-weight: bold;
+        }
+    }
+
+    [aria-expanded="false"] {
+        background: $aria-background-false;
+        border-radius: $border-radius;
+        color: $aria-color-false;
+
+        a {
+            color: $aria-color-false;
+            font-weight: bold;
+        }
+    }
+
+}
+
+@mixin color-dark-blue-background(){
+    background-color: #111927;
+    background-image: radial-gradient(at 47% 33%, hsl(227.20, 81%, 18%) 0, transparent 59%), 
+    radial-gradient(at 82% 65%, hsl(218.00, 39%, 11%) 0, transparent 55%);
+}
+
+
