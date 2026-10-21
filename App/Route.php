@@ -896,7 +896,79 @@ class Route extends Bootstrap
 			'action' => 'profile'
 		);
 
+		// Autenticação (Clerk)
+
+		$routes['clerkSession'] = array(
+			'route' => '/auth/clerk/sessao',
+			'controller' => 'Auth\\AuthController',
+			'action' => 'clerkSession'
+		);
+
 
 		$this->setRoutes($routes);
+	}
+
+
+	/**
+	 * Rotas acessíveis sem login
+	 */
+	const PUBLIC_ROUTES = [
+		'/',
+		'/admin', '/admin/login', '/admin/sair',
+		'/portal-docente', '/portal-docente/login', '/portal-docente/sair',
+		'/portal-aluno', '/portal-aluno/login', '/portal-aluno/sair',
+		'/auth/clerk/sessao',
+	];
+
+	/**
+	 * Rotas do admin que o portal do aluno também usa
+	 */
+	const STUDENT_SHARED_ROUTES = [
+		'/admin/gestao/turma/perfil-turma/aluno/boletim',
+	];
+
+	protected function run($url)
+	{
+		if (!$this->authorized($url)) {
+
+			$isAjax = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest'
+				|| $_SERVER['REQUEST_METHOD'] !== 'GET';
+
+			if ($isAjax) {
+				http_response_code(401);
+				header('Content-Type: application/json');
+				echo json_encode(['error' => 'nao-autenticado']);
+			} else {
+				header('Location: ' . (strpos($url, '/portal-docente') === 0 ? '/portal-docente' : (strpos($url, '/portal-aluno') === 0 ? '/portal-aluno' : '/admin')));
+			}
+
+			exit;
+		}
+
+		parent::run($url);
+	}
+
+	private function authorized($url)
+	{
+		$url = rtrim($url, '/') ?: '/';
+
+		// as views chamam session_start() depois do layout já ter enviado HTML
+		if (session_status() === PHP_SESSION_NONE) session_start();
+
+		if (in_array($url, self::PUBLIC_ROUTES, true)) return true;
+
+		$admin = isset($_SESSION['Admin']);
+		$teacher = isset($_SESSION['Teacher']);
+		$student = isset($_SESSION['Student']);
+
+		if (strpos($url, '/portal-aluno') === 0) return $student;
+		if (strpos($url, '/portal-docente') === 0) return $teacher;
+
+		// o portal do docente reutiliza as rotas de gestão do admin
+		if (strpos($url, '/admin') === 0 || strpos($url, '/verificar-dados') === 0) {
+			return $admin || $teacher || ($student && in_array($url, self::STUDENT_SHARED_ROUTES, true));
+		}
+
+		return $admin || $teacher || $student;
 	}
 }

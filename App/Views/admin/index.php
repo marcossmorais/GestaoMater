@@ -7,6 +7,8 @@ if (isset($_SESSION['Teacher'])) header("Location: /portal-docente/home");
 if (isset($_SESSION['Student'])) header("Location: /portal-aluno/home");
 
 require __DIR__ . '/../../config/variables.php';
+
+$clerkEnabled = \App\Auth\Clerk::enabled();
 ?>
 
 <html lang="pt-br">
@@ -99,11 +101,12 @@ require __DIR__ . '/../../config/variables.php';
 
                         <div class="row">
 
-                            <form id="adminLogin" class="col-sm-10 col-11 col-md-9 mx-auto" action="/admin/login" method="POST">
+                            <?php if ($clerkEnabled) { ?><div id="clerkLogin" class="col-sm-10 col-11 col-md-9 mx-auto"><?php } else { ?><form id="adminLogin" class="col-sm-10 col-11 col-md-9 mx-auto" action="/admin/login" method="POST"><?php } ?>
 
                                 <div class="form-row mt-2 form-body">
 
-                                    <div class="form-group col-md-10 mx-auto mt-3">
+                                    <?php if ($clerkEnabled) { $clerkPortal = 'admin'; require __DIR__ . '/../auth/clerkSignIn.php'; } else { ?>
+<div class="form-group col-md-10 mx-auto mt-3">
                                         <label for="name">Nome do usuário:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend bg-white">
@@ -128,12 +131,13 @@ require __DIR__ . '/../../config/variables.php';
                                         <button class="w-100 btn">Entrar</button>
                                         <small class="text-center text-secondary d-block mt-3"></small>
                                     </div>
+<?php } ?>
 
 
                                     <div class="form-group col-md-10 mx-auto">
                                         <?php if (isset($_GET['error'])) { ?>
                                             <div class="alert alert-warning text-center" role="alert">
-                                                <i class="fas fa-exclamation-triangle mr-3"></i> <?= ucfirst(str_replace('-', ' ', $_GET['error'])) ?>
+                                                <i class="fas fa-exclamation-triangle mr-3"></i> <?= htmlspecialchars(ucfirst(str_replace('-', ' ', $_GET['error']))) ?>
                                             </div>
                                         <?php } ?>
                                     </div>
@@ -179,7 +183,7 @@ require __DIR__ . '/../../config/variables.php';
 
                                 </div>
 
-                            </form>
+                            <?= $clerkEnabled ? '</div>' : '</form>' ?>
 
                         </div>
 

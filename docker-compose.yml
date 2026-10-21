@@ -13,9 +13,10 @@ services:
       - mater-pg-data:/var/lib/postgresql/data
       - ./database/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
       - ./database/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
-      - ./database/dev/03_dev_seed.sql:/docker-entrypoint-initdb.d/03_dev_seed.sql:ro
+      - ./database/03_auth.sql:/docker-entrypoint-initdb.d/03_auth.sql:ro
+      - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-mater} -d ${DB_NAME:-mater}"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${DB_USER:-mater} -d ${DB_NAME:-mater}"]
       interval: 5s
       timeout: 5s
       retries: 30
@@ -34,6 +35,9 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-mater}
       DB_SSLMODE: ${DB_SSLMODE:-disable}
       PHP_DISPLAY_ERRORS: ${PHP_DISPLAY_ERRORS:-On}
+      APP_URL: ${APP_URL:-http://localhost:8000}
+      CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY:-}
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
     ports:
       - "8000:80"
     volumes:

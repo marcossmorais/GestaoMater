@@ -19,6 +19,12 @@ class TeacherPortalController extends Action
     public function auth()
     {
 
+        // com o Clerk ativo o login por nome + código fica desligado
+        if (\App\Auth\Clerk::enabled()) {
+            header('Location: /portal-docente');
+            return;
+        }
+
         $Teacher = Container::getModel('Teacher\\Teacher');
         $Tool = new Tools();
 
@@ -204,6 +210,6 @@ class TeacherPortalController extends Action
 
         unset($_SESSION['Teacher']);
 
-        header('Location: /portal-docente');
+        header('Location: /portal-docente' . (\App\Auth\Clerk::enabled() ? '?logout=1' : ''));
     }
 }

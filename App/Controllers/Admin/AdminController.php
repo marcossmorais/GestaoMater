@@ -16,6 +16,12 @@ class AdminController extends Action
     public function auth()
     {
 
+        // com o Clerk ativo o login por nome + código fica desligado
+        if (\App\Auth\Clerk::enabled()) {
+            header('Location: /admin');
+            return;
+        }
+
         $Admin = Container::getModel('Admin\\Admin');
         $Tool = new Tools();
 
@@ -33,13 +39,13 @@ class AdminController extends Action
 
             if ($account_status[0]->account_status == 1) {
 
-                if (!isset($_SESSION)) session_start();
+                if (session_status() === PHP_SESSION_NONE) session_start();
 
                 $adminName = explode(" ", $auth[0]->name);
 
                 $_SESSION['Admin'] = [
                     'id' => $auth[0]->id,
-                    'name' => $adminName[0] . ' ' . $adminName[1] . ' ' . $adminName[2],
+                    'name' => implode(' ', array_slice($adminName, 0, 3)),
                     'profilePhoto' => $auth[0]->profile_photo,
                     'hierarchyFunction' => $auth[0]->hierarchy_function
                 ];
@@ -57,7 +63,7 @@ class AdminController extends Action
     public function adminRegistration()
     {
 
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         if($_SESSION['Admin']['hierarchyFunction'] == 1){
 
@@ -113,7 +119,7 @@ class AdminController extends Action
         $Admin = Container::getModel('Admin\\Admin');
         $HierarchyFunction = Container::getModel('GeneralManagement\\HierarchyFunction');
 
-        if (!isset($_SESSION)) session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         $Admin->__set('id', $_SESSION['Admin']['id']);
 
@@ -143,7 +149,7 @@ class AdminController extends Action
 
         $Tool = new Tools();
 
-        if (!isset($_SESSION)) session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         $Address->__set('addressId', $_POST['addressId']);
         $Address->__set('district', $_POST['district']);
@@ -199,7 +205,7 @@ class AdminController extends Action
         
         $Admin->__set('id', $_POST['id']);
 
-        if (!isset($_SESSION)) session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         $Admin->updateProfilePicture();
         $profilePhoto = $Admin->dataGeneral();
@@ -217,7 +223,7 @@ class AdminController extends Action
 
         $Admin->__set('id', $_GET['id']);
 
-        if (!isset($_SESSION)) session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         $this->view->data = $Admin->dataGeneral();
         $this->view->modalType = 'data';
@@ -274,7 +280,7 @@ class AdminController extends Action
     public function adminList()
     {
 
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         if($_SESSION['Admin']['hierarchyFunction'] == 1){
 
@@ -293,10 +299,10 @@ class AdminController extends Action
     public function exit()
     {
 
-        if (!isset($_SESSION)) session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         unset($_SESSION['Admin']);
 
-        header('Location: /admin');
+        header('Location: /admin' . (\App\Auth\Clerk::enabled() ? '?logout=1' : ''));
     }
 }

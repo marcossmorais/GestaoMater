@@ -7,6 +7,6 @@ RUN apt-get update \
     && a2enmod rewrite \
     && sed -ri 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf \
     && printf '<Directory /var/www/html/public>\n    AllowOverride All\n</Directory>\n' > /etc/apache2/conf-enabled/mater.conf \
-    && printf 'display_errors=${PHP_DISPLAY_ERRORS}\nlog_errors=On\nupload_max_filesize=10M\n' > /usr/local/etc/php/conf.d/mater.ini
+    && printf 'display_errors=${PHP_DISPLAY_ERRORS}\nerror_reporting=E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED\nlog_errors=On\nupload_max_filesize=10M\n' > /usr/local/etc/php/conf.d/mater.ini
 
 WORKDIR /var/www/html

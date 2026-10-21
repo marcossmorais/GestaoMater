@@ -4,6 +4,9 @@
 
 	require_once "../vendor/autoload.php";
 
+	// carrega o .env quando a app roda fora do Docker (variáveis já definidas têm prioridade)
+	Dotenv\Dotenv::createUnsafeImmutable(dirname(__DIR__))->safeLoad();
+
 	$route = new \App\Route;
 	
 ?>
