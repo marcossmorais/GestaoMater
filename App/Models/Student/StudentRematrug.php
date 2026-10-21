@@ -97,8 +97,8 @@ class StudentRematrug extends Model
              
             AND
              
-            situacao_periodo_letivo.id_situacao_periodo_letivo = 1) AS totalAnswer , 
-            situacao_rematricula.situacao AS rematrugAnswer
+            situacao_periodo_letivo.id_situacao_periodo_letivo = 1) AS "totalAnswer" , 
+            situacao_rematricula.situacao AS "rematrugAnswer"
             
             FROM situacao_rematricula"
         );

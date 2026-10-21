@@ -189,7 +189,7 @@ class Teacher extends People
             INNER JOIN periodo_letivo ON(turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo) 
             INNER JOIN situacao_periodo_letivo ON(periodo_letivo.fk_id_situacao_periodo_letivo = situacao_periodo_letivo.id_situacao_periodo_letivo) 
 
-            WHERE professor.nome_professor LIKE :teacherName 
+            WHERE professor.nome_professor ILIKE :teacherName 
 
             AND
 
@@ -385,7 +385,7 @@ class Teacher extends People
     public function updateProfilePicture()
     {
 
-        $query = "UPDATE professor SET professor.foto_perfil_professor = :profilePhoto WHERE professor.id_professor = :teacherId";
+        $query = "UPDATE professor SET foto_perfil_professor = :profilePhoto WHERE professor.id_professor = :teacherId";
 
         $stmt = $this->db->prepare($query);
 

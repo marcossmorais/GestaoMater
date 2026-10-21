@@ -349,7 +349,7 @@ class Lack extends Model
 
             CASE WHEN :fk_id_discipline_class = 0 THEN turma_disciplina.id_turma_disciplina <> 0 ELSE turma_disciplina.id_turma_disciplina = :fk_id_discipline_class END
 
-            ORDER BY falta_aluno.total_faltas $orderBy
+            ORDER BY falta_aluno.total_faltas " . (strtoupper($orderBy) === "DESC" ? "DESC" : "ASC") . "
         
         ";
 

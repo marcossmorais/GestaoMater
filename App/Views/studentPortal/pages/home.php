@@ -237,8 +237,9 @@ require __DIR__ . '../../../../config/variables.php';
                                             array_multisort($sort, SORT_DESC, $data['dados']);
                                         }
 
-                                        function currentDate($array)
-                                        {
+                                        if (!function_exists("currentDate")) {
+function currentDate($array)
+{
 
                                             date_default_timezone_set('America/Sao_Paulo');
                                             $today = date('d-m');
@@ -254,6 +255,7 @@ require __DIR__ . '../../../../config/variables.php';
 
                                             return $data;
                                         }
+}
 
                                         ?>
 

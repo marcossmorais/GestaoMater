@@ -38,12 +38,12 @@
             .portal-disabled {
                 background-color: #F2F2F2;
                 color: black;
-                border: 1px solid #00D8C3;
+                border: 1px solid #F8A808;
             }
 
             .portal-active {
-                background-color: #00D8C3;
-                border: 1px solid #00D8C3;
+                background-color: #F8A808;
+                border: 1px solid #F8A808;
                 color: white;
             }
 
@@ -62,7 +62,7 @@
 
             form {
                 padding: 5px;
-                border: 1px solid #00D8C3;
+                border: 1px solid #F8A808;
                 background-color: white;
                 border-radius: 15px;
 
@@ -126,7 +126,7 @@
                     padding: 20px 15px;
 
                     button {
-                        background-color: #00D8C3;
+                        background-color: #F8A808;
                         font-weight: bold;
                         color: white;
                         transition: all 0.5s ease;

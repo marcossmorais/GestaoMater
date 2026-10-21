@@ -1,25 +1,24 @@
 services:
   db:
-    image: mariadb:10.11
+    image: postgres:17-alpine
     container_name: mater-db
     restart: unless-stopped
     environment:
-      MARIADB_DATABASE: ${DB_NAME:-mater}
-      MARIADB_USER: ${DB_USER:-mater}
-      MARIADB_PASSWORD: ${DB_PASSWORD:-mater}
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      POSTGRES_DB: ${DB_NAME:-mater}
+      POSTGRES_USER: ${DB_USER:-mater}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-mater}
     ports:
-      - "3307:3306"
+      - "5433:5432"
     volumes:
-      - mater-db-data:/var/lib/mysql
-      - ./database_creation_script.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
-      - ./initial_data_insertion_script.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - mater-pg-data:/var/lib/postgresql/data
+      - ./database/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - ./database/dev/03_dev_seed.sql:/docker-entrypoint-initdb.d/03_dev_seed.sql:ro
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-mater} -d ${DB_NAME:-mater}"]
       interval: 5s
       timeout: 5s
       retries: 30
-      start_period: 120s
 
   app:
     build:
@@ -28,11 +27,13 @@ services:
     container_name: mater-app
     restart: unless-stopped
     environment:
-      DB_HOST: db
-      DB_PORT: 3306
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
       DB_NAME: ${DB_NAME:-mater}
       DB_USER: ${DB_USER:-mater}
       DB_PASSWORD: ${DB_PASSWORD:-mater}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
+      PHP_DISPLAY_ERRORS: ${PHP_DISPLAY_ERRORS:-On}
     ports:
       - "8000:80"
     volumes:
@@ -42,4 +43,4 @@ services:
         condition: service_healthy
 
 volumes:
-  mater-db-data:
+  mater-pg-data:

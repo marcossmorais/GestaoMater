@@ -24,7 +24,7 @@ li {
 }
 
 h5 {
-  color: #09023B;
+  color: #0838B8;
   font-family: Bold;
 }
 
@@ -455,7 +455,7 @@ h5 {
 .nightMode body#admin #pagina section#home .card .total-student-enrolled,
 .nightMode body#teacherPortal #pagina section#home .card .total-student-enrolled,
 .nightMode body#studentPortal #pagina section#home .card .total-student-enrolled {
-  color: #e4d9ff;
+  color: #DCE8FC;
 }
 .nightMode body#admin #pagina section#home .recently-enrolled table td,
 .nightMode body#teacherPortal #pagina section#home .recently-enrolled table td,
@@ -510,7 +510,7 @@ h5 {
   outline: none;
 }
 #pagina .main-button {
-  background-color: #363C90;
+  background-color: #1868E8;
   font-weight: 500;
 }
 #pagina .btn {
@@ -628,7 +628,7 @@ h5 {
   font-size: 15px;
 }
 #pagina .modal-profile .modal-content span.badge {
-  background-color: #363C90;
+  background-color: #1868E8;
 }
 #pagina .modal-profile h5 {
   font-family: Bold;
@@ -662,11 +662,11 @@ h5 {
 }
 #pagina .modal-profile .container-list-group nav ul a:hover {
   background: #E8F0FE;
-  color: #363C90;
+  color: #1868E8;
 }
 #pagina .modal-profile .container-list-group nav ul [aria-expanded=true] {
   background: #E8F0FE;
-  color: #363C90;
+  color: #1868E8;
 }
 #pagina .modal-profile .modal-sidebar img {
   border-radius: 50%;
@@ -710,7 +710,7 @@ h5 {
 #pagina .modal-profile .main-content #accordion-data-admin form select {
   background-color: transparent;
   border: none;
-  border-bottom: 3px solid #e4d9ff;
+  border-bottom: 3px solid #DCE8FC;
 }
 #pagina .modal-profile .main-content #accordion-data-student form input:disabled,
 #pagina .modal-profile .main-content #accordion-data-student form select:disabled,
@@ -757,7 +757,7 @@ h5 {
 #pagina #profileClassModal #accordion-data-student form select {
   background-color: #ffffff;
   border-bottom: none;
-  border: 2px solid #e4d9ff;
+  border: 2px solid #DCE8FC;
 }
 #pagina #profileClassModal #accordion-data-student form input:disabled,
 #pagina #profileClassModal #accordion-data-student form select:disabled {
@@ -775,10 +775,10 @@ h5 {
   background-color: #E5E7E9;
   cursor: no-drop;
   border: none;
-  color: #09023B;
+  color: #0838B8;
 }
 #pagina form .form-control:valid {
-  border: 2px solid #e4d9ff;
+  border: 2px solid #DCE8FC;
 }
 #pagina form .form-control:invalid {
   border: 2px solid #F2DCD6;
@@ -795,7 +795,7 @@ h5 {
 }
 #pagina form select, #pagina form input {
   font-size: 1.1vw;
-  color: #09023B;
+  color: #0838B8;
 }
 
 #pagina .edit-data-icon {
@@ -809,7 +809,7 @@ h5 {
 }
 #pagina .edit-data-icon:hover {
   color: #ffffff;
-  background-color: #363C90;
+  background-color: #1868E8;
 }
 #pagina .edit-data-icon:hover .fa-edit,
 #pagina .edit-data-icon:hover .fa-print,
@@ -874,7 +874,7 @@ h5 {
 }
 #pagina .printer-icon:hover {
   color: #ffffff;
-  background-color: #363C90;
+  background-color: #1868E8;
 }
 #pagina .printer-icon:hover .fa-edit,
 #pagina .printer-icon:hover .fa-print,
@@ -947,7 +947,7 @@ h5 {
 }
 
 table th {
-  color: #09023B;
+  color: #0838B8;
   border-top: none;
 }
 table thead {
@@ -985,7 +985,7 @@ table tr {
   padding: 5px;
   left: 0;
   height: 100vh;
-  background: #09023B;
+  background: #0838B8;
   overflow: auto;
   box-shadow: 5px 0 4px -4px #999, -6px 0 4px -4px #999;
 }
@@ -1069,7 +1069,7 @@ table tr {
 }
 #left-panel #sidebar .sidebar-lists .link-active {
   background-color: #3F3D56;
-  border-left: 5px solid #00D8C3;
+  border-left: 5px solid #F8A808;
 }
 #left-panel #sidebar .sidebar-lists .footer-panel {
   bottom: 0;
@@ -1081,7 +1081,7 @@ table tr {
   margin-top: 0;
   transition: 1s;
   width: 100%;
-  border-left: 5px solid #00D8C3;
+  border-left: 5px solid #F8A808;
 }
 #left-panel #sidebar .sidebar-lists .collapse li:hover {
   background-color: #2C2D32;
@@ -1161,25 +1161,25 @@ html > .sidebar-responsive #left-panel #sidebar li {
 
 @keyframes theme {
   0% {
-    background: #012a4a;
+    background: #0838B8;
   }
   16% {
-    background: #012a4a;
+    background: #0838B8;
   }
   33% {
-    background: #013a63;
+    background: #0858C8;
   }
   50% {
-    background: #014f86;
+    background: #0878C8;
   }
   66% {
-    background: #014f86;
+    background: #0878C8;
   }
   83% {
-    background: #013a63;
+    background: #0858C8;
   }
   100% {
-    background: #012a4a;
+    background: #0838B8;
   }
 }
 @keyframes background {
@@ -1237,7 +1237,7 @@ nav img {
   display: block;
   width: 100px;
   height: 3px;
-  background: #00D8C3;
+  background: #F8A808;
   margin: 5px auto;
 }
 .box .card .card-img img {
@@ -1246,8 +1246,8 @@ nav img {
   margin: auto;
 }
 .box .card a {
-  color: #091954;
-  background: #00D8C3;
+  color: #0838B8;
+  background: #F8A808;
   border: none;
   padding: 10px 15px;
   font-size: 13px;
@@ -1287,7 +1287,7 @@ footer p {
 }
 
 .area {
-  background: -webkit-linear-gradient(to left, #091954, #091954);
+  background: -webkit-linear-gradient(to left, #0838B8, #0838B8);
   width: 100%;
   height: 100vh;
 }
@@ -1338,7 +1338,7 @@ footer p {
 }
 #table-print .sub-header p, #table-print .sub-header div {
   font-family: Semi-bold;
-  color: #09023B;
+  color: #0838B8;
   margin-bottom: 5px;
 }
 #table-print .sub-header span {
@@ -1685,7 +1685,7 @@ footer p {
 #admin #pagina .school-term-scheduled,
 #teacherPortal #pagina .school-term-scheduled,
 #studentPortal #pagina .school-term-scheduled {
-  border-left: 8px solid #363C90 !important;
+  border-left: 8px solid #1868E8 !important;
 }
 #admin #pagina .option-icon-group span,
 #teacherPortal #pagina .option-icon-group span,
@@ -1701,7 +1701,7 @@ footer p {
 #admin #pagina .registration-in-stages form [data-toggle=collapse],
 #teacherPortal #pagina .registration-in-stages form [data-toggle=collapse],
 #studentPortal #pagina .registration-in-stages form [data-toggle=collapse] {
-  background-color: #363C90;
+  background-color: #1868E8;
 }
 #admin #pagina .registration-in-stages form [data-toggle=collapse] .fa-angle-right,
 #teacherPortal #pagina .registration-in-stages form [data-toggle=collapse] .fa-angle-right,
@@ -1718,7 +1718,7 @@ footer p {
   height: 3px;
   margin: auto;
   width: 75%;
-  background-color: #e4d9ff;
+  background-color: #DCE8FC;
 }
 #admin #pagina .registration-in-stages .registration-header-by-step .row,
 #teacherPortal #pagina .registration-in-stages .registration-header-by-step .row,
@@ -1734,7 +1734,7 @@ footer p {
 #admin #pagina .registration-in-stages .registration-header-by-step .row .container-option > .collapsed,
 #teacherPortal #pagina .registration-in-stages .registration-header-by-step .row .container-option > .collapsed,
 #studentPortal #pagina .registration-in-stages .registration-header-by-step .row .container-option > .collapsed {
-  background-color: #e4d9ff;
+  background-color: #DCE8FC;
   color: #080809;
 }
 #admin #pagina .registration-in-stages .registration-header-by-step .row .container-option a,
@@ -1747,7 +1747,7 @@ footer p {
   align-items: center;
   height: 35px;
   margin: auto;
-  background-color: #363C90;
+  background-color: #1868E8;
   border-radius: 50%;
 }
 #admin #pagina .registration-in-stages .registration-header-by-step .row .container-option a span,
@@ -1814,7 +1814,7 @@ footer p {
 #teacherPortal #pagina .collapse-options-container span:hover,
 #studentPortal #pagina .collapse-options-container span:hover {
   color: #ffffff;
-  background-color: #091954;
+  background-color: #0838B8;
 }
 #admin #pagina .collapse-options-container span:hover .fa-edit,
 #admin #pagina .collapse-options-container span:hover .fa-print,
@@ -1839,7 +1839,7 @@ footer p {
 #admin #pagina .collapse-options-container [aria-expanded=true] span,
 #teacherPortal #pagina .collapse-options-container [aria-expanded=true] span,
 #studentPortal #pagina .collapse-options-container [aria-expanded=true] span {
-  background: #091954;
+  background: #0838B8;
   color: #ffffff;
   border: none;
 }
@@ -1864,7 +1864,7 @@ footer p {
 #admin #pagina .horizontal-control-list [aria-expanded=true],
 #teacherPortal #pagina .horizontal-control-list [aria-expanded=true],
 #studentPortal #pagina .horizontal-control-list [aria-expanded=true] {
-  background: #363C90;
+  background: #1868E8;
   border-radius: 5px;
   color: #ffffff;
 }
@@ -1949,11 +1949,11 @@ footer p {
 #login .container-login .sidebar-primary .portal-disabled {
   background-color: #F2F2F2;
   color: black;
-  border: 1px solid #00D8C3;
+  border: 1px solid #F8A808;
 }
 #login .container-login .sidebar-primary .portal-active {
-  background-color: #00D8C3;
-  border: 1px solid #00D8C3;
+  background-color: #F8A808;
+  border: 1px solid #F8A808;
   color: white;
 }
 #login .container-login .sidebar-primary .portal a {
@@ -1969,7 +1969,7 @@ footer p {
 }
 #login .container-login .sidebar-secondary form {
   padding: 5px;
-  border: 1px solid #00D8C3;
+  border: 1px solid #F8A808;
   background-color: white;
   border-radius: 15px;
 }
@@ -1982,17 +1982,17 @@ footer p {
 #login .container-login .sidebar-secondary form .input-group-text {
   border: none;
   border-radius: 0px;
-  border-bottom: 2px solid #363C90;
+  border-bottom: 2px solid #1868E8;
   color: #3F3D56;
 }
 #login .container-login .sidebar-secondary form input {
   border: none;
   border-radius: 0px;
   transition: 0.9s;
-  border-bottom: 2px solid #e4d9ff;
+  border-bottom: 2px solid #DCE8FC;
 }
 #login .container-login .sidebar-secondary form input:hover {
-  border-bottom: 2px solid #363C90;
+  border-bottom: 2px solid #1868E8;
 }
 #login .container-login .sidebar-secondary form .portal a {
   font-size: 9px;
@@ -2022,7 +2022,7 @@ footer p {
   padding: 20px 15px;
 }
 #login .container-login .sidebar-secondary form .form-body button {
-  background-color: #00D8C3;
+  background-color: #F8A808;
   font-weight: bold;
   color: white;
   transition: all 0.5s ease;
@@ -2082,8 +2082,8 @@ footer p {
   font-size: 14px;
 }
 #studentPortal nav#studentPortalNavbar [aria-expanded=true] {
-  color: #363C90;
-  border-bottom: 2px solid #363C90;
+  color: #1868E8;
+  border-bottom: 2px solid #1868E8;
 }
 #studentPortal textarea:disabled {
   background: white;
@@ -2988,7 +2988,7 @@ html body#studentPortal #pagina .modal-profile .modal-sidebar .container-list-gr
   html body#admin #pagina .modal-profile .modal-sidebar .container-list-group nav ul [aria-expanded=true],
 html body#teacherPortal #pagina .modal-profile .modal-sidebar .container-list-group nav ul [aria-expanded=true],
 html body#studentPortal #pagina .modal-profile .modal-sidebar .container-list-group nav ul [aria-expanded=true] {
-    border-bottom: 2px solid #363C90;
+    border-bottom: 2px solid #1868E8;
     background-color: transparent;
     color: #506177;
   }
@@ -3247,7 +3247,7 @@ body #navbarBottomStudentPortal i.fas {
 body nav#navbarBottom a:hover span,
 body #navbarBottomStudentPortal a:hover span {
   display: inline;
-  color: #09023B;
+  color: #0838B8;
 }
 body nav#navbarBottom span,
 body #navbarBottomStudentPortal span {
@@ -3265,7 +3265,7 @@ body #navbarBottomStudentPortal .navbar-nav a[aria-expanded=true],
 body #navbarBottomStudentPortal .navbar-nav .link-active {
   border-bottom: 3px solid #5C4CFF;
   padding: 10px;
-  color: #09023B;
+  color: #0838B8;
 }
 body nav#navbarBottom .navbar-nav a[aria-expanded=true] span,
 body nav#navbarBottom .navbar-nav .link-active span,
@@ -3277,7 +3277,7 @@ body nav#navbarBottom .navbar-nav a[aria-expanded=true] i.fas,
 body nav#navbarBottom .navbar-nav .link-active i.fas,
 body #navbarBottomStudentPortal .navbar-nav a[aria-expanded=true] i.fas,
 body #navbarBottomStudentPortal .navbar-nav .link-active i.fas {
-  color: #09023B;
+  color: #0838B8;
 }
 
 /*# sourceMappingURL=stylesheet.css.map */

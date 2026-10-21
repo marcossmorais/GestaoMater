@@ -158,9 +158,9 @@ class Exam extends Model
 
             "UPDATE avaliacoes SET
 
-            avaliacoes.data_realizada = :realizeDate ,
-            avaliacoes.valor_avaliacao = :examValue ,
-            avaliacoes.descricao_avaliacao = :examDescription 
+            data_realizada = :realizeDate ,
+            valor_avaliacao = :examValue ,
+            descricao_avaliacao = :examDescription 
 
             WHERE avaliacoes.id_avaliacao = :examId          
             
@@ -234,7 +234,7 @@ class Exam extends Model
             INNER JOIN periodo_letivo ON(turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo)
             INNER JOIN situacao_periodo_letivo ON(periodo_letivo.fk_id_situacao_periodo_letivo = situacao_periodo_letivo.id_situacao_periodo_letivo) 
 
-            WHERE avaliacoes.descricao_avaliacao LIKE :examDescription 
+            WHERE avaliacoes.descricao_avaliacao ILIKE :examDescription 
 
             AND
 

@@ -106,10 +106,10 @@ class SchoolTerm extends Model
 
             "UPDATE periodo_letivo SET
 
-             periodo_letivo.data_inicio = :startDate ,
-             periodo_letivo.data_fim = :endDate ,
+             data_inicio = :startDate ,
+             data_fim = :endDate ,
             
-             periodo_letivo.fk_id_situacao_periodo_letivo = CASE
+             fk_id_situacao_periodo_letivo = CASE
 
              WHEN periodo_letivo.fk_id_situacao_periodo_letivo = 1 THEN 1
              WHEN periodo_letivo.fk_id_situacao_periodo_letivo = 3 THEN 3

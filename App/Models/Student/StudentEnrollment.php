@@ -65,7 +65,7 @@ class StudentEnrollment extends Model
     public function update()
     {
 
-        $query = "UPDATE matricula SET matricula.fk_id_situacao_aluno = :fk_id_student_situation WHERE matricula.id_matricula = :studentEnrollmentId";
+        $query = "UPDATE matricula SET fk_id_situacao_aluno = :fk_id_student_situation WHERE matricula.id_matricula = :studentEnrollmentId";
 
         $stmt = $this->db->prepare($query);
 
@@ -127,7 +127,7 @@ class StudentEnrollment extends Model
             disciplina.nome_disciplina AS discipline_name , 
             unidade.unidade AS unity,
             SUM(nota_avaliacao.valor_nota) AS note ,
-            turma_disciplina.id_turma_disciplina AS class_id
+            MIN(turma_disciplina.id_turma_disciplina) AS class_id
             
             FROM nota_avaliacao 
             
@@ -330,7 +330,7 @@ class StudentEnrollment extends Model
     public function changeStudentFromClass()
     {
 
-        $query = "UPDATE matricula SET matricula.fk_id_situacao_aluno = :fk_id_student_situation WHERE matricula.id_matricula = :studentEnrollmentId";
+        $query = "UPDATE matricula SET fk_id_situacao_aluno = :fk_id_student_situation WHERE matricula.id_matricula = :studentEnrollmentId";
 
         $stmt = $this->db->prepare($query);
 

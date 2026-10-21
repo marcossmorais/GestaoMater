@@ -29,23 +29,23 @@ class Unity extends Model
     public function readOpenUnits()
     {
 
-        $query = "SET @controle_unidade = (SELECT configuracao.fk_id_controle_unidade FROM configuracao)";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-
         return $this->speedingUp(
 
             "SELECT unidade.id_unidade AS option_value , unidade.unidade AS option_text
-            
-            FROM unidade 
-            
-            WHERE 
-            
-            CASE 
-            
-            WHEN @controle_unidade = 1 THEN unidade.id_unidade = 1  
-            WHEN @controle_unidade = 2 THEN unidade.id_unidade BETWEEN 1 AND 2
-            ELSE unidade.id_unidade <> 0 END;"
+
+            FROM unidade
+
+            CROSS JOIN (SELECT configuracao.fk_id_controle_unidade AS controle_unidade FROM configuracao LIMIT 1) AS config
+
+            WHERE
+
+            CASE
+
+            WHEN config.controle_unidade = 1 THEN unidade.id_unidade = 1
+            WHEN config.controle_unidade = 2 THEN unidade.id_unidade BETWEEN 1 AND 2
+            ELSE unidade.id_unidade <> 0 END
+
+            ORDER BY unidade.id_unidade"
         );
     }
 

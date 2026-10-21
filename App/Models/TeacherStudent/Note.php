@@ -273,7 +273,7 @@ class Note extends Model
             INNER JOIN periodo_letivo ON(turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo)
             INNER JOIN situacao_periodo_letivo ON(periodo_letivo.fk_id_situacao_periodo_letivo = situacao_periodo_letivo.id_situacao_periodo_letivo)  
 
-            WHERE avaliacoes.descricao_avaliacao LIKE :examDescription 
+            WHERE avaliacoes.descricao_avaliacao ILIKE :examDescription 
 
             AND
 
@@ -291,7 +291,7 @@ class Note extends Model
 
             CASE WHEN :fk_id_teacher = 0 THEN turma_disciplina.fk_id_professor <> 0 ELSE turma_disciplina.fk_id_professor = :fk_id_teacher END
 
-            ORDER BY nota_avaliacao.valor_nota $orderBy
+            ORDER BY nota_avaliacao.valor_nota " . (strtoupper($orderBy) === "DESC" ? "DESC" : "ASC") . "
              
         ";
 
@@ -318,7 +318,7 @@ class Note extends Model
     public function update()
     {
 
-        $query = "UPDATE nota_avaliacao SET nota_avaliacao.valor_nota = :note_value WHERE nota_avaliacao.id_nota = :note_id ";
+        $query = "UPDATE nota_avaliacao SET valor_nota = :note_value WHERE nota_avaliacao.id_nota = :note_id ";
 
         $stmt = $this->db->prepare($query);
 

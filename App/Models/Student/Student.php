@@ -354,7 +354,7 @@ class Student extends People
 
             AND
 
-            aluno.nome_aluno LIKE :studentName 
+            aluno.nome_aluno ILIKE :studentName 
 
             ORDER BY aluno.nome_aluno
         
@@ -400,7 +400,7 @@ class Student extends People
             INNER JOIN matricula ON(aluno.id_aluno = matricula.fk_id_aluno) 
             INNER JOIN turma ON(matricula.fk_id_turma_matricula = turma.id_turma) 
 
-            WHERE turma.id_turma = :fk_id_class AND aluno.nome_aluno LIKE :studentName 
+            WHERE turma.id_turma = :fk_id_class AND aluno.nome_aluno ILIKE :studentName 
         
         ";
 
@@ -423,7 +423,7 @@ class Student extends People
     public function updateProfilePicture()
     {
 
-        $query = "UPDATE aluno SET aluno.foto_perfil_aluno = :profilePhoto WHERE aluno.id_aluno = :studentId";
+        $query = "UPDATE aluno SET foto_perfil_aluno = :profilePhoto WHERE aluno.id_aluno = :studentId";
 
         $stmt = $this->db->prepare($query);
 
@@ -524,7 +524,7 @@ class Student extends People
             
             WHERE aluno.fk_id_situacao_geral_aluno = 1
 
-            ORDER BY aluno.id_aluno DESC LIMIT $limit"
+            ORDER BY aluno.id_aluno DESC LIMIT " . (int) $limit
         );
     }
 
@@ -537,18 +537,13 @@ class Student extends People
     public function studentsAddedToday()
     {
 
-        $query = "SET @currentDate = (SELECT CURDATE())";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-
         return $this->speedingUp(
 
             "SELECT COUNT(aluno.id_aluno) AS total_student
-            
-            FROM aluno 
-            
-            WHERE aluno.fk_id_situacao_geral_aluno = 1 AND DATE(aluno.data_matricula_inicial) = DATE(@currentDate)"
+
+            FROM aluno
+
+            WHERE aluno.fk_id_situacao_geral_aluno = 1 AND DATE(aluno.data_matricula_inicial) = CURRENT_DATE"
         );
     }
 

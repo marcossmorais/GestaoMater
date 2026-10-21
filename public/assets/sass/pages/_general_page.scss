@@ -393,7 +393,7 @@
             margin-right: 1px;
 
             span {
-                @include icon-card(none, #091954, $color-white, 5px);
+                @include icon-card(none, #0838B8, $color-white, 5px);
                 padding-left: 20px;
                 padding-right: 20px;
                 font-size: 1vw;
@@ -405,7 +405,7 @@
         .collapse-options-container {
             [aria-expanded="true"] {
                 span {
-                    background: #091954;
+                    background: #0838B8;
                     color: $color-white;
                     border: none;
                 }

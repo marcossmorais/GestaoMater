@@ -40,7 +40,12 @@ class AdminPeopleController extends Action
 
         $People = Container::getModel('People\\People');
 
-        $cpf = preg_replace('/[^0-9]/', '', $_GET['cpf']);
+        $cpf = preg_replace('/[^0-9]/', '', $_GET['cpf'] ?? '');
+
+        if ($cpf === '') {
+            echo json_encode([]);
+            return;
+        }
 
         $People->__set('cpf', $cpf);
 

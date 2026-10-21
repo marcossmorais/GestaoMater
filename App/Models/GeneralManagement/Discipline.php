@@ -189,7 +189,7 @@ class Discipline extends Model
             
             INNER JOIN modalidade_disciplina on(disciplina.fk_id_modalidade_disciplina = modalidade_disciplina.id_modalidade_disciplina) 
             
-            WHERE disciplina.nome_disciplina LIKE :disciplineName 
+            WHERE disciplina.nome_disciplina ILIKE :disciplineName 
             
             AND
 

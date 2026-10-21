@@ -1,3 +1,5 @@
+-- Mater — dados iniciais (Postgres)
+
 
 INSERT INTO situacao_periodo_letivo(situacao_periodo_letivo) values ('Ativo'),('Finalizado'),('Agendado');
 
@@ -23,7 +25,7 @@ insert into tipo_sanguineo(tipo_sanguineo) values ('Não informado'),('AB+'),('A
 
 insert into situacao_aluno_ano_letivo (situacao_aluno) values ('Matriculado'),('Aprovado'),('Reprovado'),('Mudou de turma');
 
-INSERT INTO situacao_geral_aluno (`situacao_geral`) VALUES ('Matriculado'),('Desistente'),('Concluído');
+INSERT INTO situacao_geral_aluno (situacao_geral) VALUES ('Matriculado'),('Desistente'),('Concluído');
 
 insert into hierarquia_funcao(hierarquia_funcao) values ('Administrador'),('Co-administrador'),('Docente'),('Aluno');
 
@@ -37,21 +39,12 @@ INSERT INTO administrador(codigo_acesso , cpf_administrador , data_nascimento_ad
 
 INSERT INTO legenda(legenda, sigla) VALUES ('Aprovado', 'AP'),('Reprovado', 'RP'),('Regime de Progressão Parcial', 'RPP'),('Reprovado por Falta', 'RPF'),('Recuperação Final', 'RF');
 
-INSERT INTO controle_rematricula(situacao) VALUE ('Aberta'),('Fechada');
+INSERT INTO controle_rematricula(situacao) VALUES ('Aberta'),('Fechada');
 
-INSERT INTO controle_unidade(situacao)VALUES("Somente a Primeira"),("Primeira e Segunda"),("Todas");
+INSERT INTO controle_unidade(situacao)VALUES('Somente a Primeira'),('Primeira e Segunda'),('Todas');
 
 INSERT INTO situacao_rematricula(situacao)VALUES('Sim'),('Não');
 
 INSERT INTO configuracao(fk_id_controle_unidade , fk_id_controle_rematricula) VALUES (1, 2);
 
-INSERT INTO `modalidade_curso` (`modalidade_curso`, `modalidade_curso_sigla`) VALUES ('Ensino Médio', 'EM'), ('Ensino Profissional, médio integrado', 'ET');
-
-
-
-
-
-
-
-
-
+INSERT INTO modalidade_curso (modalidade_curso, modalidade_curso_sigla) VALUES ('Ensino Médio', 'EM'), ('Ensino Profissional, médio integrado', 'ET');

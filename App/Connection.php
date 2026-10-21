@@ -10,14 +10,21 @@ class Connection
 		try {
 
 			$host = getenv('DB_HOST') ?: 'localhost';
-			$port = getenv('DB_PORT') ?: '3306';
+			$port = getenv('DB_PORT') ?: '5432';
 			$name = getenv('DB_NAME') ?: 'mater';
+			$sslmode = getenv('DB_SSLMODE') ?: 'disable';
 
 			$conn = new \PDO(
-				"mysql:host=$host;port=$port;dbname=$name;charset=utf8",
-				getenv('DB_USER') ?: 'root',
-				getenv('DB_PASSWORD') ?: ''
+				"pgsql:host=$host;port=$port;dbname=$name;sslmode=$sslmode",
+				getenv('DB_USER') ?: 'postgres',
+				getenv('DB_PASSWORD') ?: '',
+				[
+					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+					\PDO::ATTR_EMULATE_PREPARES => true
+				]
 			);
+
+			$conn->exec("SET TIME ZONE 'America/Sao_Paulo'");
 
 			return $conn;
 

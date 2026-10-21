@@ -53,6 +53,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                 <?php
 
+if (!function_exists("currentDate")) {
 function currentDate($array)
 {
 
@@ -66,6 +67,7 @@ function currentDate($array)
     $data = ($data == $today ? 'Hoje' : $data);
 
     return $data;
+}
 }
 
                 ?>

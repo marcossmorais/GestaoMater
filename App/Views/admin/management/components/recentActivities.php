@@ -45,8 +45,9 @@ require __DIR__ . '../../../../../config/variables.php';
         array_multisort($ord, SORT_DESC, $data['dados']);
     }
 
-    function currentDate($array)
-    {
+    if (!function_exists("currentDate")) {
+function currentDate($array)
+{
 
         date_default_timezone_set('America/Sao_Paulo');
         $today = date('d-m');
@@ -59,6 +60,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
         return $data;
     }
+}
 
     $photoDir =  "$app_url/assets/img/teacherProfilePhotos/";
     $photoStudentDir =  "$app_url/assets/img/studentProfilePhotos/";
