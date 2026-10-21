@@ -1,5 +1,5 @@
 let studentsTotal;
-let colorLabels = localStorage.getItem('nightModeAdmin') ? '#fff' : '#000';
+let colorLabels = localStorage.getItem('nightModeAdmin') ? '#94A3BD' : '#5B6B84';
 
 function createBarChart(elementId, labels, datas) {
     let ctx = document.getElementById(elementId);
@@ -14,15 +14,18 @@ function createBarChart(elementId, labels, datas) {
                 datasets: [{
                     label: 'Total de alunos',
                     backgroundColor: colors['primary'],
+                    maxBarThickness: 72,
+                    borderRadius: 6,
                     borderColor: '#e5e5e5',
                     color: colorLabels,
                     data: datas
                 }]
             },
-            options: {        
+            options: {
+                maintainAspectRatio: false,        
                 plugins: {
                     title: {
-                        display: true,
+                        display: false,
                         text: 'Divisão de alunos por curso',
                         color: colorLabels,
                         padding: {
@@ -85,13 +88,14 @@ function createPieChart(elementId, labels, datas) {
                 }]
             },
             options: {
+                maintainAspectRatio: false,
                 legend: {
                     position: "bottom"
                 },
                 cutoutPercentage: 30,
                 plugins: {
                     title: {
-                        display: true,
+                        display: false,
                         text: 'Situação dos alunos no ano letivo',
                         color: colorLabels,
                         padding: {
@@ -135,10 +139,11 @@ function createDoughnutChart(elementId, labels, datas) {
                 }]
             },
             options: {
+                maintainAspectRatio: false,
                 cutoutPercentage: 30,
                 plugins: {
                     title: {
-                        display: true,
+                        display: false,
                         text: 'Status das solicitações de rematrículas recebidas',
                         color: colorLabels,
                         padding: {

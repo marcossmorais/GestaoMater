@@ -16,8 +16,8 @@ require __DIR__ . '../../../../config/variables.php';
     <link href="<?= $app_url ?>/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= $app_url ?>/node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet">
     <script> if (localStorage.getItem('nightModeStudent')) { document.documentElement.classList.add('nightMode') } </script>
-    <link rel="stylesheet" href="<?= $app_url ?>/assets/css/stylesheet.css">
-	<link rel="stylesheet" href="<?= $app_url ?>/assets/css/mater.css">
+    <link rel="stylesheet" href="<?= asset('/assets/css/stylesheet.css') ?>">
+	<link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
     <link rel="shortcut icon" type="imagem/x-icon" href="<?= $app_url ?>/assets/img/logo-components/logo.png" />
 </head>
 
@@ -62,6 +62,8 @@ require __DIR__ . '../../../../config/variables.php';
                         </ul>
 
                         <ul class="navbar-nav ml-auto d-flex align-items-center">
+
+                            <li class="nav-item"><?php $topbarPortal = 'Student'; require __DIR__ . '/../../components/topbarTools.php'; ?></li>
 
                             <?php $photo = empty($_SESSION['Student']['profilePhoto']) ? 'foto-vazia.jpg' : $_SESSION['Student']['profilePhoto'] ?>
 
@@ -887,18 +889,20 @@ function currentDate($array)
 
 <script src="<?= $app_url ?>/node_modules/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Tools.js"></script>
+<script src="<?= asset('/assets/js/utilities/Tools.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Validation.js"></script>
+<script src="<?= asset('/assets/js/utilities/Validation.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Application.js"></script>
+<script src="<?= asset('/assets/js/utilities/Application.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Management.js"></script>
+<script src="<?= asset('/assets/js/utilities/Management.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/style.js"></script>
+<script src="<?= asset('/assets/js/utilities/style.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/main.js"></script>
+<script src="<?= asset('/assets/js/main.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Bulletin.js"></script>
+<script src="<?= asset('/assets/js/mater.js') ?>"></script>
+
+<script src="<?= asset('/assets/js/utilities/Bulletin.js') ?>"></script>
 
 </html>

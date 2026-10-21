@@ -3263,7 +3263,7 @@ body nav#navbarBottom .navbar-nav a[aria-expanded=true],
 body nav#navbarBottom .navbar-nav .link-active,
 body #navbarBottomStudentPortal .navbar-nav a[aria-expanded=true],
 body #navbarBottomStudentPortal .navbar-nav .link-active {
-  border-bottom: 3px solid #5C4CFF;
+  border-bottom: 3px solid #1868E8;
   padding: 10px;
   color: #0838B8;
 }

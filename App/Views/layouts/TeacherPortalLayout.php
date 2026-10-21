@@ -15,8 +15,8 @@ require __DIR__ . '/../../config/variables.php';
 	<title> Mater - Portal do docente</title>
 	<link rel = "shortcut icon" type = "imagem/x-icon" href = "<?= $app_url ?>/assets/img/logo-components/logo.png"/>
 	<script> if (localStorage.getItem('nightModeTeacher')) { document.documentElement.classList.add('nightMode') } </script>
-	<link rel="stylesheet" href="<?= $app_url ?>/assets/css/stylesheet.css">
-	<link rel="stylesheet" href="<?= $app_url ?>/assets/css/mater.css">
+	<link rel="stylesheet" href="<?= asset('/assets/css/stylesheet.css') ?>">
+	<link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
 	<link href="<?= $app_url ?>/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="<?= $app_url ?>/node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet">
 
@@ -82,24 +82,26 @@ require __DIR__ . '/../../config/variables.php';
 
 <script src="<?= $app_url ?>/node_modules/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Tools.js"></script>
+<script src="<?= asset('/assets/js/utilities/Tools.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Validation.js"></script>
+<script src="<?= asset('/assets/js/utilities/Validation.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Application.js"></script>
+<script src="<?= asset('/assets/js/utilities/Application.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Management.js"></script>
+<script src="<?= asset('/assets/js/utilities/Management.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/style.js"></script>
+<script src="<?= asset('/assets/js/utilities/style.js') ?>"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/chartJs/config.js"></script> 
+<script src="<?= asset('/assets/js/utilities/chartJs/config.js') ?>"></script> 
 
-<script src="<?= $app_url ?>/assets/js/utilities/chartJs/teacherPortal.js"></script> 
+<script src="<?= asset('/assets/js/utilities/chartJs/teacherPortal.js') ?>"></script> 
 
-<script src="<?= $app_url ?>/assets/js/main.js"></script>
+<script src="<?= asset('/assets/js/main.js') ?>"></script>
 
-<script src="<?= $app_url ?>/assets/js/utilities/Bulletin.js"></script>
+<script src="<?= asset('/assets/js/mater.js') ?>"></script>
+
+<script src="<?= asset('/assets/js/utilities/Bulletin.js') ?>"></script>
 
 </html>

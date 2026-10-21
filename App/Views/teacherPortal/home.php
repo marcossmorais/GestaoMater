@@ -1,7 +1,22 @@
-<?php 
-
+<?php
 require __DIR__ . '../../../config/variables.php';
 
+$schoolTerm = isset($this->view->SchoolTermActive[0]->option_text) ? $this->view->SchoolTermActive[0]->option_text : null;
+$unity = $this->view->unitControlCurrent[0]->option_value;
+
+// Agenda: próximas avaliações primeiro, depois as já realizadas (mais recentes primeiro)
+$now = (new DateTime('now', new DateTimeZone('America/Sao_Paulo')))->getTimestamp();
+$upcoming = [];
+$done = [];
+foreach ($this->view->listExam as $exam) {
+    $exam->timestamp = strtotime($exam->realize_date);
+    $exam->timestamp >= $now ? $upcoming[] = $exam : $done[] = $exam;
+}
+usort($upcoming, function ($a, $b) { return $a->timestamp <=> $b->timestamp; });
+usort($done, function ($a, $b) { return $b->timestamp <=> $a->timestamp; });
+$agenda = array_merge($upcoming, $done);
+$classes = [];
+foreach ($this->view->listExam as $exam) $classes[$exam->acronym_series . $exam->ballot . $exam->shift] = true;
 ?>
 
 <section id="home">
@@ -10,146 +25,87 @@ require __DIR__ . '../../../config/variables.php';
 
         <div class="col-lg-11 mx-auto">
 
-            <div class="row">
-
-                <h5 class="col-lg-12">Visão Geral</h5>
-
+            <div class="m-page-head">
+                <div>
+                    <h5>Olá, <?= htmlspecialchars(explode(' ', $_SESSION['Teacher']['name'])[0]) ?></h5>
+                    <p><?= $schoolTerm ? "Período letivo $schoolTerm · {$unity}ª unidade aberta" : 'Nenhum período letivo ativo' ?></p>
+                </div>
+                <div class="m-actions">
+                    <a href="/portal-docente/turmas" class="btn btn-primary"><i class="fas fa-users mr-2"></i>Minhas turmas</a>
+                </div>
             </div>
 
-            <div class="row mt-2">
+            <div class="m-kpis">
+                <div class="card m-kpi">
+                    <div class="m-kpi-icon"><i class="fas fa-calendar-check"></i></div>
+                    <div>
+                        <div class="m-kpi-label">Avaliações pendentes</div>
+                        <div class="m-kpi-value"><?= count($upcoming) ?></div>
+                    </div>
+                </div>
+                <div class="card m-kpi">
+                    <div class="m-kpi-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div>
+                        <div class="m-kpi-label">Avaliações realizadas</div>
+                        <div class="m-kpi-value"><?= count($done) ?></div>
+                    </div>
+                </div>
+                <div class="card m-kpi">
+                    <div class="m-kpi-icon"><i class="fas fa-users"></i></div>
+                    <div>
+                        <div class="m-kpi-label">Turmas com avaliações</div>
+                        <div class="m-kpi-value"><?= count($classes) ?></div>
+                    </div>
+                </div>
+                <div class="card m-kpi">
+                    <div class="m-kpi-icon"><i class="fas fa-boxes"></i></div>
+                    <div>
+                        <div class="m-kpi-label">Unidade atual</div>
+                        <div class="m-kpi-value"><?= $unity ?>ª</div>
+                    </div>
+                </div>
+            </div>
 
-                <div class="col-lg-6">
+            <div class="m-grid m-grid-even">
 
-                    <div class="row">
-
-                        <div class="col-6">
-
-                            <div class="card">
-
-                                <div class="card-title">Unidade atual</div>
-
-                                <div class="row d-flex justify-content-center align-items-center">
-
-                                    <div class="col-lg-12 card-text total-student-enrolled"><i class="fas fa-boxes mr-2"></i> <?= $this->view->unitControlCurrent[0]->option_value ?> unidade</div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="col-6">
-
-                            <div class="card">
-
-                                <div class="card-title">Período letivo ativo</div>
-
-                                <div class="row d-flex justify-content-center align-items-center">
-
-                                    <div class="col-lg-12 card-text total-student-enrolled"><i class="far fa-calendar-alt mr-2"></i> <?= $this->view->SchoolTermActive[0]->option_text ?></div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
+                <div class="card m-panel">
+                    <div class="m-panel-head">
+                        <h6>Agenda de avaliações</h6>
+                        <a href="/portal-docente/turmas">Abrir turmas</a>
                     </div>
 
-                    <div class="row">
-
-                        <div class="col-lg-12 avaliacoes-agendadas mt-3">
-
-                            <div class="card">
-
-                                <?php
-
-                                if (count($this->view->listExam) > 0) {
-
-                                    foreach ($this->view->listExam  as $key => $part) {
-                                        $date = explode(' ', $part->realize_date);
-                                        $sort[$key] = strtotime($date[0]);
-                                    }
-
-                                    array_multisort($sort, SORT_DESC, $this->view->listExam);
-
-                                    $timezone = new DateTimeZone('America/Sao_Paulo');
-                                    $now = new DateTime('now', $timezone);
-                                    $dataNow = $now->format('Y/m/d H:i');
-                                }
-
-                                ?>
-
-                                <div class="row">
-                                    <div class="card-title col-11 mx-auto p-0">Agenda de avaliações</div>
-                                    <?php
-                                    if (count($this->view->listExam) > 0) {
-                                        foreach ($this->view->listExam as $key => $value) { ?>
-                                            <div class="col-lg-12">
-                                                <div class="card">
-                                                    <div class="row d-flex justify-content-between align-items-center mb-2">
-                                                        <div class="col-lg-9">
-                                                            <?php $data = $value->realize_date ?>
-                                                            <p class="mb-0"><?= $value->exam_description ?> - <?= $value->discipline_name ?> - <?= $this->view->tools->currentDate($value->realize_date) ?></p>
-
-                                                        </div>
-                                                        <div class="col-lg-3 d-flex justify-content-end">
-                                                            <?php if (strtotime($dataNow) >= strtotime($data)) { ?>
-                                                                <span class="badge badge-pill p-2 badge-success ">Realizada</span>
-                                                        </div>
-                                                    <?php } else { ?>
-                                                        <span class="badge badge-pill p-2 badge-info ">Pendente</span>
-                                                    </div>
-                                                <?php } ?>
-                                                </div>
-
-                                                <div class="d-flex justify-content-start class-and-value align-items-center">
-                                                    <div class="">Turma: <?= $value->acronym_series ?>ª <?= $value->ballot ?>-<?= $value->course ?> - <?= $value->shift ?> / Valor: <?= $value->exam_value ?> <?= $value->exam_value > 1 ? ' pontos' : ' décimos' ?></div>
-
-                                                </div>
-                                            </div>
-                                            <hr class="mx-auto col-11">
-                                </div>
-
-                            <?php }
-                                    } else { ?>
-
-                            <div class="col-11 mx-auto">
-
-                                <div class="row">
-
-                                    <img class="enrollment-null d-block mx-auto" src="<?= $app_url ?>/assets/img/illustrations/calendar.svg" alt="">
-
-                                    <p class="mt-3 col-lg-12 p-0 text-justify text-right">Nenhuma avaliação criada ainda</p>
-
-                                </div>
-
-                            </div>
-
-                        <?php } ?>
-
-                            </div>
-
+                    <?php if (count($agenda) > 0) { ?>
+                        <ul class="m-list m-list-tall">
+                            <?php foreach ($agenda as $exam) {
+                                $pending = $exam->timestamp >= $now;
+                            ?>
+                                <li>
+                                    <div class="m-date">
+                                        <strong><?= date('d', $exam->timestamp) ?></strong>
+                                        <span><?= ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][date('n', $exam->timestamp) - 1] ?></span>
+                                    </div>
+                                    <div class="m-list-body">
+                                        <span class="m-list-name"><?= htmlspecialchars($exam->exam_description) ?> · <?= htmlspecialchars($exam->discipline_name) ?></span>
+                                        <span class="m-list-meta"><?= $exam->acronym_series ?>ª <?= $exam->ballot ?> - <?= $exam->course ?> · <?= $exam->shift ?> · <?= $exam->exam_value ?> <?= $exam->exam_value > 1 ? 'pontos' : 'décimos' ?></span>
+                                    </div>
+                                    <span class="m-pill <?= $pending ? 'm-pill-info' : 'm-pill-ok' ?>"><?= $pending ? 'Pendente' : 'Realizada' ?></span>
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    <?php } else { ?>
+                        <div class="m-empty">
+                            <img src="<?= $app_url ?>/assets/img/illustrations/calendar.svg" alt="">
+                            <p>Nenhuma avaliação criada ainda.</p>
                         </div>
-
-                    </div>
-
+                    <?php } ?>
                 </div>
 
-            </div>
-
-            <div class="col-lg-6">
-
-                <div class="row">
-
-                    <div class="col-lg-12 recent-activities">
-
+                <div class="card m-panel">
+                    <div class="m-panel-head"><h6>Atividades recentes</h6></div>
+                    <div class="p-0 recent-activities">
                         <?php $teacherName = "Você" ?>
-
                         <?php require '../App/Views/admin/management/components/recentActivities.php' ?>
-
                     </div>
-
                 </div>
 
             </div>
@@ -157,8 +113,5 @@ require __DIR__ . '../../../config/variables.php';
         </div>
 
     </div>
-
-    </div>
-
 
 </section>

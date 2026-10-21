@@ -28,17 +28,7 @@ $(document).ready(function(){
         document.location.reload()
     })
 
-    if (localStorage.getItem('nightModeAdmin')) {
-        $('#admin #logo-mater').attr('src', '/assets/img/logo-components/logo-completa-branca.png')
-    }
-
-    if (localStorage.getItem('nightModeTeacher')) {
-        $('#teacherPortal #logo-mater').attr('src', '/assets/img/logo-components/logo-completa-branca.png')
-    }
-
-    if (localStorage.getItem('nightModeStudent')) {
-        $('#studentPortal #logo-mater-main').attr('src', '/assets/img/logo-components/logo-completa-branca.png')
-    }
+    // a logo da barra superior fica branca no modo escuro via CSS (mater.css), sem trocar a imagem
 
 
     $(document).on('click', '[data-target="#accordion-interface-admin"] , [data-target="#accordion-interface-teacher"],  [data-target="#accordion-interface-student"]', function (e) {
@@ -579,37 +569,37 @@ let timeout = null
 
 $("#seekDiscipline input[name='seekName']").keyup(function (e) {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => application.loadListElements("containerListDiscipline", "/admin/gestao/disciplina/buscar", "#seekDiscipline"), 1000)
+    timeout = setTimeout(() => application.loadListElements("containerListDiscipline", "/admin/gestao/disciplina/buscar", "#seekDiscipline"), 300)
 })
 
 
 $("#seekTeacher input[name='name']").keyup(function (e) {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => application.loadListElements("containerListTeacher", "/admin/professor/lista/buscar", "#seekTeacher"), 1000)
+    timeout = setTimeout(() => application.loadListElements("containerListTeacher", "/admin/professor/lista/buscar", "#seekTeacher"), 300)
 })
 
 
 $("#seekStudent input[name='name']").keyup(function (e) {
     if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => application.loadListElements("containerListStudent", "/admin/aluno/lista/buscar", "#seekStudent"), 1500)
+    timeout = setTimeout(() => application.loadListElements("containerListStudent", "/admin/aluno/lista/buscar", "#seekStudent"), 300)
 })
 
 
 $(document).on("keyup", "#seekExam #examDescription", function (e) {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => application.loadListElements("containerExamsList", "/admin/gestao/turma/perfil-turma/avaliacoes/buscar", "#seekExam"), 1500)
+    timeout = setTimeout(() => application.loadListElements("containerExamsList", "/admin/gestao/turma/perfil-turma/avaliacoes/buscar", "#seekExam"), 300)
 })
 
 
 $(document).on("keyup", "#studentsAverageSeek #name", function (e) {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => application.loadListElements("containerStudentsAverage", "/admin/gestao/turma/perfil-turma/medias-alunos/buscar", "#studentsAverageSeek"), 1500)
+    timeout = setTimeout(() => application.loadListElements("containerStudentsAverage", "/admin/gestao/turma/perfil-turma/medias-alunos/buscar", "#studentsAverageSeek"), 300)
 })
 
 
 $(document).on("keyup", "#seekNoteExamStudent #examDescription", function (e) {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => application.loadListElements("containerListNote", "/admin/gestao/turma/perfil-turma/aluno/lista-avaliacoes/buscar", "#seekNoteExamStudent"), 2000)
+    timeout = setTimeout(() => application.loadListElements("containerListNote", "/admin/gestao/turma/perfil-turma/aluno/lista-avaliacoes/buscar", "#seekNoteExamStudent"), 300)
 })
 
 
@@ -620,7 +610,7 @@ $(document).on("click", '[data-target="#averageNote"]', function (e) {
 
 $(document).on("keyup", "#seekNoteExamClass #examDescription", function (e) {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => application.loadListElements("containerListNote", "/admin/gestao/turma/perfil-turma/lista-notas/buscar", "#seekNoteExamClass"), 1500)
+    timeout = setTimeout(() => application.loadListElements("containerListNote", "/admin/gestao/turma/perfil-turma/lista-notas/buscar", "#seekNoteExamClass"), 300)
 })
 
 

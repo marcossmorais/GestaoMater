@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mater — Sistema de Gestão Escolar</title>
     <link rel="preload" href="<?= $app_url ?>/assets/fonts/inter/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="<?= $app_url ?>/assets/css/auth.css">
+    <link rel="stylesheet" href="<?= asset('/assets/css/auth.css') ?>">
     <link rel="icon" type="image/png" href="<?= $app_url ?>/favicon.png">
 </head>
 

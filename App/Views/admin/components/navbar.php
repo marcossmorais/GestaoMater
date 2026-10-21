@@ -23,6 +23,8 @@ require __DIR__ . '../../../../config/variables.php';
 
 		<ul class="navbar-nav ml-auto d-flex align-items-center">
 
+			<li class="nav-item"><?php $topbarPortal = 'Admin'; require __DIR__ . '/../../components/topbarTools.php'; ?></li>
+
 		<?php $photo = ($_SESSION['Admin']['profilePhoto'] ? $_SESSION['Admin']['profilePhoto'] : 'foto-vazia.jpg') ?>
 
 			<li class="nav-item d-none d-md-block">			

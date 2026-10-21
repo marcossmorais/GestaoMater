@@ -107,6 +107,7 @@ class AdminController extends Action
         $this->view->listObservation = $Observation->readAll();
         $this->view->listDisciplineAverage = $DisciplineAverage->readAll();
         $this->view->listWarning = $ClasseWarning->readAll();
+        $this->view->totals = Container::getModel('Admin\Dashboard')->totals();
 
         $this->render('home', 'AdminLayout');
     }

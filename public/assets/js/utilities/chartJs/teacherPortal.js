@@ -32,10 +32,11 @@ $.ajax({
               }]
             },
             options: {
+                maintainAspectRatio: false,
               cutoutPercentage: 30,
               plugins: {
                 title: {
-                  display: true,
+                        display: false,
                   text: 'Aproveitamento dos alunos com base na média final',
                   padding: {
                     top: 10,

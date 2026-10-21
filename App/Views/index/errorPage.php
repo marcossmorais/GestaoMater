@@ -10,8 +10,8 @@ require __DIR__ . '/../../config/variables.php';
     <title> Página não encontrada </title>
     <link href="<?= $app_url ?>/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= $app_url ?>/node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= $app_url?>/assets/css/stylesheet.css">
-    <link rel="stylesheet" href="<?= $app_url ?>/assets/css/mater.css">
+    <link rel="stylesheet" href="<?= asset('/assets/css/stylesheet.css') ?>">
+    <link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
     <link rel = "shortcut icon" type = "imagem/x-icon" href = "<?= $app_url?>/assets/img/logo-components/logo.png"/>
 </head>
 

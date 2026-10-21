@@ -10,7 +10,7 @@ function sideState() {
     setTimeout(() => {
 
         $('body').hasClass('sidebar-responsive') ?
-            $sidebarLogo.attr('src', '/assets/img/logo-components/logo.png') : $sidebarLogo.attr('src', '/assets/img/logo-components/logo-completa-branca.png')
+            $sidebarLogo.attr('src', '/assets/img/logo-components/logo-branco.png') : $sidebarLogo.attr('src', '/assets/img/logo-components/logo-completa-branca.png')
 
     }, 100)
 

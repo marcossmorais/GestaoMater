@@ -19,6 +19,8 @@ require __DIR__ . '../../../../config/variables.php';
 
 		<ul class="navbar-nav ml-auto d-flex align-items-center">
 
+			<li class="nav-item"><?php $topbarPortal = 'Teacher'; require __DIR__ . '/../../components/topbarTools.php'; ?></li>
+
 		<?php $photo = ($_SESSION['Teacher']['profilePhoto'] ? $_SESSION['Teacher']['profilePhoto'] : 'foto-vazia.jpg') ?>
 
 			<li class="nav-item d-none d-md-block">			
