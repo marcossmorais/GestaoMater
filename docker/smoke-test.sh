@@ -22,9 +22,20 @@ PARAMS="accessCode=1&accountState=1&acronym=TST&address=Rua+Teste&addressId=1&ad
 login() { # $1 cookie, $2 url, $3 name, $4 code
   curl -s -c "$TMP/$1" -o /dev/null --data-urlencode "name=$3" --data-urlencode "accessCode=$4" "$BASE$2"
 }
+first() { # $1 tabela, $2 coluna nome, $3 coluna id: "nome|codigo" do primeiro registro
+  php -r '
+    require "/var/www/html/vendor/autoload.php";
+    $r = App\Connection::getDb()->query("SELECT '"$2"' AS n, codigo_acesso AS c FROM '"$1"' ORDER BY '"$3"' LIMIT 1")->fetch();
+    echo $r["n"] . "|" . $r["c"];'
+}
+T=$(first professor nome_professor id_professor)
+S=$(first aluno nome_aluno id_aluno)
 login admin /admin/login "Usuário Padrão" 867532
-login teacher /portal-docente/login "Professora Ana Teste Silva" 111111
-login student /portal-aluno/login "Aluno Pedro Teste Souza" 222222
+login teacher /portal-docente/login "${T%|*}" "${T#*|}"
+login student /portal-aluno/login "${S%|*}" "${S#*|}"
+for jar in admin teacher student; do
+  grep -q PHPSESSID "$TMP/$jar" || { echo "Login falhou ($jar). Com o Clerk ativo o login por código fica desligado."; exit 1; }
+done
 
 ROUTES=$(grep -o "'route' => '[^']*'" /var/www/html/App/Route.php | sed "s/'route' => '//; s/'$//" | sort -u)
 IS_WRITE='inserir|atualizar|deletar|rematricul|troca-turma|adicionar|sair|login'
@@ -42,10 +53,10 @@ for r in $ROUTES; do
   esac
   total=$((total+1))
   body=$(curl -s -b "$TMP/$jar" -d "$PARAMS" "$BASE$r?$PARAMS")
-  if echo "$body" | grep -qiE "SQLSTATE|Fatal error|Uncaught"; then
+  if echo "$body" | grep -qiE "SQLSTATE|Fatal error|Parse error|Uncaught"; then
     fail=$((fail+1))
     echo "FALHOU $r"
-    echo "$body" | grep -oiE "(SQLSTATE|Fatal error|Uncaught)[^<]{0,300}" | head -2 | sed 's/^/    /'
+    echo "$body" | grep -oiE "(SQLSTATE|Fatal error|Parse error|Uncaught)[^<]{0,300}" | head -2 | sed 's/^/    /'
   fi
 done
 echo "Rotas testadas: $total | com erro: $fail"

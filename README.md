@@ -18,7 +18,7 @@ docker compose up -d --build
 - App: http://localhost:8000
 - Banco: Postgres em `localhost:5433` (usuário/senha/banco em `.env`, padrão `mater`/`mater`/`mater`)
 
-Na primeira subida o banco é criado a partir de `database/` e recebe dados fictícios de teste (`database/dev/99_dev_seed.sql`).
+Na primeira subida o banco é criado a partir de `database/` e recebe uma escola fictícia de teste (`database/dev/99_dev_seed.sql`): 9 turmas, 12 disciplinas, 14 professores e 300 alunos com notas e faltas da 1ª unidade. Usuários para login em [docs/USUARIOS_TESTE.md](docs/USUARIOS_TESTE.md). Para regerar os dados: `docker run --rm -v "$PWD":/w -w /w python:3.12-alpine python -I database/dev/generate_dev_seed.py`.
 
 Para recriar o banco do zero:
 
@@ -28,13 +28,7 @@ docker compose down -v && docker compose up -d
 
 ### Login sem Clerk (apenas desenvolvimento)
 
-Com `CLERK_*` vazios no `.env`, vale o login antigo por nome completo + código de acesso:
-
-| Portal | Nome | Código |
-| ------ | ------ | ------ |
-| Admin (`/admin`) | Usuário Padrão | 867532 |
-| Docente (`/portal-docente`) | Professora Ana Teste Silva | 111111 |
-| Aluno (`/portal-aluno`) | Aluno Pedro Teste Souza | 222222 |
+Com `CLERK_*` vazios no `.env`, vale o login antigo por nome completo + código de acesso (ex.: admin `Usuário Padrão` / `867532`). Nomes e códigos de professores e alunos em [docs/USUARIOS_TESTE.md](docs/USUARIOS_TESTE.md).
 
 ## Autenticação com Clerk
 
