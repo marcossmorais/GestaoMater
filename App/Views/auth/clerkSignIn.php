@@ -2,16 +2,11 @@
 // Login via Clerk. Espera $clerkPortal = 'admin' | 'docente' | 'aluno'
 $clerkFrontendApi = \App\Auth\Clerk::frontendApi();
 $clerkJsVersion = getenv('CLERK_JS_VERSION') ?: '5';
+$clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
 ?>
 
-<div class="form-row mt-2 form-body">
-    <div class="col-12 d-flex justify-content-center mt-3">
-        <div id="clerk-sign-in"></div>
-    </div>
-    <div class="col-md-10 mx-auto mt-3">
-        <div id="clerk-status" class="alert alert-warning text-center d-none" role="alert"></div>
-    </div>
-</div>
+<div id="clerk-status" class="alert" role="alert" hidden></div>
+<div id="clerk-sign-in"><p class="loading">Carregando…</p></div>
 
 <script
     async
@@ -30,17 +25,42 @@ $clerkJsVersion = getenv('CLERK_JS_VERSION') ?: '5';
             'conta-desativada': 'Sua conta está desativada.',
             'token-invalido': 'Não foi possível validar o login. Tente novamente.'
         };
+
+        // Visual da Mater no componente do Clerk
+        const appearance = {
+            layout: { logoPlacement: 'none', socialButtonsVariant: 'blockButton', unsafe_disableDevelopmentModeWarnings: true },
+            variables: {
+                colorPrimary: '#1868E8',
+                colorText: '#14213D',
+                colorTextSecondary: '#5B6B84',
+                colorInputBackground: '#FFFFFF',
+                colorInputText: '#14213D',
+                fontFamily: 'Inter, system-ui, sans-serif',
+                fontSize: '15px',
+                borderRadius: '10px'
+            },
+            elements: {
+                rootBox: { width: '100%' },
+                cardBox: { width: '100%', boxShadow: 'none', border: '0', overflow: 'visible' },
+                card: { boxShadow: 'none', border: '0', padding: '4px', background: 'transparent' },
+                header: { display: 'none' },
+                formButtonPrimary: { fontSize: '14px', fontWeight: 600, textTransform: 'none', padding: '11px 18px' },
+                formFieldInput: { padding: '11px 14px' },
+                footer: { background: 'transparent', marginTop: '8px' },
+                footerAction: { padding: '12px 0 0' }
+            }
+        };
+
         let opening = false;
 
         function showError(code) {
-            statusBox.innerHTML = '';
-            statusBox.appendChild(document.createTextNode(messages[code] || 'Não foi possível entrar.'));
+            statusBox.textContent = messages[code] || 'Não foi possível entrar.';
             const retry = document.createElement('button');
-            retry.className = 'btn btn-link d-block mx-auto';
+            retry.type = 'button';
             retry.textContent = 'Entrar com outra conta';
             retry.onclick = async () => { await window.Clerk.signOut(); location.reload(); };
             statusBox.appendChild(retry);
-            statusBox.classList.remove('d-none');
+            statusBox.hidden = false;
         }
 
         async function openSession() {
@@ -61,9 +81,19 @@ $clerkJsVersion = getenv('CLERK_JS_VERSION') ?: '5';
             }
         }
 
+        async function loadLocalization() {
+            try {
+                const mod = await import('https://cdn.jsdelivr.net/npm/@clerk/localizations@<?= htmlspecialchars($clerkLocalizationVersion) ?>/+esm');
+                return mod.ptBR;
+            } catch (e) {
+                return undefined; // sem tradução, o Clerk fica em inglês
+            }
+        }
+
         window.addEventListener('load', async function () {
             const clerk = window.Clerk;
-            await clerk.load();
+            const [localization] = await Promise.all([loadLocalization()]);
+            await clerk.load({ localization, appearance });
 
             const params = new URLSearchParams(window.location.search);
             if (params.has('logout')) {
@@ -71,18 +101,19 @@ $clerkJsVersion = getenv('CLERK_JS_VERSION') ?: '5';
                 history.replaceState(null, '', window.location.pathname);
             }
 
+            const target = document.getElementById('clerk-sign-in');
+            target.innerHTML = '';
+
             if (clerk.user) {
+                target.innerHTML = '<p class="loading">Entrando…</p>';
                 openSession();
                 return;
             }
 
-            clerk.mountSignIn(document.getElementById('clerk-sign-in'), {
+            clerk.mountSignIn(target, {
                 withSignUp: true,
                 forceRedirectUrl: window.location.pathname,
-                signUpForceRedirectUrl: window.location.pathname,
-                appearance: {
-                    variables: { colorPrimary: '#1868E8', borderRadius: '8px' }
-                }
+                signUpForceRedirectUrl: window.location.pathname
             });
 
             clerk.addListener(function (resources) {

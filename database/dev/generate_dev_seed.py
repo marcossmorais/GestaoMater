@@ -265,9 +265,10 @@ md = f"""# Usuários de teste — Mater
 **Com o Clerk ativo** (chaves no `.env`):
 
 1. Abra o portal (`/admin`, `/portal-docente` ou `/portal-aluno`).
-2. No primeiro acesso clique em **Sign up** e use o e-mail da tabela. Senha: a que quiser (sugestão `{SUGGESTED_PASSWORD}`).
+2. Digite o e-mail da tabela e clique em **Continuar**. Se a conta ainda não existe, o Clerk segue direto para o cadastro:
+   escolha um nome de usuário qualquer e uma senha (sugestão `{SUGGESTED_PASSWORD}`).
 3. O Clerk pede um código de verificação: use **`{CLERK_TEST_CODE}`**. E-mails com `+clerk_test` não recebem e-mail de verdade.
-4. Nos próximos acessos, só **Sign in** com e-mail e senha.
+4. Nos próximos acessos, basta e-mail (ou usuário) e senha.
 
 **Sem o Clerk** (`CLERK_*` vazios no `.env`): login por **nome completo + código de acesso**.
 

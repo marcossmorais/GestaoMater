@@ -17,6 +17,7 @@ require __DIR__ . '/../../config/variables.php';
 	<link href="<?= $app_url ?>/node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet">
 	<script> if (localStorage.getItem('nightModeAdmin')) { document.documentElement.classList.add('nightMode') } </script>
 	<link rel="stylesheet" href="<?= $app_url ?>/assets/css/stylesheet.css">
+	<link rel="stylesheet" href="<?= $app_url ?>/assets/css/mater.css">
 	<link rel = "shortcut icon" type = "imagem/x-icon" href = "<?= $app_url ?>/assets/img/logo-components/logo.png"/>
 </head>
 
@@ -69,15 +70,12 @@ require __DIR__ . '/../../config/variables.php';
 
 </body>
 
-<script src="<?= $app_url ?>/node_modules/jquery/dist/jquery.js"></script>
+<script src="<?= $app_url ?>/node_modules/jquery/dist/jquery.min.js"></script>
 
 <script src="<?= $app_url ?>/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 
-<script src="<?= $app_url ?>/node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
-<script src="<?= $app_url ?>/node_modules/chart.js/dist/Chart.min.js"></script>
 
 <script src="<?= $app_url ?>/node_modules/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
 
@@ -91,7 +89,7 @@ require __DIR__ . '/../../config/variables.php';
 
 <script src="<?= $app_url ?>/assets/js/utilities/style.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <script src="<?= $app_url ?>/assets/js/utilities/chartJs/config.js"></script> 
 

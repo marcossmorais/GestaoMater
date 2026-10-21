@@ -51,7 +51,7 @@ Como funciona:
 ## Banco no Supabase
 
 1. Crie um projeto em https://supabase.com.
-2. No **SQL Editor**, rode em ordem: `database/01_schema.sql`, `database/02_seed.sql`, `database/03_auth.sql`.
+2. No **SQL Editor**, rode em ordem: `database/01_schema.sql`, `database/02_seed.sql`, `database/03_auth.sql`, `database/04_indexes.sql`.
    Não rode `database/dev/99_dev_seed.sql` (dados fictícios).
 3. Em **Project Settings → Database → Connection string**, pegue os dados do *Session pooler* e configure:
    ```

@@ -176,7 +176,7 @@ class Note extends Model
      * 
      * @return array
      */
-    public function readAll()
+    public function readAll($limit = null)
     {
 
         return $this->speedingUp(
@@ -219,7 +219,7 @@ class Note extends Model
            
            situacao_periodo_letivo.id_situacao_periodo_letivo = 1 
 
-            ORDER BY nota_avaliacao.valor_nota DESC"
+            ORDER BY " . ($limit ? "nota_avaliacao.data_postagem DESC LIMIT " . (int) $limit : "nota_avaliacao.valor_nota DESC")
 
         );
     }

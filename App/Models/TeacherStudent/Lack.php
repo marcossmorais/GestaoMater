@@ -211,7 +211,7 @@ class Lack extends Model
      * 
      * @return array
      */
-    public function readAll()
+    public function readAll($limit = null)
     {
 
         return $this->speedingUp(
@@ -244,7 +244,7 @@ class Lack extends Model
 
             WHERE situacao_periodo_letivo.id_situacao_periodo_letivo = 1 
 
-            ORDER BY falta_aluno.total_faltas DESC"
+            ORDER BY " . ($limit ? "falta_aluno.data_postagem DESC LIMIT " . (int) $limit : "falta_aluno.total_faltas DESC")
 
         );
     }

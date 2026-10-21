@@ -43,6 +43,9 @@ require __DIR__ . '../../../../../config/variables.php';
         }
 
         array_multisort($ord, SORT_DESC, $data['dados']);
+
+        // só os eventos mais recentes: desenhar o ano inteiro gerava páginas de vários MB
+        $data['dados'] = array_slice($data['dados'], 0, 40);
     }
 
     if (!function_exists("currentDate")) {

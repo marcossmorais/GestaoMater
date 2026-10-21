@@ -96,14 +96,14 @@ class AdminController extends Action
         $DisciplineAverage = Container::getModel('TeacherStudent\\DisciplineAverage');
         $Observation = Container::getModel('TeacherStudent\\Observation');
 
-        $this->view->recentlyEnrolledStudents = $Student->recentlyEnrolledStudents(1000);
+        $this->view->recentlyEnrolledStudents = $Student->recentlyEnrolledStudents(15);
         $this->view->studentTotal = count($Student->readAll());
         $this->view->studentsAddedToday = $Student->studentsAddedToday();
         $this->view->unitControlCurrent = $Settings->unitControlCurrent();
         $this->view->SchoolTermActive = $SchoolTerm->active();
-        $this->view->listExam = $Exam->readAll(1);
-        $this->view->listNote = $Note->readAll(1);
-        $this->view->listLack = $Lack->readAll(1);
+        $this->view->listExam = $Exam->readAll(40);
+        $this->view->listNote = $Note->readAll(40);
+        $this->view->listLack = $Lack->readAll(40);
         $this->view->listObservation = $Observation->readAll();
         $this->view->listDisciplineAverage = $DisciplineAverage->readAll();
         $this->view->listWarning = $ClasseWarning->readAll();

@@ -5,8 +5,16 @@ namespace App;
 class Connection
 {
 
+	private static $conn = null;
+
+	/**
+	 * Retorna a conexão com o banco. Uma única conexão é reaproveitada por toda a requisição
+	 * (antes cada Model abria a sua).
+	 */
 	public static function getDb()
 	{
+		if (self::$conn !== null) return self::$conn;
+
 		try {
 
 			$host = getenv('DB_HOST') ?: 'localhost';
@@ -26,7 +34,7 @@ class Connection
 
 			$conn->exec("SET TIME ZONE 'America/Sao_Paulo'");
 
-			return $conn;
+			return self::$conn = $conn;
 
 		} catch (\PDOException $e) {
 			echo ($e->getMessage());

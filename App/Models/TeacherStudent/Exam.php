@@ -351,7 +351,7 @@ class Exam extends Model
      * 
      * @return array
      */
-    public function readAll()
+    public function readAll($limit = null)
     {
 
         return $this->speedingUp(
@@ -393,7 +393,7 @@ class Exam extends Model
          
             situacao_periodo_letivo.id_situacao_periodo_letivo = 1 
 
-            ORDER BY avaliacoes.id_avaliacao ASC"
+            ORDER BY " . ($limit ? "avaliacoes.data_postagem DESC LIMIT " . (int) $limit : "avaliacoes.id_avaliacao ASC")
 
         );
     }
