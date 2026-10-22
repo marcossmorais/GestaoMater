@@ -94,6 +94,96 @@ class Route extends Bootstrap
 			'action' => 'updateStudentProfilePicture'
 		);
 
+		$routes['adminListMedicalCertificates'] = array(
+			'route' => '/admin/aluno/atestados/listar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'listMedicalCertificates'
+		);
+
+		$routes['adminSaveMedicalCertificate'] = array(
+			'route' => '/admin/aluno/atestados/salvar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'saveMedicalCertificate'
+		);
+
+		$routes['adminDeleteMedicalCertificate'] = array(
+			'route' => '/admin/aluno/atestados/deletar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'deleteMedicalCertificate'
+		);
+
+		$routes['adminStudentDeclarationEnrollment'] = array(
+			'route' => '/admin/aluno/declaracao/matricula',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'declarationEnrollment'
+		);
+
+		$routes['adminStudentDeclarationAttendance'] = array(
+			'route' => '/admin/aluno/declaracao/frequencia',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'declarationAttendance'
+		);
+
+		$routes['studentDeclarationEnrollment'] = array(
+			'route' => '/portal-aluno/declaracao/matricula',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'declarationEnrollment'
+		);
+
+		$routes['studentDeclarationAttendance'] = array(
+			'route' => '/portal-aluno/declaracao/frequencia',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'declarationAttendance'
+		);
+
+		$routes['adminListOccurrences'] = array(
+			'route' => '/admin/aluno/ocorrencias/listar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'listOccurrences'
+		);
+
+		$routes['adminSaveOccurrence'] = array(
+			'route' => '/admin/aluno/ocorrencias/salvar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'saveOccurrence'
+		);
+
+		$routes['adminDeleteOccurrence'] = array(
+			'route' => '/admin/aluno/ocorrencias/deletar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'deleteOccurrence'
+		);
+
+		$routes['studentAcknowledgeOccurrence'] = array(
+			'route' => '/portal-aluno/ocorrencias/dar-ciencia',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'acknowledgeOccurrence'
+		);
+
+		$routes['adminListGuardians'] = array(
+			'route' => '/admin/aluno/responsaveis/listar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'listGuardians'
+		);
+
+		$routes['adminSaveGuardian'] = array(
+			'route' => '/admin/aluno/responsaveis/salvar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'saveGuardian'
+		);
+
+		$routes['adminDeleteGuardian'] = array(
+			'route' => '/admin/aluno/responsaveis/deletar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'deleteGuardian'
+		);
+
+		$routes['adminToggleGuardian'] = array(
+			'route' => '/admin/aluno/responsaveis/toggle',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'toggleGuardianPickup'
+		);
+
 		$routes['adminUpdateTeacherProfilePicture'] = array(
 			'route' => '/admin/professor/lista/perfil-professor/atualizar-foto',
 			'controller' => 'Admin\\AdminTeacherController',
@@ -788,6 +878,30 @@ class Route extends Bootstrap
 			'route' => '/portal-docente/aproveitamento-alunos-base-media-final',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
 			'action' => 'studentBasedFinalAverage'
+		);
+
+		$routes['attendanceTeacherPortal'] = array(
+			'route' => '/portal-docente/chamada',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'attendance'
+		);
+
+		$routes['attendanceStudentsTeacherPortal'] = array(
+			'route' => '/portal-docente/chamada/alunos',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'attendanceStudents'
+		);
+
+		$routes['attendanceSaveTeacherPortal'] = array(
+			'route' => '/portal-docente/chamada/salvar',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'attendanceSave'
+		);
+
+		$routes['teacherSchedule'] = array(
+			'route' => '/portal-docente/horario',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'schedule'
 		);
 
 		$routes['exitTeacherPortal'] = array(

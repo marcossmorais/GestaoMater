@@ -128,6 +128,22 @@ class AdminStudentController extends Action
         $this->view->generalSituationStudent = $Student->generalSituationStudent();
         $this->view->classesWhereStudentEnrolledSameYear = $Classe->classesWhereStudentEnrolledSameYear();
 
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+        $enrollmentId = $this->view->studentDataEnrollment[0]->enrollment_id;
+        $this->view->medicalCertificates = $MedicalCertificate->getByEnrollment($enrollmentId);
+        $this->view->absenceSummary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+
+
+
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+
+        $this->view->occurrences = $Occurrence->getByEnrollment($enrollmentId);
+
+        $this->view->occurrenceSummary = $Occurrence->getSummaryByEnrollment($enrollmentId);
+
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $this->view->guardians = $Guardian->getByStudent($this->view->studentDataEnrollment[0]->id);
+
         $this->render('student/components/modalStudentProfile', 'SimpleLayout');
     }
 
@@ -312,5 +328,334 @@ class AdminStudentController extends Action
         $StudentEnrollment->__set('studentEnrollmentId', $_POST['enrollmentId']);
 
         $StudentEnrollment->changeStudentFromClass();
+    }
+
+
+    public function listMedicalCertificates()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $enrollmentId = (int) ($_GET['enrollmentId'] ?? 0);
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+        $list = $MedicalCertificate->getByEnrollment($enrollmentId);
+        $summary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+        echo json_encode(['certificates' => $list, 'summary' => $summary]);
+    }
+
+
+    public function saveMedicalCertificate()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+
+        $enrollmentId = (int) ($_POST['enrollmentId'] ?? 0);
+        $studentId = (int) ($_POST['studentId'] ?? 0);
+        $startDate = trim($_POST['startDate'] ?? '');
+        $endDate = trim($_POST['endDate'] ?? '') ?: $startDate;
+        $reason = trim($_POST['reason'] ?? '');
+        $cid = trim($_POST['cid'] ?? '');
+        $doctorName = trim($_POST['doctorName'] ?? '');
+        $doctorCrm = trim($_POST['doctorCrm'] ?? '');
+        $healthInstitution = trim($_POST['healthInstitution'] ?? '');
+        $faltasAbonadas = (int) ($_POST['aboneLacks'] ?? 0);
+        $disciplineClass = (int) ($_POST['disciplineClass'] ?? 0);
+        $unity = (int) ($_POST['unity'] ?? 0);
+        $observation = trim($_POST['observation'] ?? '');
+
+        if (!$enrollmentId || !$studentId || !$startDate || !$reason) {
+            http_response_code(422);
+            echo json_encode(['error' => 'Preencha os campos obrigatorios (aluno, datas e motivo).']);
+            return;
+        }
+
+        $fileName = null;
+        if (!empty($_FILES['attachment']['name'])) {
+            $uploadDir = dirname(__DIR__, 2) . '/public/assets/uploads/atestados/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $ext = strtolower(pathinfo($_FILES['attachment']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['pdf', 'jpg', 'jpeg', 'png', 'webp'])) {
+                $fileName = 'atestado_' . $enrollmentId . '_' . time() . '.' . $ext;
+                move_uploaded_file($_FILES['attachment']['tmp_name'], $uploadDir . $fileName);
+            }
+        }
+
+        $d1 = new \DateTime($startDate);
+        $d2 = new \DateTime($endDate);
+        $dias = max(1, $d2->diff($d1)->days + 1);
+
+        $registeredBy = isset($_SESSION['Admin']) 
+            ? ($_SESSION['Admin']['name'] ?? 'Secretaria Escolar') 
+            : (isset($_SESSION['Teacher']) ? $_SESSION['Teacher']['name'] : 'Secretaria Escolar');
+
+        try {
+            $id = $MedicalCertificate->create([
+                'fk_id_matricula' => $enrollmentId,
+                'fk_id_aluno' => $studentId,
+                'data_inicio' => $startDate,
+                'data_fim' => $endDate,
+                'dias' => $dias,
+                'motivo' => $reason,
+                'cid' => $cid,
+                'medico_nome' => $doctorName,
+                'medico_crm' => $doctorCrm,
+                'instituicao_saude' => $healthInstitution,
+                'status' => 'Aprovado',
+                'faltas_abonadas' => $faltasAbonadas,
+                'fk_id_turma_disciplina_falta' => $disciplineClass,
+                'fk_id_unidade_falta' => $unity,
+                'observacao' => $observation,
+                'anexo_documento' => $fileName,
+                'registrado_por' => $registeredBy,
+            ]);
+
+            echo json_encode([
+                'status' => 'success',
+                'id' => $id,
+                'message' => 'Atestado registrado com sucesso!'
+            ]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao salvar atestado: ' . $e->getMessage()]);
+        }
+    }
+
+
+    public function deleteMedicalCertificate()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID invalido']);
+            return;
+        }
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+        $MedicalCertificate->delete($id);
+        echo json_encode(['status' => 'success']);
+    }
+
+    public function declarationEnrollment()
+    {
+        $this->loadDeclarationData('matricula');
+    }
+
+    public function declarationAttendance()
+    {
+        $this->loadDeclarationData('frequencia');
+    }
+
+    private function loadDeclarationData($type = 'matricula')
+    {
+        if (!isset($_SESSION)) session_start();
+        $enrollmentId = (int) ($_GET['enrollmentId'] ?? 0);
+
+        $StudentEnrollment = Container::getModel('Student\\StudentEnrollment');
+        $Student = Container::getModel('Student\\Student');
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+
+        $StudentEnrollment->__set('studentEnrollmentId', $enrollmentId);
+        $enrollmentData = $StudentEnrollment->dataGeneral();
+
+        if (empty($enrollmentData)) {
+            echo "Matrícula não encontrada.";
+            return;
+        }
+
+        $Student->__set('studentId', $enrollmentData[0]->id);
+        $studentData = $Student->dataGeneral($StudentEnrollment);
+
+        $this->view->student = $studentData[0] ?? $enrollmentData[0];
+        $this->view->enrollment = $enrollmentData[0];
+        $this->view->summary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+        $this->view->type = $_GET['type'] ?? $type;
+        $this->view->authCode = 'MATER-' . date('Y') . '-' . strtoupper(substr(md5($enrollmentId . date('Ymd')), 0, 8));
+
+        require __DIR__ . '/../../Views/admin/student/declarations/declaration.php';
+    }
+
+    public function listOccurrences()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $enrollmentId = (int) ($_GET['enrollmentId'] ?? 0);
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+        echo json_encode([
+            'occurrences' => $Occurrence->getByEnrollment($enrollmentId),
+            'summary' => $Occurrence->getSummaryByEnrollment($enrollmentId)
+        ]);
+    }
+
+    public function saveOccurrence()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        $enrollmentId = (int) ($_POST['enrollmentId'] ?? 0);
+        $studentId = (int) ($_POST['studentId'] ?? 0);
+        $category = trim($_POST['category'] ?? 'Disciplinar');
+        $title = trim($_POST['title'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $severity = trim($_POST['severity'] ?? 'Média');
+        $measure = trim($_POST['measure'] ?? '');
+        $disciplineClass = !empty($_POST['disciplineClass']) ? (int) $_POST['disciplineClass'] : null;
+        $date = trim($_POST['date'] ?? '') ?: date('Y-m-d');
+        $visible = !empty($_POST['visible']);
+        $reqAck = !empty($_POST['requireAck']);
+
+        if (!$enrollmentId || !$studentId || !$title || !$description) {
+            http_response_code(422);
+            echo json_encode(['error' => 'Preencha título e descrição da ocorrência.']);
+            return;
+        }
+
+        $registeredBy = isset($_SESSION['Admin']) 
+            ? ($_SESSION['Admin']['name'] ?? 'Coordenação Pedagógica') 
+            : (isset($_SESSION['Teacher']) ? $_SESSION['Teacher']['name'] : 'Coordenação Pedagógica');
+
+        try {
+            $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+            $id = $Occurrence->create([
+                'fk_id_matricula' => $enrollmentId,
+                'fk_id_aluno' => $studentId,
+                'fk_id_turma_disciplina' => $disciplineClass,
+                'categoria' => $category,
+                'titulo' => $title,
+                'descricao' => $description,
+                'gravidade' => $severity,
+                'medida_tomada' => $measure,
+                'visivel_responsavel' => $visible,
+                'requer_ciencia' => $reqAck,
+                'registrado_por' => $registeredBy,
+                'data_ocorrencia' => $date
+            ]);
+
+            echo json_encode(['status' => 'success', 'id' => $id, 'message' => 'Ocorrência registrada com sucesso!']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao salvar ocorrência: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteOccurrence()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+        $Occurrence->delete($id);
+        echo json_encode(['status' => 'success']);
+    }
+
+    public function listGuardians()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $studentId = (int) ($_GET['studentId'] ?? 0);
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        echo json_encode($Guardian->getByStudent($studentId));
+    }
+
+    public function saveGuardian()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        $studentId = (int) ($_POST['studentId'] ?? 0);
+        $name = trim($_POST['name'] ?? '');
+        $relationship = trim($_POST['relationship'] ?? 'Outro Autorizado');
+        $cpf = trim($_POST['cpf'] ?? '');
+        $rg = trim($_POST['rg'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $authorizedPickup = !empty($_POST['authorizedPickup']);
+        $financialResp = !empty($_POST['financialResp']);
+        $pedagogicalResp = !empty($_POST['pedagogicalResp']);
+        $obs = trim($_POST['observations'] ?? '');
+
+        if (!$studentId || !$name || !$phone) {
+            http_response_code(422);
+            echo json_encode(['error' => 'Preencha nome e telefone do responsável/autorizado.']);
+            return;
+        }
+
+        try {
+            $Guardian = Container::getModel('TeacherStudent\\Guardian');
+            $id = $Guardian->create([
+                'fk_id_aluno' => $studentId,
+                'nome' => $name,
+                'parentesco' => $relationship,
+                'cpf' => $cpf,
+                'rg' => $rg,
+                'telefone' => $phone,
+                'email' => $email,
+                'autorizado_buscar' => $authorizedPickup,
+                'responsavel_financeiro' => $financialResp,
+                'responsavel_pedagogico' => $pedagogicalResp,
+                'observacao_restricao' => $obs
+            ]);
+
+            echo json_encode(['status' => 'success', 'id' => $id, 'message' => 'Responsável registrado com sucesso!']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao salvar responsável: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteGuardian()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $Guardian->delete($id);
+        echo json_encode(['status' => 'success']);
+    }
+
+    public function toggleGuardianPickup()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $Guardian->toggleAuthorized($id);
+        echo json_encode(['status' => 'success']);
     }
 }

@@ -92,6 +92,15 @@ class StudentPortalController extends Action
         $this->view->listWarning = $ClasseWarning->readByIdClasse($Classe);
         $this->view->listNote = $Note->readByIdStudent();
         $this->view->listObservation = $Observation->readByIdStudent();
+
+
+
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+
+        $this->view->listOccurrences = $Occurrence->getForPortal($_SESSION['Student']['enrollmentId']);
+
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $this->view->guardians = $Guardian->getByStudent($_SESSION['Student']['id']);
         $this->view->lackList = $Lack->readByIdStudent();
         $this->view->disciplineAverageList = $DisciplineAverage->readByIdStudent();
         $this->view->rematrugSituationList = $StudentRematrug->rematrugSituation();
@@ -107,6 +116,11 @@ class StudentPortalController extends Action
         $this->view->listTeacher = $ClassDiscipline->listTeachersClass();
         $this->view->linkedDisciplines = $ClassDiscipline->classLinkedSubjects();
         $this->view->unity = ( $this->view->schoolTermActive[0]->option_value == $this->view->studentDataGeneral[0]->school_term_id ? $Unity->readOpenUnits() : $Unity->searchSpecificUniy() );
+
+        $ClassSchedule = Container::getModel('GeneralManagement\\ClassSchedule');
+        $this->view->classSchedule = $ClassSchedule->getScheduleByClass($_SESSION['Student']['classId']);
+        $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
+        $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
 
         $this->render("pages/home", "SimpleLayout", "studentPortal");
     }
@@ -208,5 +222,59 @@ class StudentPortalController extends Action
         unset($_SESSION['Student']);
 
         header('Location: /portal-aluno' . (\App\Auth\Clerk::enabled() ? '?logout=1' : ''));
+    }
+
+    public function declarationEnrollment()
+    {
+        $this->loadDeclarationData('matricula');
+    }
+
+    public function declarationAttendance()
+    {
+        $this->loadDeclarationData('frequencia');
+    }
+
+    private function loadDeclarationData($type = 'matricula')
+    {
+        if (!isset($_SESSION)) session_start();
+        $enrollmentId = (int) ($_SESSION['Student']['enrollmentId'] ?? 0);
+
+        $StudentEnrollment = Container::getModel('Student\\StudentEnrollment');
+        $Student = Container::getModel('Student\\Student');
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+
+        $StudentEnrollment->__set('studentEnrollmentId', $enrollmentId);
+        $enrollmentData = $StudentEnrollment->dataGeneral();
+
+        if (empty($enrollmentData)) {
+            echo "Matrícula não encontrada.";
+            return;
+        }
+
+        $Student->__set('studentId', $enrollmentData[0]->id);
+        $studentData = $Student->dataGeneral($StudentEnrollment);
+
+        $this->view->student = $studentData[0] ?? $enrollmentData[0];
+        $this->view->enrollment = $enrollmentData[0];
+        $this->view->summary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+        $this->view->type = $_GET['type'] ?? $type;
+        $this->view->authCode = 'MATER-' . date('Y') . '-' . strtoupper(substr(md5($enrollmentId . date('Ymd')), 0, 8));
+
+        require __DIR__ . '/../../Views/admin/student/declarations/declaration.php';
+    }
+
+    public function acknowledgeOccurrence()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+        $Occurrence->acknowledge($id);
+        echo json_encode(['status' => 'success']);
     }
 }

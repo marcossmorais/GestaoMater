@@ -59,6 +59,28 @@ require __DIR__ . '../../../../config/variables.php';
                                 <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#averageNote" href="#">Notas e médias</a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule">Horários</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentGuardians"><i class="fas fa-shield-alt mr-1"></i> Portaria</a>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="studentDeclaracoesMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-file-contract mr-1"></i> Declarações
+                                </a>
+                                <div class="dropdown-menu shadow" aria-labelledby="studentDeclaracoesMenu">
+                                    <a class="dropdown-item" href="/portal-aluno/declaracao/matricula" target="_blank">
+                                        <i class="fas fa-file-alt mr-2 text-primary"></i> Declaração de Matrícula (PDF)
+                                    </a>
+                                    <a class="dropdown-item" href="/portal-aluno/declaracao/frequencia" target="_blank">
+                                        <i class="fas fa-calendar-check mr-2 text-success"></i> Declaração de Frequência (PDF)
+                                    </a>
+                                </div>
+                            </li>
+
                         </ul>
 
                         <ul class="navbar-nav ml-auto d-flex align-items-center">
@@ -229,11 +251,17 @@ require __DIR__ . '../../../../config/variables.php';
                                             $data['dados'][] = ['tipo' => 'warning', 'value' => $value];
                                         }
 
+                                        if (!empty($this->view->listOccurrences)) {
+                                            foreach ($this->view->listOccurrences as $key => $occ) {
+                                                $data['dados'][] = ['tipo' => 'occurrence', 'value' => $occ];
+                                            }
+                                        }
+
 
                                         if (count($data) != 0) {
 
                                             foreach ($data['dados'] as $key => $part) {
-                                                $date = $part['value']->post_date;
+                                                $date = $part['value']->post_date ?? $part['value']->data_ocorrencia_fmt ?? date('Y-m-d');
                                                 $sort[$key] = $date;
                                             }
 
@@ -407,7 +435,12 @@ function currentDate($array)
 
                                                             <div class="col-lg-12">
                                                                 <div class="row">
-                                                                    <div class="col-lg-8"><small class="font-weight-bold text-important">Você obteve um total de <?= $value['value']->total_lack ?> faltas</small></div>
+                                                                    <div class="col-lg-8">
+                                                                        <small class="font-weight-bold text-important">Você obteve um total de <?= $value['value']->total_lack ?> faltas</small>
+                                                                        <?php if (!empty($value['value']->excused_lack) && $value['value']->excused_lack > 0) { ?>
+                                                                            <span class="badge badge-success ml-2" title="Faltas abonadas por atestado médico ou justificativa regulamentar"><i class="fas fa-check mr-1"></i><?= $value['value']->excused_lack ?> justificadas por atestado</span>
+                                                                        <?php } ?>
+                                                                    </div>
 
                                                                     <div class="col-lg-4 d-flex justify-content-end mt-xs-3"><small class="text-muted p-0 mt-3"> <i class="fas fa-history mr-2"></i>Postado <?= currentDate($value['value']->post_date) ?></small></div>
                                                                 </div>
@@ -449,7 +482,65 @@ function currentDate($array)
                                                     </div>
 
 
-                                                <?php } else if ($value['tipo'] == 'warning') { ?>
+                                                <?php } else if ($value['tipo'] == 'occurrence') { 
+    $occ = $value['value'];
+    $icon = 'fa-info-circle text-secondary';
+    $badgeStyle = 'badge-secondary';
+    if ($occ->categoria === 'Elogio') {
+        $icon = 'fa-award text-success';
+        $badgeStyle = 'badge-success';
+    } else if ($occ->categoria === 'Disciplinar') {
+        $icon = 'fa-exclamation-triangle text-warning';
+        $badgeStyle = 'badge-warning text-dark';
+    } else if ($occ->categoria === 'Pedagógica') {
+        $icon = 'fa-book-reader text-primary';
+        $badgeStyle = 'badge-primary';
+    } else if ($occ->categoria === 'Saúde') {
+        $icon = 'fa-heartbeat text-danger';
+        $badgeStyle = 'badge-danger';
+    }
+?>
+    <div class="col-11 mx-auto card mb-3 shadow-sm border" style="border-radius: 12px;" data-portal-occ="<?= $occ->id_ocorrencia ?>">
+        <div class="row p-3">
+            <div class="col-sm-1 d-flex justify-content-center align-items-center">
+                <i class="fas <?= $icon ?> fa-2x"></i>
+            </div>
+            <div class="col-sm-11">
+                <div class="d-flex align-items-center justify-content-between flex-wrap">
+                    <div>
+                        <span class="badge <?= $badgeStyle ?> mr-2"><?= $occ->categoria ?></span>
+                        <strong class="text-dark"><?= htmlspecialchars($occ->titulo) ?></strong>
+                    </div>
+                    <small class="text-muted"><i class="fas fa-calendar-alt mr-1"></i><?= $occ->data_ocorrencia_fmt ?></small>
+                </div>
+                <p class="mt-2 text-muted mb-2"><?= nl2br(htmlspecialchars($occ->descricao)) ?></p>
+
+                <?php if (!empty($occ->medida_tomada)) { ?>
+                    <div class="p-2 mb-2 rounded bg-light small">
+                        <strong>Providência / Medida:</strong> <?= htmlspecialchars($occ->medida_tomada) ?>
+                    </div>
+                <?php } ?>
+
+                <div class="d-flex align-items-center justify-content-between flex-wrap mt-2 pt-2 border-top">
+                    <small class="text-muted"><i class="fas fa-user-edit mr-1"></i>Registrado por <?= htmlspecialchars($occ->registrado_por) ?></small>
+
+                    <?php if ($occ->requer_ciencia) { ?>
+                        <div id="occAckBox_<?= $occ->id_ocorrencia ?>">
+                            <?php if ($occ->ciencia_responsavel) { ?>
+                                <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Ciência dos Pais Confirmada</span>
+                            <?php } else { ?>
+                                <button type="button" class="btn btn-sm btn-outline-success font-weight-bold" onclick="acknowledgeOccurrence(<?= $occ->id_ocorrencia ?>)">
+                                    <i class="fas fa-signature mr-1"></i> Confirmar Ciência dos Responsáveis
+                                </button>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<?php } else if ($value['tipo'] == 'warning') { ?>
 
 
                                                     <div class="col-11 mx-auto card mb-3">
@@ -840,6 +931,231 @@ function currentDate($array)
 
             </div>
 
+                                <div class="collapse mt-3" id="studentSchedule" data-parent="#studentPortal-accordion">
+
+                        <div class="row">
+
+                            <div class="col-lg-11 mx-auto main-content">
+
+                                <?php
+                                $scheduleByDay = [];
+                                for ($d = 2; $d <= 6; $d++) $scheduleByDay[$d] = [];
+                                $timeSlots = [];
+                                if (!empty($this->view->classSchedule)) {
+                                    foreach ($this->view->classSchedule as $s) {
+                                        $scheduleByDay[$s->dia_semana][] = $s;
+                                        if (!isset($timeSlots[$s->ordem_aula])) {
+                                            $timeSlots[$s->ordem_aula] = [
+                                                'ordem' => $s->ordem_aula,
+                                                'start' => $s->hora_inicio,
+                                                'end'   => $s->hora_fim,
+                                            ];
+                                        }
+                                    }
+                                    ksort($timeSlots);
+                                }
+                                $dayNames = $this->view->dayNames ?? \App\Models\GeneralManagement\ClassSchedule::dayNames();
+                                $shortDayNames = $this->view->shortDayNames ?? \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
+                                $studentCurrentDay = (int) date('N') + 1;
+                                if ($studentCurrentDay < 2 || $studentCurrentDay > 6) $studentCurrentDay = 2;
+                                ?>
+
+                                <!-- Cabeçalho com estilo Sophia / Superapp -->
+                                <div class="m-page-head mt-3">
+                                    <div>
+                                        <h5>Quadro de horários</h5>
+                                        <p>Horários das aulas e professores da sua turma (<?= htmlspecialchars($_SESSION['Student']['class']) ?>).</p>
+                                    </div>
+                                    <div class="m-actions align-items-center">
+                                        <span class="m-pill m-pill-info"><i class="fas fa-clock mr-1"></i> 25 aulas semanais</span>
+                                        <div class="m-view-switch m-seg" data-student-view-mode>
+                                            <button type="button" class="is-active" data-mode="timeline"><i class="fas fa-list-ul mr-1"></i> Por dia</button>
+                                            <button type="button" data-mode="grid"><i class="fas fa-table mr-1"></i> Grade completa</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODO 1: VISÃO POR DIA (TIMELINE ESPAÇOSA E LIMPA) -->
+                                <div id="studentTimelineView">
+
+                                    <!-- Seletor de Dias em Abas Grandes -->
+                                    <div class="m-day-tabs" data-student-day-tabs>
+                                        <?php for ($d = 2; $d <= 6; $d++) { 
+                                            $count = count($scheduleByDay[$d] ?? []);
+                                            $isActive = ($d === $studentCurrentDay);
+                                        ?>
+                                            <button type="button" class="m-day-tab <?= $isActive ? 'is-active' : '' ?>" data-day="<?= $d ?>">
+                                                <span class="m-day-tab-name"><?= $dayNames[$d] ?></span>
+                                                <span class="m-day-tab-badge"><?= $count ?> aula<?= $count !== 1 ? 's' : '' ?></span>
+                                            </button>
+                                        <?php } ?>
+                                    </div>
+
+                                    <!-- Lista de Cards do Dia Selecionado -->
+                                    <?php for ($d = 2; $d <= 6; $d++) { 
+                                        $slots = $scheduleByDay[$d] ?? [];
+                                        $isShown = ($d === $studentCurrentDay);
+                                    ?>
+                                        <div class="m-day-content <?= $isShown ? 'is-visible' : '' ?>" data-student-day-panel="<?= $d ?>">
+
+                                            <?php if (count($slots) > 0) { ?>
+
+                                                <div class="m-timeline-list">
+                                                    <?php foreach ($slots as $slot) { ?>
+                                                        <div class="card m-timeline-card">
+                                                            
+                                                            <div class="m-timeline-time">
+                                                                <span class="m-time-pill"><?= $slot->hora_inicio ?> – <?= $slot->hora_fim ?></span>
+                                                                <small class="m-ordem-text"><?= $slot->ordem_aula ?>ª aula</small>
+                                                            </div>
+
+                                                            <div class="m-timeline-info">
+                                                                <div class="m-timeline-tags">
+                                                                    <span class="m-tag m-tag-teacher"><i class="fas fa-chalkboard-teacher mr-1"></i><?= htmlspecialchars($slot->nome_professor) ?></span>
+                                                                    <span class="m-tag m-tag-room"><i class="fas fa-map-marker-alt mr-1"></i><?= htmlspecialchars($slot->sala) ?></span>
+                                                                </div>
+                                                                <h6 class="m-timeline-title"><?= htmlspecialchars($slot->nome_disciplina) ?></h6>
+                                                            </div>
+
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+
+                                            <?php } else { ?>
+
+                                                <div class="card m-panel m-empty py-5">
+                                                    <img src="<?= $app_url ?>/assets/img/illustrations/calendar.svg" alt="" style="max-width: 140px;">
+                                                    <h6>Nenhuma aula agendada para <?= $dayNames[$d] ?></h6>
+                                                    <p class="text-muted">Aproveite para revisar os conteúdos e tarefas.</p>
+                                                </div>
+
+                                            <?php } ?>
+
+                                        </div>
+                                    <?php } ?>
+
+                                </div>
+
+                                <!-- MODO 2: GRADE COMPLETA (MATRIZ SEMANAL VISUAL) -->
+                                <div id="studentGridView" style="display: none;">
+                                    <div class="card m-panel p-0 overflow-hidden">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered m-schedule-table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 120px;" class="text-center">Horário</th>
+                                                        <?php for ($d = 2; $d <= 6; $d++) { ?>
+                                                            <th class="text-center <?= $d === $studentCurrentDay ? 'bg-primary-soft' : '' ?>">
+                                                                <?= $shortDayNames[$d] ?>
+                                                            </th>
+                                                        <?php } ?>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php 
+                                                    foreach ($timeSlots as $tKey => $tInfo) { 
+                                                    ?>
+                                                        <tr>
+                                                            <td class="m-matrix-time text-center">
+                                                                <strong><?= $tInfo['start'] ?></strong>
+                                                                <small><?= $tInfo['end'] ?></small>
+                                                            </td>
+
+                                                            <?php for ($d = 2; $d <= 6; $d++) { 
+                                                                $matched = null;
+                                                                foreach ($scheduleByDay[$d] ?? [] as $s) {
+                                                                    if ($s->ordem_aula == $tKey) {
+                                                                        $matched = $s;
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            ?>
+                                                                <td class="m-matrix-cell <?= $matched ? 'is-occupied' : 'is-free' ?>">
+                                                                    <?php if ($matched) { ?>
+                                                                        <div class="m-cell-content">
+                                                                            <span class="m-cell-badge"><?= $matched->sigla_disciplina ?></span>
+                                                                            <strong class="m-cell-disc"><?= htmlspecialchars($matched->nome_disciplina) ?></strong>
+                                                                            <small class="m-cell-room"><i class="fas fa-chalkboard-teacher mr-1"></i><?= htmlspecialchars($matched->nome_professor) ?></small>
+                                                                            <small class="text-muted"><i class="fas fa-map-marker-alt mr-1"></i><?= htmlspecialchars($matched->sala) ?></small>
+                                                                        </div>
+                                                                    <?php } else { ?>
+                                                                        <span class="m-cell-empty">—</span>
+                                                                    <?php } ?>
+                                                                </td>
+                                                            <?php } ?>
+                                                        </tr>
+
+                                                        <?php if ($tKey == 2) { ?>
+                                                            <tr class="m-recreio-row">
+                                                                <td colspan="6" class="text-center">
+                                                                    <i class="fas fa-coffee mr-2"></i> Intervalo / Recreio
+                                                                </td>
+                                                            </tr>
+                                                        <?php } ?>
+
+                                                    <?php } ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                                <!-- SEÇÃO PORTARIA NO PORTAL DO ALUNO -->
+                    <div class="collapse mt-3" id="studentGuardians" data-parent="#studentPortal-accordion">
+                        <div class="row">
+                            <div class="col-lg-11 mx-auto main-content">
+                                <div class="m-page-head mt-3">
+                                    <div>
+                                        <h5>Portaria & Pessoas Autorizadas</h5>
+                                        <p>Lista de familiares e transporte escolar autorizados a retirar você no portão.</p>
+                                    </div>
+                                    <span class="m-pill m-pill-ok"><i class="fas fa-shield-alt mr-1"></i> Segurança Escolar</span>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <?php if (!empty($this->view->guardians)) { 
+                                        foreach ($this->view->guardians as $g) { 
+                                            $cleanPhone = preg_replace('/\D/', '', $g->telefone);
+                                        ?>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card p-3 h-100 shadow-sm border" style="border-radius: 12px; border-left: 4px solid <?= $g->autorizado_buscar ? '#16a34a' : '#dc2626' ?> !important;">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <h6 class="mb-0 font-weight-bold text-dark"><?= htmlspecialchars($g->nome) ?></h6>
+                                                            <span class="badge badge-light border mt-1"><?= htmlspecialchars($g->parentesco) ?></span>
+                                                        </div>
+                                                        <?php if ($g->autorizado_buscar) { ?>
+                                                            <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Autorizado</span>
+                                                        <?php } else { ?>
+                                                            <span class="badge badge-danger"><i class="fas fa-ban mr-1"></i> Não Autorizado</span>
+                                                        <?php } ?>
+                                                    </div>
+                                                    <div class="mt-2 small text-muted">
+                                                        <div><i class="fas fa-phone-alt mr-1 text-primary"></i> <?= htmlspecialchars($g->telefone) ?></div>
+                                                        <?php if (!empty($g->observacao_restricao)) { ?>
+                                                            <div class="mt-2 p-2 rounded bg-light border text-dark"><i class="fas fa-info-circle text-info mr-1"></i> <?= htmlspecialchars($g->observacao_restricao) ?></div>
+                                                        <?php } ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } 
+                                    } else { ?>
+                                        <div class="col-12 text-center py-5 text-muted">
+                                            <i class="fas fa-user-shield fa-2x mb-2 d-block"></i>
+                                            Nenhum responsável cadastrado para liberação na portaria.
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
             <div class="toast" id="toastContainer">
 					<div class="toast-header text-white">
 						<strong class="text-center mx-auto"><span class="icon-toast mr-3"><i class="fas text-white"></i></span>
@@ -867,6 +1183,10 @@ function currentDate($array)
 
                         <li class="nav-item">
                             <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#bulletin"><i class="fas fa-book-open"></i> <span>Boletim</span></a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule"><i class="fas fa-calendar-alt"></i> <span>Horários</span></a>
                         </li>
 
                     </ul>
@@ -906,3 +1226,26 @@ function currentDate($array)
 <script src="<?= asset('/assets/js/utilities/Bulletin.js') ?>"></script>
 
 </html>
+<script>
+    async function acknowledgeOccurrence(id) {
+        if (!confirm('Confirmar ciência dos responsáveis sobre este comunicado escolar?')) return;
+        try {
+            const formData = new FormData();
+            formData.append('id', id);
+            const response = await fetch('/portal-aluno/ocorrencias/dar-ciencia', {
+                method: 'POST',
+                body: formData
+            });
+            const res = await response.json();
+            if (!response.ok || res.status !== 'success') throw new Error(res.error || 'Erro ao registrar ciência.');
+
+            const box = document.getElementById('occAckBox_' + id);
+            if (box) {
+                box.innerHTML = '<span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Ciência dos Pais Confirmada</span>';
+            }
+            alert('Ciência confirmada com sucesso!');
+        } catch (err) {
+            alert(err.message || 'Erro ao confirmar ciência.');
+        }
+    }
+</script>
