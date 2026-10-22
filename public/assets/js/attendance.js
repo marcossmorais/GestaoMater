@@ -132,11 +132,15 @@
             const ring = Math.min(lack, 20) / 20 * 100;
             const ringClass = lack >= 10 ? 'is-high' : lack >= 5 ? 'is-mid' : '';
 
+            const certBadge = s.hasCertificate
+                ? `<span class="m-att-cert-badge" title="Atestado: ${escapeHtml(s.certificateReason || 'Médico')} (${escapeHtml(s.certificateDates || '')})"><i class="fas fa-file-medical mr-1"></i> Atestado</span>`
+                : '';
+
             return `
                 <button type="button" class="m-att-student${absent ? ' is-absent' : ''}" data-student="${s.id}" data-name="${escapeHtml(normalize(s.name))}" aria-pressed="${absent}">
                     <span class="m-att-num">${index + 1}</span>
                     <span class="m-att-avatar">${avatar}<span class="m-att-mark"><i class="fas ${absent ? 'fa-times' : 'fa-check'}"></i></span></span>
-                    <span class="m-att-name">${escapeHtml(s.name)}</span>
+                    <span class="m-att-name">${escapeHtml(s.name)}${certBadge}</span>
                     <span class="m-att-status">${absent ? 'Faltou' : 'Presente'}</span>
                     <span class="m-att-ring ${ringClass}" style="--p:${ring}">
                         <strong>${lack}</strong>

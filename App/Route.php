@@ -94,6 +94,24 @@ class Route extends Bootstrap
 			'action' => 'updateStudentProfilePicture'
 		);
 
+		$routes['adminListMedicalCertificates'] = array(
+			'route' => '/admin/aluno/atestados/listar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'listMedicalCertificates'
+		);
+
+		$routes['adminSaveMedicalCertificate'] = array(
+			'route' => '/admin/aluno/atestados/salvar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'saveMedicalCertificate'
+		);
+
+		$routes['adminDeleteMedicalCertificate'] = array(
+			'route' => '/admin/aluno/atestados/deletar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'deleteMedicalCertificate'
+		);
+
 		$routes['adminUpdateTeacherProfilePicture'] = array(
 			'route' => '/admin/professor/lista/perfil-professor/atualizar-foto',
 			'controller' => 'Admin\\AdminTeacherController',

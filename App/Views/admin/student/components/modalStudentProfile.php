@@ -74,6 +74,10 @@ require __DIR__ . '../../../../../config/variables.php';
                                                 <span class="box-icon"><i class="fas fa-tasks mr-3"></i></span> Faltas
                                             </a>
 
+                                            <a class="collapsed" href="#" data-toggle="collapse" aria-expanded="false" data-target="#class-profile-medical-certificate">
+                                                <span class="box-icon"><i class="fas fa-file-medical mr-3"></i></span> Atestados & Abono
+                                            </a>
+
                                             <a class="collapsed" href="#" data-toggle="collapse" aria-expanded="false" data-target="#class-profile-disciplineFinalData">
                                                 <span class="box-icon"><i class="fab fa-buffer mr-3"></i></span> Média final
                                             </a>
@@ -1001,6 +1005,251 @@ require __DIR__ . '../../../../../config/variables.php';
 
             </div>
 
+            <!-- SEÇÃO DE ATESTADOS MÉDICOS E ABONO DE FALTAS -->
+            <div class="col-lg-11 mx-auto collapse" id="class-profile-medical-certificate" data-parent="#main-accordion-student">
+
+                <div class="accordion" id="accordion-medical-certificate">
+
+                    <div class="col-lg-12 mb-3">
+                        <div class="row d-flex align-items-center p-0">
+                            <div class="col-lg-6 p-0">
+                                <h5 class="mt-2"><i class="fas fa-file-medical text-primary mr-2"></i>Atestados Médicos & Abono de Faltas</h5>
+                            </div>
+                            <div class="col-lg-6 col-12 p-0">
+                                <div class="row collapse-options-container">
+                                    <a class="font-weight-bold" aria-expanded="true" data-toggle="collapse" data-target="#medical-certificate-list">
+                                        <span><i class="fas fa-list mr-2"></i>Atestados</span>
+                                    </a>
+                                    <a class="collapsed font-weight-bold text-success" aria-expanded="false" data-toggle="collapse" data-target="#medical-certificate-add">
+                                        <span><i class="fas fa-plus-circle mr-2"></i>Novo Atestado</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumo das Faltas e Abonos -->
+                    <?php 
+                    $sum = $this->view->absenceSummary ?? (object)['total_faltas' => 0, 'faltas_abonadas' => 0, 'faltas_injustificadas' => 0, 'total_atestados' => 0]; 
+                    ?>
+                    <div class="col-lg-12 p-0 mb-3" id="medicalCertificateSummaryCards">
+                        <div class="row">
+                            <div class="col-md-3 col-6 mb-2">
+                                <div class="card p-3 border text-center shadow-sm" style="border-radius: 12px; background: var(--m-surface);">
+                                    <small class="text-muted font-weight-bold">Total de Faltas</small>
+                                    <h3 class="mb-0 text-secondary font-weight-bold mt-1" data-sum-total><?= $sum->total_faltas ?></h3>
+                                    <small class="text-muted">geral no ano</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-2">
+                                <div class="card p-3 border text-center shadow-sm" style="border-radius: 12px; background: rgba(22, 163, 74, .08); border-color: rgba(22, 163, 74, .2) !important;">
+                                    <small class="text-success font-weight-bold"><i class="fas fa-check-circle mr-1"></i>Faltas Abonadas</small>
+                                    <h3 class="mb-0 text-success font-weight-bold mt-1" data-sum-abonadas><?= $sum->faltas_abonadas ?></h3>
+                                    <small class="text-success">justificadas</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-2">
+                                <div class="card p-3 border text-center shadow-sm" style="border-radius: 12px; background: rgba(220, 38, 38, .08); border-color: rgba(220, 38, 38, .2) !important;">
+                                    <small class="text-danger font-weight-bold"><i class="fas fa-exclamation-circle mr-1"></i>Injustificadas</small>
+                                    <h3 class="mb-0 text-danger font-weight-bold mt-1" data-sum-injustificadas><?= $sum->faltas_injustificadas ?></h3>
+                                    <small class="text-danger">a recuperar</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-2">
+                                <div class="card p-3 border text-center shadow-sm" style="border-radius: 12px; background: rgba(59, 130, 246, .08); border-color: rgba(59, 130, 246, .2) !important;">
+                                    <small class="text-primary font-weight-bold"><i class="fas fa-file-medical mr-1"></i>Atestados</small>
+                                    <h3 class="mb-0 text-primary font-weight-bold mt-1" data-sum-atestados><?= $sum->total_atestados ?></h3>
+                                    <small class="text-primary">arquivados</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 p-0">
+
+                        <!-- LISTA DE ATESTADOS -->
+                        <div class="collapse show" id="medical-certificate-list" data-parent="#accordion-medical-certificate">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped" id="tableMedicalCertificates">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Período</th>
+                                            <th>Dias</th>
+                                            <th>Motivo / Diagnóstico</th>
+                                            <th>Médico / CRM</th>
+                                            <th>Abono</th>
+                                            <th>Status</th>
+                                            <th>Comprovante</th>
+                                            <th class="text-center">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="containerMedicalCertificates">
+                                        <?php if (!empty($this->view->medicalCertificates)) { 
+                                            foreach ($this->view->medicalCertificates as $cert) { ?>
+                                                <tr data-cert-id="<?= $cert->id_atestado ?>">
+                                                    <td>
+                                                        <strong><?= $cert->data_inicio_formatada ?></strong><br>
+                                                        <small class="text-muted">até <?= $cert->data_fim_formatada ?></small>
+                                                    </td>
+                                                    <td><span class="badge badge-light border font-weight-bold"><?= $cert->dias ?> dia<?= $cert->dias > 1 ? 's' : '' ?></span></td>
+                                                    <td>
+                                                        <strong class="text-dark"><?= htmlspecialchars($cert->motivo) ?></strong>
+                                                        <?php if (!empty($cert->cid)) { ?>
+                                                            <br><span class="badge badge-secondary">CID: <?= htmlspecialchars($cert->cid) ?></span>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td>
+                                                        <?= htmlspecialchars($cert->medico_nome ?: '—') ?>
+                                                        <?php if (!empty($cert->medico_crm)) { ?>
+                                                            <br><small class="text-muted"><?= htmlspecialchars($cert->medico_crm) ?></small>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php if ($cert->faltas_abonadas > 0) { ?>
+                                                            <span class="badge badge-success font-weight-bold"><?= $cert->faltas_abonadas ?> falta<?= $cert->faltas_abonadas > 1 ? 's' : '' ?></span>
+                                                        <?php } else { ?>
+                                                            <span class="text-muted">—</span>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td><span class="badge badge-success"><?= $cert->status ?></span></td>
+                                                    <td>
+                                                        <?php if (!empty($cert->anexo_documento)) { ?>
+                                                            <a href="/assets/uploads/atestados/<?= htmlspecialchars($cert->anexo_documento) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                                <i class="fas fa-paperclip mr-1"></i>Ver
+                                                            </a>
+                                                        <?php } else { ?>
+                                                            <small class="text-muted">Sem anexo</small>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMedicalCertificate(<?= $cert->id_atestado ?>)" title="Excluir atestado">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php } 
+                                        } else { ?>
+                                            <tr id="emptyMedicalCertificatesRow">
+                                                <td colspan="8" class="text-center py-4 text-muted">
+                                                    <i class="fas fa-file-medical fa-2x mb-2 d-block text-secondary"></i>
+                                                    Nenhum atestado médico registrado para este aluno.
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- FORMULÁRIO DE CADASTRO -->
+                        <div class="collapse card p-4 shadow-sm" id="medical-certificate-add" data-parent="#accordion-medical-certificate" style="border-radius: 12px;">
+                            <h6 class="font-weight-bold text-primary mb-3"><i class="fas fa-plus-circle mr-2"></i>Registrar Novo Atestado / Justificativa</h6>
+                            <form id="formMedicalCertificate" enctype="multipart/form-data">
+                                <input type="hidden" name="enrollmentId" value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>">
+                                <input type="hidden" name="studentId" value="<?= $this->view->studentDataEnrollment[0]->id ?>">
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-3 col-6">
+                                        <label class="font-weight-bold">Data Início *</label>
+                                        <input type="date" class="form-control" name="startDate" id="certStartDate" value="<?= date('Y-m-d') ?>" required>
+                                    </div>
+                                    <div class="form-group col-md-3 col-6">
+                                        <label class="font-weight-bold">Data Fim *</label>
+                                        <input type="date" class="form-control" name="endDate" id="certEndDate" value="<?= date('Y-m-d') ?>" required>
+                                    </div>
+                                    <div class="form-group col-md-6 col-12">
+                                        <label class="font-weight-bold">Motivo / Tipo de Licença *</label>
+                                        <select class="form-control custom-select" name="reason" id="certReasonSelect" required>
+                                            <option value="">Selecione o motivo...</option>
+                                            <option value="Consulta Médica">Consulta Médica / Exames</option>
+                                            <option value="Tratamento de Saúde / Repouso">Tratamento de Saúde / Repouso</option>
+                                            <option value="Infecção / Isolamento Preventivo">Infecção / Isolamento Preventivo</option>
+                                            <option value="Atestado Odontológico">Atestado Odontológico</option>
+                                            <option value="Internação Hospitalar">Internação Hospitalar</option>
+                                            <option value="Luto Familiar">Luto Familiar (Abono Legal)</option>
+                                            <option value="Outro">Outro Justificativo</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label>CID (Classificação de Doenças)</label>
+                                        <input type="text" class="form-control" name="cid" placeholder="Ex: J06.9, K02">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Nome do Médico / Profissional</label>
+                                        <input type="text" class="form-control" name="doctorName" placeholder="Ex: Dra. Mariana Prado">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>CRM / CRO</label>
+                                        <input type="text" class="form-control" name="doctorCrm" placeholder="Ex: CRM/SP 142.890">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Instituição de Saúde</label>
+                                        <input type="text" class="form-control" name="healthInstitution" placeholder="Hospital, Clínica ou UBS">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Anexar Comprovante / Atestado (PDF, JPG, PNG)</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="attachment" id="certAttachment" accept=".pdf,image/*">
+                                            <label class="custom-file-label" for="certAttachment" data-browse="Escolher">Selecionar arquivo...</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-3">
+                                <h6 class="font-weight-bold text-secondary mb-2"><i class="fas fa-calculator mr-2"></i>Abono de Faltas no Boletim (Opcional)</h6>
+                                <p class="text-muted small mb-3">Se o aluno já possui faltas registradas na chamada para este período, você pode aboná-las imediatamente no histórico.</p>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label>Quantidade de Faltas a Abonar</label>
+                                        <input type="number" class="form-control" name="aboneLacks" min="0" max="40" value="0">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Disciplina</label>
+                                        <select class="form-control custom-select" name="disciplineClass">
+                                            <option value="">Selecione se for abonar...</option>
+                                            <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
+                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Unidade</label>
+                                        <select class="form-control custom-select" name="unity">
+                                            <option value="">Selecione a unidade...</option>
+                                            <?php foreach ($this->view->unity as $key => $unity) { ?>
+                                                <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Observações Internas da Secretaria</label>
+                                    <textarea class="form-control" name="observation" rows="2" placeholder="Observações adicionais, orientações pedagógicas ou despacho do coordenador..."></textarea>
+                                </div>
+
+                                <div class="d-flex justify-content-end align-items-center mt-3">
+                                    <button type="button" class="btn btn-light mr-2" data-toggle="collapse" data-target="#medical-certificate-list">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary font-weight-bold" id="btnSaveMedicalCertificate">
+                                        <i class="fas fa-save mr-1"></i> Salvar Atestado
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
             <div class="col-lg-11 mx-auto collapse" id="class-student-profile-average" data-parent="#main-accordion-student">
 
                 <div class="col-lg-12 mb-3">
@@ -1224,3 +1473,166 @@ require __DIR__ . '../../../../../config/variables.php';
 </div>
 
 </div>
+<script>
+    // Gerenciamento de Atestados Médicos no Perfil do Aluno
+    (function () {
+        const form = document.getElementById('formMedicalCertificate');
+        const fileInput = document.getElementById('certAttachment');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function () {
+                const label = this.nextElementSibling;
+                if (label && this.files && this.files[0]) {
+                    label.textContent = this.files[0].name;
+                }
+            });
+        }
+
+        if (form) {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const btn = document.getElementById('btnSaveMedicalCertificate');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Salvando...';
+
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch('/admin/aluno/atestados/salvar', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const res = await response.json();
+
+                    if (!response.ok || res.status !== 'success') {
+                        throw new Error(res.error || 'Erro ao salvar atestado.');
+                    }
+
+                    if (typeof tools !== 'undefined' && typeof tools.showToast === 'function') {
+                        tools.showToast('Atestado registrado com sucesso!', 'bg-success');
+                    } else {
+                        alert('Atestado registrado com sucesso!');
+                    }
+
+                    // Recarregar lista de atestados
+                    const enrollmentId = form.querySelector('[name="enrollmentId"]').value;
+                    await reloadMedicalCertificates(enrollmentId);
+
+                    form.reset();
+                    if (fileInput && fileInput.nextElementSibling) {
+                        fileInput.nextElementSibling.textContent = 'Selecionar arquivo...';
+                    }
+
+                    // Alternar de volta para a lista
+                    if (window.jQuery) {
+                        window.jQuery('#medical-certificate-list').collapse('show');
+                        window.jQuery('#medical-certificate-add').collapse('hide');
+                    }
+
+                } catch (err) {
+                    alert(err.message || 'Erro ao salvar atestado.');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save mr-1"></i> Salvar Atestado';
+                }
+            });
+        }
+
+        window.deleteMedicalCertificate = async function (id) {
+            if (!confirm('Deseja realmente excluir este atestado médico?')) return;
+
+            try {
+                const formData = new FormData();
+                formData.append('id', id);
+
+                const response = await fetch('/admin/aluno/atestados/deletar', {
+                    method: 'POST',
+                    body: formData
+                });
+                const res = await response.json();
+
+                if (!response.ok || res.status !== 'success') {
+                    throw new Error(res.error || 'Erro ao excluir atestado.');
+                }
+
+                if (typeof tools !== 'undefined' && typeof tools.showToast === 'function') {
+                    tools.showToast('Atestado excluído com sucesso!', 'bg-info');
+                }
+
+                const enrollmentInput = document.querySelector('#formMedicalCertificate [name="enrollmentId"]');
+                if (enrollmentInput) {
+                    await reloadMedicalCertificates(enrollmentInput.value);
+                }
+
+            } catch (err) {
+                alert(err.message || 'Erro ao excluir atestado.');
+            }
+        };
+
+        async function reloadMedicalCertificates(enrollmentId) {
+            try {
+                const response = await fetch('/admin/aluno/atestados/listar?enrollmentId=' + enrollmentId);
+                const data = await response.json();
+
+                // Atualizar contadores
+                if (data.summary) {
+                    const sum = data.summary;
+                    const elTotal = document.querySelector('[data-sum-total]');
+                    const elAbonadas = document.querySelector('[data-sum-abonadas]');
+                    const elInjust = document.querySelector('[data-sum-injustificadas]');
+                    const elAtest = document.querySelector('[data-sum-atestados]');
+                    if (elTotal) elTotal.textContent = sum.total_faltas;
+                    if (elAbonadas) elAbonadas.textContent = sum.faltas_abonadas;
+                    if (elInjust) elInjust.textContent = sum.faltas_injustificadas;
+                    if (elAtest) elAtest.textContent = sum.total_atestados;
+                }
+
+                // Atualizar tabela
+                const tbody = document.getElementById('containerMedicalCertificates');
+                if (!tbody) return;
+
+                if (!data.certificates || data.certificates.length === 0) {
+                    tbody.innerHTML = `<tr id="emptyMedicalCertificatesRow">
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            <i class="fas fa-file-medical fa-2x mb-2 d-block text-secondary"></i>
+                            Nenhum atestado médico registrado para este aluno.
+                        </td>
+                    </tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.certificates.map(c => `
+                    <tr data-cert-id="${c.id_atestado}">
+                        <td>
+                            <strong>${c.data_inicio_formatada}</strong><br>
+                            <small class="text-muted">até ${c.data_fim_formatada}</small>
+                        </td>
+                        <td><span class="badge badge-light border font-weight-bold">${c.dias} dia${c.dias > 1 ? 's' : ''}</span></td>
+                        <td>
+                            <strong class="text-dark">${c.motivo || ''}</strong>
+                            ${c.cid ? `<br><span class="badge badge-secondary">CID: ${c.cid}</span>` : ''}
+                        </td>
+                        <td>
+                            ${c.medico_nome || '—'}
+                            ${c.medico_crm ? `<br><small class="text-muted">${c.medico_crm}</small>` : ''}
+                        </td>
+                        <td>
+                            ${c.faltas_abonadas > 0 ? `<span class="badge badge-success font-weight-bold">${c.faltas_abonadas} falta${c.faltas_abonadas > 1 ? 's' : ''}</span>` : '<span class="text-muted">—</span>'}
+                        </td>
+                        <td><span class="badge badge-success">${c.status || 'Aprovado'}</span></td>
+                        <td>
+                            ${c.anexo_documento ? `<a href="/assets/uploads/atestados/${c.anexo_documento}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-paperclip mr-1"></i>Ver</a>` : '<small class="text-muted">Sem anexo</small>'}
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMedicalCertificate(${c.id_atestado})" title="Excluir atestado">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    })();
+</script>

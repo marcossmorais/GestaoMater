@@ -128,6 +128,11 @@ class AdminStudentController extends Action
         $this->view->generalSituationStudent = $Student->generalSituationStudent();
         $this->view->classesWhereStudentEnrolledSameYear = $Classe->classesWhereStudentEnrolledSameYear();
 
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+        $enrollmentId = $this->view->studentDataEnrollment[0]->enrollment_id;
+        $this->view->medicalCertificates = $MedicalCertificate->getByEnrollment($enrollmentId);
+        $this->view->absenceSummary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+
         $this->render('student/components/modalStudentProfile', 'SimpleLayout');
     }
 
@@ -312,5 +317,120 @@ class AdminStudentController extends Action
         $StudentEnrollment->__set('studentEnrollmentId', $_POST['enrollmentId']);
 
         $StudentEnrollment->changeStudentFromClass();
+    }
+
+
+    public function listMedicalCertificates()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $enrollmentId = (int) ($_GET['enrollmentId'] ?? 0);
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+        $list = $MedicalCertificate->getByEnrollment($enrollmentId);
+        $summary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+        echo json_encode(['certificates' => $list, 'summary' => $summary]);
+    }
+
+
+    public function saveMedicalCertificate()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+
+        $enrollmentId = (int) ($_POST['enrollmentId'] ?? 0);
+        $studentId = (int) ($_POST['studentId'] ?? 0);
+        $startDate = trim($_POST['startDate'] ?? '');
+        $endDate = trim($_POST['endDate'] ?? '') ?: $startDate;
+        $reason = trim($_POST['reason'] ?? '');
+        $cid = trim($_POST['cid'] ?? '');
+        $doctorName = trim($_POST['doctorName'] ?? '');
+        $doctorCrm = trim($_POST['doctorCrm'] ?? '');
+        $healthInstitution = trim($_POST['healthInstitution'] ?? '');
+        $faltasAbonadas = (int) ($_POST['aboneLacks'] ?? 0);
+        $disciplineClass = (int) ($_POST['disciplineClass'] ?? 0);
+        $unity = (int) ($_POST['unity'] ?? 0);
+        $observation = trim($_POST['observation'] ?? '');
+
+        if (!$enrollmentId || !$studentId || !$startDate || !$reason) {
+            http_response_code(422);
+            echo json_encode(['error' => 'Preencha os campos obrigatorios (aluno, datas e motivo).']);
+            return;
+        }
+
+        $fileName = null;
+        if (!empty($_FILES['attachment']['name'])) {
+            $uploadDir = dirname(__DIR__, 2) . '/public/assets/uploads/atestados/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $ext = strtolower(pathinfo($_FILES['attachment']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['pdf', 'jpg', 'jpeg', 'png', 'webp'])) {
+                $fileName = 'atestado_' . $enrollmentId . '_' . time() . '.' . $ext;
+                move_uploaded_file($_FILES['attachment']['tmp_name'], $uploadDir . $fileName);
+            }
+        }
+
+        $d1 = new \DateTime($startDate);
+        $d2 = new \DateTime($endDate);
+        $dias = max(1, $d2->diff($d1)->days + 1);
+
+        $registeredBy = isset($_SESSION['Admin']) 
+            ? ($_SESSION['Admin']['name'] ?? 'Secretaria Escolar') 
+            : (isset($_SESSION['Teacher']) ? $_SESSION['Teacher']['name'] : 'Secretaria Escolar');
+
+        try {
+            $id = $MedicalCertificate->create([
+                'fk_id_matricula' => $enrollmentId,
+                'fk_id_aluno' => $studentId,
+                'data_inicio' => $startDate,
+                'data_fim' => $endDate,
+                'dias' => $dias,
+                'motivo' => $reason,
+                'cid' => $cid,
+                'medico_nome' => $doctorName,
+                'medico_crm' => $doctorCrm,
+                'instituicao_saude' => $healthInstitution,
+                'status' => 'Aprovado',
+                'faltas_abonadas' => $faltasAbonadas,
+                'fk_id_turma_disciplina_falta' => $disciplineClass,
+                'fk_id_unidade_falta' => $unity,
+                'observacao' => $observation,
+                'anexo_documento' => $fileName,
+                'registrado_por' => $registeredBy,
+            ]);
+
+            echo json_encode([
+                'status' => 'success',
+                'id' => $id,
+                'message' => 'Atestado registrado com sucesso!'
+            ]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao salvar atestado: ' . $e->getMessage()]);
+        }
+    }
+
+
+    public function deleteMedicalCertificate()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID invalido']);
+            return;
+        }
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+        $MedicalCertificate->delete($id);
+        echo json_encode(['status' => 'success']);
     }
 }

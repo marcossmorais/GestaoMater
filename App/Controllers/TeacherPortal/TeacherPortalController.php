@@ -253,12 +253,20 @@ class TeacherPortalController extends Action
 
         if (!in_array($unity, $openUnits, true)) $unity = max($openUnits);
 
-        $students = array_map(function ($s) {
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+        $activeCertificates = $MedicalCertificate->getActiveCertificatesForClassAndDate($disciplineClass->class_id, $date);
+
+        $students = array_map(function ($s) use ($activeCertificates) {
+            $cert = $activeCertificates[(int) $s->enrollment_id] ?? null;
             return [
                 'id' => (int) $s->enrollment_id,
                 'name' => $s->name,
                 'photo' => $s->photo,
                 'totalLack' => (int) $s->total_lack,
+                'hasCertificate' => $cert !== null,
+                'certificateReason' => $cert ? $cert->motivo : null,
+                'certificateDoctor' => $cert ? $cert->medico_nome : null,
+                'certificateDates' => $cert ? ($cert->data_inicio_fmt . ' até ' . $cert->data_fim_fmt) : null,
             ];
         }, $Attendance->students($disciplineClassId, $unity));
 

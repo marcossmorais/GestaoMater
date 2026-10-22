@@ -70,6 +70,7 @@ class Lack extends Model
             
             falta_aluno.id_falta AS lack_id , 
             falta_aluno.total_faltas AS total_lack , 
+            COALESCE(falta_aluno.faltas_abonadas, 0) AS excused_lack , 
             disciplina.nome_disciplina AS discipline_name , 
             unidade.unidade AS unity,
             falta_aluno.fk_id_matricula_falta AS enrollment_id ,
@@ -120,6 +121,7 @@ class Lack extends Model
             
             falta_aluno.id_falta AS lack_id , 
             falta_aluno.total_faltas AS total_lack , 
+            COALESCE(falta_aluno.faltas_abonadas, 0) AS excused_lack , 
             disciplina.nome_disciplina AS discipline_name , 
             unidade.unidade AS unity,
             falta_aluno.fk_id_matricula_falta AS enrollment_id ,
@@ -170,6 +172,7 @@ class Lack extends Model
             
             falta_aluno.id_falta AS lack_id , 
             falta_aluno.total_faltas AS total_lack , 
+            COALESCE(falta_aluno.faltas_abonadas, 0) AS excused_lack , 
             disciplina.nome_disciplina AS discipline_name , 
             unidade.unidade AS unity,
             falta_aluno.fk_id_matricula_falta AS enrollment_id ,
@@ -220,6 +223,7 @@ class Lack extends Model
             
             falta_aluno.id_falta AS lack_id , 
             falta_aluno.total_faltas AS total_lack , 
+            COALESCE(falta_aluno.faltas_abonadas, 0) AS excused_lack , 
             disciplina.nome_disciplina AS discipline_name , 
             unidade.unidade AS unity,
             falta_aluno.fk_id_matricula_falta AS enrollment_id ,
@@ -325,6 +329,7 @@ class Lack extends Model
             
             falta_aluno.id_falta AS lack_id , 
             falta_aluno.total_faltas AS total_lack , 
+            COALESCE(falta_aluno.faltas_abonadas, 0) AS excused_lack , 
             disciplina.nome_disciplina AS discipline_name , 
             unidade.unidade AS unity,
             falta_aluno.fk_id_matricula_falta AS enrollment_id

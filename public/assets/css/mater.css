@@ -548,6 +548,24 @@ html.nightMode .m-att-avatar > span:first-child { color: hsl(var(--h, 215), 80%,
 }
 html.nightMode .m-att-status { color: #4ADE80; }
 
+.m-att-cert-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(234, 179, 8, .18);
+  color: #B45309;
+  border: 1px solid rgba(234, 179, 8, .35);
+  margin-top: 3px;
+}
+html.nightMode .m-att-cert-badge {
+  background: rgba(234, 179, 8, .2);
+  color: #FCD34D;
+  border-color: rgba(234, 179, 8, .4);
+}
+
 .m-att-ring {
   --p: 0; --ring: var(--m-primary);
   width: 46px; height: 46px; border-radius: 50%; margin-top: 4px; display: flex; align-items: center; justify-content: center;

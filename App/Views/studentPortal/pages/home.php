@@ -411,7 +411,12 @@ function currentDate($array)
 
                                                             <div class="col-lg-12">
                                                                 <div class="row">
-                                                                    <div class="col-lg-8"><small class="font-weight-bold text-important">Você obteve um total de <?= $value['value']->total_lack ?> faltas</small></div>
+                                                                    <div class="col-lg-8">
+                                                                        <small class="font-weight-bold text-important">Você obteve um total de <?= $value['value']->total_lack ?> faltas</small>
+                                                                        <?php if (!empty($value['value']->excused_lack) && $value['value']->excused_lack > 0) { ?>
+                                                                            <span class="badge badge-success ml-2" title="Faltas abonadas por atestado médico ou justificativa regulamentar"><i class="fas fa-check mr-1"></i><?= $value['value']->excused_lack ?> justificadas por atestado</span>
+                                                                        <?php } ?>
+                                                                    </div>
 
                                                                     <div class="col-lg-4 d-flex justify-content-end mt-xs-3"><small class="text-muted p-0 mt-3"> <i class="fas fa-history mr-2"></i>Postado <?= currentDate($value['value']->post_date) ?></small></div>
                                                                 </div>
