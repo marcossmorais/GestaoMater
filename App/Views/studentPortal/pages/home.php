@@ -63,6 +63,20 @@ require __DIR__ . '../../../../config/variables.php';
                                 <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule">Horários</a>
                             </li>
 
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="studentDeclaracoesMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-file-contract mr-1"></i> Declarações
+                                </a>
+                                <div class="dropdown-menu shadow" aria-labelledby="studentDeclaracoesMenu">
+                                    <a class="dropdown-item" href="/portal-aluno/declaracao/matricula" target="_blank">
+                                        <i class="fas fa-file-alt mr-2 text-primary"></i> Declaração de Matrícula (PDF)
+                                    </a>
+                                    <a class="dropdown-item" href="/portal-aluno/declaracao/frequencia" target="_blank">
+                                        <i class="fas fa-calendar-check mr-2 text-success"></i> Declaração de Frequência (PDF)
+                                    </a>
+                                </div>
+                            </li>
+
                         </ul>
 
                         <ul class="navbar-nav ml-auto d-flex align-items-center">

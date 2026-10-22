@@ -112,6 +112,30 @@ class Route extends Bootstrap
 			'action' => 'deleteMedicalCertificate'
 		);
 
+		$routes['adminStudentDeclarationEnrollment'] = array(
+			'route' => '/admin/aluno/declaracao/matricula',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'declarationEnrollment'
+		);
+
+		$routes['adminStudentDeclarationAttendance'] = array(
+			'route' => '/admin/aluno/declaracao/frequencia',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'declarationAttendance'
+		);
+
+		$routes['studentDeclarationEnrollment'] = array(
+			'route' => '/portal-aluno/declaracao/matricula',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'declarationEnrollment'
+		);
+
+		$routes['studentDeclarationAttendance'] = array(
+			'route' => '/portal-aluno/declaracao/frequencia',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'declarationAttendance'
+		);
+
 		$routes['adminUpdateTeacherProfilePicture'] = array(
 			'route' => '/admin/professor/lista/perfil-professor/atualizar-foto',
 			'controller' => 'Admin\\AdminTeacherController',

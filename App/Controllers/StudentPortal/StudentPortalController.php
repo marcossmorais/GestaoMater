@@ -214,4 +214,43 @@ class StudentPortalController extends Action
 
         header('Location: /portal-aluno' . (\App\Auth\Clerk::enabled() ? '?logout=1' : ''));
     }
+
+    public function declarationEnrollment()
+    {
+        $this->loadDeclarationData('matricula');
+    }
+
+    public function declarationAttendance()
+    {
+        $this->loadDeclarationData('frequencia');
+    }
+
+    private function loadDeclarationData($type = 'matricula')
+    {
+        if (!isset($_SESSION)) session_start();
+        $enrollmentId = (int) ($_SESSION['Student']['enrollmentId'] ?? 0);
+
+        $StudentEnrollment = Container::getModel('Student\\StudentEnrollment');
+        $Student = Container::getModel('Student\\Student');
+        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+
+        $StudentEnrollment->__set('studentEnrollmentId', $enrollmentId);
+        $enrollmentData = $StudentEnrollment->dataGeneral();
+
+        if (empty($enrollmentData)) {
+            echo "Matrícula não encontrada.";
+            return;
+        }
+
+        $Student->__set('studentId', $enrollmentData[0]->id);
+        $studentData = $Student->dataGeneral($StudentEnrollment);
+
+        $this->view->student = $studentData[0] ?? $enrollmentData[0];
+        $this->view->enrollment = $enrollmentData[0];
+        $this->view->summary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+        $this->view->type = $_GET['type'] ?? $type;
+        $this->view->authCode = 'MATER-' . date('Y') . '-' . strtoupper(substr(md5($enrollmentId . date('Ymd')), 0, 8));
+
+        require __DIR__ . '/../../Views/admin/student/declarations/declaration.php';
+    }
 }
