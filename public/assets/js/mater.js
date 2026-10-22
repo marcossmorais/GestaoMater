@@ -47,33 +47,42 @@
     const topSearch = document.querySelector('.m-search input');
     if (topSearch && query) topSearch.value = query;
 
-    // Alternância de dias no Quadro de Horários do Aluno (mobile)
+    // Alternância de modo (Timeline / Grade Completa) no Portal do Aluno
     document.addEventListener('click', function (event) {
-        const tab = event.target.closest('[data-student-schedule-tabs] button');
-        if (!tab) return;
-        const day = tab.dataset.day;
-        const tabs = tab.closest('[data-student-schedule-tabs]').querySelectorAll('button');
-        tabs.forEach(t => t.classList.toggle('is-active', t === tab));
+        const btn = event.target.closest('[data-student-view-mode] button');
+        if (!btn) return;
+        const container = btn.closest('[data-student-view-mode]');
+        container.querySelectorAll('button').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
 
-        const cols = document.querySelectorAll('[data-student-schedule-grid] [data-student-day-col]');
-        cols.forEach(col => {
-            if (window.innerWidth < 768) {
-                col.style.display = (col.dataset.studentDayCol === String(day)) ? 'block' : 'none';
-            } else {
-                col.style.display = '';
-            }
-        });
+        const timelineView = document.getElementById('studentTimelineView');
+        const gridView = document.getElementById('studentGridView');
+        if (!timelineView || !gridView) return;
+
+        if (btn.dataset.mode === 'timeline') {
+            timelineView.style.display = 'block';
+            gridView.style.display = 'none';
+        } else {
+            timelineView.style.display = 'none';
+            gridView.style.display = 'block';
+        }
     });
 
-    window.addEventListener('resize', function () {
-        const activeTab = document.querySelector('[data-student-schedule-tabs] button.is-active');
-        if (!activeTab) return;
-        const cols = document.querySelectorAll('[data-student-schedule-grid] [data-student-day-col]');
-        cols.forEach(col => {
-            if (window.innerWidth < 768) {
-                col.style.display = (col.dataset.studentDayCol === String(activeTab.dataset.day)) ? 'block' : 'none';
+    // Alternância de dias no Quadro de Horários do Aluno
+    document.addEventListener('click', function (event) {
+        const tab = event.target.closest('[data-student-day-tabs] .m-day-tab');
+        if (!tab) return;
+        const tabsContainer = tab.closest('[data-student-day-tabs]');
+        tabsContainer.querySelectorAll('.m-day-tab').forEach(t => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+
+        const targetDay = tab.dataset.day;
+        const panels = document.querySelectorAll('[data-student-day-panel]');
+        panels.forEach(panel => {
+            if (panel.dataset.studentDayPanel === targetDay) {
+                panel.classList.add('is-visible');
             } else {
-                col.style.display = '';
+                panel.classList.remove('is-visible');
             }
         });
     });
