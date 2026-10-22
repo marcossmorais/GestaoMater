@@ -808,6 +808,12 @@ class Route extends Bootstrap
 			'action' => 'attendanceSave'
 		);
 
+		$routes['teacherSchedule'] = array(
+			'route' => '/portal-docente/horario',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'schedule'
+		);
+
 		$routes['exitTeacherPortal'] = array(
 			'route' => '/portal-docente/sair',
 			'controller' => 'TeacherPortal\\TeacherPortalController',

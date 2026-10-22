@@ -59,6 +59,10 @@ require __DIR__ . '../../../../config/variables.php';
                                 <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#averageNote" href="#">Notas e médias</a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule">Horários</a>
+                            </li>
+
                         </ul>
 
                         <ul class="navbar-nav ml-auto d-flex align-items-center">
@@ -840,6 +844,106 @@ function currentDate($array)
 
             </div>
 
+                                <div class="collapse mt-3" id="studentSchedule" data-parent="#studentPortal-accordion">
+
+                        <div class="row">
+
+                            <div class="col-lg-11 mx-auto main-content">
+
+                                <?php
+                                $scheduleByDay = [];
+                                for ($d = 2; $d <= 6; $d++) $scheduleByDay[$d] = [];
+                                if (!empty($this->view->classSchedule)) {
+                                    foreach ($this->view->classSchedule as $s) {
+                                        $scheduleByDay[$s->dia_semana][] = $s;
+                                    }
+                                }
+                                $dayNames = $this->view->dayNames ?? \App\Models\GeneralManagement\ClassSchedule::dayNames();
+                                $shortDayNames = $this->view->shortDayNames ?? \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
+                                $studentCurrentDay = (int) date('N') + 1;
+                                if ($studentCurrentDay < 2 || $studentCurrentDay > 6) $studentCurrentDay = 2;
+                                ?>
+
+                                <div class="m-page-head mt-3">
+                                    <div>
+                                        <h5>Quadro de horários</h5>
+                                        <p>Horários de aula e professores da sua turma (<?= htmlspecialchars($_SESSION['Student']['class']) ?>).</p>
+                                    </div>
+                                    <span class="m-pill m-pill-info"><i class="fas fa-clock mr-1"></i> 25 aulas semanais</span>
+                                </div>
+
+                                <!-- Seletor mobile -->
+                                <div class="m-schedule-tabs mb-3 d-flex d-md-none">
+                                    <div class="m-seg w-100 justify-content-between" data-student-schedule-tabs>
+                                        <?php for ($d = 2; $d <= 6; $d++) { ?>
+                                            <button type="button" data-day="<?= $d ?>" class="<?= $d === $studentCurrentDay ? 'is-active' : '' ?>">
+                                                <?= substr($shortDayNames[$d], 0, 3) ?>
+                                            </button>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+
+                                <div class="m-schedule-grid" data-student-schedule-grid>
+
+                                    <?php for ($d = 2; $d <= 6; $d++) {
+                                        $slots = $scheduleByDay[$d] ?? [];
+                                        $isToday = ($d === $studentCurrentDay);
+                                    ?>
+                                        <div class="card m-schedule-col <?= $isToday ? 'is-today' : '' ?>" data-student-day-col="<?= $d ?>">
+
+                                            <div class="m-schedule-col-head">
+                                                <div>
+                                                    <h6><?= $dayNames[$d] ?></h6>
+                                                    <small class="text-muted"><?= count($slots) ?> aula<?= count($slots) !== 1 ? 's' : '' ?></small>
+                                                </div>
+                                                <?php if ($isToday) { ?>
+                                                    <span class="badge badge-primary">Hoje</span>
+                                                <?php } ?>
+                                            </div>
+
+                                            <div class="m-schedule-col-body">
+
+                                                <?php if (count($slots) > 0) { ?>
+
+                                                    <?php foreach ($slots as $slot) { ?>
+                                                        <div class="m-schedule-card">
+                                                            <div class="m-schedule-card-time">
+                                                                <span class="m-time-range"><?= $slot->hora_inicio ?> – <?= $slot->hora_fim ?></span>
+                                                                <span class="m-ordem-tag"><?= $slot->ordem_aula ?>ª aula</span>
+                                                            </div>
+
+                                                            <div class="m-schedule-card-body">
+                                                                <strong class="m-schedule-discipline"><?= htmlspecialchars($slot->nome_disciplina) ?></strong>
+                                                                <div class="m-schedule-meta">
+                                                                    <span><i class="fas fa-chalkboard-teacher mr-1"></i><?= htmlspecialchars($slot->nome_professor) ?></span>
+                                                                    <span><i class="fas fa-map-marker-alt mr-1"></i><?= $slot->sala ?></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+
+                                                <?php } else { ?>
+
+                                                    <div class="m-schedule-empty">
+                                                        <i class="fas fa-mug-hot"></i>
+                                                        <span>Sem aulas</span>
+                                                    </div>
+
+                                                <?php } ?>
+
+                                            </div>
+
+                                        </div>
+                                    <?php } ?>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
             <div class="toast" id="toastContainer">
 					<div class="toast-header text-white">
 						<strong class="text-center mx-auto"><span class="icon-toast mr-3"><i class="fas text-white"></i></span>
@@ -867,6 +971,10 @@ function currentDate($array)
 
                         <li class="nav-item">
                             <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#bulletin"><i class="fas fa-book-open"></i> <span>Boletim</span></a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule"><i class="fas fa-calendar-alt"></i> <span>Horários</span></a>
                         </li>
 
                     </ul>

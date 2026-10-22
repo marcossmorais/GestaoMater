@@ -370,6 +370,38 @@ class TeacherPortalController extends Action
     }
 
 
+    /**
+     * Quadro de horários semanal do professor
+     */
+    public function schedule()
+    {
+
+        $ClassSchedule = Container::getModel('GeneralManagement\\ClassSchedule');
+
+        if (!isset($_SESSION)) session_start();
+
+        $teacherId = (int) $_SESSION['Teacher']['id'];
+        $schedule = $ClassSchedule->getScheduleByTeacher($teacherId);
+
+        // Agrupa por dia da semana (2=Segunda ... 6=Sexta)
+        $scheduleByDay = [];
+        for ($d = 2; $d <= 6; $d++) {
+            $scheduleByDay[$d] = [];
+        }
+
+        foreach ($schedule as $slot) {
+            $scheduleByDay[$slot->dia_semana][] = $slot;
+        }
+
+        $this->view->scheduleByDay = $scheduleByDay;
+        $this->view->totalClasses = count($schedule);
+        $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
+        $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
+
+        $this->render('schedule', 'TeacherPortalLayout', 'teacherPortal');
+    }
+
+
     public function exit()
     {
 

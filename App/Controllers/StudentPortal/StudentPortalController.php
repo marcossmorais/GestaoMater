@@ -108,6 +108,11 @@ class StudentPortalController extends Action
         $this->view->linkedDisciplines = $ClassDiscipline->classLinkedSubjects();
         $this->view->unity = ( $this->view->schoolTermActive[0]->option_value == $this->view->studentDataGeneral[0]->school_term_id ? $Unity->readOpenUnits() : $Unity->searchSpecificUniy() );
 
+        $ClassSchedule = Container::getModel('GeneralManagement\\ClassSchedule');
+        $this->view->classSchedule = $ClassSchedule->getScheduleByClass($_SESSION['Student']['classId']);
+        $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
+        $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
+
         $this->render("pages/home", "SimpleLayout", "studentPortal");
     }
 

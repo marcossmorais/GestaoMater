@@ -47,4 +47,35 @@
     const topSearch = document.querySelector('.m-search input');
     if (topSearch && query) topSearch.value = query;
 
+    // Alternância de dias no Quadro de Horários do Aluno (mobile)
+    document.addEventListener('click', function (event) {
+        const tab = event.target.closest('[data-student-schedule-tabs] button');
+        if (!tab) return;
+        const day = tab.dataset.day;
+        const tabs = tab.closest('[data-student-schedule-tabs]').querySelectorAll('button');
+        tabs.forEach(t => t.classList.toggle('is-active', t === tab));
+
+        const cols = document.querySelectorAll('[data-student-schedule-grid] [data-student-day-col]');
+        cols.forEach(col => {
+            if (window.innerWidth < 768) {
+                col.style.display = (col.dataset.studentDayCol === String(day)) ? 'block' : 'none';
+            } else {
+                col.style.display = '';
+            }
+        });
+    });
+
+    window.addEventListener('resize', function () {
+        const activeTab = document.querySelector('[data-student-schedule-tabs] button.is-active');
+        if (!activeTab) return;
+        const cols = document.querySelectorAll('[data-student-schedule-grid] [data-student-day-col]');
+        cols.forEach(col => {
+            if (window.innerWidth < 768) {
+                col.style.display = (col.dataset.studentDayCol === String(activeTab.dataset.day)) ? 'block' : 'none';
+            } else {
+                col.style.display = '';
+            }
+        });
+    });
+
 })();

@@ -22,6 +22,8 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li name="chamada"><a href="/portal-docente/chamada"><i class="fas fa-clipboard-check"></i><span class="link-name">Chamada rápida</span></a></li>
 
+            <li name="horario"><a href="/portal-docente/horario"><i class="fas fa-calendar-alt"></i><span class="link-name">Horários</span></a></li>
+
             <li><a href="#" id="settingsTeacherPortal"><i class="fas fa-cog"></i><span class="link-name">Configurações</span></a></li>
 
         </ul>
