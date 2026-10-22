@@ -93,7 +93,7 @@
 
                                     <div class="table-responsive">
 
-                                        <table class="col-lg-12 table table-borderless table-hover" id="table-class-teacher">
+                                        <table class="col-lg-12 table table-borderless table-hover m-table-cards" id="table-class-teacher">
 
                                             <thead>
 
@@ -103,6 +103,7 @@
                                                     <th scope="col">Período letivo</th>
                                                     <th scope="col">Disciplinas ativas</th>
                                                     <th scope="col">Total de alunos</th>
+                                                    <th scope="col"></th>
                                                 </tr>
 
                                             </thead>

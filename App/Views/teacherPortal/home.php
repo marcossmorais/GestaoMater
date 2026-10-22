@@ -31,9 +31,19 @@ foreach ($this->view->listExam as $exam) $classes[$exam->acronym_series . $exam-
                     <p><?= $schoolTerm ? "Período letivo $schoolTerm · {$unity}ª unidade aberta" : 'Nenhum período letivo ativo' ?></p>
                 </div>
                 <div class="m-actions">
-                    <a href="/portal-docente/turmas" class="btn btn-primary"><i class="fas fa-users mr-2"></i>Minhas turmas</a>
+                    <a href="/portal-docente/chamada" class="btn btn-primary"><i class="fas fa-clipboard-check mr-2"></i>Fazer chamada</a>
+                    <a href="/portal-docente/turmas" class="btn btn-light"><i class="fas fa-users mr-2"></i>Minhas turmas</a>
                 </div>
             </div>
+
+            <a href="/portal-docente/chamada" class="card m-cta">
+                <span class="m-cta-icon"><i class="fas fa-bolt"></i></span>
+                <span class="m-cta-body">
+                    <strong>Chamada rápida</strong>
+                    <span>Todos começam presentes — toque só em quem faltou. Leva menos de 30 segundos.</span>
+                </span>
+                <span class="m-cta-go">Começar</span>
+            </a>
 
             <div class="m-kpis">
                 <div class="card m-kpi">

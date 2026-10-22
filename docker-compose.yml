@@ -15,6 +15,7 @@ services:
       - ./database/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
       - ./database/03_auth.sql:/docker-entrypoint-initdb.d/03_auth.sql:ro
       - ./database/04_indexes.sql:/docker-entrypoint-initdb.d/04_indexes.sql:ro
+      - ./database/05_chamada.sql:/docker-entrypoint-initdb.d/05_chamada.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${DB_USER:-mater} -d ${DB_NAME:-mater}"]

@@ -203,6 +203,158 @@ class TeacherPortalController extends Action
     }
 
 
+    /**
+     * Chamada rápida: todos começam presentes e o professor marca só quem faltou
+     */
+    public function attendance()
+    {
+
+        $Attendance = Container::getModel('TeacherStudent\\Attendance');
+        $Settings = Container::getModel('Admin\\Settings');
+
+        if (!isset($_SESSION)) session_start();
+
+        $this->view->disciplineClasses = $Attendance->disciplineClassesByTeacher($_SESSION['Teacher']['id']);
+        $this->view->openUnits = $this->openUnits($Settings);
+
+        $this->render('attendance', 'TeacherPortalLayout', 'teacherPortal');
+    }
+
+
+    /**
+     * JSON com os alunos da turma/disciplina e as faltas já lançadas na unidade
+     */
+    public function attendanceStudents()
+    {
+
+        header('Content-Type: application/json');
+
+        $Attendance = Container::getModel('TeacherStudent\\Attendance');
+        $Settings = Container::getModel('Admin\\Settings');
+
+        if (!isset($_SESSION)) session_start();
+
+        $disciplineClassId = (int) ($_GET['disciplineClass'] ?? 0);
+        $unity = (int) ($_GET['unity'] ?? 0);
+        $openUnits = $this->openUnits($Settings);
+
+        $disciplineClass = $Attendance->findForTeacher($disciplineClassId, $_SESSION['Teacher']['id']);
+
+        if (!$disciplineClass) {
+            http_response_code(404);
+            echo json_encode(['error' => 'turma-nao-encontrada']);
+            return;
+        }
+
+        if (!in_array($unity, $openUnits, true)) $unity = max($openUnits);
+
+        $students = array_map(function ($s) {
+            return [
+                'id' => (int) $s->enrollment_id,
+                'name' => $s->name,
+                'photo' => $s->photo,
+                'totalLack' => (int) $s->total_lack,
+            ];
+        }, $Attendance->students($disciplineClassId, $unity));
+
+        echo json_encode([
+            'unity' => $unity,
+            'doneTodayAt' => $disciplineClass->done_today_at,
+            'students' => $students,
+        ]);
+    }
+
+
+    /**
+     * Salva a chamada (POST JSON: disciplineClass, unity, lessons, absent[])
+     */
+    public function attendanceSave()
+    {
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        $Attendance = Container::getModel('TeacherStudent\\Attendance');
+        $Settings = Container::getModel('Admin\\Settings');
+
+        if (!isset($_SESSION)) session_start();
+
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $teacherId = (int) $_SESSION['Teacher']['id'];
+        $disciplineClassId = (int) ($input['disciplineClass'] ?? 0);
+        $unity = (int) ($input['unity'] ?? 0);
+        $lessons = (int) ($input['lessons'] ?? 1);
+        $absent = array_values(array_unique(array_map('intval', (array) ($input['absent'] ?? []))));
+
+        $disciplineClass = $Attendance->findForTeacher($disciplineClassId, $teacherId);
+
+        if (!$disciplineClass) {
+            http_response_code(404);
+            echo json_encode(['error' => 'turma-nao-encontrada']);
+            return;
+        }
+
+        if (!in_array($unity, $this->openUnits($Settings), true)) {
+            http_response_code(422);
+            echo json_encode(['error' => 'unidade-fechada']);
+            return;
+        }
+
+        if ($lessons < 1 || $lessons > 6) {
+            http_response_code(422);
+            echo json_encode(['error' => 'quantidade-aulas-invalida']);
+            return;
+        }
+
+        // só aceita matrículas que são realmente da turma
+        $enrolled = array_map(function ($s) { return (int) $s->enrollment_id; }, $Attendance->students($disciplineClassId, $unity));
+
+        if (array_diff($absent, $enrolled)) {
+            http_response_code(422);
+            echo json_encode(['error' => 'aluno-fora-da-turma']);
+            return;
+        }
+
+        try {
+            $id = $Attendance->save($disciplineClassId, $unity, $teacherId, $lessons, $absent, count($enrolled) - count($absent));
+        } catch (\Throwable $e) {
+            error_log('Chamada: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'falha-ao-salvar']);
+            return;
+        }
+
+        echo json_encode([
+            'id' => $id,
+            'present' => count($enrolled) - count($absent),
+            'absent' => count($absent),
+            'lessons' => $lessons,
+            'unity' => $unity,
+            'savedAt' => date('H:i'),
+        ]);
+    }
+
+
+    /**
+     * Unidades abertas para lançamento conforme a configuração (1 = só a 1ª, 2 = 1ª e 2ª, 3 = todas)
+     *
+     * @return int[]
+     */
+    private function openUnits($Settings)
+    {
+
+        $current = $Settings->unitControlCurrent();
+        $max = isset($current[0]) ? max(1, min(3, (int) $current[0]->option_value)) : 1;
+
+        return range(1, $max);
+    }
+
+
     public function exit()
     {
 

@@ -790,6 +790,24 @@ class Route extends Bootstrap
 			'action' => 'studentBasedFinalAverage'
 		);
 
+		$routes['attendanceTeacherPortal'] = array(
+			'route' => '/portal-docente/chamada',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'attendance'
+		);
+
+		$routes['attendanceStudentsTeacherPortal'] = array(
+			'route' => '/portal-docente/chamada/alunos',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'attendanceStudents'
+		);
+
+		$routes['attendanceSaveTeacherPortal'] = array(
+			'route' => '/portal-docente/chamada/salvar',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'attendanceSave'
+		);
+
 		$routes['exitTeacherPortal'] = array(
 			'route' => '/portal-docente/sair',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
