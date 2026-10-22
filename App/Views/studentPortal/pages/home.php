@@ -63,6 +63,10 @@ require __DIR__ . '../../../../config/variables.php';
                                 <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule">Horários</a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentGuardians"><i class="fas fa-shield-alt mr-1"></i> Portaria</a>
+                            </li>
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="studentDeclaracoesMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-file-contract mr-1"></i> Declarações
@@ -1100,6 +1104,56 @@ function currentDate($array)
 
                         </div>
 
+                    </div>
+
+                                <!-- SEÇÃO PORTARIA NO PORTAL DO ALUNO -->
+                    <div class="collapse mt-3" id="studentGuardians" data-parent="#studentPortal-accordion">
+                        <div class="row">
+                            <div class="col-lg-11 mx-auto main-content">
+                                <div class="m-page-head mt-3">
+                                    <div>
+                                        <h5>Portaria & Pessoas Autorizadas</h5>
+                                        <p>Lista de familiares e transporte escolar autorizados a retirar você no portão.</p>
+                                    </div>
+                                    <span class="m-pill m-pill-ok"><i class="fas fa-shield-alt mr-1"></i> Segurança Escolar</span>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <?php if (!empty($this->view->guardians)) { 
+                                        foreach ($this->view->guardians as $g) { 
+                                            $cleanPhone = preg_replace('/\D/', '', $g->telefone);
+                                        ?>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card p-3 h-100 shadow-sm border" style="border-radius: 12px; border-left: 4px solid <?= $g->autorizado_buscar ? '#16a34a' : '#dc2626' ?> !important;">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <h6 class="mb-0 font-weight-bold text-dark"><?= htmlspecialchars($g->nome) ?></h6>
+                                                            <span class="badge badge-light border mt-1"><?= htmlspecialchars($g->parentesco) ?></span>
+                                                        </div>
+                                                        <?php if ($g->autorizado_buscar) { ?>
+                                                            <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Autorizado</span>
+                                                        <?php } else { ?>
+                                                            <span class="badge badge-danger"><i class="fas fa-ban mr-1"></i> Não Autorizado</span>
+                                                        <?php } ?>
+                                                    </div>
+                                                    <div class="mt-2 small text-muted">
+                                                        <div><i class="fas fa-phone-alt mr-1 text-primary"></i> <?= htmlspecialchars($g->telefone) ?></div>
+                                                        <?php if (!empty($g->observacao_restricao)) { ?>
+                                                            <div class="mt-2 p-2 rounded bg-light border text-dark"><i class="fas fa-info-circle text-info mr-1"></i> <?= htmlspecialchars($g->observacao_restricao) ?></div>
+                                                        <?php } ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } 
+                                    } else { ?>
+                                        <div class="col-12 text-center py-5 text-muted">
+                                            <i class="fas fa-user-shield fa-2x mb-2 d-block"></i>
+                                            Nenhum responsável cadastrado para liberação na portaria.
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
             <div class="toast" id="toastContainer">

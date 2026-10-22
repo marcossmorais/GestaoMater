@@ -131,11 +131,18 @@ class AdminStudentController extends Action
         $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
         $enrollmentId = $this->view->studentDataEnrollment[0]->enrollment_id;
         $this->view->medicalCertificates = $MedicalCertificate->getByEnrollment($enrollmentId);
-        $this->view->absenceSummary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+        $this->view->absenceSummary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+
+
+
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+
+        $this->view->occurrences = $Occurrence->getByEnrollment($enrollmentId);
+
+        $this->view->occurrenceSummary = $Occurrence->getSummaryByEnrollment($enrollmentId);
 
-        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
-        $this->view->occurrences = $Occurrence->getByEnrollment($enrollmentId);
-        $this->view->occurrenceSummary = $Occurrence->getSummaryByEnrollment($enrollmentId);
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $this->view->guardians = $Guardian->getByStudent($this->view->studentDataEnrollment[0]->id);
 
         $this->render('student/components/modalStudentProfile', 'SimpleLayout');
     }
@@ -558,6 +565,97 @@ class AdminStudentController extends Action
         }
         $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
         $Occurrence->delete($id);
+        echo json_encode(['status' => 'success']);
+    }
+
+    public function listGuardians()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $studentId = (int) ($_GET['studentId'] ?? 0);
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        echo json_encode($Guardian->getByStudent($studentId));
+    }
+
+    public function saveGuardian()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        $studentId = (int) ($_POST['studentId'] ?? 0);
+        $name = trim($_POST['name'] ?? '');
+        $relationship = trim($_POST['relationship'] ?? 'Outro Autorizado');
+        $cpf = trim($_POST['cpf'] ?? '');
+        $rg = trim($_POST['rg'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $authorizedPickup = !empty($_POST['authorizedPickup']);
+        $financialResp = !empty($_POST['financialResp']);
+        $pedagogicalResp = !empty($_POST['pedagogicalResp']);
+        $obs = trim($_POST['observations'] ?? '');
+
+        if (!$studentId || !$name || !$phone) {
+            http_response_code(422);
+            echo json_encode(['error' => 'Preencha nome e telefone do responsável/autorizado.']);
+            return;
+        }
+
+        try {
+            $Guardian = Container::getModel('TeacherStudent\\Guardian');
+            $id = $Guardian->create([
+                'fk_id_aluno' => $studentId,
+                'nome' => $name,
+                'parentesco' => $relationship,
+                'cpf' => $cpf,
+                'rg' => $rg,
+                'telefone' => $phone,
+                'email' => $email,
+                'autorizado_buscar' => $authorizedPickup,
+                'responsavel_financeiro' => $financialResp,
+                'responsavel_pedagogico' => $pedagogicalResp,
+                'observacao_restricao' => $obs
+            ]);
+
+            echo json_encode(['status' => 'success', 'id' => $id, 'message' => 'Responsável registrado com sucesso!']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao salvar responsável: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteGuardian()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $Guardian->delete($id);
+        echo json_encode(['status' => 'success']);
+    }
+
+    public function toggleGuardianPickup()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $Guardian->toggleAuthorized($id);
         echo json_encode(['status' => 'success']);
     }
 }

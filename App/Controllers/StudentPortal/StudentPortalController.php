@@ -91,10 +91,16 @@ class StudentPortalController extends Action
 
         $this->view->listWarning = $ClasseWarning->readByIdClasse($Classe);
         $this->view->listNote = $Note->readByIdStudent();
-        $this->view->listObservation = $Observation->readByIdStudent();
+        $this->view->listObservation = $Observation->readByIdStudent();
+
+
+
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+
+        $this->view->listOccurrences = $Occurrence->getForPortal($_SESSION['Student']['enrollmentId']);
 
-        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
-        $this->view->listOccurrences = $Occurrence->getForPortal($_SESSION['Student']['enrollmentId']);
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $this->view->guardians = $Guardian->getByStudent($_SESSION['Student']['id']);
         $this->view->lackList = $Lack->readByIdStudent();
         $this->view->disciplineAverageList = $DisciplineAverage->readByIdStudent();
         $this->view->rematrugSituationList = $StudentRematrug->rematrugSituation();

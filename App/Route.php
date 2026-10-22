@@ -160,6 +160,30 @@ class Route extends Bootstrap
 			'action' => 'acknowledgeOccurrence'
 		);
 
+		$routes['adminListGuardians'] = array(
+			'route' => '/admin/aluno/responsaveis/listar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'listGuardians'
+		);
+
+		$routes['adminSaveGuardian'] = array(
+			'route' => '/admin/aluno/responsaveis/salvar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'saveGuardian'
+		);
+
+		$routes['adminDeleteGuardian'] = array(
+			'route' => '/admin/aluno/responsaveis/deletar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'deleteGuardian'
+		);
+
+		$routes['adminToggleGuardian'] = array(
+			'route' => '/admin/aluno/responsaveis/toggle',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'toggleGuardianPickup'
+		);
+
 		$routes['adminUpdateTeacherProfilePicture'] = array(
 			'route' => '/admin/professor/lista/perfil-professor/atualizar-foto',
 			'controller' => 'Admin\\AdminTeacherController',
