@@ -31,6 +31,7 @@ Inspirado nas melhores práticas de interfaces educacionais modernas (referênci
    * Selo tátil com alternância instantânea entre `Presente` e `Faltou` com micro-vibração háptica em dispositivos móveis.
 3. **Barra Fixa de Ação Instantânea:**
    * Contadores em tempo real: `X presentes` e `Y ausentes`.
+   * Seletor de data da aula (permite lançar chamadas de hoje ou retroativas com validação contra datas futuras).
    * Seletor de aulas seguidas (1 a 6 aulas com multiplicador automático de faltas).
    * Seletor rápido de unidade letiva aberta.
    * Filtro de busca de alunos por digitação instantânea sem recarga.

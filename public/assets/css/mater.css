@@ -464,6 +464,12 @@ html body .m-actions .btn { font-size: 13px !important; padding: 8px 14px !impor
 .m-stepper button { width: 38px; height: 38px; border: 0; background: transparent; color: var(--m-primary-text); cursor: pointer; }
 .m-stepper button:hover { background: var(--m-primary-soft); }
 .m-stepper output { min-width: 34px; text-align: center; font-weight: 700; font-size: 15px; color: var(--m-text); }
+input[type="date"].m-att-date-input {
+  height: 38px !important; min-height: 38px !important; padding: 0 10px !important; border-radius: 10px !important;
+  font-weight: 600; font-size: 13px; border: 1px solid var(--m-input-border) !important; background: var(--m-input-bg) !important;
+  color: var(--m-text) !important; width: 145px; cursor: pointer;
+}
+input[type="date"].m-att-date-input:focus { border-color: var(--m-primary) !important; box-shadow: var(--m-focus); }
 
 /* ---------- Passo 1: escolha da turma */
 .m-att-classes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }

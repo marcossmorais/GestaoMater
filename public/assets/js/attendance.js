@@ -14,7 +14,7 @@
     const saveButton = $('[data-att-save]');
     const searchInput = $('[data-att-search]');
 
-    const state = { cls: null, unity: null, lessons: 1, students: [], absent: new Set(), saving: false };
+    const state = { cls: null, unity: null, date: null, lessons: 1, students: [], absent: new Set(), saving: false };
 
     const errors = {
         'turma-nao-encontrada': 'Turma não encontrada para o seu usuário.',
@@ -71,6 +71,8 @@
         state.cls = cls;
         state.absent = new Set();
         state.lessons = 1;
+        const dateInput = $('[data-att-date]');
+        state.date = dateInput ? dateInput.value : new Date().toISOString().slice(0, 10);
         if (!keepUnity) state.unity = parseInt(($('[data-att-unity] .is-active') || {}).dataset?.value || '1', 10);
 
         $('[data-att-title]').textContent = `${cls.label} · ${cls.discipline}`;
@@ -83,7 +85,7 @@
         updateCounters();
 
         try {
-            const response = await fetch(`/portal-docente/chamada/alunos?disciplineClass=${cls.id}&unity=${state.unity}`, {
+            const response = await fetch(`/portal-docente/chamada/alunos?disciplineClass=${cls.id}&unity=${state.unity}&date=${encodeURIComponent(state.date)}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
             const data = await response.json();
@@ -95,7 +97,9 @@
 
             const warning = $('[data-att-warning]');
             if (data.doneTodayAt) {
-                warning.innerHTML = `<i class="fas fa-info-circle mr-2"></i>Você já fez a chamada desta turma hoje às <strong>${escapeHtml(data.doneTodayAt)}</strong>. Salvar de novo lança as faltas de mais uma aula.`;
+                const todayIso = new Date().toISOString().slice(0, 10);
+                const dayLabel = state.date === todayIso ? 'hoje' : `no dia ${state.date.split('-').reverse().join('/')}`;
+                warning.innerHTML = `<i class="fas fa-info-circle mr-2"></i>Você já fez a chamada desta turma ${dayLabel} às <strong>${escapeHtml(data.doneTodayAt)}</strong>. Salvar de novo lança as faltas de mais uma aula.`;
                 warning.hidden = false;
             } else {
                 warning.hidden = true;
@@ -199,6 +203,20 @@
         $$('[data-att-unity] button').forEach((b) => b.classList.toggle('is-active', parseInt(b.dataset.value, 10) === unity));
     }
 
+    // Data da aula
+    const dateInput = $('[data-att-date]');
+    if (dateInput) {
+        dateInput.addEventListener('change', () => {
+            if (!state.cls) return;
+            state.date = dateInput.value || new Date().toISOString().slice(0, 10);
+            const keepAbsent = new Set(state.absent);
+            openClass(state.cls.id, true).then(() => {
+                state.absent = keepAbsent;
+                render();
+            });
+        });
+    }
+
     // Aulas seguidas
     $$('[data-att-lessons]').forEach((button) => button.addEventListener('click', () => {
         state.lessons = Math.max(1, Math.min(6, state.lessons + parseInt(button.dataset.attLessons, 10)));
@@ -234,7 +252,13 @@
             const response = await fetch('/portal-docente/chamada/salvar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                body: JSON.stringify({ disciplineClass: state.cls.id, unity: state.unity, lessons: state.lessons, absent: Array.from(state.absent) })
+                body: JSON.stringify({
+                    disciplineClass: state.cls.id,
+                    unity: state.unity,
+                    date: state.date,
+                    lessons: state.lessons,
+                    absent: Array.from(state.absent)
+                })
             });
             const data = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(data.error || 'falha-ao-salvar');
@@ -260,9 +284,10 @@
         }
 
         const lessonsText = data.lessons > 1 ? ` (${data.lessons} aulas)` : '';
+        const dateStr = data.formattedDate || (state.date ? state.date.split('-').reverse().join('/') : '');
         $('[data-att-done-summary]').textContent = data.absent === 0
-            ? `${cls.label} · ${cls.discipline}: todos os ${data.present} alunos presentes${lessonsText}.`
-            : `${cls.label} · ${cls.discipline}: ${data.present} presentes e ${data.absent} ausente${data.absent > 1 ? 's' : ''}${lessonsText} na ${data.unity}ª unidade.`;
+            ? `${cls.label} · ${cls.discipline} (${dateStr}): todos os ${data.present} alunos presentes${lessonsText}.`
+            : `${cls.label} · ${cls.discipline} (${dateStr}): ${data.present} presentes e ${data.absent} ausente${data.absent > 1 ? 's' : ''}${lessonsText} na ${data.unity}ª unidade.`;
 
         const absentNames = state.students.filter((s) => state.absent.has(s.id));
         $('[data-att-done-list]').innerHTML = absentNames.map((s) =>

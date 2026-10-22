@@ -236,6 +236,11 @@ class TeacherPortalController extends Action
 
         $disciplineClassId = (int) ($_GET['disciplineClass'] ?? 0);
         $unity = (int) ($_GET['unity'] ?? 0);
+        $date = trim($_GET['date'] ?? '') ?: date('Y-m-d');
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $date = date('Y-m-d');
+        }
+
         $openUnits = $this->openUnits($Settings);
 
         $disciplineClass = $Attendance->findForTeacher($disciplineClassId, $_SESSION['Teacher']['id']);
@@ -257,16 +262,19 @@ class TeacherPortalController extends Action
             ];
         }, $Attendance->students($disciplineClassId, $unity));
 
+        $doneAtDate = $Attendance->doneAtDate($disciplineClassId, $date);
+
         echo json_encode([
             'unity' => $unity,
-            'doneTodayAt' => $disciplineClass->done_today_at,
+            'date' => $date,
+            'doneTodayAt' => $doneAtDate,
             'students' => $students,
         ]);
     }
 
 
     /**
-     * Salva a chamada (POST JSON: disciplineClass, unity, lessons, absent[])
+     * Salva a chamada (POST JSON: disciplineClass, unity, date, lessons, absent[])
      */
     public function attendanceSave()
     {
@@ -289,6 +297,11 @@ class TeacherPortalController extends Action
         $disciplineClassId = (int) ($input['disciplineClass'] ?? 0);
         $unity = (int) ($input['unity'] ?? 0);
         $lessons = (int) ($input['lessons'] ?? 1);
+        $date = trim($input['date'] ?? '') ?: date('Y-m-d');
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || $date > date('Y-m-d')) {
+            $date = date('Y-m-d');
+        }
+
         $absent = array_values(array_unique(array_map('intval', (array) ($input['absent'] ?? []))));
 
         $disciplineClass = $Attendance->findForTeacher($disciplineClassId, $teacherId);
@@ -321,7 +334,7 @@ class TeacherPortalController extends Action
         }
 
         try {
-            $id = $Attendance->save($disciplineClassId, $unity, $teacherId, $lessons, $absent, count($enrolled) - count($absent));
+            $id = $Attendance->save($disciplineClassId, $unity, $teacherId, $lessons, $absent, count($enrolled) - count($absent), $date);
         } catch (\Throwable $e) {
             error_log('Chamada: ' . $e->getMessage());
             http_response_code(500);
@@ -335,6 +348,8 @@ class TeacherPortalController extends Action
             'absent' => count($absent),
             'lessons' => $lessons,
             'unity' => $unity,
+            'date' => $date,
+            'formattedDate' => date('d/m/Y', strtotime($date)),
             'savedAt' => date('H:i'),
         ]);
     }

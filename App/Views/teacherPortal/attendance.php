@@ -89,6 +89,11 @@ $classesJson = array_map(function ($c) {
                     </div>
 
                     <div class="m-att-field">
+                        <span class="m-att-label">Data da aula</span>
+                        <input type="date" class="form-control m-att-date-input" data-att-date value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>">
+                    </div>
+
+                    <div class="m-att-field">
                         <span class="m-att-label">Aulas seguidas</span>
                         <div class="m-stepper">
                             <button type="button" data-att-lessons="-1" aria-label="Menos uma aula"><i class="fas fa-minus"></i></button>

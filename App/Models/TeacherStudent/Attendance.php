@@ -115,19 +115,41 @@ class Attendance extends Model
 
 
     /**
+     * Retorna o horário da última chamada feita em uma data específica para a turma (ou null)
+     */
+    public function doneAtDate($disciplineClassId, $date)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT TO_CHAR(MAX(chamada.criado_em), 'HH24:MI') FROM chamada
+             WHERE chamada.fk_id_turma_disciplina = :id AND chamada.data_aula = :date"
+        );
+
+        $stmt->bindValue(':id', (int) $disciplineClassId, \PDO::PARAM_INT);
+        $stmt->bindValue(':date', $date);
+        $stmt->execute();
+
+        return $stmt->fetchColumn() ?: null;
+    }
+
+
+    /**
      * Grava a chamada: soma as faltas dos ausentes e registra o histórico, tudo em uma transação
      *
-     * @param int   $disciplineClassId
-     * @param int   $unity
-     * @param int   $teacherId
-     * @param int   $lessons            aulas seguidas (cada ausente recebe essa quantidade de faltas)
-     * @param int[] $absentEnrollments  matrículas ausentes (já validadas como pertencentes à turma)
-     * @param int   $presentTotal
+     * @param int         $disciplineClassId
+     * @param int         $unity
+     * @param int         $teacherId
+     * @param int         $lessons            aulas seguidas (cada ausente recebe essa quantidade de faltas)
+     * @param int[]       $absentEnrollments  matrículas ausentes (já validadas como pertencentes à turma)
+     * @param int         $presentTotal
+     * @param string|null $lessonDate         data da aula (YYYY-MM-DD), padrão hoje
      *
      * @return int id da chamada
      */
-    public function save($disciplineClassId, $unity, $teacherId, $lessons, array $absentEnrollments, $presentTotal)
+    public function save($disciplineClassId, $unity, $teacherId, $lessons, array $absentEnrollments, $presentTotal, $lessonDate = null)
     {
+
+        $date = ($lessonDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $lessonDate)) ? $lessonDate : date('Y-m-d');
 
         $this->db->beginTransaction();
 
@@ -162,9 +184,9 @@ class Attendance extends Model
 
             $log = $this->db->prepare(
                 "INSERT INTO chamada
-                    (fk_id_turma_disciplina, fk_id_unidade, fk_id_professor, quantidade_aulas, total_presentes, total_ausentes, matriculas_ausentes)
+                    (fk_id_turma_disciplina, fk_id_unidade, fk_id_professor, data_aula, quantidade_aulas, total_presentes, total_ausentes, matriculas_ausentes)
                  VALUES
-                    (:disciplineClass, :unity, :teacher, :lessons, :present, :absent, :absentList)
+                    (:disciplineClass, :unity, :teacher, :dataAula, :lessons, :present, :absent, :absentList)
                  RETURNING id_chamada"
             );
 
@@ -172,6 +194,7 @@ class Attendance extends Model
                 ':disciplineClass' => (int) $disciplineClassId,
                 ':unity' => (int) $unity,
                 ':teacher' => (int) $teacherId,
+                ':dataAula' => $date,
                 ':lessons' => (int) $lessons,
                 ':present' => (int) $presentTotal,
                 ':absent' => count($absentEnrollments),
