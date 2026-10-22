@@ -91,7 +91,10 @@ class StudentPortalController extends Action
 
         $this->view->listWarning = $ClasseWarning->readByIdClasse($Classe);
         $this->view->listNote = $Note->readByIdStudent();
-        $this->view->listObservation = $Observation->readByIdStudent();
+        $this->view->listObservation = $Observation->readByIdStudent();
+
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+        $this->view->listOccurrences = $Occurrence->getForPortal($_SESSION['Student']['enrollmentId']);
         $this->view->lackList = $Lack->readByIdStudent();
         $this->view->disciplineAverageList = $DisciplineAverage->readByIdStudent();
         $this->view->rematrugSituationList = $StudentRematrug->rematrugSituation();
@@ -252,5 +255,20 @@ class StudentPortalController extends Action
         $this->view->authCode = 'MATER-' . date('Y') . '-' . strtoupper(substr(md5($enrollmentId . date('Ymd')), 0, 8));
 
         require __DIR__ . '/../../Views/admin/student/declarations/declaration.php';
+    }
+
+    public function acknowledgeOccurrence()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+        $Occurrence->acknowledge($id);
+        echo json_encode(['status' => 'success']);
     }
 }

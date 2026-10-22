@@ -78,6 +78,10 @@ require __DIR__ . '../../../../../config/variables.php';
                                                 <span class="box-icon"><i class="fas fa-file-medical mr-3"></i></span> Atestados & Abono
                                             </a>
 
+                                            <a class="collapsed" href="#" data-toggle="collapse" aria-expanded="false" data-target="#class-profile-occurrence">
+                                                <span class="box-icon"><i class="fas fa-exclamation-triangle mr-3"></i></span> Ocorrências
+                                            </a>
+
                                             <a class="collapsed" href="#" data-toggle="collapse" aria-expanded="false" data-target="#class-profile-disciplineFinalData">
                                                 <span class="box-icon"><i class="fab fa-buffer mr-3"></i></span> Média final
                                             </a>
@@ -1510,6 +1514,227 @@ require __DIR__ . '../../../../../config/variables.php';
 
 
 
+            <!-- SEÇÃO DE OCORRÊNCIAS DISCIPLINARES E PEDAGÓGICAS -->
+            <div class="col-lg-11 mx-auto collapse" id="class-profile-occurrence" data-parent="#main-accordion-student">
+
+                <div class="accordion" id="accordion-occurrence">
+
+                    <div class="col-lg-12 mb-3">
+                        <div class="row d-flex align-items-center p-0">
+                            <div class="col-lg-6 p-0">
+                                <h5 class="mt-2"><i class="fas fa-exclamation-triangle text-warning mr-2"></i>Ocorrências & Elogios</h5>
+                            </div>
+                            <div class="col-lg-6 col-12 p-0">
+                                <div class="row collapse-options-container">
+                                    <a class="font-weight-bold" aria-expanded="true" data-toggle="collapse" data-target="#occurrence-list">
+                                        <span><i class="fas fa-list mr-2"></i>Registros</span>
+                                    </a>
+                                    <a class="collapsed font-weight-bold text-success" aria-expanded="false" data-toggle="collapse" data-target="#occurrence-add">
+                                        <span><i class="fas fa-plus-circle mr-2"></i>Nova Ocorrência</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumo das Ocorrências -->
+                    <?php 
+                    $occSum = $this->view->occurrenceSummary ?? (object)['total' => 0, 'disciplinares' => 0, 'pedagogicas' => 0, 'elogios' => 0]; 
+                    ?>
+                    <div class="col-lg-12 p-0 mb-3" id="occurrenceSummaryCards">
+                        <div class="row">
+                            <div class="col-md-3 col-6 mb-2">
+                                <div class="card p-3 border text-center shadow-sm" style="border-radius: 12px; background: var(--m-surface);">
+                                    <small class="text-muted font-weight-bold">Total Registrado</small>
+                                    <h3 class="mb-0 text-secondary font-weight-bold mt-1" data-sum-occ-total><?= $occSum->total ?></h3>
+                                    <small class="text-muted">histórico geral</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-2">
+                                <div class="card p-3 border text-center shadow-sm" style="border-radius: 12px; background: rgba(234, 179, 8, .08); border-color: rgba(234, 179, 8, .2) !important;">
+                                    <small class="text-warning font-weight-bold"><i class="fas fa-user-times mr-1"></i>Disciplinares</small>
+                                    <h3 class="mb-0 text-warning font-weight-bold mt-1" data-sum-occ-disc><?= $occSum->disciplinares ?></h3>
+                                    <small class="text-muted">comportamentais</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-2">
+                                <div class="card p-3 border text-center shadow-sm" style="border-radius: 12px; background: rgba(59, 130, 246, .08); border-color: rgba(59, 130, 246, .2) !important;">
+                                    <small class="text-primary font-weight-bold"><i class="fas fa-book-reader mr-1"></i>Pedagógicas</small>
+                                    <h3 class="mb-0 text-primary font-weight-bold mt-1" data-sum-occ-ped><?= $occSum->pedagogicas ?></h3>
+                                    <small class="text-muted">desempenho/tarefas</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-2">
+                                <div class="card p-3 border text-center shadow-sm" style="border-radius: 12px; background: rgba(22, 163, 74, .08); border-color: rgba(22, 163, 74, .2) !important;">
+                                    <small class="text-success font-weight-bold"><i class="fas fa-award mr-1"></i>Elogios / Méritos</small>
+                                    <h3 class="mb-0 text-success font-weight-bold mt-1" data-sum-occ-elog><?= $occSum->elogios ?></h3>
+                                    <small class="text-success">reconhecimentos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 p-0">
+
+                        <!-- LISTA DE OCORRÊNCIAS -->
+                        <div class="collapse show" id="occurrence-list" data-parent="#accordion-occurrence">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped" id="tableOccurrences">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Categoria</th>
+                                            <th>Título / Descrição</th>
+                                            <th>Gravidade</th>
+                                            <th>Medida Adotada</th>
+                                            <th>Ciência Pais</th>
+                                            <th>Autor</th>
+                                            <th class="text-center">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="containerOccurrences">
+                                        <?php if (!empty($this->view->occurrences)) { 
+                                            foreach ($this->view->occurrences as $occ) { 
+                                                $badgeCat = 'badge-secondary';
+                                                if ($occ->categoria === 'Elogio') $badgeCat = 'badge-success';
+                                                else if ($occ->categoria === 'Pedagógica') $badgeCat = 'badge-primary';
+                                                else if ($occ->categoria === 'Disciplinar') $badgeCat = 'badge-warning text-dark';
+                                                else if ($occ->categoria === 'Saúde') $badgeCat = 'badge-info';
+                                            ?>
+                                                <tr data-occ-id="<?= $occ->id_ocorrencia ?>">
+                                                    <td><strong><?= $occ->data_ocorrencia_fmt ?></strong></td>
+                                                    <td><span class="badge <?= $badgeCat ?>"><?= $occ->categoria ?></span></td>
+                                                    <td>
+                                                        <strong class="text-dark"><?= htmlspecialchars($occ->titulo) ?></strong><br>
+                                                        <small class="text-muted"><?= htmlspecialchars($occ->descricao) ?></small>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge <?= $occ->gravidade === 'Alta' || $occ->gravidade === 'Gravíssima' ? 'badge-danger' : ($occ->gravidade === 'Média' ? 'badge-warning' : 'badge-light border') ?>">
+                                                            <?= $occ->gravidade ?>
+                                                        </span>
+                                                    </td>
+                                                    <td><small><?= htmlspecialchars($occ->medida_tomada ?: 'Nenhuma') ?></small></td>
+                                                    <td>
+                                                        <?php if ($occ->requer_ciencia) { ?>
+                                                            <?php if ($occ->ciencia_responsavel) { ?>
+                                                                <span class="badge badge-success"><i class="fas fa-check mr-1"></i> Ciente</span><br>
+                                                                <small class="text-muted"><?= $occ->ciencia_em_fmt ?></small>
+                                                            <?php } else { ?>
+                                                                <span class="badge badge-warning text-dark"><i class="fas fa-clock mr-1"></i> Pendente</span>
+                                                            <?php } ?>
+                                                        <?php } else { ?>
+                                                            <small class="text-muted">Informativo</small>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td><small class="text-muted"><?= htmlspecialchars($occ->registrado_por) ?></small></td>
+                                                    <td class="text-center">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteOccurrence(<?= $occ->id_ocorrencia ?>)" title="Excluir ocorrência">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php } 
+                                        } else { ?>
+                                            <tr id="emptyOccurrencesRow">
+                                                <td colspan="8" class="text-center py-4 text-muted">
+                                                    <i class="fas fa-clipboard-check fa-2x mb-2 d-block text-secondary"></i>
+                                                    Nenhuma ocorrência registrada para este aluno.
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- FORMULÁRIO DE CADASTRO DE OCORRÊNCIA -->
+                        <div class="collapse card p-4 shadow-sm" id="occurrence-add" data-parent="#accordion-occurrence" style="border-radius: 12px;">
+                            <h6 class="font-weight-bold text-primary mb-3"><i class="fas fa-plus-circle mr-2"></i>Registrar Nova Ocorrência ou Elogio</h6>
+                            <form id="formOccurrence">
+                                <input type="hidden" name="enrollmentId" value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>">
+                                <input type="hidden" name="studentId" value="<?= $this->view->studentDataEnrollment[0]->id ?>">
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label class="font-weight-bold">Categoria *</label>
+                                        <select class="form-control custom-select" name="category" required>
+                                            <option value="Disciplinar">Disciplinar (Comportamento)</option>
+                                            <option value="Pedagógica">Pedagógica (Atividades/Material)</option>
+                                            <option value="Elogio">Elogio / Reconhecimento</option>
+                                            <option value="Saúde">Saúde / Encaminhamento</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label class="font-weight-bold">Gravidade *</label>
+                                        <select class="form-control custom-select" name="severity" required>
+                                            <option value="Baixa">Baixa (Informativa / Leve)</option>
+                                            <option value="Média" selected>Média (Advertência / Orientação)</option>
+                                            <option value="Alta">Alta (Grave / Advertência Escrita)</option>
+                                            <option value="Gravíssima">Gravíssima (Convocação / Suspensão)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label class="font-weight-bold">Data do Fato *</label>
+                                        <input type="date" class="form-control" name="date" value="<?= date('Y-m-d') ?>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Título da Ocorrência *</label>
+                                    <input type="text" class="form-control" name="title" placeholder="Ex: Uso indevido de celular durante a aula de Física" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Descrição dos Fatos *</label>
+                                    <textarea class="form-control" name="description" rows="3" placeholder="Descreva com detalhes o que aconteceu, contexto e alunos envolvidos..." required></textarea>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Medida Adotada / Providência</label>
+                                        <input type="text" class="form-control" name="measure" placeholder="Ex: Orientação verbal em sala e notificação aos responsáveis">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Disciplina Relacionada (Opcional)</label>
+                                        <select class="form-control custom-select" name="disciplineClass">
+                                            <option value="">Geral / Sem disciplina específica</option>
+                                            <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
+                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row mt-2">
+                                    <div class="col-md-6">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="occVisible" name="visible" value="1" checked>
+                                            <label class="custom-control-label font-weight-bold" for="occVisible">Tornar visível no Portal do Aluno e Responsáveis</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="occReqAck" name="requireAck" value="1">
+                                            <label class="custom-control-label font-weight-bold text-danger" for="occReqAck">Exigir confirmação de ciência digital dos responsáveis</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end align-items-center mt-4">
+                                    <button type="button" class="btn btn-light mr-2" data-toggle="collapse" data-target="#occurrence-list">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary font-weight-bold" id="btnSaveOccurrence">
+                                        <i class="fas fa-save mr-1"></i> Registrar Ocorrência
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
             <div class="col-lg-11 mx-auto collapse" id="class-student-profile-average" data-parent="#main-accordion-student">
 
                 <div class="col-lg-12 mb-3">
@@ -1889,6 +2114,156 @@ require __DIR__ . '../../../../../config/variables.php';
                         </td>
                     </tr>
                 `).join('');
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    })();
+</script>
+
+<script>
+    // Gerenciamento de Ocorrências no Perfil do Aluno
+    (function () {
+        const form = document.getElementById('formOccurrence');
+
+        if (form) {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const btn = document.getElementById('btnSaveOccurrence');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Salvando...';
+
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch('/admin/aluno/ocorrencias/salvar', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const res = await response.json();
+
+                    if (!response.ok || res.status !== 'success') {
+                        throw new Error(res.error || 'Erro ao registrar ocorrência.');
+                    }
+
+                    if (typeof tools !== 'undefined' && typeof tools.showToast === 'function') {
+                        tools.showToast('Ocorrência registrada com sucesso!', 'bg-success');
+                    } else {
+                        alert('Ocorrência registrada com sucesso!');
+                    }
+
+                    const enrollmentId = form.querySelector('[name="enrollmentId"]').value;
+                    await reloadOccurrences(enrollmentId);
+
+                    form.reset();
+
+                    if (window.jQuery) {
+                        window.jQuery('#occurrence-list').collapse('show');
+                        window.jQuery('#occurrence-add').collapse('hide');
+                    }
+
+                } catch (err) {
+                    alert(err.message || 'Erro ao registrar ocorrência.');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save mr-1"></i> Registrar Ocorrência';
+                }
+            });
+        }
+
+        window.deleteOccurrence = async function (id) {
+            if (!confirm('Deseja realmente excluir esta ocorrência?')) return;
+
+            try {
+                const formData = new FormData();
+                formData.append('id', id);
+
+                const response = await fetch('/admin/aluno/ocorrencias/deletar', {
+                    method: 'POST',
+                    body: formData
+                });
+                const res = await response.json();
+
+                if (!response.ok || res.status !== 'success') {
+                    throw new Error(res.error || 'Erro ao excluir ocorrência.');
+                }
+
+                if (typeof tools !== 'undefined' && typeof tools.showToast === 'function') {
+                    tools.showToast('Ocorrência excluída com sucesso!', 'bg-info');
+                }
+
+                const enrollmentInput = document.querySelector('#formOccurrence [name="enrollmentId"]');
+                if (enrollmentInput) {
+                    await reloadOccurrences(enrollmentInput.value);
+                }
+
+            } catch (err) {
+                alert(err.message || 'Erro ao excluir ocorrência.');
+            }
+        };
+
+        async function reloadOccurrences(enrollmentId) {
+            try {
+                const response = await fetch('/admin/aluno/ocorrencias/listar?enrollmentId=' + enrollmentId);
+                const data = await response.json();
+
+                if (data.summary) {
+                    const sum = data.summary;
+                    const elTotal = document.querySelector('[data-sum-occ-total]');
+                    const elDisc = document.querySelector('[data-sum-occ-disc]');
+                    const elPed = document.querySelector('[data-sum-occ-ped]');
+                    const elElog = document.querySelector('[data-sum-occ-elog]');
+                    if (elTotal) elTotal.textContent = sum.total;
+                    if (elDisc) elDisc.textContent = sum.disciplinares;
+                    if (elPed) elPed.textContent = sum.pedagogicas;
+                    if (elElog) elElog.textContent = sum.elogios;
+                }
+
+                const tbody = document.getElementById('containerOccurrences');
+                if (!tbody) return;
+
+                if (!data.occurrences || data.occurrences.length === 0) {
+                    tbody.innerHTML = `<tr id="emptyOccurrencesRow">
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            <i class="fas fa-clipboard-check fa-2x mb-2 d-block text-secondary"></i>
+                            Nenhuma ocorrência registrada para este aluno.
+                        </td>
+                    </tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.occurrences.map(o => {
+                    let badgeCat = 'badge-secondary';
+                    if (o.categoria === 'Elogio') badgeCat = 'badge-success';
+                    else if (o.categoria === 'Pedagógica') badgeCat = 'badge-primary';
+                    else if (o.categoria === 'Disciplinar') badgeCat = 'badge-warning text-dark';
+                    else if (o.categoria === 'Saúde') badgeCat = 'badge-info';
+
+                    let badgeSev = o.gravidade === 'Alta' || o.gravidade === 'Gravíssima' ? 'badge-danger' : (o.gravidade === 'Média' ? 'badge-warning' : 'badge-light border');
+
+                    let cienciaHtml = o.requer_ciencia 
+                        ? (o.ciencia_responsavel ? `<span class="badge badge-success"><i class="fas fa-check mr-1"></i> Ciente</span><br><small class="text-muted">${o.ciencia_em_fmt || ''}</small>` : '<span class="badge badge-warning text-dark"><i class="fas fa-clock mr-1"></i> Pendente</span>')
+                        : '<small class="text-muted">Informativo</small>';
+
+                    return `
+                    <tr data-occ-id="${o.id_ocorrencia}">
+                        <td><strong>${o.data_ocorrencia_fmt}</strong></td>
+                        <td><span class="badge ${badgeCat}">${o.categoria}</span></td>
+                        <td>
+                            <strong class="text-dark">${o.titulo}</strong><br>
+                            <small class="text-muted">${o.descricao}</small>
+                        </td>
+                        <td><span class="badge ${badgeSev}">${o.gravidade}</span></td>
+                        <td><small>${o.medida_tomada || 'Nenhuma'}</small></td>
+                        <td>${cienciaHtml}</td>
+                        <td><small class="text-muted">${o.registrado_por || ''}</small></td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteOccurrence(${o.id_ocorrencia})" title="Excluir ocorrência">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                }).join('');
 
             } catch (e) {
                 console.error(e);

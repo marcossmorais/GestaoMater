@@ -136,6 +136,30 @@ class Route extends Bootstrap
 			'action' => 'declarationAttendance'
 		);
 
+		$routes['adminListOccurrences'] = array(
+			'route' => '/admin/aluno/ocorrencias/listar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'listOccurrences'
+		);
+
+		$routes['adminSaveOccurrence'] = array(
+			'route' => '/admin/aluno/ocorrencias/salvar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'saveOccurrence'
+		);
+
+		$routes['adminDeleteOccurrence'] = array(
+			'route' => '/admin/aluno/ocorrencias/deletar',
+			'controller' => 'Admin\\AdminStudentController',
+			'action' => 'deleteOccurrence'
+		);
+
+		$routes['studentAcknowledgeOccurrence'] = array(
+			'route' => '/portal-aluno/ocorrencias/dar-ciencia',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'acknowledgeOccurrence'
+		);
+
 		$routes['adminUpdateTeacherProfilePicture'] = array(
 			'route' => '/admin/professor/lista/perfil-professor/atualizar-foto',
 			'controller' => 'Admin\\AdminTeacherController',

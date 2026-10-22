@@ -131,7 +131,11 @@ class AdminStudentController extends Action
         $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
         $enrollmentId = $this->view->studentDataEnrollment[0]->enrollment_id;
         $this->view->medicalCertificates = $MedicalCertificate->getByEnrollment($enrollmentId);
-        $this->view->absenceSummary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+        $this->view->absenceSummary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
+
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+        $this->view->occurrences = $Occurrence->getByEnrollment($enrollmentId);
+        $this->view->occurrenceSummary = $Occurrence->getSummaryByEnrollment($enrollmentId);
 
         $this->render('student/components/modalStudentProfile', 'SimpleLayout');
     }
@@ -471,5 +475,89 @@ class AdminStudentController extends Action
         $this->view->authCode = 'MATER-' . date('Y') . '-' . strtoupper(substr(md5($enrollmentId . date('Ymd')), 0, 8));
 
         require __DIR__ . '/../../Views/admin/student/declarations/declaration.php';
+    }
+
+    public function listOccurrences()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $enrollmentId = (int) ($_GET['enrollmentId'] ?? 0);
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+        echo json_encode([
+            'occurrences' => $Occurrence->getByEnrollment($enrollmentId),
+            'summary' => $Occurrence->getSummaryByEnrollment($enrollmentId)
+        ]);
+    }
+
+    public function saveOccurrence()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        $enrollmentId = (int) ($_POST['enrollmentId'] ?? 0);
+        $studentId = (int) ($_POST['studentId'] ?? 0);
+        $category = trim($_POST['category'] ?? 'Disciplinar');
+        $title = trim($_POST['title'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $severity = trim($_POST['severity'] ?? 'Média');
+        $measure = trim($_POST['measure'] ?? '');
+        $disciplineClass = !empty($_POST['disciplineClass']) ? (int) $_POST['disciplineClass'] : null;
+        $date = trim($_POST['date'] ?? '') ?: date('Y-m-d');
+        $visible = !empty($_POST['visible']);
+        $reqAck = !empty($_POST['requireAck']);
+
+        if (!$enrollmentId || !$studentId || !$title || !$description) {
+            http_response_code(422);
+            echo json_encode(['error' => 'Preencha título e descrição da ocorrência.']);
+            return;
+        }
+
+        $registeredBy = isset($_SESSION['Admin']) 
+            ? ($_SESSION['Admin']['name'] ?? 'Coordenação Pedagógica') 
+            : (isset($_SESSION['Teacher']) ? $_SESSION['Teacher']['name'] : 'Coordenação Pedagógica');
+
+        try {
+            $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+            $id = $Occurrence->create([
+                'fk_id_matricula' => $enrollmentId,
+                'fk_id_aluno' => $studentId,
+                'fk_id_turma_disciplina' => $disciplineClass,
+                'categoria' => $category,
+                'titulo' => $title,
+                'descricao' => $description,
+                'gravidade' => $severity,
+                'medida_tomada' => $measure,
+                'visivel_responsavel' => $visible,
+                'requer_ciencia' => $reqAck,
+                'registrado_por' => $registeredBy,
+                'data_ocorrencia' => $date
+            ]);
+
+            echo json_encode(['status' => 'success', 'id' => $id, 'message' => 'Ocorrência registrada com sucesso!']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao salvar ocorrência: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteOccurrence()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id) {
+            http_response_code(422);
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+        $Occurrence->delete($id);
+        echo json_encode(['status' => 'success']);
     }
 }
