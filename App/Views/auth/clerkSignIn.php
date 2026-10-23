@@ -61,6 +61,10 @@ $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
             retry.onclick = async () => { await window.Clerk.signOut(); location.reload(); };
             statusBox.appendChild(retry);
             statusBox.hidden = false;
+
+            // limpa o "Entrando…" e monta o Clerk para permitir trocar de conta
+            const target = document.getElementById('clerk-sign-in');
+            target.innerHTML = '';
         }
 
         async function openSession() {
