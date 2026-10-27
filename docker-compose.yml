@@ -22,6 +22,7 @@ services:
       - ./database/09_responsaveis_portaria.sql:/docker-entrypoint-initdb.d/09_responsaveis_portaria.sql:ro
       - ./database/10_auditoria.sql:/docker-entrypoint-initdb.d/10_auditoria.sql:ro
       - ./database/11_etapa_turma.sql:/docker-entrypoint-initdb.d/11_etapa_turma.sql:ro
+      - ./database/12_diario_aula.sql:/docker-entrypoint-initdb.d/12_diario_aula.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro

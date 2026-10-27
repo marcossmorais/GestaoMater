@@ -16,11 +16,11 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 ## 2. Portal Docente
 - [x] Chamada rápida por carômetro
 - [x] Grade de horários
-- [x] Anos Iniciais: seleção de disciplinas na chamada · [ ] observação/atividade (Fase 3)
+- [x] Anos Iniciais: seleção de disciplinas na chamada e no diário
 - [x] Ensino Médio: edição restrita à própria disciplina · [ ] tela de visão geral da turma (`TeacherAccess::canViewClass` pronto; tela com notas na Fase 4)
-- [ ] **Diário**: habilidade BNCC (texto) + observação da aula
-- [ ] **Atividades da aula**: Aula Teórica, Documentário, Questionário, Revisão, outros
-- [ ] **Troca de professor/matéria** no meio da aula (exceção registrada)
+- [x] **Diário** (`/portal-docente/diario`, `database/12_diario_aula.sql`): habilidade BNCC (texto + código validado) + observação, vinculado à chamada do dia
+- [x] **Atividades da aula**: teórica, documentário, questionário, revisão, prática, avaliação, outro
+- [x] **Troca de professor/matéria** na aula: substituto e/ou matéria dada, motivo obrigatório, auditado
 - [ ] **Lançamento de notas** facilitado (mobile)
 - [ ] **Roteiro de provas**: publicar conteúdo de avaliação + desempenho por aluno
 - [ ] **Quadro de avisos da turma**, fixar até 3
