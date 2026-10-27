@@ -1,226 +1,31 @@
-TRUNCATE TABLE grade_horario RESTART IDENTITY;
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 8, 2, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 7, 2, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 6, 2, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 5, 2, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 8, 2, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 4, 3, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 5, 3, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 2, 3, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 3, 3, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 2, 3, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 4, 4, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 2, 4, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 7, 4, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 12, 4, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 1, 4, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 6, 5, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 3, 5, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 1, 5, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 1, 5, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 11, 5, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 2, 6, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 10, 6, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 9, 6, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 1, 6, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (1, 9, 6, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 13, 2, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 14, 2, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 14, 2, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 13, 2, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 15, 2, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 18, 3, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 15, 3, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 19, 3, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 14, 3, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 23, 3, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 21, 4, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 20, 4, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 22, 4, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 20, 4, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 18, 4, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 16, 5, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 13, 5, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 21, 5, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 24, 5, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 19, 5, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 16, 6, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 17, 6, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 13, 6, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 14, 6, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (2, 17, 6, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 43, 2, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 48, 2, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 44, 2, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 45, 2, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 45, 2, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 38, 3, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 42, 3, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 37, 3, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 37, 3, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 46, 3, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 41, 4, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 40, 4, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 37, 4, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 42, 4, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 38, 4, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 37, 5, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 38, 5, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 39, 5, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 38, 5, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 40, 5, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 39, 6, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 47, 6, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 41, 6, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 43, 6, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (4, 44, 6, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 53, 2, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 56, 2, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 51, 2, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 60, 2, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 50, 2, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 49, 3, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 57, 3, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 53, 3, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 54, 3, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 55, 3, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 49, 4, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 55, 4, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 50, 4, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 52, 4, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 51, 4, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 56, 5, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 58, 5, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 50, 5, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 59, 5, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 54, 5, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 49, 6, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 57, 6, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 50, 6, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 52, 6, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (5, 49, 6, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 83, 2, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 76, 2, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 81, 2, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 80, 2, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 74, 2, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 77, 3, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 73, 3, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 76, 3, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 79, 3, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 84, 3, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 74, 4, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 77, 4, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 74, 4, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 75, 4, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 81, 4, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 75, 5, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 78, 5, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 74, 5, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 73, 5, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 73, 5, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 79, 6, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 80, 6, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 78, 6, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 82, 6, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (7, 73, 6, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 87, 2, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 89, 2, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 85, 2, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 86, 2, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 88, 2, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 94, 3, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 91, 3, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 93, 3, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 85, 3, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 87, 3, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 91, 4, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 90, 4, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 96, 4, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 86, 4, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 92, 4, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 89, 5, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 93, 5, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 92, 5, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 88, 5, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 86, 5, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 86, 6, 1);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 90, 6, 2);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 85, 6, 3);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 85, 6, 4);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (8, 95, 6, 5);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 26, 2, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 33, 2, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 25, 2, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 27, 2, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 29, 2, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 28, 3, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 34, 3, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 25, 3, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 30, 3, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 27, 3, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 36, 4, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 28, 4, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 31, 4, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 30, 4, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 26, 4, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 25, 5, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 29, 5, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 26, 5, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 32, 5, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 31, 5, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 32, 6, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 25, 6, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 26, 6, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 33, 6, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (3, 35, 6, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 68, 2, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 64, 2, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 63, 2, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 61, 2, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 70, 2, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 61, 3, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 65, 3, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 68, 3, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 69, 3, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 72, 3, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 63, 4, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 65, 4, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 66, 4, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 64, 4, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 67, 4, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 67, 5, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 62, 5, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 69, 5, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 66, 5, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 62, 5, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 62, 6, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 71, 6, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 62, 6, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 61, 6, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (6, 61, 6, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 97, 2, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 104, 2, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 98, 2, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 108, 2, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 97, 2, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 98, 3, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 99, 3, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 106, 3, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 100, 3, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 103, 3, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 101, 4, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 97, 4, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 99, 4, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 98, 4, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 104, 4, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 102, 5, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 105, 5, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 101, 5, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 100, 5, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 97, 5, 10);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 102, 6, 6);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 98, 6, 7);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 103, 6, 8);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 107, 6, 9);
-INSERT INTO grade_horario (fk_id_turma, fk_id_turma_disciplina, dia_semana, fk_id_horario_aula) VALUES (9, 105, 6, 10);
+-- Mater — Migração 06: Grade de horários semanal
+CREATE TABLE IF NOT EXISTS horario_aula (
+  id_horario_aula SERIAL PRIMARY KEY,
+  ordem_aula INTEGER NOT NULL,
+  hora_inicio TIME NOT NULL,
+  hora_fim TIME NOT NULL
+);
+
+INSERT INTO horario_aula (id_horario_aula, ordem_aula, hora_inicio, hora_fim) VALUES
+  (1, 1, '07:00', '07:50'),
+  (2, 2, '07:50', '08:40'),
+  (3, 3, '08:40', '09:30'),
+  (4, 4, '09:50', '10:40'),
+  (5, 5, '10:40', '11:30'),
+  (6, 1, '13:00', '13:50'),
+  (7, 2, '13:50', '14:40'),
+  (8, 3, '14:40', '15:30'),
+  (9, 4, '15:50', '16:40'),
+  (10, 5, '16:40', '17:30')
+ON CONFLICT DO NOTHING;
+SELECT setval(pg_get_serial_sequence('horario_aula', 'id_horario_aula'), (SELECT MAX(id_horario_aula) FROM horario_aula));
+
+CREATE TABLE IF NOT EXISTS grade_horario (
+  id_grade_horario SERIAL PRIMARY KEY,
+  fk_id_turma INTEGER NOT NULL REFERENCES turma(id_turma) ON UPDATE CASCADE ON DELETE CASCADE,
+  fk_id_turma_disciplina INTEGER NOT NULL REFERENCES turma_disciplina(id_turma_disciplina) ON UPDATE CASCADE ON DELETE CASCADE,
+  dia_semana INTEGER NOT NULL CHECK (dia_semana BETWEEN 1 AND 7),
+  fk_id_horario_aula INTEGER NOT NULL REFERENCES horario_aula(id_horario_aula) ON UPDATE CASCADE ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_grade_horario_turma ON grade_horario (fk_id_turma);
+CREATE INDEX IF NOT EXISTS idx_grade_horario_td ON grade_horario (fk_id_turma_disciplina);
