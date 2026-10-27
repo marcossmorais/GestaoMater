@@ -38,6 +38,8 @@ jobs:
         run: |
           docker exec mater-app sh -c 'echo "<?php echo PHP_VERSION;" > public/_v.php; curl -s localhost/_v.php; rm public/_v.php' | tee /dev/stderr | grep -q '^8\.4\.'
       - name: Smoke test
-        run: docker exec mater-app sh /var/www/html/docker/smoke-test.sh | tee out.txt; grep -q 'com erro: 0' out.txt
+        run: |
+          docker exec mater-app sh /var/www/html/docker/smoke-test.sh | tee out.txt
+          grep -q 'com erro: 0' out.txt
       - if: failure()
         run: docker compose logs --tail=100
