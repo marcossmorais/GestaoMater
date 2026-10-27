@@ -535,7 +535,7 @@ class TeacherPortalController extends Action
     {
 
         $current = $Settings->unitControlCurrent();
-        $max = isset($current[0]) ? max(1, min(3, (int) $current[0]->option_value)) : 1;
+        $max = isset($current[0]) ? max(1, min(4, (int) $current[0]->option_value)) : 1;
 
         return range(1, $max);
     }

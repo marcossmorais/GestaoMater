@@ -59,7 +59,7 @@ class TeacherClassController extends Action
     private function openUnits()
     {
         $current = Container::getModel('Admin\\Settings')->unitControlCurrent();
-        $max = isset($current[0]) ? max(1, min(3, (int) $current[0]->option_value)) : 1;
+        $max = isset($current[0]) ? max(1, min(4, (int) $current[0]->option_value)) : 1;
 
         return range(1, $max);
     }
@@ -183,8 +183,9 @@ class TeacherClassController extends Action
         if (!$this->canEdit($disciplineClassId)) return $this->json(['error' => 'sem-permissao'], 403);
 
         $Gradebook = Container::getModel('TeacherStudent\\Gradebook');
+        $rule = Container::getModel('Student\\StudentPerformance')->rule();
         $units = [];
-        foreach ($this->openUnits() as $u) $units[$u] = $Gradebook->unitPoints($disciplineClassId, $u);
+        foreach ($this->openUnits() as $u) $units[$u] = $Gradebook->examCount($disciplineClassId, $u);
 
         $this->json([
             'exams' => array_map(function ($e) {
@@ -195,18 +196,20 @@ class TeacherClassController extends Action
                     'unity' => (int) $e->unity,
                     'date' => $e->date,
                     'guide' => $e->guide,
+                    'recovery' => (bool) $e->recovery,
                     'graded' => (int) $e->graded,
                 ];
             }, $Gradebook->exams($disciplineClassId)),
             'openUnits' => $this->openUnits(),
-            'unitPoints' => $units,
-            'maxUnitPoints' => \App\Models\TeacherStudent\Gradebook::MAX_UNIT_POINTS,
+            'units' => $units,
+            'perBimester' => $rule['perBimester'],
+            'passing' => $rule['passing'],
         ]);
     }
 
 
     /**
-     * Cria avaliação (com roteiro) ou, com "exam", atualiza só o roteiro
+     * Cria avaliação de 0 a 10 (até 3 por bimestre) ou a recuperação do bimestre; com "exam", atualiza só o roteiro
      */
     public function examSave()
     {
@@ -229,20 +232,20 @@ class TeacherClassController extends Action
 
         $unity = (int) ($input['unity'] ?? 0);
         $description = trim((string) ($input['description'] ?? ''));
-        $value = round((float) ($input['value'] ?? 0), 1);
         $date = trim((string) ($input['date'] ?? ''));
+        $recovery = !empty($input['recovery']);
 
         if (!in_array($unity, $this->openUnits(), true)) return $this->json(['error' => 'unidade-fechada'], 422);
         if ($description === '' || mb_strlen($description) > 180) return $this->json(['error' => 'descricao-invalida'], 422);
-        if ($value <= 0) return $this->json(['error' => 'valor-invalido'], 422);
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) return $this->json(['error' => 'data-invalida'], 422);
 
-        $distributed = $Gradebook->unitPoints($disciplineClassId, $unity);
-        if ($distributed + $value > \App\Models\TeacherStudent\Gradebook::MAX_UNIT_POINTS + 0.001) {
-            return $this->json(['error' => 'pontos-excedidos', 'available' => max(0, \App\Models\TeacherStudent\Gradebook::MAX_UNIT_POINTS - $distributed)], 422);
-        }
+        $count = $Gradebook->examCount($disciplineClassId, $unity);
+        $perBimester = Container::getModel('Student\\StudentPerformance')->rule()['perBimester'];
 
-        $this->json(['id' => $Gradebook->createExam($disciplineClassId, $unity, $description, $value, $date, $guide)]);
+        if ($recovery && $count['recovery']) return $this->json(['error' => 'recuperacao-ja-existe'], 422);
+        if (!$recovery && $count['regular'] >= $perBimester) return $this->json(['error' => 'limite-avaliacoes', 'max' => $perBimester], 422);
+
+        $this->json(['id' => $Gradebook->createExam($disciplineClassId, $unity, $description, $date, $guide, $recovery)]);
     }
 
 
@@ -253,18 +256,40 @@ class TeacherClassController extends Action
 
         if (!$exam || !$this->canEdit($exam->discipline_class_id)) return $this->json(['error' => 'sem-permissao'], 403);
 
+        $rule = Container::getModel('Student\\StudentPerformance')->rule();
+
         $this->json([
-            'exam' => ['id' => (int) $exam->id, 'value' => (float) $exam->value, 'unity' => (int) $exam->unity, 'description' => $exam->description],
+            'exam' => ['id' => (int) $exam->id, 'value' => (float) $exam->value, 'unity' => (int) $exam->unity, 'description' => $exam->description, 'recovery' => (bool) $exam->recovery],
             'editable' => in_array((int) $exam->unity, $this->openUnits(), true),
-            'students' => array_map(function ($s) {
+            'passing' => $rule['passing'],
+            'students' => array_map(function ($s) use ($exam, $rule) {
+                $eligible = $this->recoveryEligible($s, $exam, $rule);
                 return [
                     'id' => (int) $s->enrollment_id,
                     'name' => $s->name,
                     'photo' => $s->photo,
                     'grade' => $s->grade === null ? null : (float) $s->grade,
+                    'bimesterAverage' => $s->bimester_average === null ? null : round((float) $s->bimester_average, 2),
+                    'eligible' => $eligible,
                 ];
             }, $Gradebook->students($exam->id)),
         ]);
+    }
+
+
+    /**
+     * Na recuperação só lança nota quem fechou o bimestre abaixo da média; nas demais avaliações, todos
+     */
+    private function recoveryEligible($student, $exam, array $rule)
+    {
+        if (!$exam->recovery) return true;
+
+        $b = \App\Tools\GradeSimulator::bimester(
+            $student->bimester_average === null ? null : (float) $student->bimester_average,
+            (int) $student->bimester_graded, $rule['perBimester'], null, $rule['passing']
+        );
+
+        return $b['closed'] && $b['average'] < $rule['passing'];
     }
 
 
@@ -278,12 +303,15 @@ class TeacherClassController extends Action
         if (!$exam || !$this->canEdit($exam->discipline_class_id)) return $this->deny('nota_avaliacao', $input['exam'] ?? null);
         if (!in_array((int) $exam->unity, $this->openUnits(), true)) return $this->json(['error' => 'unidade-fechada'], 422);
 
-        $enrolled = array_map(function ($s) { return (int) $s->enrollment_id; }, $Gradebook->students($exam->id));
+        $rule = Container::getModel('Student\\StudentPerformance')->rule();
+        $enrolled = [];
+        foreach ($Gradebook->students($exam->id) as $s) $enrolled[(int) $s->enrollment_id] = $this->recoveryEligible($s, $exam, $rule);
         $grades = [];
 
         foreach ((array) ($input['grades'] ?? []) as $enrollment => $grade) {
             $enrollment = (int) $enrollment;
-            if (!in_array($enrollment, $enrolled, true)) return $this->json(['error' => 'aluno-fora-da-turma'], 422);
+            if (!isset($enrolled[$enrollment])) return $this->json(['error' => 'aluno-fora-da-turma'], 422);
+            if (!$enrolled[$enrollment] && $grade !== null && $grade !== '') return $this->json(['error' => 'sem-recuperacao', 'student' => $enrollment], 422);
 
             if ($grade === null || $grade === '') {
                 $grades[$enrollment] = null;
@@ -328,13 +356,14 @@ class TeacherClassController extends Action
         }
 
         $unity = (int) ($_GET['unidade'] ?? 0);
-        if ($unity < 1 || $unity > 3) $unity = max($this->openUnits());
+        if ($unity < 1 || $unity > 4) $unity = max($this->openUnits());
 
         $Gradebook = Container::getModel('TeacherStudent\\Gradebook');
 
         $this->view->classId = $classId;
         $this->view->unity = $unity;
-        $this->view->overview = $Gradebook->classOverview($classId, $unity);
+        $this->view->rule = Container::getModel('Student\\StudentPerformance')->rule();
+        $this->view->overview = $Gradebook->classOverview($classId, $unity, $this->view->rule);
         $this->view->classLabel = $Gradebook->classLabel($classId);
         $this->view->editable = array_map(function ($c) { return (int) $c->discipline_class_id; }, Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($this->teacherId()));
 

@@ -15,11 +15,13 @@
 
     const errors = {
         'sem-permissao': 'Você não tem permissão nesta turma/disciplina.',
-        'unidade-fechada': 'Esta unidade está fechada para lançamentos.',
+        'unidade-fechada': 'Este bimestre está fechado para lançamentos.',
+        'limite-avaliacoes': 'Este bimestre já tem as 3 avaliações.',
+        'recuperacao-ja-existe': 'Este bimestre já tem recuperação.',
+        'sem-recuperacao': 'Só lança recuperação quem fechou o bimestre abaixo de 7.',
         'descricao-invalida': 'Informe a descrição da avaliação.',
         'valor-invalido': 'Informe o valor da avaliação.',
         'data-invalida': 'Data inválida.',
-        'pontos-excedidos': 'A unidade passaria de 10 pontos.',
         'texto-muito-longo': 'Roteiro longo demais.',
         'nota-invalida': 'Há uma nota inválida.',
         'nota-acima-do-valor': 'Há nota acima do valor da avaliação.',
@@ -91,16 +93,16 @@
             const data = await api(`/portal-docente/notas/avaliacoes?disciplineClass=${state.cls.id}`);
             state.exams = data.exams;
 
-            $('[data-gr-units]').innerHTML = Object.entries(data.unitPoints).map(([u, pts]) =>
-                `<span class="m-pill ${pts >= data.maxUnitPoints ? 'm-pill-ok' : 'm-pill-info'}">${u}ª un.: ${fmt(pts)}/${data.maxUnitPoints} pts distribuídos</span>`
+            $('[data-gr-units]').innerHTML = Object.entries(data.units).map(([u, c]) =>
+                `<span class="m-pill ${c.regular >= data.perBimester ? 'm-pill-ok' : 'm-pill-info'}">${u}º bim.: ${c.regular}/${data.perBimester} avaliações${c.recovery ? ' · recuperação' : ''}</span>`
             ).join('');
 
             $('[data-gr-exams]').innerHTML = state.exams.length ? state.exams.map((e) => `
                 <button type="button" class="m-exam" data-exam="${e.id}">
-                    <span class="m-att-class-badge">${e.unity}ª</span>
+                    <span class="m-att-class-badge">${e.unity}º</span>
                     <span class="m-exam-body">
-                        <strong>${escapeHtml(e.description)}</strong>
-                        <small>${fmt(e.value)} pts · ${e.date.split('-').reverse().join('/')} · ${e.graded}/${state.cls.students} notas${e.guide ? ' · com roteiro' : ''}</small>
+                        <strong>${e.recovery ? '<span class="m-pill m-pill-warn mr-1">Recuperação</span>' : ''}${escapeHtml(e.description)}</strong>
+                        <small>${e.date.split('-').reverse().join('/')} · ${e.graded} nota${e.graded === 1 ? '' : 's'}${e.guide ? ' · com roteiro' : ''}</small>
                     </span>
                     <i class="fas fa-chevron-right m-att-class-go"></i>
                 </button>`).join('') : '<div class="m-empty">Nenhuma avaliação nesta disciplina.</div>';
@@ -120,7 +122,7 @@
                 disciplineClass: state.cls.id,
                 description: (data.get('description') || '').trim(),
                 unity: parseInt(data.get('unity'), 10),
-                value: parseFloat(String(data.get('value') || '0').replace(',', '.')),
+                recovery: data.get('kind') === 'recovery',
                 date: data.get('date'),
                 guide: (data.get('guide') || '').trim()
             });
@@ -129,8 +131,7 @@
             toast('Avaliação criada');
             await loadExams();
         } catch (e) {
-            const extra = e.message === 'pontos-excedidos' && e.data ? ` Restam ${fmt(e.data.available)} pts.` : '';
-            toast((errors[e.message] || errors['falha-ao-salvar']) + extra, 'error');
+            toast(errors[e.message] || errors['falha-ao-salvar'], 'error');
         } finally {
             state.busy = false;
         }
@@ -158,7 +159,7 @@
             state.students = data.students;
             state.editable = data.editable;
             $('[data-gr-closed]').hidden = data.editable;
-            $('[data-gr-exam-subtitle]').textContent = `${state.cls.label} · ${state.cls.discipline} · vale ${fmt(data.exam.value)} pts · ${data.exam.unity}ª unidade`;
+            $('[data-gr-exam-subtitle]').textContent = `${state.cls.label} · ${state.cls.discipline} · ${data.exam.recovery ? 'recuperação · ' : ''}nota de 0 a ${fmt(data.exam.value)} · ${data.exam.unity}º bimestre`;
             render();
         } catch (e) {
             list.innerHTML = `<div class="m-empty">${escapeHtml(errors[e.message] || 'Não foi possível carregar.')}</div>`;
@@ -166,11 +167,12 @@
     }
 
     function render() {
+        // na recuperação, quem não ficou abaixo da média aparece só para consulta
         list.innerHTML = state.students.map((s, i) => `
-            <label class="m-grade-row" data-student="${s.id}">
-                <span>${i + 1}. ${escapeHtml(s.name)}</span>
+            <label class="m-grade-row${s.eligible ? '' : ' is-muted'}" data-student="${s.id}">
+                <span>${i + 1}. ${escapeHtml(s.name)}${state.exam.recovery ? `<small>média do bimestre ${s.bimesterAverage === null ? '–' : fmt(s.bimesterAverage)}${s.eligible ? '' : ' · sem recuperação'}</small>` : ''}</span>
                 <input type="text" inputmode="decimal" class="form-control" value="${s.grade === null ? '' : String(s.grade).replace('.', ',')}"
-                    ${state.editable ? '' : 'disabled'} aria-label="Nota de ${escapeHtml(s.name)}" autocomplete="off">
+                    ${state.editable && s.eligible ? '' : 'disabled'} aria-label="Nota de ${escapeHtml(s.name)}" autocomplete="off">
             </label>`).join('') || '<div class="m-empty">Nenhum aluno na turma.</div>';
         updateCount();
     }
@@ -211,7 +213,7 @@
 
         const grades = {};
         let invalid = false;
-        $$('[data-gr-list] [data-student]').forEach((row) => {
+        $$('[data-gr-list] [data-student]:not(.is-muted)').forEach((row) => {
             const grade = parseGrade(row.querySelector('input').value);
             if (Number.isNaN(grade) || (grade !== null && grade > state.exam.value)) invalid = true;
             grades[row.dataset.student] = grade;

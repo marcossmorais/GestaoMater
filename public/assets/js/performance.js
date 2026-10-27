@@ -1,7 +1,7 @@
 // Mater — Desempenho, simulador de notas e cronograma (portal do aluno)
 (function () {
 
-    const rule = window.MATER_PERFORMANCE || { units: 3, maxPerUnit: 10, passing: 6, minAttendance: 75 };
+    const rule = window.MATER_PERFORMANCE || { units: 4, maxPerUnit: 10, passing: 7, perBimester: 3 };
 
     function fmt(n) {
         return Number(n).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
@@ -65,7 +65,7 @@
             if (sim.status === 'aprovado') {
                 result.innerHTML = `<i class="fas fa-check-circle mr-1"></i>Com essas notas sua média seria <strong>${fmt(sim.average)}</strong>: aprovado(a)!`;
             } else if (sim.needed !== null) {
-                result.innerHTML = `Ainda faltaria <strong>${fmt(sim.needed)}</strong> em cada unidade restante${sim.status === 'impossivel' ? ' (acima do máximo)' : ''}.`;
+                result.innerHTML = `Ainda faltaria <strong>${fmt(sim.needed)}</strong> em cada bimestre restante${sim.status === 'impossivel' ? ' (acima do máximo)' : ''}.`;
             } else {
                 result.innerHTML = `Sua média seria <strong>${fmt(sim.average)}</strong>, abaixo de ${fmt(rule.passing)}.`;
             }

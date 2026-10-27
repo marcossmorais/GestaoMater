@@ -19,9 +19,9 @@ require __DIR__ . '/components/classCards.php';
                 <div class="m-page-head">
                     <div>
                         <h5>Notas e roteiro de provas</h5>
-                        <p>Crie a avaliação com o roteiro de estudo e lance as notas pelo celular.</p>
+                        <p>3 avaliações de 0 a 10 por bimestre; abaixo de 7, recuperação (substitui a nota do bimestre).</p>
                     </div>
-                    <span class="m-pill m-pill-info"><?= max($openUnits) ?>ª unidade aberta</span>
+                    <span class="m-pill m-pill-info"><?= max($openUnits) ?>º bimestre aberto</span>
                 </div>
 
                 <?php if (count($disciplineClasses) === 0) { ?>
@@ -64,7 +64,7 @@ require __DIR__ . '/components/classCards.php';
                 </div>
 
                 <details class="card m-panel m-lesson-exception" data-gr-new>
-                    <summary><i class="fas fa-plus mr-2"></i>Nova avaliação com roteiro</summary>
+                    <summary><i class="fas fa-plus mr-2"></i>Nova avaliação ou recuperação</summary>
                     <form class="m-lesson-form mb-0" data-gr-exam-form novalidate>
                         <div class="m-lesson-row">
                             <label class="m-att-field">
@@ -72,16 +72,19 @@ require __DIR__ . '/components/classCards.php';
                                 <input type="text" class="form-control" name="description" maxlength="180" placeholder="Ex.: Prova 2" required>
                             </label>
                             <label class="m-att-field">
-                                <span class="m-att-label">Unidade</span>
+                                <span class="m-att-label">Bimestre</span>
                                 <select class="form-control" name="unity">
                                     <?php foreach ($openUnits as $u) { ?>
-                                        <option value="<?= $u ?>" <?= $u === max($openUnits) ? 'selected' : '' ?>><?= $u ?>ª unidade</option>
+                                        <option value="<?= $u ?>" <?= $u === max($openUnits) ? 'selected' : '' ?>><?= $u ?>º bimestre</option>
                                     <?php } ?>
                                 </select>
                             </label>
                             <label class="m-att-field">
-                                <span class="m-att-label">Valor (pontos)</span>
-                                <input type="number" class="form-control" name="value" min="0.1" max="10" step="0.1" inputmode="decimal" required>
+                                <span class="m-att-label">Tipo</span>
+                                <select class="form-control" name="kind">
+                                    <option value="regular">Avaliação (0 a 10)</option>
+                                    <option value="recovery">Recuperação do bimestre</option>
+                                </select>
                             </label>
                             <label class="m-att-field">
                                 <span class="m-att-label">Data</span>

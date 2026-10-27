@@ -21,7 +21,7 @@ require __DIR__ . '/components/classCards.php';
                         <h5>Chamada rápida</h5>
                         <p>Todos começam presentes. Toque só em quem faltou.</p>
                     </div>
-                    <span class="m-pill m-pill-info"><i class="fas fa-bolt mr-1"></i> <?= date('d/m') ?> · <?= max($openUnits) ?>ª unidade</span>
+                    <span class="m-pill m-pill-info"><i class="fas fa-bolt mr-1"></i> <?= date('d/m') ?> · <?= max($openUnits) ?>º bimestre</span>
                 </div>
 
                 <?php if (count($disciplineClasses) === 0) { ?>
@@ -76,10 +76,10 @@ require __DIR__ . '/components/classCards.php';
                 <div class="card m-att-toolbar">
 
                     <div class="m-att-field">
-                        <span class="m-att-label">Unidade</span>
+                        <span class="m-att-label">Bimestre</span>
                         <div class="m-seg" data-att-unity>
                             <?php foreach ($openUnits as $u) { ?>
-                                <button type="button" data-value="<?= $u ?>" class="<?= $u === max($openUnits) ? 'is-active' : '' ?>"><?= $u ?>ª</button>
+                                <button type="button" data-value="<?= $u ?>" class="<?= $u === max($openUnits) ? 'is-active' : '' ?>"><?= $u ?>º</button>
                             <?php } ?>
                         </div>
                     </div>
