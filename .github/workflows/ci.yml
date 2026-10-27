@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+      - name: Composer validate e audit
+        run: |
+          composer validate --no-check-lock
+          composer audit
+      - name: PHP lint
+        run: find App public vendor/MF -name '*.php' -not -path 'public/node_modules/*' -print0 | xargs -0 -n1 -P4 php -l > /dev/null
+
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Subir stack
+        run: |
+          cp .env.example .env
+          docker compose up -d --build --pull always
+          for i in $(seq 1 60); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' mater-db)" = healthy ] && break
+            sleep 2
+          done
+          sleep 5
+      - name: Versão PHP servida
+        run: |
+          docker exec mater-app sh -c 'echo "<?php echo PHP_VERSION;" > public/_v.php; curl -s localhost/_v.php; rm public/_v.php' | tee /dev/stderr | grep -q '^8\.4\.'
+      - name: Smoke test
+        run: docker exec mater-app sh /var/www/html/docker/smoke-test.sh | tee out.txt; grep -q 'com erro: 0' out.txt
+      - if: failure()
+        run: docker compose logs --tail=100
