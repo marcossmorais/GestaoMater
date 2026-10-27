@@ -10,14 +10,14 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 
 ## 1. Transversal
 - [x] **Trilha de auditoria** imutável (`database/10_auditoria.sql`, `App/Tools/Audit.php`): triggers em notas, faltas, chamadas, atestados e ocorrências; download de declarações pelo aluno
-- [ ] **RBAC docente**: Anos Iniciais (polivalente) edita todas as disciplinas da turma; Ensino Médio vê desempenho geral e edita só a própria disciplina — checado no servidor
+- [x] **RBAC docente** no servidor (`curso.etapa`, `App/Models/Teacher/TeacherAccess.php`): Anos Iniciais edita todas as disciplinas da turma; Finais/EM só a própria. Negado = 403 + linha `NEGADO` na auditoria
 - [x] Auth Clerk · [x] Responsivo mobile · [ ] Modo noturno
 
 ## 2. Portal Docente
 - [x] Chamada rápida por carômetro
 - [x] Grade de horários
-- [ ] Anos Iniciais: checkbox de disciplinas na chamada/observação/atividade da aula
-- [ ] Ensino Médio: visão geral da turma, edição restrita à própria disciplina
+- [x] Anos Iniciais: seleção de disciplinas na chamada · [ ] observação/atividade (Fase 3)
+- [x] Ensino Médio: edição restrita à própria disciplina · [ ] tela de visão geral da turma (`TeacherAccess::canViewClass` pronto; tela com notas na Fase 4)
 - [ ] **Diário**: habilidade BNCC (texto) + observação da aula
 - [ ] **Atividades da aula**: Aula Teórica, Documentário, Questionário, Revisão, outros
 - [ ] **Troca de professor/matéria** no meio da aula (exceção registrada)

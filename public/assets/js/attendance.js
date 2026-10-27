@@ -14,10 +14,11 @@
     const saveButton = $('[data-att-save]');
     const searchInput = $('[data-att-search]');
 
-    const state = { cls: null, unity: null, date: null, lessons: 1, students: [], absent: new Set(), saving: false };
+    const state = { cls: null, unity: null, date: null, lessons: 1, students: [], absent: new Set(), subjects: new Set(), saving: false };
 
     const errors = {
         'turma-nao-encontrada': 'Turma não encontrada para o seu usuário.',
+        'sem-permissao': 'Você não tem permissão para lançar nesta turma/disciplina.',
         'unidade-fechada': 'Esta unidade está fechada para lançamentos.',
         'aluno-fora-da-turma': 'A lista de alunos mudou. Abra a turma novamente.',
         'nao-autenticado': 'Sua sessão expirou. Entre novamente.',
@@ -75,8 +76,11 @@
         state.date = dateInput ? dateInput.value : new Date().toISOString().slice(0, 10);
         if (!keepUnity) state.unity = parseInt(($('[data-att-unity] .is-active') || {}).dataset?.value || '1', 10);
 
-        $('[data-att-title]').textContent = `${cls.label} · ${cls.discipline}`;
+        const polyvalent = cls.stage === 'iniciais';
+        if (!keepUnity) state.subjects = new Set([cls.id]);
+        $('[data-att-title]').textContent = `${cls.label} · ${polyvalent ? 'Anos Iniciais' : cls.discipline}`;
         $('[data-att-subtitle]').textContent = `${cls.course} · ${cls.shift} · ${cls.students} alunos`;
+        renderSubjects();
         $('[data-att-lessons-value]').textContent = '1';
         searchInput.value = '';
 
@@ -110,6 +114,29 @@
             grid.innerHTML = `<div class="m-empty">${escapeHtml(errors[e.message] || 'Não foi possível carregar os alunos.')}</div>`;
         }
     }
+
+    // Anos Iniciais: o polivalente marca em quais disciplinas da turma a chamada vale
+    function renderSubjects() {
+        const box = $('[data-att-subjects]');
+        const subjects = config.classes.filter((c) => c.classId === state.cls.classId);
+        box.hidden = state.cls.stage !== 'iniciais' || subjects.length < 2;
+        if (box.hidden) return;
+
+        $('[data-att-subjects-list]').innerHTML = subjects.map((c) => {
+            const active = state.subjects.has(c.id);
+            return `<button type="button" class="m-att-subject${active ? ' is-active' : ''}" data-subject="${c.id}" aria-pressed="${active}">
+                <i class="fas ${active ? 'fa-check-square' : 'fa-square'}"></i>${escapeHtml(c.discipline)}</button>`;
+        }).join('');
+    }
+
+    $('[data-att-subjects]').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-subject]');
+        if (!button) return;
+        const id = parseInt(button.dataset.subject, 10);
+        if (state.subjects.has(id) && state.subjects.size === 1) return; // ao menos uma
+        state.subjects.has(id) ? state.subjects.delete(id) : state.subjects.add(id);
+        renderSubjects();
+    });
 
     function skeleton(n) {
         return Array.from({ length: n }, () => '<div class="m-att-student is-loading"><span class="m-att-avatar"></span><span class="m-att-skel"></span><span class="m-att-skel m-att-skel-sm"></span></div>').join('');
@@ -258,6 +285,7 @@
                 headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 body: JSON.stringify({
                     disciplineClass: state.cls.id,
+                    disciplineClasses: Array.from(state.subjects),
                     unity: state.unity,
                     date: state.date,
                     lessons: state.lessons,
@@ -289,9 +317,10 @@
 
         const lessonsText = data.lessons > 1 ? ` (${data.lessons} aulas)` : '';
         const dateStr = data.formattedDate || (state.date ? state.date.split('-').reverse().join('/') : '');
+        const subject = (data.disciplines && data.disciplines.length) ? data.disciplines.join(', ') : cls.discipline;
         $('[data-att-done-summary]').textContent = data.absent === 0
-            ? `${cls.label} · ${cls.discipline} (${dateStr}): todos os ${data.present} alunos presentes${lessonsText}.`
-            : `${cls.label} · ${cls.discipline} (${dateStr}): ${data.present} presentes e ${data.absent} ausente${data.absent > 1 ? 's' : ''}${lessonsText} na ${data.unity}ª unidade.`;
+            ? `${cls.label} · ${subject} (${dateStr}): todos os ${data.present} alunos presentes${lessonsText}.`
+            : `${cls.label} · ${subject} (${dateStr}): ${data.present} presentes e ${data.absent} ausente${data.absent > 1 ? 's' : ''}${lessonsText} na ${data.unity}ª unidade.`;
 
         const absentNames = state.students.filter((s) => state.absent.has(s.id));
         $('[data-att-done-list]').innerHTML = absentNames.map((s) =>

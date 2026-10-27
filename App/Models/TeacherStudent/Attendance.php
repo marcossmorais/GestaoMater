@@ -15,7 +15,8 @@ class Attendance extends Model
 {
 
     /**
-     * Turmas/disciplinas do professor no período letivo ativo, com total de alunos e a última chamada de hoje
+     * Turmas/disciplinas em que o professor pode lançar no período letivo ativo (próprias e, nos Anos Iniciais,
+     * todas as da turma), com total de alunos e a última chamada de hoje
      *
      * @return array
      */
@@ -26,6 +27,8 @@ class Attendance extends Model
             "SELECT
                 turma_disciplina.id_turma_disciplina AS discipline_class_id,
                 turma.id_turma AS class_id,
+                curso.etapa AS stage,
+                (turma_disciplina.fk_id_professor = :teacherId) AS own,
                 disciplina.nome_disciplina AS discipline_name,
                 disciplina.sigla_disciplina AS discipline_acronym,
                 serie.sigla AS series_acronym,
@@ -47,7 +50,7 @@ class Attendance extends Model
             INNER JOIN turno ON (turma.fk_id_turno = turno.id_turno)
             INNER JOIN periodo_letivo ON (turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo)
 
-            WHERE turma_disciplina.fk_id_professor = :teacherId
+            WHERE " . \App\Models\Teacher\TeacherAccess::EDITABLE . "
             AND periodo_letivo.fk_id_situacao_periodo_letivo = 1
 
             ORDER BY serie.sigla, cedula_turma.cedula, disciplina.nome_disciplina"
@@ -151,7 +154,9 @@ class Attendance extends Model
 
         $date = ($lessonDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $lessonDate)) ? $lessonDate : date('Y-m-d');
 
-        $this->db->beginTransaction();
+        // permite salvar várias disciplinas numa transação externa (Anos Iniciais)
+        $ownTransaction = !$this->db->inTransaction();
+        if ($ownTransaction) $this->db->beginTransaction();
 
         try {
 
@@ -203,12 +208,12 @@ class Attendance extends Model
 
             $id = (int) $log->fetchColumn();
 
-            $this->db->commit();
+            if ($ownTransaction) $this->db->commit();
 
             return $id;
         } catch (\Throwable $e) {
 
-            $this->db->rollBack();
+            if ($ownTransaction) $this->db->rollBack();
             throw $e;
         }
     }

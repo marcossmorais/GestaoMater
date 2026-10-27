@@ -7,6 +7,9 @@ $openUnits = $this->view->openUnits;
 $classesJson = array_map(function ($c) {
     return [
         'id' => (int) $c->discipline_class_id,
+        'classId' => (int) $c->class_id,
+        'stage' => $c->stage,
+        'own' => (bool) $c->own,
         'label' => $c->series_acronym . 'ª ' . $c->ballot,
         'course' => $c->course,
         'shift' => $c->shift,
@@ -15,6 +18,24 @@ $classesJson = array_map(function ($c) {
         'doneTodayAt' => $c->done_today_at,
     ];
 }, $disciplineClasses);
+
+// Anos Iniciais: um card por turma (o polivalente escolhe as disciplinas depois); demais: um card por disciplina
+$cards = [];
+foreach ($classesJson as $c) {
+    if ($c['stage'] !== 'iniciais') {
+        $cards[] = $c;
+        continue;
+    }
+    $key = 'turma-' . $c['classId'];
+    if (!isset($cards[$key])) {
+        $cards[$key] = $c + ['count' => 0];
+    }
+    $cards[$key]['count']++;
+    $cards[$key]['discipline'] = 'Polivalente · ' . $cards[$key]['count'] . ' disciplina' . ($cards[$key]['count'] > 1 ? 's' : '');
+    if ($c['own'] && !$cards[$key]['own']) $cards[$key]['id'] = $c['id'];
+    $cards[$key]['own'] = $cards[$key]['own'] || $c['own'];
+    if ($c['doneTodayAt'] && $c['doneTodayAt'] > (string) $cards[$key]['doneTodayAt']) $cards[$key]['doneTodayAt'] = $c['doneTodayAt'];
+}
 ?>
 
 <section id="attendance" class="m-att">
@@ -44,7 +65,7 @@ $classesJson = array_map(function ($c) {
                 <?php } else { ?>
 
                     <div class="m-att-classes">
-                        <?php foreach ($classesJson as $c) { ?>
+                        <?php foreach ($cards as $c) { ?>
                             <button type="button" class="card m-att-class" data-att-class="<?= $c['id'] ?>">
                                 <span class="m-att-class-badge"><?= htmlspecialchars($c['label']) ?></span>
                                 <span class="m-att-class-body">
@@ -76,6 +97,12 @@ $classesJson = array_map(function ($c) {
                 </div>
 
                 <div class="alert alert-warning m-att-warning" data-att-warning hidden></div>
+
+                <!-- Anos Iniciais: disciplinas em que a chamada vale -->
+                <div class="card m-att-toolbar m-att-subjects" data-att-subjects hidden>
+                    <span class="m-att-label">Vale para as disciplinas</span>
+                    <div class="m-att-subjects-list" data-att-subjects-list></div>
+                </div>
 
                 <div class="card m-att-toolbar">
 
