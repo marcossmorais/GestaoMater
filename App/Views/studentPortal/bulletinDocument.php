@@ -64,7 +64,7 @@ $statusText = ['aprovado' => 'Média atingida', 'possivel' => 'Em andamento', 'i
                     <tr>
                         <th>Disciplina</th>
                         <?php for ($u = 1; $u <= $rule['units']; $u++) { ?><th><?= $u ?>º bim.</th><?php } ?>
-                        <th>Média</th>
+                        <th>Soma (de <?= $fmt($rule['passing'] * $rule['units']) ?>)</th>
                         <th>Faltas (abonadas)</th>
                         <th>Situação</th>
                     </tr>
@@ -76,7 +76,7 @@ $statusText = ['aprovado' => 'Média atingida', 'possivel' => 'Em andamento', 'i
                             <?php foreach ($d['units'] as $unit) { ?>
                                 <td class="<?= $unit['grade'] !== null && $unit['closed'] && $unit['grade'] < $rule['passing'] ? 'low' : '' ?>"><?= $unit['grade'] === null ? '–' : $fmt($unit['grade']) . ($unit['recovered'] ? ' <small>(R)</small>' : (!$unit['closed'] ? ' <small>*</small>' : '')) ?></td>
                             <?php } ?>
-                            <td><?= $fmt($d['simulation']['average']) ?></td>
+                            <td><?= $fmt($d['simulation']['total']) ?></td>
                             <td><?= (int) $d['absences'] ?> (<?= (int) $d['excused'] ?>)</td>
                             <td><?= $statusText[$d['simulation']['status']] ?></td>
                         </tr>
@@ -84,7 +84,7 @@ $statusText = ['aprovado' => 'Média atingida', 'possivel' => 'Em andamento', 'i
                 </tbody>
             </table>
         </div>
-        <p class="rule"><?= $rule['units'] ?> bimestres; nota do bimestre = média das <?= (int) $rule['perBimester'] ?> avaliações (0 a <?= $fmt($rule['maxPerUnit']) ?>); média <?= $fmt($rule['passing']) ?>. (R) = nota da recuperação, que substitui a do bimestre. * = parcial. Média = média dos bimestres fechados. Faltas são informativas e não entram na nota.</p>
+        <p class="rule"><?= $rule['units'] ?> bimestres; nota do bimestre = média das <?= (int) $rule['perBimester'] ?> avaliações (0 a <?= $fmt($rule['maxPerUnit']) ?>); média <?= $fmt($rule['passing']) ?> por bimestre. (R) = vale a recuperação (maior que a média do bimestre). * = parcial. No ano, a soma dos bimestres precisa chegar a <?= $fmt($rule['passing'] * $rule['units']) ?>. Faltas são informativas e não entram na nota.</p>
 
         <footer>
             <div>

@@ -18,7 +18,7 @@ $fmt = function ($n) { return str_replace('.', ',', (string) round((float) $n, 1
                 <a href="/portal-docente/turmas" class="m-icon-btn" aria-label="Voltar"><i class="fas fa-arrow-left"></i></a>
                 <div class="m-att-head-title">
                     <h5><?= htmlspecialchars($this->view->classLabel) ?></h5>
-                    <p>Nota do bimestre (média das <?= (int) $rule['perBimester'] ?> avaliações; abaixo de <?= $fmt($rule['passing']) ?>, vale a recuperação). Você edita só as disciplinas com <i class="fas fa-pen fa-xs"></i>.</p>
+                    <p>Nota do bimestre (média das <?= (int) $rule['perBimester'] ?> avaliações; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior entre o bimestre e a recuperação). Você edita só as disciplinas com <i class="fas fa-pen fa-xs"></i>.</p>
                 </div>
             </div>
 

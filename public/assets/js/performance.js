@@ -20,12 +20,14 @@
             if (grade === null || grade === undefined) missing++;
             else sum += Math.min(grade, rule.maxPerUnit);
         }
-        const remaining = rule.passing * rule.units - sum;
+        const target = rule.passing * rule.units;
+        const remaining = target - sum;
         const average = sum / rule.units;
-        if (remaining <= 0.0001) return { status: 'aprovado', needed: null, average, missing };
-        if (missing === 0) return { status: 'impossivel', needed: null, average, missing };
+        const total = sum;
+        if (remaining <= 0.0001) return { status: 'aprovado', needed: null, average, total, target, missing };
+        if (missing === 0) return { status: 'impossivel', needed: null, average, total, target, missing };
         const needed = Math.ceil(Math.round(remaining / missing * 10000) / 10000 * 10) / 10;
-        return { status: needed > rule.maxPerUnit ? 'impossivel' : 'possivel', needed, average, missing };
+        return { status: needed > rule.maxPerUnit ? 'impossivel' : 'possivel', needed, average, total, target, missing };
     }
 
     // ---------- Simulador por disciplina
@@ -63,11 +65,11 @@
 
             const sim = simulate(units);
             if (sim.status === 'aprovado') {
-                result.innerHTML = `<i class="fas fa-check-circle mr-1"></i>Com essas notas sua média seria <strong>${fmt(sim.average)}</strong>: aprovado(a)!`;
+                result.innerHTML = `<i class="fas fa-check-circle mr-1"></i>Com essas notas a soma seria <strong>${fmt(sim.total)}</strong> de ${fmt(sim.target)}: aprovado(a)!`;
             } else if (sim.needed !== null) {
                 result.innerHTML = `Ainda faltaria <strong>${fmt(sim.needed)}</strong> em cada bimestre restante${sim.status === 'impossivel' ? ' (acima do máximo)' : ''}.`;
             } else {
-                result.innerHTML = `Sua média seria <strong>${fmt(sim.average)}</strong>, abaixo de ${fmt(rule.passing)}.`;
+                result.innerHTML = `A soma seria <strong>${fmt(sim.total)}</strong>, abaixo de ${fmt(sim.target)}.`;
             }
         });
     }
