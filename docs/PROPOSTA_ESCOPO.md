@@ -34,8 +34,8 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **Roteiro de provas** na home · [x] **cronograma** dia/semana/mês/ano (`evento_escolar` + avaliações da turma; cadastro de eventos fica no Admin)
 - [x] **Simulador de notas** (`App/Tools/GradeSimulator.php`, testes em `tests/`): quanto tirar por unidade + simulação interativa. **Regra padrão 6,0 / 3 unidades / 75% em `regra_aprovacao` — confirmar com a direção**
 - [x] Ocorrências com ciência
-- [x] Declarações (matrícula, frequência) · [ ] **assinatura digital** com validação (QR/código) + log de download
-- [ ] Boletim com assinatura digital
+- [x] Declarações (matrícula, frequência) · [x] **assinatura eletrônica** HMAC-SHA256 com código + QR e validação pública em `/validar` (detecta adulteração e documento cancelado) + log de download. Frequência agora vem das chamadas (antes era inventada) e dados da escola vêm do `.env`
+- [x] Boletim com validação (`/portal-aluno/boletim/documento`)
 
 ## 4. Ordem sugerida
 1. Remoções + auditoria (base de tudo)

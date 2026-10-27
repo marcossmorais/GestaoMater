@@ -10,6 +10,8 @@ use MF\Model\Container;
 class AdminStudentController extends Action
 {
 
+    use \App\Controllers\DeclarationTrait;
+
     public function studentRegistration()
     {
 
@@ -458,30 +460,8 @@ class AdminStudentController extends Action
     private function loadDeclarationData($type = 'matricula')
     {
         if (!isset($_SESSION)) session_start();
-        $enrollmentId = (int) ($_GET['enrollmentId'] ?? 0);
 
-        $StudentEnrollment = Container::getModel('Student\\StudentEnrollment');
-        $Student = Container::getModel('Student\\Student');
-        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
-
-        $StudentEnrollment->__set('studentEnrollmentId', $enrollmentId);
-        $enrollmentData = $StudentEnrollment->dataGeneral();
-
-        if (empty($enrollmentData)) {
-            echo "Matrícula não encontrada.";
-            return;
-        }
-
-        $Student->__set('studentId', $enrollmentData[0]->id);
-        $studentData = $Student->dataGeneral($StudentEnrollment);
-
-        $this->view->student = $studentData[0] ?? $enrollmentData[0];
-        $this->view->enrollment = $enrollmentData[0];
-        $this->view->summary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
-        $this->view->type = $_GET['type'] ?? $type;
-        $this->view->authCode = 'MATER-' . date('Y') . '-' . strtoupper(substr(md5($enrollmentId . date('Ymd')), 0, 8));
-
-        require __DIR__ . '/../../Views/admin/student/declarations/declaration.php';
+        $this->renderDeclaration((int) ($_GET['enrollmentId'] ?? 0), $_GET['type'] ?? $type, 'admin', $_SESSION['Admin']['id'] ?? null);
     }
 
     public function listOccurrences()
