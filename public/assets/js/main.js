@@ -309,11 +309,6 @@ $(document).on("click", "#profileStudentModal [data-target='#class-student-profi
 })
 
 
-$(document).on("click", "[data-target='#averageNote']", function (e) {
-    application.loadListElements("containerStudentsProfileAverage", "/admin/gestao/turma/perfil-turma/aluno/medias-gerais", "#seekAverageStudentProfile")
-})
-
-
 $(document).on("blur", "#profileClassModal #seekExam #disciplineClass , #seekExam #unity", function (e) {
     application.loadListElements("containerExamsList", "/admin/gestao/turma/perfil-turma/avaliacoes/buscar", "#seekExam")
 })
@@ -366,7 +361,7 @@ $(document).on("click", "#profileStudentModal [data-target='#class-profile-bulle
 
 
 $('#studentPortal  [data-target="#bulletin"]').on('click', function (e) {
-    application.loadListElements("containerBulletin", "/admin/gestao/turma/perfil-turma/aluno/boletim")
+    application.loadListElements("containerBulletin", "/portal-aluno/boletim")
 })
 
 

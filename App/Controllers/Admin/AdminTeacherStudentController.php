@@ -438,8 +438,10 @@ class AdminTeacherStudentController extends Action
         if (!isset($_SESSION)) session_start();
         if (isset($_SESSION['Teacher']['id'])) $ClassDiscipline->__set("fk_id_teacher", $_SESSION['Teacher']['id']);
 
-        $enrollmentId = (!isset($_GET['enrollmentId']) ? $_SESSION['Student']['enrollmentId'] : $_GET['enrollmentId']);
-        $classId = (!isset($_GET['classId']) ? $_SESSION['Student']['classId'] : $_GET['classId']);
+        // aluno só vê o próprio boletim: ignora ids da URL
+        $isStudent = isset($_SESSION['Student']) && !isset($_SESSION['Admin']) && !isset($_SESSION['Teacher']);
+        $enrollmentId = ($isStudent || !isset($_GET['enrollmentId'])) ? $_SESSION['Student']['enrollmentId'] : $_GET['enrollmentId'];
+        $classId = ($isStudent || !isset($_GET['classId'])) ? $_SESSION['Student']['classId'] : $_GET['classId'];
         $teacherId = (isset($_SESSION['Teacher']['id']) ? $_SESSION['Teacher']['id'] : 0);
 
         $StudentEnrollment->__set('studentEnrollmentId', $enrollmentId);

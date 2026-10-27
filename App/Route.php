@@ -1020,6 +1020,12 @@ class Route extends Bootstrap
 			'action' => 'exit'
 		);
 
+		$routes['StudentBulletin'] = array(
+			'route' => '/portal-aluno/boletim',
+			'controller' => 'Admin\AdminTeacherStudentController',
+			'action' => 'bulletin'
+		);
+
 		$routes['StudentBoardRead'] = array(
 			'route' => '/portal-aluno/mural/lido',
 			'controller' => 'StudentPortal\StudentPortalController',
@@ -1115,9 +1121,7 @@ class Route extends Bootstrap
 	/**
 	 * Rotas do admin que o portal do aluno também usa
 	 */
-	const STUDENT_SHARED_ROUTES = [
-		'/admin/gestao/turma/perfil-turma/aluno/boletim',
-	];
+	const STUDENT_SHARED_ROUTES = [];
 
 	protected function run($url)
 	{
