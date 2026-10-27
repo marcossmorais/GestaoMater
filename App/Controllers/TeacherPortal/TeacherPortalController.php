@@ -315,30 +315,10 @@ class TeacherPortalController extends Action
 
         $absent = array_values(array_unique(array_map('intval', (array) ($input['absent'] ?? []))));
 
-        $disciplineClass = $Attendance->findForTeacher($disciplineClassId, $teacherId);
+        $targets = $this->editableTargets($Attendance, $teacherId, $disciplineClassId, $input['disciplineClasses'] ?? [], 'chamada');
+        if ($targets === null) return;
 
-        $targetIds = array_values(array_unique(array_merge(
-            [$disciplineClassId],
-            array_map('intval', (array) ($input['disciplineClasses'] ?? []))
-        )));
-
-        // todas precisam ser editáveis pelo professor; mais de uma só nos Anos Iniciais e na mesma turma
-        $targets = [];
-        foreach ($targetIds as $id) {
-            $row = $Attendance->findForTeacher($id, $teacherId);
-            if (!$row || !$disciplineClass || $row->class_id !== $disciplineClass->class_id) {
-                $targets = null;
-                break;
-            }
-            $targets[] = $row;
-        }
-
-        if (!$disciplineClass || $targets === null || (count($targets) > 1 && $disciplineClass->stage !== 'iniciais')) {
-            Audit::log(\App\Connection::getDb(), 'NEGADO', 'chamada', $disciplineClassId, ['disciplineClasses' => $targetIds]);
-            http_response_code(403);
-            echo json_encode(['error' => 'sem-permissao']);
-            return;
-        }
+        $disciplineClass = $targets[0];
 
         if (!in_array($unity, $this->openUnits($Settings), true)) {
             http_response_code(422);
@@ -388,6 +368,160 @@ class TeacherPortalController extends Action
             'date' => $date,
             'formattedDate' => date('d/m/Y', strtotime($date)),
             'savedAt' => date('H:i'),
+        ]);
+    }
+
+
+    /**
+     * Turmas/disciplinas em que o lançamento vale (a principal primeiro). Todas precisam ser editáveis pelo professor;
+     * mais de uma só nos Anos Iniciais e na mesma turma. Se negar, responde 403, audita e retorna null.
+     *
+     * @return array|null
+     */
+    private function editableTargets($Attendance, $teacherId, $disciplineClassId, $extraIds, $entity)
+    {
+
+        $ids = array_values(array_unique(array_merge([(int) $disciplineClassId], array_map('intval', (array) $extraIds))));
+
+        $main = $Attendance->findForTeacher($disciplineClassId, $teacherId);
+        $targets = [];
+
+        foreach ($ids as $id) {
+            $row = $Attendance->findForTeacher($id, $teacherId);
+            if (!$row || !$main || $row->class_id !== $main->class_id) {
+                $targets = null;
+                break;
+            }
+            $targets[] = $row;
+        }
+
+        if (!$main || $targets === null || (count($targets) > 1 && $main->stage !== 'iniciais')) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', $entity, $disciplineClassId, ['disciplineClasses' => $ids]);
+            http_response_code(403);
+            echo json_encode(['error' => 'sem-permissao']);
+            return null;
+        }
+
+        return $targets;
+    }
+
+
+    /**
+     * Diário de aula: habilidade BNCC, observação, atividades e exceções
+     */
+    public function lessons()
+    {
+
+        $Attendance = Container::getModel('TeacherStudent\\Attendance');
+        $Lesson = Container::getModel('TeacherStudent\\Lesson');
+
+        if (!isset($_SESSION)) session_start();
+
+        $classes = $Attendance->disciplineClassesByTeacher($_SESSION['Teacher']['id']);
+
+        $this->view->disciplineClasses = $classes;
+        $this->view->activities = \App\Models\TeacherStudent\Lesson::ACTIVITIES;
+        $this->view->teachers = $Lesson->teachers();
+        $this->view->classDisciplines = $Lesson->classDisciplines(array_unique(array_map(function ($c) { return $c->class_id; }, $classes)));
+        $this->view->recentLessons = $Lesson->recent(array_map(function ($c) { return $c->discipline_class_id; }, $classes));
+
+        $this->render('lessons', 'TeacherPortalLayout', 'teacherPortal');
+    }
+
+
+    /**
+     * Salva a aula (POST JSON: disciplineClass, disciplineClasses[]?, date, bnccCode, bnccSkill, notes, activities[],
+     * substitute?, taughtDisciplineClass?, reason?)
+     */
+    public function lessonSave()
+    {
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        $Attendance = Container::getModel('TeacherStudent\\Attendance');
+        $Lesson = Container::getModel('TeacherStudent\\Lesson');
+
+        if (!isset($_SESSION)) session_start();
+
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $teacherId = (int) $_SESSION['Teacher']['id'];
+
+        $targets = $this->editableTargets($Attendance, $teacherId, (int) ($input['disciplineClass'] ?? 0), $input['disciplineClasses'] ?? [], 'aula');
+        if ($targets === null) return;
+
+        $fail = function ($error) {
+            http_response_code(422);
+            echo json_encode(['error' => $error]);
+        };
+
+        $date = trim($input['date'] ?? '') ?: date('Y-m-d');
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || $date > date('Y-m-d')) return $fail('data-invalida');
+
+        $bnccCode = strtoupper(preg_replace('/\s+/', '', (string) ($input['bnccCode'] ?? '')));
+        if ($bnccCode !== '' && !preg_match(\App\Models\TeacherStudent\Lesson::BNCC_CODE, $bnccCode)) return $fail('codigo-bncc-invalido');
+
+        $bnccSkill = trim((string) ($input['bnccSkill'] ?? ''));
+        $notes = trim((string) ($input['notes'] ?? ''));
+        if (mb_strlen($bnccSkill) > 1000 || mb_strlen($notes) > 2000) return $fail('texto-muito-longo');
+
+        $activities = array_values(array_unique(array_filter((array) ($input['activities'] ?? []), 'is_string')));
+        if (array_diff($activities, array_keys(\App\Models\TeacherStudent\Lesson::ACTIVITIES))) return $fail('atividade-invalida');
+
+        if ($bnccCode === '' && $bnccSkill === '' && $notes === '' && !$activities) return $fail('aula-vazia');
+
+        // exceções: substituto e/ou matéria trocada, sempre com motivo
+        $substituteId = (int) ($input['substitute'] ?? 0);
+        $taughtId = (int) ($input['taughtDisciplineClass'] ?? 0);
+        $reason = trim((string) ($input['reason'] ?? ''));
+
+        if ($substituteId && ($substituteId === $teacherId || !$Lesson->teacherExists($substituteId))) return $fail('substituto-invalido');
+
+        if ($taughtId) {
+            $taught = $Lesson->disciplineClass($taughtId);
+            if (!$taught || $taught->class_id !== $targets[0]->class_id || $taughtId === (int) $targets[0]->discipline_class_id) return $fail('materia-invalida');
+        }
+
+        if (($substituteId || $taughtId) && ($reason === '' || mb_strlen($reason) > 255)) return $fail('motivo-obrigatorio');
+
+        $db = \App\Connection::getDb();
+        $ids = [];
+
+        try {
+            $db->beginTransaction();
+            foreach ($targets as $target) {
+                $ids[] = $Lesson->save([
+                    'disciplineClassId' => $target->discipline_class_id,
+                    'teacherId' => $teacherId,
+                    'attendanceId' => $Lesson->attendanceFor($target->discipline_class_id, $date, $teacherId),
+                    'date' => $date,
+                    'bnccCode' => $bnccCode,
+                    'bnccSkill' => $bnccSkill,
+                    'notes' => $notes,
+                    'activities' => $activities,
+                    'substituteId' => $substituteId,
+                    'taughtDisciplineClassId' => $taughtId,
+                    'reason' => $reason,
+                ]);
+            }
+            $db->commit();
+        } catch (\Throwable $e) {
+            if ($db->inTransaction()) $db->rollBack();
+            error_log('Diário: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'falha-ao-salvar']);
+            return;
+        }
+
+        echo json_encode([
+            'ids' => $ids,
+            'disciplines' => array_map(function ($t) { return $t->discipline_name; }, $targets),
+            'formattedDate' => date('d/m/Y', strtotime($date)),
         ]);
     }
 

@@ -898,6 +898,18 @@ class Route extends Bootstrap
 			'action' => 'attendanceSave'
 		);
 
+		$routes['lessonsTeacherPortal'] = array(
+			'route' => '/portal-docente/diario',
+			'controller' => 'TeacherPortal\TeacherPortalController',
+			'action' => 'lessons'
+		);
+
+		$routes['lessonSaveTeacherPortal'] = array(
+			'route' => '/portal-docente/diario/salvar',
+			'controller' => 'TeacherPortal\TeacherPortalController',
+			'action' => 'lessonSave'
+		);
+
 		$routes['teacherSchedule'] = array(
 			'route' => '/portal-docente/horario',
 			'controller' => 'TeacherPortal\\TeacherPortalController',

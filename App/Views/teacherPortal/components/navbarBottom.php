@@ -23,6 +23,10 @@ require __DIR__ . '../../../../config/variables.php';
             </li>
 
             <li class="nav-item">
+                <a name="diario" class="nav-link" href="/portal-docente/diario"><i class="fas fa-book-open"></i> <span>Diário</span></a>
+            </li>
+
+            <li class="nav-item">
                 <a name="horario" class="nav-link" href="/portal-docente/horario"><i class="fas fa-calendar-alt"></i> <span>Horários</span></a>
             </li>
 

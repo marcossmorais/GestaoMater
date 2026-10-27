@@ -327,6 +327,9 @@
             `<li><span class="m-att-dot"></span>${escapeHtml(s.name)}<small>${s.totalLack + data.lessons} faltas</small></li>`
         ).join('');
 
+        // 1 toque para o diário, com a mesma turma e disciplinas
+        $('[data-att-lesson]').href = `/portal-docente/diario?turma=${cls.id}&disciplinas=${Array.from(state.subjects).join(',')}`;
+
         show('done');
         toast('Chamada salva');
     }

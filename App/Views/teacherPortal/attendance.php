@@ -4,38 +4,7 @@ require __DIR__ . '/../../config/variables.php';
 $disciplineClasses = $this->view->disciplineClasses;
 $openUnits = $this->view->openUnits;
 
-$classesJson = array_map(function ($c) {
-    return [
-        'id' => (int) $c->discipline_class_id,
-        'classId' => (int) $c->class_id,
-        'stage' => $c->stage,
-        'own' => (bool) $c->own,
-        'label' => $c->series_acronym . 'ª ' . $c->ballot,
-        'course' => $c->course,
-        'shift' => $c->shift,
-        'discipline' => $c->discipline_name,
-        'students' => (int) $c->student_total,
-        'doneTodayAt' => $c->done_today_at,
-    ];
-}, $disciplineClasses);
-
-// Anos Iniciais: um card por turma (o polivalente escolhe as disciplinas depois); demais: um card por disciplina
-$cards = [];
-foreach ($classesJson as $c) {
-    if ($c['stage'] !== 'iniciais') {
-        $cards[] = $c;
-        continue;
-    }
-    $key = 'turma-' . $c['classId'];
-    if (!isset($cards[$key])) {
-        $cards[$key] = $c + ['count' => 0];
-    }
-    $cards[$key]['count']++;
-    $cards[$key]['discipline'] = 'Polivalente · ' . $cards[$key]['count'] . ' disciplina' . ($cards[$key]['count'] > 1 ? 's' : '');
-    if ($c['own'] && !$cards[$key]['own']) $cards[$key]['id'] = $c['id'];
-    $cards[$key]['own'] = $cards[$key]['own'] || $c['own'];
-    if ($c['doneTodayAt'] && $c['doneTodayAt'] > (string) $cards[$key]['doneTodayAt']) $cards[$key]['doneTodayAt'] = $c['doneTodayAt'];
-}
+require __DIR__ . '/components/classCards.php';
 ?>
 
 <section id="attendance" class="m-att">
@@ -161,7 +130,8 @@ foreach ($classesJson as $c) {
                     <p data-att-done-summary></p>
                     <ul class="m-att-done-list" data-att-done-list></ul>
                     <div class="m-att-done-actions">
-                        <button type="button" class="btn btn-primary" data-att-again><i class="fas fa-clipboard-list mr-2"></i>Fazer outra chamada</button>
+                        <a href="/portal-docente/diario" class="btn btn-primary" data-att-lesson><i class="fas fa-book-open mr-2"></i>Registrar aula no diário</a>
+                        <button type="button" class="btn btn-light" data-att-again><i class="fas fa-clipboard-list mr-2"></i>Fazer outra chamada</button>
                         <a href="/portal-docente/home" class="btn btn-light">Voltar ao início</a>
                     </div>
                 </div>
