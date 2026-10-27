@@ -25,6 +25,7 @@ services:
       - ./database/12_diario_aula.sql:/docker-entrypoint-initdb.d/12_diario_aula.sql:ro
       - ./database/13_mural_roteiro.sql:/docker-entrypoint-initdb.d/13_mural_roteiro.sql:ro
       - ./database/14_desempenho_cronograma.sql:/docker-entrypoint-initdb.d/14_desempenho_cronograma.sql:ro
+      - ./database/15_documentos_assinados.sql:/docker-entrypoint-initdb.d/15_documentos_assinados.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro
@@ -57,6 +58,12 @@ services:
       CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY:-}
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-}
       CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
+      # dev: chave fixa só para ambiente local; em produção defina APP_SIGNING_KEY no .env
+      APP_SIGNING_KEY: ${APP_SIGNING_KEY:-dev-only-signing-key-change-me-in-production-0000}
+      SCHOOL_NAME: ${SCHOOL_NAME:-MATER Colégio e Curso}
+      SCHOOL_LEGAL_INFO: ${SCHOOL_LEGAL_INFO:-}
+      SCHOOL_ADDRESS: ${SCHOOL_ADDRESS:-}
+      SCHOOL_CITY: ${SCHOOL_CITY:-}
     ports:
       - "8000:80"
     volumes:

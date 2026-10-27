@@ -9,6 +9,8 @@ use App\Tools\Tools;
 class StudentPortalController extends Action
 {
 
+    use \App\Controllers\DeclarationTrait;
+
     public function index()
     {
 
@@ -227,32 +229,50 @@ class StudentPortalController extends Action
     private function loadDeclarationData($type = 'matricula')
     {
         if (!isset($_SESSION)) session_start();
-        $enrollmentId = (int) ($_SESSION['Student']['enrollmentId'] ?? 0);
 
-        $StudentEnrollment = Container::getModel('Student\\StudentEnrollment');
-        $Student = Container::getModel('Student\\Student');
-        $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
+        $this->renderDeclaration((int) ($_SESSION['Student']['enrollmentId'] ?? 0), $type, 'aluno', $_SESSION['Student']['id'] ?? null);
+    }
 
+    /**
+     * Boletim para imprimir, com código de validação e QR (só do próprio aluno)
+     */
+    public function bulletinDocument()
+    {
+        if (!isset($_SESSION)) session_start();
+
+        $enrollmentId = (int) $_SESSION['Student']['enrollmentId'];
+
+        $StudentEnrollment = Container::getModel('Student\StudentEnrollment');
         $StudentEnrollment->__set('studentEnrollmentId', $enrollmentId);
-        $enrollmentData = $StudentEnrollment->dataGeneral();
+        $enrollment = $StudentEnrollment->dataGeneral()[0] ?? null;
 
-        if (empty($enrollmentData)) {
-            echo "Matrícula não encontrada.";
+        if (!$enrollment) {
+            http_response_code(404);
+            echo 'Matrícula não encontrada.';
             return;
         }
 
-        $Student->__set('studentId', $enrollmentData[0]->id);
-        $studentData = $Student->dataGeneral($StudentEnrollment);
+        $Performance = Container::getModel('Student\StudentPerformance');
+        $rule = $Performance->rule();
+        $rows = $Performance->byDiscipline($enrollmentId, $enrollment->class_id);
 
-        $this->view->student = $studentData[0] ?? $enrollmentData[0];
-        $this->view->enrollment = $enrollmentData[0];
-        $this->view->summary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
-        $this->view->type = $_GET['type'] ?? $type;
-        $this->view->authCode = 'MATER-' . date('Y') . '-' . strtoupper(substr(md5($enrollmentId . date('Ymd')), 0, 8));
+        $content = ['matricula' => $enrollmentId, 'nome' => $enrollment->name, 'ano' => $enrollment->school_year, 'regra' => $rule, 'disciplinas' => array_map(function ($d) {
+            return [$d['discipline'], array_column($d['units'], 'earned'), $d['absences'], $d['excused'], $d['simulation']['status']];
+        }, $rows)];
 
-        \App\Tools\Audit::log(\App\Connection::getDb(), 'DOWNLOAD', 'declaracao_' . $type, $enrollmentId, ['codigo' => $this->view->authCode]);
+        $code = Container::getModel('Student\IssuedDocument')->issue('boletim', $enrollmentId, $enrollment->name, $content, 'aluno', $_SESSION['Student']['id'] ?? null);
+        $url = rtrim(getenv('APP_URL') ?: '', '/') . '/validar?codigo=' . $code;
 
-        require __DIR__ . '/../../Views/admin/student/declarations/declaration.php';
+        \App\Tools\Audit::log(\App\Connection::getDb(), 'DOWNLOAD', 'boletim', $enrollmentId, ['codigo' => $code]);
+
+        $this->view->enrollment = $enrollment;
+        $this->view->rule = $rule;
+        $this->view->rows = $rows;
+        $this->view->authCode = $code;
+        $this->view->validationUrl = $url;
+        $this->view->qrSvg = \App\Tools\DocumentSigner::qrSvg($url);
+
+        require __DIR__ . '/../../Views/studentPortal/bulletinDocument.php';
     }
 
     /**

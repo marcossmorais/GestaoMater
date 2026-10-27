@@ -20,6 +20,7 @@ $fmt = function ($n) { return str_replace('.', ',', (string) round((float) $n, 1
                 <h5>Desempenho por matéria</h5>
                 <p>Média para aprovação: <strong><?= $fmt($rule['passing']) ?></strong> em <?= $rule['units'] ?> unidades de <?= $fmt($rule['maxPerUnit']) ?> pontos · frequência mínima <?= $rule['minAttendance'] ?>%.</p>
             </div>
+            <a class="btn btn-light" href="/portal-aluno/boletim/documento" target="_blank" rel="noopener"><i class="fas fa-file-signature mr-2"></i>Boletim com validação</a>
         </div>
 
         <?php if (!$performance) { ?>

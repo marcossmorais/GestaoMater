@@ -5,7 +5,10 @@ $student = $this->view->student;
 $enrollment = $this->view->enrollment;
 $summary = $this->view->summary ?? (object)['total_faltas' => 0, 'faltas_abonadas' => 0, 'faltas_injustificadas' => 0];
 $type = $this->view->type ?? 'matricula'; // 'matricula' ou 'frequencia'
-$authCode = $this->view->authCode ?? ('MATER-' . date('Y') . '-' . strtoupper(substr(md5(($enrollment->enrollment_id ?? 1) . date('Ymd')), 0, 8)));
+$authCode = $this->view->authCode;
+$validationUrl = $this->view->validationUrl;
+$attendance = $this->view->attendance; // null = sem aulas registradas no sistema
+$city = getenv('SCHOOL_CITY') ?: '';
 
 // Formatação de data de nascimento
 $birthDateFormatted = '—';
@@ -22,10 +25,7 @@ $meses = [
 ];
 $dataExtensa = date('d') . ' de ' . $meses[(int)date('m')] . ' de ' . date('Y');
 
-// Frequência calculada
-$totalAulas = 800; // Carga horária anual padrão LDB
-$faltas = (int) $summary->faltas_injustificadas;
-$presencaPercent = max(75, min(100, round((($totalAulas - $faltas) / $totalAulas) * 100, 1)));
+$attendanceText = $attendance === null ? null : str_replace('.', ',', (string) $attendance) . '%';
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -211,6 +211,8 @@ $presencaPercent = max(75, min(100, round((($totalAulas - $faltas) / $totalAulas
         }
 
         /* Rodapé de Autenticidade */
+        .m-qr { width: 96px; height: 96px; flex: 0 0 96px; }
+        .m-qr svg { width: 100%; height: 100%; }
         .m-footer-seal {
             border-top: 1px dashed #cbd5e1;
             padding-top: 12px;
@@ -286,12 +288,12 @@ $presencaPercent = max(75, min(100, round((($totalAulas - $faltas) / $totalAulas
 
             <!-- CABEÇALHO -->
             <div class="m-header">
-                <img src="<?= $app_url ?>/assets/img/logo-components/logo-completa.png" alt="Colégio Mater" class="m-header-logo" onerror="this.src='<?= $app_url ?>/assets/img/logo-components/logo.png'">
-                <h1 class="m-school-title">Colégio Mater — Educação e Tecnologia</h1>
-                <div class="m-school-sub">
-                    Portaria de Credenciamento MEC/SEE nº 4.812/2020 · CNPJ: 12.345.678/0001-90<br>
-                    Av. Paulista, 1000 — Bela Vista, São Paulo - SP · Telefone: (11) 3456-7890 · secretaria@colegiomater.com.br
-                </div>
+                <img src="<?= $app_url ?>/assets/img/logo-components/logo-completa.png" alt="MATER Colégio e Curso" class="m-header-logo" onerror="this.src='<?= $app_url ?>/assets/img/logo-components/logo.png'">
+                <h1 class="m-school-title"><?= htmlspecialchars(getenv('SCHOOL_NAME') ?: 'MATER Colégio e Curso') ?></h1>
+                <?php $schoolLines = array_filter([getenv('SCHOOL_LEGAL_INFO'), getenv('SCHOOL_ADDRESS')]); ?>
+                <?php if ($schoolLines) { ?>
+                    <div class="m-school-sub"><?= implode('<br>', array_map('htmlspecialchars', $schoolLines)) ?></div>
+                <?php } ?>
             </div>
 
             <!-- TÍTULO -->
@@ -304,12 +306,12 @@ $presencaPercent = max(75, min(100, round((($totalAulas - $faltas) / $totalAulas
             <!-- CORPO -->
             <div class="m-doc-body">
                 Declaramos para os devidos fins de direito e a quem possa interessar que o(a) aluno(a) 
-                <strong><?= mb_strtoupper($student->name, 'UTF-8') ?></strong>, 
+                <strong><?= htmlspecialchars(mb_strtoupper($student->name, 'UTF-8')) ?></strong>, 
                 <?php if (!empty($student->cpf)) { ?>
                     portador(a) do CPF sob o nº <strong><?= htmlspecialchars($student->cpf) ?></strong>, 
                 <?php } ?>
                 nascido(a) em <strong><?= $birthDateFormatted ?></strong>, 
-                natural de <strong><?= htmlspecialchars($student->naturalness ?: 'São Paulo/SP') ?></strong>, 
+                <?php if (!empty($student->naturalness)) { ?>natural de <strong><?= htmlspecialchars($student->naturalness) ?></strong>, <?php } ?>
                 nacionalidade <strong><?= htmlspecialchars($student->nacionality ?: 'Brasileira') ?></strong>, 
                 filho(a) de <strong><?= htmlspecialchars($student->mother ?: 'Não informada') ?></strong>
                 <?php if (!empty($student->father)) { ?>
@@ -344,7 +346,7 @@ $presencaPercent = max(75, min(100, round((($totalAulas - $faltas) / $totalAulas
                     </div>
                     <div class="m-data-item">
                         <strong>Regime de Frequência</strong>
-                        <span><?= $presencaPercent ?>% de assiduidade</span>
+                        <span><?= $attendanceText ? $attendanceText . ' de assiduidade' : 'Sem aulas registradas no sistema' ?></span>
                     </div>
                 </div>
             </div>
@@ -352,7 +354,7 @@ $presencaPercent = max(75, min(100, round((($totalAulas - $faltas) / $totalAulas
             <?php if ($type === 'frequencia') { ?>
                 <div class="m-doc-body">
                     Atestamos ainda que, durante o período letivo em curso, o(a) referido(a) estudante cumpriu 
-                    com o percentual de assiduidade de <strong><?= $presencaPercent ?>%</strong>, 
+                    <?php if ($attendanceText) { ?>com o percentual de assiduidade de <strong><?= $attendanceText ?></strong> (aulas registradas no sistema), <?php } ?>
                     tendo sido computadas <strong><?= (int)$summary->total_faltas ?> faltas</strong>, 
                     das quais <strong><?= (int)$summary->faltas_abonadas ?> foram devidamente abonadas e justificadas</strong> 
                     mediante apresentação tempestiva de atestados médicos e declarações legais acolhidas pela Secretaria Escolar, 
@@ -366,7 +368,7 @@ $presencaPercent = max(75, min(100, round((($totalAulas - $faltas) / $totalAulas
 
             <!-- DATA E LOCAL -->
             <div class="m-date-place">
-                São Paulo, <?= $dataExtensa ?>.
+                <?= $city ? htmlspecialchars($city) . ', ' : '' ?><?= $dataExtensa ?>.
             </div>
 
             <!-- ASSINATURAS -->
@@ -391,8 +393,10 @@ $presencaPercent = max(75, min(100, round((($totalAulas - $faltas) / $totalAulas
                 <i class="fas fa-shield-alt text-primary mr-1"></i> Documento Oficial emitido eletronicamente pelo Sistema Mater de Gestão Escolar.
             </div>
             <div>
-                Autenticidade: <span class="m-auth-code"><?= $authCode ?></span>
+                Código de validação: <span class="m-auth-code"><?= htmlspecialchars($authCode) ?></span>
+                <br><small>Confira em <?= htmlspecialchars($validationUrl) ?></small>
             </div>
+            <div class="m-qr" aria-label="QR code de validação"><?= $this->view->qrSvg ?></div>
         </div>
 
     </div>

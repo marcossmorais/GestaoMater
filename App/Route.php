@@ -1026,6 +1026,18 @@ class Route extends Bootstrap
 			'action' => 'bulletin'
 		);
 
+		$routes['StudentBulletinDocument'] = array(
+			'route' => '/portal-aluno/boletim/documento',
+			'controller' => 'StudentPortal\StudentPortalController',
+			'action' => 'bulletinDocument'
+		);
+
+		$routes['validateDocument'] = array(
+			'route' => '/validar',
+			'controller' => 'Index\DocumentController',
+			'action' => 'validate'
+		);
+
 		$routes['StudentBoardRead'] = array(
 			'route' => '/portal-aluno/mural/lido',
 			'controller' => 'StudentPortal\StudentPortalController',
@@ -1116,6 +1128,7 @@ class Route extends Bootstrap
 		'/portal-docente', '/portal-docente/login', '/portal-docente/sair',
 		'/portal-aluno', '/portal-aluno/login', '/portal-aluno/sair',
 		'/auth/clerk/sessao',
+		'/validar',
 	];
 
 	/**
