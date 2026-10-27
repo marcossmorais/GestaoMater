@@ -47,11 +47,11 @@
                 .sidebar-lists {
 
                     a {
-                        font-size: 0.8vw;
+                        font-size: clamp(13px, 0.8vw, 20px);
                     }
 
                     p {
-                        font-size: 1vw;
+                        font-size: clamp(13px, 1vw, 20px);
                     }
 
                 }

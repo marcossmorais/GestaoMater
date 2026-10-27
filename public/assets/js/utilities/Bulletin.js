@@ -9,8 +9,15 @@ $(document).on("click", "#printBuleetin", function (e) {
 
     class_data = class_data.split('-')
 
-    let myTable = document.getElementById('table-bulletin-print').innerHTML
-    let win = window.open()
+    const table = document.getElementById('table-bulletin-print')
+    let win = table ? window.open() : null
+
+    if (!win) {
+        if (typeof tools !== 'undefined' && tools.showToast) tools.showToast('Permita pop-ups para baixar o boletim.', 'bg-danger')
+        return
+    }
+
+    let myTable = table.innerHTML
     let now = new Date
     let mes = (now.getMonth() + 1).toString()
 

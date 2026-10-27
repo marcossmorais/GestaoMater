@@ -515,7 +515,7 @@ h5 {
 }
 #pagina .btn {
   border-radius: 5px;
-  font-size: 1.1vw;
+  font-size: clamp(13px, 1.1vw, 20px);
 }
 #pagina .edit-image-button {
   cursor: pointer;
@@ -595,7 +595,7 @@ h5 {
 #pagina .modal-profile .main-sheet span {
   text-align: center;
   font-family: Bold;
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
 }
 #pagina .modal-profile .main-sheet img {
   width: 100px;
@@ -632,7 +632,7 @@ h5 {
 }
 #pagina .modal-profile h5 {
   font-family: Bold;
-  font-size: 1.6vw;
+  font-size: clamp(13px, 1.6vw, 20px);
 }
 #pagina .modal-profile .container-list-group {
   border-radius: 15px;
@@ -650,7 +650,7 @@ h5 {
 #pagina .modal-profile .container-list-group nav ul a {
   padding: 10px 15px;
   color: #7F8C8D;
-  font-size: 0.9vw;
+  font-size: clamp(13px, 0.9vw, 20px);
   text-align: left;
   display: block;
   margin-bottom: 7px;
@@ -690,10 +690,10 @@ h5 {
   border: 1px solid #e5e5e5;
 }
 #pagina .modal-profile .main-content td {
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
 }
 #pagina .modal-profile .main-content th {
-  font-size: 1.1vw;
+  font-size: clamp(13px, 1.1vw, 20px);
   font-weight: bold;
 }
 #pagina .modal-profile .main-content .row:nth-child(1) {
@@ -728,7 +728,7 @@ h5 {
   margin-bottom: 10px;
 }
 #pagina .modal-profile .main-content form .font-weight-bold {
-  font-size: 1.2vw;
+  font-size: clamp(13px, 1.2vw, 20px);
 }
 #pagina .modal-profile .main-content form .input-group-text {
   background-color: white;
@@ -788,13 +788,13 @@ h5 {
   border-radius: 10px;
 }
 #pagina form label, #pagina form .input-group-text {
-  font-size: 1.1vw;
+  font-size: clamp(13px, 1.1vw, 20px);
 }
 #pagina form label {
   font-weight: bold;
 }
 #pagina form select, #pagina form input {
-  font-size: 1.1vw;
+  font-size: clamp(13px, 1.1vw, 20px);
   color: #0838B8;
 }
 
@@ -805,7 +805,7 @@ h5 {
   background: #E5E7E9;
   padding: 10px;
   transition: all 0.2s ease;
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
 }
 #pagina .edit-data-icon:hover {
   color: #ffffff;
@@ -826,7 +826,7 @@ h5 {
   background: #E5E7E9;
   padding: 10px;
   transition: all 0.2s ease;
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
   pointer-events: none;
 }
 #pagina .update-data-icon:hover {
@@ -848,7 +848,7 @@ h5 {
   background: #E5E7E9;
   padding: 10px;
   transition: all 0.2s ease;
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
   pointer-events: none;
 }
 #pagina .delete-data-icon:hover {
@@ -870,7 +870,7 @@ h5 {
   background: #e5e5e5;
   padding: 10px;
   transition: all 0.2s ease;
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
 }
 #pagina .printer-icon:hover {
   color: #ffffff;
@@ -891,7 +891,7 @@ h5 {
   background: #e5e5e5;
   padding: 10px;
   transition: all 0.2s ease;
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
 }
 #pagina .refesh-data-icon:hover {
   color: #ffffff;
@@ -1033,7 +1033,7 @@ table tr {
 }
 #left-panel #sidebar .sidebar-lists p {
   color: #ffffff;
-  font-size: 0.9vw;
+  font-size: clamp(13px, 0.9vw, 20px);
   margin-bottom: 10px;
   padding: 10px 18px;
 }
@@ -1049,7 +1049,7 @@ table tr {
 #left-panel #sidebar .sidebar-lists a {
   color: white;
   font-weight: 300;
-  font-size: 0.8vw;
+  font-size: clamp(13px, 0.8vw, 20px);
   transition: 1s;
   display: block;
 }
@@ -1653,7 +1653,7 @@ footer p {
 #admin #pagina p,
 #teacherPortal #pagina p,
 #studentPortal #pagina p {
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
 }
 #admin #pagina .miniature-photo,
 #teacherPortal #pagina .miniature-photo,
@@ -1803,10 +1803,10 @@ footer p {
   background: #ffffff;
   padding: 10px;
   transition: all 0.2s ease;
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
   padding-left: 20px;
   padding-right: 20px;
-  font-size: 1vw;
+  font-size: clamp(13px, 1vw, 20px);
   border: 1px solid #e5e5e5;
   color: #506177;
 }
@@ -1859,7 +1859,7 @@ footer p {
 #admin #pagina .horizontal-control-list a,
 #teacherPortal #pagina .horizontal-control-list a,
 #studentPortal #pagina .horizontal-control-list a {
-  font-size: 2vw;
+  font-size: clamp(13px, 2vw, 20px);
 }
 #admin #pagina .horizontal-control-list [aria-expanded=true],
 #teacherPortal #pagina .horizontal-control-list [aria-expanded=true],
@@ -2184,10 +2184,10 @@ footer p {
     display: block;
   }
   body #left-panel #sidebar .sidebar-lists a {
-    font-size: 0.8vw;
+    font-size: clamp(13px, 0.8vw, 20px);
   }
   body #left-panel #sidebar .sidebar-lists p {
-    font-size: 1vw;
+    font-size: clamp(13px, 1vw, 20px);
   }
   body #left-panel #sidebar .fa-angle-down {
     display: none;
@@ -2258,12 +2258,12 @@ body#studentPortal .panel-side #left-panel #sidebar .sidebar-lists #minimize {
   body#admin .panel-side #left-panel #sidebar .sidebar-lists a,
 body#teacherPortal .panel-side #left-panel #sidebar .sidebar-lists a,
 body#studentPortal .panel-side #left-panel #sidebar .sidebar-lists a {
-    font-size: 2vw;
+    font-size: clamp(13px, 2vw, 20px);
   }
   body#admin .panel-side #left-panel #sidebar .sidebar-lists p,
 body#teacherPortal .panel-side #left-panel #sidebar .sidebar-lists p,
 body#studentPortal .panel-side #left-panel #sidebar .sidebar-lists p {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   body#admin #pagina #navbarBottom,
 body#admin #pagina #navbarBottomStudentPortal,
@@ -2319,7 +2319,7 @@ body#studentPortal #pagina #navbarBottomStudentPortal ul img {
   body#admin #pagina form label,
 body#teacherPortal #pagina form label,
 body#studentPortal #pagina form label {
-    font-size: 2vw;
+    font-size: clamp(13px, 2vw, 20px);
   }
   body#admin #pagina form input,
 body#admin #pagina form select,
@@ -2327,22 +2327,22 @@ body#teacherPortal #pagina form input,
 body#teacherPortal #pagina form select,
 body#studentPortal #pagina form input,
 body#studentPortal #pagina form select {
-    font-size: 1.5vw;
+    font-size: clamp(13px, 1.5vw, 20px);
   }
   body#admin #pagina form .btn,
 body#teacherPortal #pagina form .btn,
 body#studentPortal #pagina form .btn {
-    font-size: 2vw;
+    font-size: clamp(13px, 2vw, 20px);
   }
   body#admin #pagina table th,
 body#teacherPortal #pagina table th,
 body#studentPortal #pagina table th {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   body#admin #pagina table td,
 body#teacherPortal #pagina table td,
 body#studentPortal #pagina table td {
-    font-size: 2vw;
+    font-size: clamp(13px, 2vw, 20px);
   }
   body#admin #pagina table td .miniature-photo,
 body#teacherPortal #pagina table td .miniature-photo,
@@ -2371,7 +2371,7 @@ body#teacherPortal #pagina #navbar-top b,
 body#teacherPortal #pagina #navbar-top a,
 body#studentPortal #pagina #navbar-top b,
 body#studentPortal #pagina #navbar-top a {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   body#admin #pagina #navbar-top a#bars,
 body#teacherPortal #pagina #navbar-top a#bars,
@@ -2443,7 +2443,7 @@ body#studentPortal #pagina .modal-profile .side-collapse-options {
   body#admin #pagina .modal-profile .modal-sidebar .container-list-group nav a,
 body#teacherPortal #pagina .modal-profile .modal-sidebar .container-list-group nav a,
 body#studentPortal #pagina .modal-profile .modal-sidebar .container-list-group nav a {
-    font-size: 1.2vw;
+    font-size: clamp(13px, 1.2vw, 20px);
   }
   body#admin #pagina .modal-profile .accordion-container,
 body#teacherPortal #pagina .modal-profile .accordion-container,
@@ -2466,12 +2466,12 @@ body#studentPortal #pagina .modal-profile .main-content [data-parent="#main-acco
   body#admin #pagina .modal-profile .main-content h5,
 body#teacherPortal #pagina .modal-profile .main-content h5,
 body#studentPortal #pagina .modal-profile .main-content h5 {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   body#admin #pagina .modal-profile .main-content form .input-group-text,
 body#teacherPortal #pagina .modal-profile .main-content form .input-group-text,
 body#studentPortal #pagina .modal-profile .main-content form .input-group-text {
-    font-size: 2vw;
+    font-size: clamp(13px, 2vw, 20px);
   }
   body#admin #pagina .modal-profile .main-content form select,
 body#admin #pagina .modal-profile .main-content form input,
@@ -2479,7 +2479,7 @@ body#teacherPortal #pagina .modal-profile .main-content form select,
 body#teacherPortal #pagina .modal-profile .main-content form input,
 body#studentPortal #pagina .modal-profile .main-content form select,
 body#studentPortal #pagina .modal-profile .main-content form input {
-    font-size: 1.8vw;
+    font-size: clamp(13px, 1.8vw, 20px);
   }
   body#admin #pagina .modal-profile .option-list,
 body#teacherPortal #pagina .modal-profile .option-list,
@@ -2498,10 +2498,10 @@ body#studentPortal #pagina .modal-profile .option-list {
     text-align: justify;
   }
   html #general-management .card-title {
-    font-size: 4.5vw;
+    font-size: clamp(13px, 4.5vw, 20px);
   }
   html #general-management .btn {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   html #index nav img {
     width: 30vw;
@@ -2577,17 +2577,17 @@ html body#studentPortal #pagina #navbarBottomTeacherPortal ul .foto-perfil {
   html body#admin #pagina p,
 html body#teacherPortal #pagina p,
 html body#studentPortal #pagina p {
-    font-size: 3.5vw;
+    font-size: clamp(13px, 3.5vw, 20px);
   }
   html body#admin #pagina form,
 html body#teacherPortal #pagina form,
 html body#studentPortal #pagina form {
-    font-size: 4vw;
+    font-size: clamp(13px, 4vw, 20px);
   }
   html body#admin #pagina form label,
 html body#teacherPortal #pagina form label,
 html body#studentPortal #pagina form label {
-    font-size: 3.5vw;
+    font-size: clamp(13px, 3.5vw, 20px);
   }
   html body#admin #pagina form input,
 html body#admin #pagina form select,
@@ -2595,27 +2595,27 @@ html body#teacherPortal #pagina form input,
 html body#teacherPortal #pagina form select,
 html body#studentPortal #pagina form input,
 html body#studentPortal #pagina form select {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina form .btn,
 html body#teacherPortal #pagina form .btn,
 html body#studentPortal #pagina form .btn {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina form span,
 html body#teacherPortal #pagina form span,
 html body#studentPortal #pagina form span {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina table th,
 html body#teacherPortal #pagina table th,
 html body#studentPortal #pagina table th {
-    font-size: 3.5vw;
+    font-size: clamp(13px, 3.5vw, 20px);
   }
   html body#admin #pagina table td,
 html body#teacherPortal #pagina table td,
 html body#studentPortal #pagina table td {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina table td .miniature-photo,
 html body#teacherPortal #pagina table td .miniature-photo,
@@ -2625,27 +2625,27 @@ html body#studentPortal #pagina table td .miniature-photo {
   html body#admin #pagina #home .card .card-title,
 html body#teacherPortal #pagina #home .card .card-title,
 html body#studentPortal #pagina #home .card .card-title {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   html body#admin #pagina #home .card .card-text,
 html body#teacherPortal #pagina #home .card .card-text,
 html body#studentPortal #pagina #home .card .card-text {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina #home .card .teacher-name,
 html body#teacherPortal #pagina #home .card .teacher-name,
 html body#studentPortal #pagina #home .card .teacher-name {
-    font-size: 4vw;
+    font-size: clamp(13px, 4vw, 20px);
   }
   html body#admin #pagina #home .card .total-student-enrolled,
 html body#teacherPortal #pagina #home .card .total-student-enrolled,
 html body#studentPortal #pagina #home .card .total-student-enrolled {
-    font-size: 3.5vw;
+    font-size: clamp(13px, 3.5vw, 20px);
   }
   html body#admin #pagina #home .recently-enrolled .card-title,
 html body#teacherPortal #pagina #home .recently-enrolled .card-title,
 html body#studentPortal #pagina #home .recently-enrolled .card-title {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina #home .recently-enrolled table tr td,
 html body#teacherPortal #pagina #home .recently-enrolled table tr td,
@@ -2655,7 +2655,7 @@ html body#studentPortal #pagina #home .recently-enrolled table tr td {
   html body#admin #pagina #home .recent-activities .card-title,
 html body#teacherPortal #pagina #home .recent-activities .card-title,
 html body#studentPortal #pagina #home .recent-activities .card-title {
-    font-size: 4vw;
+    font-size: clamp(13px, 4vw, 20px);
     padding: 0px;
   }
   html body#admin #pagina #home .admin-portal .recent-activities .teacher-name,
@@ -2672,7 +2672,7 @@ html body#studentPortal #pagina #teacher-table {
   html body#admin #pagina #settingsModal #accordion-data-admin form .input-group-text,
 html body#teacherPortal #pagina #settingsModal #accordion-data-admin form .input-group-text,
 html body#studentPortal #pagina #settingsModal #accordion-data-admin form .input-group-text {
-    font-size: 2.7vw;
+    font-size: clamp(13px, 2.7vw, 20px);
   }
   html body#admin #pagina #settingsModal #accordion-data-admin form input,
 html body#admin #pagina #settingsModal #accordion-data-admin form select,
@@ -2680,7 +2680,7 @@ html body#teacherPortal #pagina #settingsModal #accordion-data-admin form input,
 html body#teacherPortal #pagina #settingsModal #accordion-data-admin form select,
 html body#studentPortal #pagina #settingsModal #accordion-data-admin form input,
 html body#studentPortal #pagina #settingsModal #accordion-data-admin form select {
-    font-size: 2.4vw;
+    font-size: clamp(13px, 2.4vw, 20px);
   }
   html body#admin #pagina #profileTeacherModal #main-accordion, html body#admin #pagina #profileTeacherModal #main-accordion-settings,
 html body#admin #pagina #profileStudentModal #main-accordion,
@@ -2801,7 +2801,7 @@ html body#studentPortal #pagina #profileStudentModal .main-content {
   html body#admin #pagina .registration-in-stages .registration-header-by-step .row .container-option p,
 html body#teacherPortal #pagina .registration-in-stages .registration-header-by-step .row .container-option p,
 html body#studentPortal #pagina .registration-in-stages .registration-header-by-step .row .container-option p {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina div.option-icon-group span,
 html body#teacherPortal #pagina div.option-icon-group span,
@@ -2822,7 +2822,7 @@ html body#studentPortal #pagina .main-container h5:nth-child(1) {
   html body#admin #pagina .page-header h5,
 html body#teacherPortal #pagina .page-header h5,
 html body#studentPortal #pagina .page-header h5 {
-    font-size: 5vw;
+    font-size: clamp(13px, 5vw, 20px);
     margin-top: 20px;
   }
   html body#admin #pagina .page-header .collapse-options-container span,
@@ -2831,12 +2831,12 @@ html body#studentPortal #pagina .page-header .collapse-options-container span {
     margin-bottom: 10px;
     margin-top: 20px;
     display: inline-block;
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina .page-header .breadcrumb-item,
 html body#teacherPortal #pagina .page-header .breadcrumb-item,
 html body#studentPortal #pagina .page-header .breadcrumb-item {
-    font-size: 3.5vw;
+    font-size: clamp(13px, 3.5vw, 20px);
   }
   html body#admin #pagina #navbar-top,
 html body#teacherPortal #pagina #navbar-top,
@@ -2849,7 +2849,7 @@ html body#teacherPortal #pagina #navbar-top b,
 html body#teacherPortal #pagina #navbar-top a,
 html body#studentPortal #pagina #navbar-top b,
 html body#studentPortal #pagina #navbar-top a {
-    font-size: 3.5vw;
+    font-size: clamp(13px, 3.5vw, 20px);
   }
   html body#admin #pagina #navbar-top b i.fas,
 html body#admin #pagina #navbar-top a i.fas,
@@ -2942,13 +2942,13 @@ html body#studentPortal #pagina .modal-profile .main-sheet {
   html body#admin #pagina .modal-profile .main-sheet span,
 html body#teacherPortal #pagina .modal-profile .main-sheet span,
 html body#studentPortal #pagina .modal-profile .main-sheet span {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
     color: #506177;
   }
   html body#admin #pagina .modal-profile h5,
 html body#teacherPortal #pagina .modal-profile h5,
 html body#studentPortal #pagina .modal-profile h5 {
-    font-size: 4vw;
+    font-size: clamp(13px, 4vw, 20px);
   }
   html body#admin #pagina .modal-profile .modal-sidebar .container-list-group,
 html body#teacherPortal #pagina .modal-profile .modal-sidebar .container-list-group,
@@ -2983,7 +2983,7 @@ html body#studentPortal #pagina .modal-profile .modal-sidebar .container-list-gr
     margin-bottom: 0;
     border-bottom: 2px solid white;
     border-radius: 0px;
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   html body#admin #pagina .modal-profile .modal-sidebar .container-list-group nav ul [aria-expanded=true],
 html body#teacherPortal #pagina .modal-profile .modal-sidebar .container-list-group nav ul [aria-expanded=true],
@@ -3001,7 +3001,7 @@ html body#studentPortal #pagina .modal-profile .collapse-options-container {
   html body#admin #pagina .modal-profile .collapse-options-container span,
 html body#teacherPortal #pagina .modal-profile .collapse-options-container span,
 html body#studentPortal #pagina .modal-profile .collapse-options-container span {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina .modal-profile .main-content,
 html body#teacherPortal #pagina .modal-profile .main-content,
@@ -3015,12 +3015,12 @@ html body#studentPortal #pagina .modal-profile .main-content {
   html body#admin #pagina .modal-profile .main-content form i.fas,
 html body#teacherPortal #pagina .modal-profile .main-content form i.fas,
 html body#studentPortal #pagina .modal-profile .main-content form i.fas {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina .modal-profile .main-content form div .font-weight-bold,
 html body#teacherPortal #pagina .modal-profile .main-content form div .font-weight-bold,
 html body#studentPortal #pagina .modal-profile .main-content form div .font-weight-bold {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   html body#admin #pagina .modal-profile .main-content form input,
 html body#admin #pagina .modal-profile .main-content form select,
@@ -3028,7 +3028,7 @@ html body#teacherPortal #pagina .modal-profile .main-content form input,
 html body#teacherPortal #pagina .modal-profile .main-content form select,
 html body#studentPortal #pagina .modal-profile .main-content form input,
 html body#studentPortal #pagina .modal-profile .main-content form select {
-    font-size: 2.4vw;
+    font-size: clamp(13px, 2.4vw, 20px);
   }
   html body#admin #pagina .modal-profile .main-content #list-warning .miniature-photo,
 html body#teacherPortal #pagina .modal-profile .main-content #list-warning .miniature-photo,
@@ -3048,7 +3048,7 @@ html body#studentPortal #pagina .modal-profile .main-content table .miniature-ph
   html body#admin #pagina .modal-profile .main-content span i.fas,
 html body#teacherPortal #pagina .modal-profile .main-content span i.fas,
 html body#studentPortal #pagina .modal-profile .main-content span i.fas {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html body#admin #pagina .modal-profile .main-content #tableListExam,
 html body#teacherPortal #pagina .modal-profile .main-content #tableListExam,
@@ -3068,7 +3068,7 @@ html body#studentPortal #pagina .modal-profile .main-content #finalized-rematrec
   html body#admin #pagina .modal-profile .main-content #finalized-rematrecules p,
 html body#teacherPortal #pagina .modal-profile .main-content #finalized-rematrecules p,
 html body#studentPortal #pagina .modal-profile .main-content #finalized-rematrecules p {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   html body#admin #pagina .modal-profile .main-content #addRematrung img,
 html body#teacherPortal #pagina .modal-profile .main-content #addRematrung img,
@@ -3081,13 +3081,13 @@ html body#teacherPortal #pagina .modal-profile .main-content h5,
 html body#teacherPortal #pagina .modal-profile .main-content .h5,
 html body#studentPortal #pagina .modal-profile .main-content h5,
 html body#studentPortal #pagina .modal-profile .main-content .h5 {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
     margin-bottom: 15px;
   }
   html body#admin #pagina .modal-profile .main-content th,
 html body#teacherPortal #pagina .modal-profile .main-content th,
 html body#studentPortal #pagina .modal-profile .main-content th {
-    font-size: 2.5vw;
+    font-size: clamp(13px, 2.5vw, 20px);
   }
   html body#admin #pagina .modal-profile .modal-sidebar,
 html body#teacherPortal #pagina .modal-profile .modal-sidebar,
@@ -3163,7 +3163,7 @@ html body#studentPortal #pagina #profileStudentModal .container-list-group nav u
     order: 2;
   }
   html #studentPortal #pagina .accordion p a {
-    font-size: 2.3vw;
+    font-size: clamp(13px, 2.3vw, 20px);
   }
   html #studentPortal #pagina #table-students,
 html #studentPortal #pagina #table-teachers {
@@ -3173,7 +3173,7 @@ html #studentPortal #pagina #table-teachers {
     margin-top: 20px;
   }
   html #studentPortal #pagina .collapse-options-container span {
-    font-size: 3vw;
+    font-size: clamp(13px, 3vw, 20px);
   }
   html #studentPortal #pagina #note-table-class {
     width: 450px;

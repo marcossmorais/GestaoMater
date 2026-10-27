@@ -1,3 +1,6 @@
+// só a home do docente tem o gráfico
+if (document.getElementById('index-disciplines')) {
+
 $.ajax({
   type: "GET",
   url: "/portal-docente/aproveitamento-alunos-base-media-final",
@@ -52,3 +55,5 @@ $.ajax({
       }, 1500)
   }
 })
+
+}

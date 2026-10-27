@@ -55,7 +55,7 @@
             span {
                 text-align: center;
                 font-family: Bold;
-                font-size: 1vw;
+                font-size: clamp(13px, 1vw, 20px);
             }
 
             img {
@@ -107,7 +107,7 @@
 
         h5 {
             font-family: Bold;
-            font-size: 1.6vw;
+            font-size: clamp(13px, 1.6vw, 20px);
         }
 
         .container-list-group {
@@ -128,7 +128,7 @@
                     a {
                         padding: 10px 15px;
                         color: #7F8C8D;
-                        font-size: 0.9vw;
+                        font-size: clamp(13px, 0.9vw, 20px);
                         text-align: left;
                         display: block;
                         margin-bottom: 7px;
@@ -177,11 +177,11 @@
             border: 1px solid #e5e5e5;
 
             td {
-                font-size: 1vw;
+                font-size: clamp(13px, 1vw, 20px);
             }
 
             th {
-                font-size: 1.1vw;
+                font-size: clamp(13px, 1.1vw, 20px);
                 font-weight: bold;
             }
 
@@ -224,7 +224,7 @@
                 }
 
                 .font-weight-bold {
-                    font-size: 1.2vw;
+                    font-size: clamp(13px, 1.2vw, 20px);
                 }
 
                 .input-group-text {

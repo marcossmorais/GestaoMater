@@ -261,7 +261,7 @@
         }
 
         p {
-            font-size: 1.0vw;
+            font-size: clamp(13px, 1.0vw, 20px);
         }
 
         .miniature-photo {
@@ -396,7 +396,7 @@
                 @include icon-card(none, #0838B8, $color-white, 5px);
                 padding-left: 20px;
                 padding-right: 20px;
-                font-size: 1vw;
+                font-size: clamp(13px, 1vw, 20px);
                 border: 1px solid $color-smooth-gray;
                 color: $color-dark-gray;
             }
@@ -426,7 +426,7 @@
             }
 
             a {
-                font-size: 2vw;
+                font-size: clamp(13px, 2vw, 20px);
             }
 
             @include aria-expanded-false-and-true($color-blue, $color-white, $color-smooth-gray, $color-black, 5px);
