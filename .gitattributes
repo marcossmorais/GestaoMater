@@ -1,0 +1,9 @@
+* text=auto
+*.sh text eol=lf
+*.sql text eol=lf
+*.yml text eol=lf
+Dockerfile text eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary
+*.woff2 binary
