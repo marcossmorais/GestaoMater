@@ -151,7 +151,7 @@ require __DIR__ . '../../../../config/variables.php';
 
                                         <h5 class="p-2 col-11 p-sm-0">Atividades agendadas</h5>
 
-                                        <?php if (count($this->view->listExam) > 1) { ?>
+                                        <?php if (count($this->view->listExam) > 0) { ?>
 
                                             <?php foreach ($this->view->listExam as $key => $value) { ?>
 
@@ -188,7 +188,7 @@ require __DIR__ . '../../../../config/variables.php';
 
                                                         ?>
 
-                                                        <div class="col-lg-12 exam-description"><?= $value->discipline_name ?> - <?= $value->exam_description ?> - <?= $value->unity ?> ª Unidade </div>
+                                                        <div class="col-lg-12 exam-description"><?= htmlspecialchars($value->discipline_name) ?> - <?= htmlspecialchars($value->exam_description) ?> - <?= $value->unity ?> ª Unidade </div>
 
                                                     </div>
 
@@ -218,6 +218,8 @@ require __DIR__ . '../../../../config/variables.php';
 
                                 <div class="col-sm-8 col-lg-9 side-mural">
 
+                                    <?php require __DIR__ . '/../components/board.php'; ?>
+
                                     <div class="row">
 
                                         <h5 class="title-mural">Postagens recentes</h5>
@@ -242,10 +244,6 @@ require __DIR__ . '../../../../config/variables.php';
 
                                         foreach ($this->view->disciplineAverageList as $key => $disciplineAverage) {
                                             $data['dados'][] = ['tipo' => 'disciplineAverage', 'value' => $disciplineAverage];
-                                        }
-
-                                        foreach ($this->view->listWarning as $key => $value) {
-                                            $data['dados'][] = ['tipo' => 'warning', 'value' => $value];
                                         }
 
                                         if (!empty($this->view->listOccurrences)) {
@@ -496,7 +494,7 @@ function currentDate($array)
                                                         <div class="row p-2">
                                                             <div class="col-lg-12">
 
-                                                                <textarea class="col-lg-12 form-control p-3" disabled name="" id="" cols="40" rows="4" value=""><?= $value['value']->warning ?></textarea>
+                                                                <textarea class="col-lg-12 form-control p-3" disabled name="" id="" cols="40" rows="4" value="" ><?= htmlspecialchars($value['value']->warning) ?></textarea>
 
                                                                 <small class="text-muted col-lg-12 d-flex justify-content-end align-items-center mt-3 p-0"> <i class="fas fa-history mr-2"></i>Postado <?= currentDate($value['value']->post_date) ?></small>
 

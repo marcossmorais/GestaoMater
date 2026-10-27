@@ -114,6 +114,9 @@ class StudentPortalController extends Action
         $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
         $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
 
+        $this->view->board = Container::getModel('TeacherStudent\ClassBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
+        $this->view->guides = Container::getModel('TeacherStudent\Gradebook')->guidesForClass($_SESSION['Student']['classId']);
+
         $this->render("pages/home", "SimpleLayout", "studentPortal");
     }
 
@@ -245,6 +248,29 @@ class StudentPortalController extends Action
         \App\Tools\Audit::log(\App\Connection::getDb(), 'DOWNLOAD', 'declaracao_' . $type, $enrollmentId, ['codigo' => $this->view->authCode]);
 
         require __DIR__ . '/../../Views/admin/student/declarations/declaration.php';
+    }
+
+    /**
+     * Confirma a leitura de um aviso do mural (só da turma do aluno)
+     */
+    public function boardRead()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        $ok = Container::getModel('TeacherStudent\ClassBoard')->markRead(
+            (int) ($_POST['id'] ?? 0),
+            $_SESSION['Student']['enrollmentId'] ?? 0,
+            $_SESSION['Student']['classId'] ?? 0
+        );
+
+        if (!$ok) {
+            http_response_code(404);
+            echo json_encode(['error' => 'aviso-nao-encontrado']);
+            return;
+        }
+
+        echo json_encode(['status' => 'success']);
     }
 
     public function acknowledgeOccurrence()

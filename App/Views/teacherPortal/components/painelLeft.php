@@ -24,6 +24,10 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li name="diario"><a href="/portal-docente/diario"><i class="fas fa-book-open"></i><span class="link-name">Diário de aula</span></a></li>
 
+            <li name="notas"><a href="/portal-docente/notas"><i class="fas fa-marker"></i><span class="link-name">Notas e provas</span></a></li>
+
+            <li name="mural"><a href="/portal-docente/mural"><i class="fas fa-thumbtack"></i><span class="link-name">Mural da turma</span></a></li>
+
             <li name="horario"><a href="/portal-docente/horario"><i class="fas fa-calendar-alt"></i><span class="link-name">Horários</span></a></li>
 
             <li><a href="#" id="settingsTeacherPortal"><i class="fas fa-cog"></i><span class="link-name">Configurações</span></a></li>

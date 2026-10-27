@@ -1003,3 +1003,49 @@ html.nightMode .m-cell-badge {
     font-size: 12px;
   }
 }
+
+/* ---------- Mural da turma e roteiro de provas */
+.m-pill-warn { background: rgba(248, 168, 8, .18); color: #9A6700; }
+html.nightMode .m-pill-warn { color: #FBBF24; }
+.m-board { margin-bottom: 24px; }
+.m-board .title-mural { margin-bottom: 12px; }
+html body .card.m-board-post, html body .card.m-board-guide, html body .card.m-board-empty { padding: 14px 16px !important; margin-bottom: 12px; border-radius: 14px; }
+.m-board-post header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 6px; }
+.m-board-post header small, .m-board-guide summary small { color: var(--m-muted); font-size: 12px; }
+.m-board-post p, .m-board-guide p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--m-text); white-space: normal; overflow-wrap: anywhere; }
+.m-board-post footer { display: flex; justify-content: flex-end; margin-top: 10px; }
+html body .m-board-post footer .btn { min-height: 44px; font-size: 14px !important; font-weight: 600; padding: 0 14px !important; display: inline-flex; align-items: center; }
+html body .card.m-board-post.is-pinned { border-left: 4px solid #F8A808 !important; }
+.m-board-post.is-read { opacity: .78; }
+.m-board-read { font-size: 13px; font-weight: 700; color: var(--m-success); min-height: 44px; display: inline-flex; align-items: center; }
+.m-board-empty { color: var(--m-muted); }
+.m-board-guide summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
+.m-board-guide[open] summary { margin-bottom: 8px; }
+
+/* ---------- Mural (docente) */
+.m-post-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.m-post-form-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.m-post-actions { display: flex; gap: 8px; }
+.m-post-actions .btn { min-height: 44px; }
+
+/* ---------- Notas (docente) */
+.m-exam-list { display: flex; flex-direction: column; gap: 10px; }
+.m-exam { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 1px solid var(--m-border); border-radius: 12px; padding: 12px 14px; background: var(--m-surface); color: var(--m-text); cursor: pointer; min-height: 56px; }
+.m-exam:hover { border-color: var(--m-primary); }
+.m-exam-body { flex: 1; display: flex; flex-direction: column; }
+.m-exam-body small { color: var(--m-muted); }
+.m-grade-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 96px; }
+.m-grade-row { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 1px solid var(--m-border); border-radius: 12px; background: var(--m-surface); }
+.m-grade-row.is-invalid { border-color: var(--m-danger); }
+.m-grade-row span { flex: 1; font-size: 15px; }
+.m-grade-row input { width: 88px; min-height: 44px; text-align: center; font-size: 17px; font-weight: 700; }
+.m-units-info { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+/* ---------- Desempenho geral da turma (docente) */
+.m-overview-wrap { overflow-x: auto; }
+.m-overview { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+.m-overview th, .m-overview td { padding: 8px 10px; border-bottom: 1px solid var(--m-border); text-align: center; white-space: nowrap; }
+.m-overview th:first-child, .m-overview td:first-child { text-align: left; position: sticky; left: 0; background: var(--m-surface); }
+.m-overview th.is-mine { color: var(--m-primary-text); }
+.m-overview td.is-low { color: var(--m-danger); font-weight: 700; }
+.m-overview small { display: block; color: var(--m-muted); font-weight: 400; font-size: 11px; }

@@ -910,6 +910,72 @@ class Route extends Bootstrap
 			'action' => 'lessonSave'
 		);
 
+		$routes['teacherBoard'] = array(
+			'route' => '/portal-docente/mural',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'board'
+		);
+
+		$routes['teacherBoardList'] = array(
+			'route' => '/portal-docente/mural/avisos',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'boardList'
+		);
+
+		$routes['teacherBoardPost'] = array(
+			'route' => '/portal-docente/mural/publicar',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'boardPost'
+		);
+
+		$routes['teacherBoardPin'] = array(
+			'route' => '/portal-docente/mural/fixar',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'boardPin'
+		);
+
+		$routes['teacherBoardDelete'] = array(
+			'route' => '/portal-docente/mural/excluir',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'boardDelete'
+		);
+
+		$routes['teacherGrades'] = array(
+			'route' => '/portal-docente/notas',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'grades'
+		);
+
+		$routes['teacherGradesExams'] = array(
+			'route' => '/portal-docente/notas/avaliacoes',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'gradesExams'
+		);
+
+		$routes['teacherExamSave'] = array(
+			'route' => '/portal-docente/notas/avaliacao/salvar',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'examSave'
+		);
+
+		$routes['teacherGradesStudents'] = array(
+			'route' => '/portal-docente/notas/alunos',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'gradesStudents'
+		);
+
+		$routes['teacherGradesSave'] = array(
+			'route' => '/portal-docente/notas/salvar',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'gradesSave'
+		);
+
+		$routes['teacherClassOverview'] = array(
+			'route' => '/portal-docente/turma',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'classOverview'
+		);
+
 		$routes['teacherSchedule'] = array(
 			'route' => '/portal-docente/horario',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
@@ -952,6 +1018,12 @@ class Route extends Bootstrap
 			'route' => '/portal-aluno/sair',
 			'controller' => 'StudentPortal\\StudentPortalController',
 			'action' => 'exit'
+		);
+
+		$routes['StudentBoardRead'] = array(
+			'route' => '/portal-aluno/mural/lido',
+			'controller' => 'StudentPortal\StudentPortalController',
+			'action' => 'boardRead'
 		);
 
 		$routes['StudentPortalSettings'] = array(
@@ -1084,9 +1156,9 @@ class Route extends Bootstrap
 		if (strpos($url, '/portal-aluno') === 0) return $student;
 		if (strpos($url, '/portal-docente') === 0) return $teacher;
 
-		// o portal do docente reutiliza as rotas de gestão do admin
+		// gestão é só do admin; o docente usa as rotas próprias de /portal-docente (com checagem de turma/disciplina)
 		if (strpos($url, '/admin') === 0 || strpos($url, '/verificar-dados') === 0) {
-			return $admin || $teacher || ($student && in_array($url, self::STUDENT_SHARED_ROUTES, true));
+			return $admin || ($student && in_array($url, self::STUDENT_SHARED_ROUTES, true));
 		}
 
 		return $admin || $teacher || $student;
