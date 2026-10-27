@@ -6,7 +6,7 @@ Aplicação web de gestão escolar com 3 portais:
 - **Docente**: avaliações, notas, faltas, avisos da turma
 - **Aluno**: boletim, notas, faltas, avisos, rematrícula
 
-Stack: PHP 8.2 (MVC próprio em `vendor/MF`), PostgreSQL (compatível com Supabase), Clerk para autenticação, Bootstrap + jQuery.
+Stack: PHP 8.4 (MVC próprio em `vendor/MF`), PostgreSQL (compatível com Supabase), Clerk para autenticação, Bootstrap + jQuery.
 
 ## Rodando localmente (Docker)
 

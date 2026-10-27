@@ -90,7 +90,7 @@ Inspirado nas melhores práticas de interfaces educacionais modernas (referênci
 └───────────────────────────┬────────────────────────────┘
                             │ Fetch / JSON
 ┌───────────────────────────▼────────────────────────────┐
-│                  APPLICATION LAYER (PHP 8.2)           │
+│                  APPLICATION LAYER (PHP 8.4)           │
 │  - Microframework MVC em Container Docker              │
 │  - Clerk Auth (JWT RS256 com validação de JWKS)        │
 │  - Controller transacional com tratamento de erros     │
