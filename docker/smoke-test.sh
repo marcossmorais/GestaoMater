@@ -33,8 +33,11 @@ S=$(first aluno nome_aluno id_aluno)
 login admin /admin/login "Usuário Padrão" 867532
 login teacher /portal-docente/login "${T%|*}" "${T#*|}"
 login student /portal-aluno/login "${S%|*}" "${S#*|}"
-for jar in admin teacher student; do
-  grep -q PHPSESSID "$TMP/$jar" || { echo "Login falhou ($jar). Com o Clerk ativo o login por código fica desligado."; exit 1; }
+# Confere se o login autenticou de verdade: a home do portal não pode redirecionar
+for pair in admin:/admin/home teacher:/portal-docente/home student:/portal-aluno/home; do
+  jar=${pair%%:*}; home=${pair#*:}
+  code=$(curl -s -b "$TMP/$jar" -o /dev/null -w "%{http_code}" "$BASE$home")
+  [ "$code" = 200 ] || { echo "Login falhou ($jar, $home -> $code). Com o Clerk ativo o login por código fica desligado: rode com CLERK_* vazios."; exit 1; }
 done
 
 ROUTES=$(grep -o "'route' => '[^']*'" /var/www/html/App/Route.php | sed "s/'route' => '//; s/'$//" | sort -u)

@@ -20,6 +20,7 @@ services:
       - ./database/07_atestado_falta.sql:/docker-entrypoint-initdb.d/07_atestado_falta.sql:ro
       - ./database/08_ocorrencias.sql:/docker-entrypoint-initdb.d/08_ocorrencias.sql:ro
       - ./database/09_responsaveis_portaria.sql:/docker-entrypoint-initdb.d/09_responsaveis_portaria.sql:ro
+      - ./database/10_auditoria.sql:/docker-entrypoint-initdb.d/10_auditoria.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro

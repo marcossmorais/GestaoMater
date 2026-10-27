@@ -65,7 +65,7 @@ Como funciona:
 
 ## Testes
 
-Smoke test que loga nos 3 portais e chama todas as rotas procurando erros de PHP/SQL (use só no banco local):
+Smoke test que loga nos 3 portais e chama todas as rotas procurando erros de PHP/SQL (use só no banco local). Precisa do login por código, então rode o app com `CLERK_*` vazios (`CLERK_PUBLISHABLE_KEY= CLERK_SECRET_KEY= docker compose up -d app`). O `--writes` altera os dados de teste; recrie o banco depois.
 
 ```bash
 docker exec mater-app sh /var/www/html/docker/smoke-test.sh

@@ -172,15 +172,17 @@ class Occurrence extends Model
      * @param int $id
      * @return bool
      */
-    public function acknowledge($id)
+    public function acknowledge($id, $enrollmentId)
     {
         $stmt = $this->db->prepare(
             "UPDATE ocorrencia_disciplinar
              SET ciencia_responsavel = TRUE, ciencia_em = CURRENT_TIMESTAMP
-             WHERE id_ocorrencia = :id"
+             WHERE id_ocorrencia = :id AND fk_id_matricula = :enrollment"
         );
         $stmt->bindValue(':id', (int) $id, \PDO::PARAM_INT);
-        return $stmt->execute();
+        $stmt->bindValue(':enrollment', (int) $enrollmentId, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
     }
 
     /**

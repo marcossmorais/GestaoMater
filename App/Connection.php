@@ -34,6 +34,8 @@ class Connection
 
 			$conn->exec("SET TIME ZONE 'America/Sao_Paulo'");
 
+			\App\Tools\Audit::bindActor($conn);
+
 			return self::$conn = $conn;
 
 		} catch (\PDOException $e) {
