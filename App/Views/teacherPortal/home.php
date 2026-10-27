@@ -110,14 +110,6 @@ foreach ($this->view->listExam as $exam) $classes[$exam->acronym_series . $exam-
                     <?php } ?>
                 </div>
 
-                <div class="card m-panel">
-                    <div class="m-panel-head"><h6>Atividades recentes</h6></div>
-                    <div class="p-0 recent-activities">
-                        <?php $teacherName = "Você" ?>
-                        <?php require '../App/Views/admin/management/components/recentActivities.php' ?>
-                    </div>
-                </div>
-
             </div>
 
         </div>
