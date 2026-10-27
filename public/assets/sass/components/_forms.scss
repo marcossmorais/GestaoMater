@@ -27,7 +27,7 @@
         }
 
         label,.input-group-text{
-            font-size: 1.1vw;
+            font-size: clamp(13px, 1.1vw, 20px);
         }
 
         label {
@@ -35,7 +35,7 @@
         }
 
         select,input{
-            font-size: 1.1vw;
+            font-size: clamp(13px, 1.1vw, 20px);
             color: $color-dark-blue;
         }
 

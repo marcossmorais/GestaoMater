@@ -11,7 +11,7 @@
 
     .btn {
         border-radius: 5px;
-        font-size: 1.1vw;
+        font-size: clamp(13px, 1.1vw, 20px);
     }
 
     .edit-image-button {

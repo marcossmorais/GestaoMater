@@ -15,10 +15,6 @@ require __DIR__ . '../../../../config/variables.php';
             </li>
 
             <li class="nav-item">
-                <a name="turmas" class="nav-link" href="/portal-docente/turmas"><i class="fas fa-users"></i> <span>Turmas</span></a>
-            </li>
-
-            <li class="nav-item">
                 <a name="chamada" class="nav-link" href="/portal-docente/chamada"><i class="fas fa-clipboard-check"></i> <span>Chamada</span></a>
             </li>
 
@@ -31,17 +27,7 @@ require __DIR__ . '../../../../config/variables.php';
             </li>
 
             <li class="nav-item">
-                <a name="mural" class="nav-link" href="/portal-docente/mural"><i class="fas fa-thumbtack"></i> <span>Mural</span></a>
-            </li>
-
-            <?php $photo = ($_SESSION['Teacher']['profilePhoto'] ? $_SESSION['Teacher']['profilePhoto'] : 'foto-vazia.jpg') ?>
-
-            <li class="nav-item">
-                <a class="nav-link" id="settingsTeacherPortal" href="#"><img class="foto-perfil" src="<?= $app_url ?>/assets/img/teacherProfilePhotos/<?= $photo ?>" alt=""></a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="/portal-docente/sair" data-toggle="tooltip" data-placement="bottom" title="Sair da conta"><i class="fas fa-sign-out-alt"></i></a>
+                <button type="button" class="nav-link m-more-toggle" data-more-toggle aria-expanded="false" aria-controls="teacherMoreMenu"><i class="fas fa-ellipsis-h"></i> <span>Mais</span></button>
             </li>
 
         </ul>
@@ -49,3 +35,14 @@ require __DIR__ . '../../../../config/variables.php';
     </div>
 
 </nav>
+
+<?php $photo = ($_SESSION['Teacher']['profilePhoto'] ? $_SESSION['Teacher']['profilePhoto'] : 'foto-vazia.jpg') ?>
+
+<!-- Menu "Mais" (celular) -->
+<div class="m-more-menu" id="teacherMoreMenu" hidden>
+    <a href="/portal-docente/turmas"><i class="fas fa-users"></i>Turmas</a>
+    <a href="/portal-docente/mural"><i class="fas fa-thumbtack"></i>Mural da turma</a>
+    <a href="/portal-docente/horario"><i class="fas fa-calendar-alt"></i>Horários</a>
+    <a href="#" id="settingsTeacherPortal"><img class="foto-perfil" src="<?= $app_url ?>/assets/img/teacherProfilePhotos/<?= $photo ?>" alt="">Meu perfil</a>
+    <a href="/portal-docente/sair" class="text-danger"><i class="fas fa-sign-out-alt"></i>Sair da conta</a>
+</div>

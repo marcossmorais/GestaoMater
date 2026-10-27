@@ -88,3 +88,22 @@
     });
 
 })();
+
+// Menu "Mais" da barra inferior do docente (celular)
+(function () {
+    const toggle = document.querySelector('[data-more-toggle]');
+    const menu = document.getElementById('teacherMoreMenu');
+    if (!toggle || !menu) return;
+
+    function set(open) {
+        menu.hidden = !open;
+        toggle.setAttribute('aria-expanded', open);
+    }
+
+    toggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        set(menu.hidden);
+    });
+    document.addEventListener('click', (event) => { if (!menu.hidden && !menu.contains(event.target)) set(false); });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') set(false); });
+})();

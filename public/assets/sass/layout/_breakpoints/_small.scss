@@ -67,11 +67,11 @@
                         }
 
                         a {
-                            font-size: 2vw;
+                            font-size: clamp(13px, 2vw, 20px);
                         }
 
                         p {
-                            font-size: 2.5vw;
+                            font-size: clamp(13px, 2.5vw, 20px);
                         }
 
                     }
@@ -117,16 +117,16 @@
             form {
 
                 label {
-                    font-size: 2vw;
+                    font-size: clamp(13px, 2vw, 20px);
                 }
 
                 input,
                 select {
-                    font-size: 1.5vw;
+                    font-size: clamp(13px, 1.5vw, 20px);
                 }
 
                 .btn {
-                    font-size: 2vw;
+                    font-size: clamp(13px, 2vw, 20px);
                 }
 
             }
@@ -134,11 +134,11 @@
             table {
 
                 th {
-                    font-size: 2.5vw;
+                    font-size: clamp(13px, 2.5vw, 20px);
                 }
 
                 td {
-                    font-size: 2vw;
+                    font-size: clamp(13px, 2vw, 20px);
 
                     .miniature-photo {
                         width: 8vw;
@@ -162,7 +162,7 @@
 
                 b,
                 a {
-                    font-size: 2.5vw;
+                    font-size: clamp(13px, 2.5vw, 20px);
                 }
 
                 a#bars {
@@ -232,7 +232,7 @@
                 .modal-sidebar {
                     .container-list-group {
                         nav a {
-                            font-size: 1.2vw;
+                            font-size: clamp(13px, 1.2vw, 20px);
                         }
                     }
                 }
@@ -255,18 +255,18 @@
                     }
 
                     h5 {
-                        font-size: 2.5vw;
+                        font-size: clamp(13px, 2.5vw, 20px);
                     }
 
                     form {
 
                         .input-group-text {
-                            font-size: 2vw;
+                            font-size: clamp(13px, 2vw, 20px);
                         }
 
                         select,
                         input {
-                            font-size: 1.8vw;
+                            font-size: clamp(13px, 1.8vw, 20px);
                         }
 
                     }

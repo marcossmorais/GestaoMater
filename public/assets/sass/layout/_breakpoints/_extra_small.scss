@@ -20,10 +20,10 @@
 
         #general-management{
             .card-title{
-                font-size: 4.5vw;
+                font-size: clamp(13px, 4.5vw, 20px);
             }
             .btn{
-                font-size: 2.5vw;
+                font-size: clamp(13px, 2.5vw, 20px);
             }
         }
 
@@ -124,38 +124,38 @@
                 }
 
                 p {
-                    font-size: 3.5vw;
+                    font-size: clamp(13px, 3.5vw, 20px);
                 }
 
                 form {
-                    font-size: 4vw;
+                    font-size: clamp(13px, 4vw, 20px);
 
                     label {
-                        font-size: 3.5vw;
+                        font-size: clamp(13px, 3.5vw, 20px);
                     }
 
                     input,
                     select {
-                        font-size: 3vw;
+                        font-size: clamp(13px, 3vw, 20px);
                     }
 
                     .btn {
-                        font-size: 3vw;
+                        font-size: clamp(13px, 3vw, 20px);
                     }
 
                     span {
-                        font-size: 3vw;
+                        font-size: clamp(13px, 3vw, 20px);
                     }
                 }
 
                 table {
 
                     th {
-                        font-size: 3.5vw;
+                        font-size: clamp(13px, 3.5vw, 20px);
                     }
 
                     td {
-                        font-size: 3vw;
+                        font-size: clamp(13px, 3vw, 20px);
 
                         .miniature-photo {
                             width: 8vw;
@@ -167,25 +167,25 @@
                 #home {
                     .card {
                         .card-title {
-                            font-size: 2.5vw;
+                            font-size: clamp(13px, 2.5vw, 20px);
                         }
 
                         .card-text {
-                            font-size: 3vw;
+                            font-size: clamp(13px, 3vw, 20px);
                         }
 
                         .teacher-name {
-                            font-size: 4vw;
+                            font-size: clamp(13px, 4vw, 20px);
                         }
                         .total-student-enrolled{
-                            font-size: 3.5vw;
+                            font-size: clamp(13px, 3.5vw, 20px);
                         }
                     }
 
                     .recently-enrolled {
 
                         .card-title {
-                            font-size: 3vw;
+                            font-size: clamp(13px, 3vw, 20px);
                         }
 
                         table tr td {
@@ -195,7 +195,7 @@
 
                     .recent-activities {
                         .card-title {
-                            font-size: 4vw;
+                            font-size: clamp(13px, 4vw, 20px);
                             padding: 0px;
                         }
                     }
@@ -218,12 +218,12 @@
                     #accordion-data-admin {
                         form {
                             .input-group-text {
-                                font-size: 2.7vw;
+                                font-size: clamp(13px, 2.7vw, 20px);
                             }
 
                             input,
                             select {
-                                font-size: 2.4vw;
+                                font-size: clamp(13px, 2.4vw, 20px);
                             }
                         }
                     }
@@ -287,7 +287,7 @@
                     .registration-header-by-step .row {
                         .container-option {
                             p {
-                                font-size: 3.0vw;
+                                font-size: clamp(13px, 3.0vw, 20px);
                             }
                         }
                     }
@@ -309,7 +309,7 @@
                 .page-header {
 
                     h5 {
-                        font-size: 5vw;
+                        font-size: clamp(13px, 5vw, 20px);
                         margin-top: 20px;
                     }
 
@@ -317,11 +317,11 @@
                         margin-bottom: 10px;
                         margin-top: 20px;
                         display: inline-block;
-                        font-size: 3vw;
+                        font-size: clamp(13px, 3vw, 20px);
                     }
 
                     .breadcrumb-item {
-                        font-size: 3.5vw;
+                        font-size: clamp(13px, 3.5vw, 20px);
                     }
 
                 }
@@ -332,7 +332,7 @@
 
                     b,
                     a {
-                        font-size: 3.5vw;
+                        font-size: clamp(13px, 3.5vw, 20px);
 
                         i.fas {
                             font-size: 15px;
@@ -413,13 +413,13 @@
                         margin-top: -8vw;
 
                         span {
-                            font-size: 2.5vw;
+                            font-size: clamp(13px, 2.5vw, 20px);
                             color: $color-dark-gray;
                         }
                     }
 
                     h5 {
-                        font-size: 4vw;
+                        font-size: clamp(13px, 4vw, 20px);
                     }
 
                     .modal-sidebar {
@@ -449,7 +449,7 @@
                                         margin-bottom: 0;
                                         border-bottom: 2px solid white;
                                         border-radius: 0px;
-                                        font-size: 2.5vw;
+                                        font-size: clamp(13px, 2.5vw, 20px);
                                     }
 
                                     [aria-expanded="true"] {
@@ -468,7 +468,7 @@
                         font-size: 10px;
 
                         span {
-                            font-size: 3vw;
+                            font-size: clamp(13px, 3vw, 20px);
                         }
                     }
 
@@ -481,16 +481,16 @@
 
                         form {
                             i.fas {
-                                font-size: 3.0vw;
+                                font-size: clamp(13px, 3.0vw, 20px);
                             }
 
                             div .font-weight-bold {
-                                font-size: 2.5vw;
+                                font-size: clamp(13px, 2.5vw, 20px);
                             }
 
                             input,
                             select {
-                                font-size: 2.4vw;
+                                font-size: clamp(13px, 2.4vw, 20px);
                             }
                         }
 
@@ -512,7 +512,7 @@
 
                         span {
                             i.fas {
-                                font-size: 3vw;
+                                font-size: clamp(13px, 3vw, 20px);
                             }
                         }
 
@@ -530,7 +530,7 @@
                             }
 
                             p {
-                                font-size: 2.5vw;
+                                font-size: clamp(13px, 2.5vw, 20px);
                             }
                         }
 
@@ -542,12 +542,12 @@
 
                          h5,
                         .h5 {
-                            font-size: 3vw;
+                            font-size: clamp(13px, 3vw, 20px);
                             margin-bottom: 15px;
                         }
 
                         th {
-                            font-size: 2.5vw
+                            font-size: clamp(13px, 2.5vw, 20px)
                         }
                     }
 
@@ -656,7 +656,7 @@
                 }
 
                 .accordion p a {
-                    font-size: 2.3vw;
+                    font-size: clamp(13px, 2.3vw, 20px);
                 }
 
                 #table-students,
@@ -668,7 +668,7 @@
                     margin-top: 20px;
 
                     span {
-                        font-size: 3vw;
+                        font-size: clamp(13px, 3vw, 20px);
                     }
                 }
 

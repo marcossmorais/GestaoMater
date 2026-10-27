@@ -1099,3 +1099,62 @@ html.nightMode .m-agenda-prova, html.nightMode .m-agenda-avaliacao { color: #FBB
   .m-agenda .m-page-head .m-seg { width: 100%; }
   .m-agenda .m-page-head .m-seg button { flex: 1; }
 }
+
+/* ---------- Polimento (Fase 7) */
+/* alvos de toque mínimos no celular */
+@media (max-width: 767.98px) {
+  .m-icon-btn { width: 44px; height: 44px; }
+  html body #navbarBottom .nav-link { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  /* iOS não dá zoom em campos com 16px+ */
+  html body #pagina input.form-control, html body #pagina select.form-control, html body #pagina textarea.form-control,
+  html body #pagina .custom-select { font-size: 16px; }
+}
+html body #navbarBottom .m-more-toggle { background: none; border: 0; color: inherit; font: inherit; cursor: pointer; padding: 0 10px; }
+.m-more-menu {
+  position: fixed; right: 12px; bottom: 76px; z-index: 1040; min-width: 220px; padding: 8px;
+  background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 16px; box-shadow: 0 12px 32px rgba(16, 32, 72, .18);
+  display: flex; flex-direction: column;
+}
+.m-more-menu[hidden] { display: none; }
+.m-more-menu a { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 12px; border-radius: 10px; color: var(--m-text); font-weight: 600; font-size: 15px; text-decoration: none; }
+.m-more-menu a:hover, .m-more-menu a:focus-visible { background: var(--m-primary-soft); text-decoration: none; }
+.m-more-menu a i { width: 20px; text-align: center; color: var(--m-primary-text); }
+.m-more-menu a.text-danger i { color: var(--m-danger); }
+.m-more-menu .foto-perfil { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+@media (min-width: 768px) { .m-more-menu { display: none !important; } }
+
+/* foco visível por teclado */
+html body #pagina a:focus-visible, html body #pagina button:focus-visible, html body #pagina [role=button]:focus-visible {
+  outline: 3px solid var(--m-primary); outline-offset: 2px;
+}
+
+/* respeita quem pede menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+/* abas de dia rolam dentro do próprio bloco, sem empurrar a página */
+.m-day-tabs { width: 100%; min-width: 0; max-width: 100%; }
+#studentSchedule .main-content, #studentSchedule .row > [class*="col"] { min-width: 0; max-width: 100%; }
+#studentPortal #pagina > #studentSchedule { flex: 0 0 100%; max-width: 100%; min-width: 0; padding: 0 15px; }
+@media (max-width: 767.98px) {
+  html body #pagina .btn:not(.btn-link):not(.close) { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+  html body #pagina .m-page-head .btn, html body #pagina .m-att-toolbar .btn { min-height: 44px; }
+}
+/* selos e etiquetas nunca abaixo de 12px */
+html body #pagina .badge, html body #pagina .m-pill { font-size: 12px; }
+/* mural alinhado às postagens do feed (col-11 centralizado) */
+#studentPortal .side-mural > .m-board { width: 91.666%; margin-left: auto; margin-right: auto; }
+/* atalho de chamada: linha (ícone · texto · botão) também no modo escuro */
+html body .card.m-cta { flex-direction: row; text-align: left; }
+html.nightMode body#teacherPortal #pagina .card.m-cta, html.nightMode body .card.m-cta { background: linear-gradient(120deg, var(--m-side-from), var(--m-primary)) !important; }
+@media (max-width: 575.98px) { html body .card.m-cta { flex-wrap: wrap; } html body .card.m-cta .m-cta-go { width: 100%; text-align: center; } }
+/* grade com um painel só ocupa a largura toda */
+.m-grid > :only-child { grid-column: 1 / -1; }
+/* toast invisível não pode bloquear toques na barra inferior */
+.toast:not(.show) { pointer-events: none; }
+.m-icon-btn { flex: none; }
+@media (max-width: 767.98px) {
+  .m-panel-head a, .m-breadcrumb a { min-height: 44px; display: inline-flex; align-items: center; }
+  .m-view-toggle button, [data-schedule-mode] button, .m-seg button { min-height: 44px; }
+  html body #pagina select.form-control, html body #pagina .custom-select { min-height: 44px; }
+}
