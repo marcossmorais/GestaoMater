@@ -1,7 +1,7 @@
 -- Mater — Migração 16: regra de avaliação do MATER (confirmada pela direção)
 -- 4 bimestres · 3 avaliações por bimestre · nota do bimestre = média aritmética (0 a 10)
 -- Bimestre abaixo de 7 tem recuperação; vale a maior nota entre o bimestre e a recuperação.
--- Resultado do ano = soma dos 4 bimestres (precisa de 28). Frequência não entra no cálculo das notas.
+-- Média do ano = soma dos 4 bimestres ÷ 4 (precisa de 7). Frequência não entra no cálculo das notas.
 
 -- 4º bimestre (a tabela legada chama de "unidade")
 INSERT INTO unidade (id_unidade, unidade) VALUES (4, '4') ON CONFLICT DO NOTHING;

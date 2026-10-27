@@ -21,7 +21,7 @@ $counts = function ($unit) { return $unit['closed'] && !$unit['needsRecovery']; 
         <div class="m-page-head">
             <div>
                 <h5>Desempenho por matéria</h5>
-                <p><?= $rule['units'] ?> bimestres · <?= $rule['perBimester'] ?> avaliações de 0 a <?= $fmt($rule['maxPerUnit']) ?> por bimestre · média <strong><?= $fmt($rule['passing']) ?></strong> por bimestre. Abaixo de <?= $fmt($rule['recoveryBelow']) ?>, tem recuperação (vale a maior nota). No ano, a soma dos bimestres precisa chegar a <strong><?= $fmt($rule['passing'] * $rule['units']) ?></strong>.</p>
+                <p><?= $rule['units'] ?> bimestres · <?= $rule['perBimester'] ?> avaliações de 0 a <?= $fmt($rule['maxPerUnit']) ?> por bimestre · média <strong><?= $fmt($rule['passing']) ?></strong> por bimestre. Abaixo de <?= $fmt($rule['recoveryBelow']) ?>, tem recuperação (vale a maior nota). Média do ano = soma dos <?= $rule['units'] ?> bimestres ÷ <?= $rule['units'] ?>; precisa de <strong><?= $fmt($rule['passing']) ?></strong>.</p>
             </div>
             <a class="btn btn-light" href="/portal-aluno/boletim/documento" target="_blank" rel="noopener"><i class="fas fa-file-signature mr-2"></i>Boletim com validação</a>
         </div>
@@ -67,11 +67,11 @@ $counts = function ($unit) { return $unit['closed'] && !$unit['needsRecovery']; 
                         <?php if ($d['pendingRecovery']) { ?>
                             <i class="fas fa-redo mr-1"></i>Recuperação do <?= implode('º e ', $d['pendingRecovery']) ?>º bimestre: se a nota for maior, ela fica no lugar da do bimestre.
                         <?php } elseif ($sim['status'] === 'aprovado') { ?>
-                            <i class="fas fa-check-circle mr-1"></i>Soma <?= $fmt($sim['total']) ?> de <?= $fmt($sim['target']) ?>: você já alcançou o necessário nesta matéria.
+                            <i class="fas fa-check-circle mr-1"></i>Você já garantiu média do ano <?= $fmt($rule['passing']) ?> nesta matéria.
                         <?php } elseif ($sim['needed'] !== null) { ?>
-                            <i class="fas fa-bullseye mr-1"></i>Soma <?= $fmt($sim['total']) ?> de <?= $fmt($sim['target']) ?>. Precisa de <strong><?= $fmt($sim['needed']) ?></strong> em cada um dos <?= $sim['missing'] ?> bimestre<?= $sim['missing'] > 1 ? 's' : '' ?> que falta<?= $sim['missing'] > 1 ? 'm' : '' ?><?= $sim['status'] === 'impossivel' ? ' — acima de 10; procure o professor' : '' ?>.
+                            <i class="fas fa-bullseye mr-1"></i>Para média do ano <?= $fmt($rule['passing']) ?>, precisa de <strong><?= $fmt($sim['needed']) ?></strong> em cada um dos <?= $sim['missing'] ?> bimestre<?= $sim['missing'] > 1 ? 's' : '' ?> que falta<?= $sim['missing'] > 1 ? 'm' : '' ?><?= $sim['status'] === 'impossivel' ? ' — acima de 10; procure o professor' : '' ?>.
                         <?php } else { ?>
-                            <i class="fas fa-exclamation-circle mr-1"></i>Soma no ano <?= $fmt($sim['total']) ?> de <?= $fmt($sim['target']) ?>. Procure o professor.
+                            <i class="fas fa-exclamation-circle mr-1"></i>Média do ano <?= $fmt($sim['average']) ?>, abaixo de <?= $fmt($rule['passing']) ?>. Procure o professor.
                         <?php } ?>
                     </p>
 

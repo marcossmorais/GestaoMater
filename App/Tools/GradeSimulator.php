@@ -9,7 +9,7 @@ namespace App\Tools;
  * - 4 bimestres, 3 avaliações por bimestre (notas de 0 a 10).
  * - Nota do bimestre = média aritmética das avaliações.
  * - Bimestre abaixo de 7 tem recuperação; vale a maior nota entre o bimestre e a recuperação.
- * - Resultado do ano = soma das notas dos 4 bimestres; precisa de 7 × 4 = 28. Frequência não entra na conta.
+ * - Média do ano = soma dos 4 bimestres ÷ 4; precisa de 7 (equivale a somar 28). Frequência não entra na conta.
  */
 class GradeSimulator
 {
@@ -47,7 +47,7 @@ class GradeSimulator
 
 
     /**
-     * Quanto falta para o resultado do ano (soma dos bimestres)
+     * Quanto falta para a média do ano (soma dos bimestres ÷ 4)
      *
      * @param array $units      [bimestre => nota que vale (float) ou null se ainda aberto], 1..total
      * @param float $passing    média por bimestre (regra: 7); o ano precisa de passing × total (28)
@@ -57,7 +57,7 @@ class GradeSimulator
      * @return array status: aprovado | possivel | impossivel
      *               needed: nota mínima em cada bimestre que falta (null se aprovado ou nenhum falta)
      *               total: soma dos bimestres que já fecharam · target: soma necessária (28)
-     *               average: total / bimestres (bimestres abertos contam 0)
+     *               average: média do ano = total / bimestres (bimestres abertos contam 0)
      *               missing: bimestres que faltam
      */
     public static function simulate(array $units, $passing, $totalUnits, $maxPerUnit)

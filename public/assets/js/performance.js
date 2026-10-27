@@ -65,11 +65,11 @@
 
             const sim = simulate(units);
             if (sim.status === 'aprovado') {
-                result.innerHTML = `<i class="fas fa-check-circle mr-1"></i>Com essas notas a soma seria <strong>${fmt(sim.total)}</strong> de ${fmt(sim.target)}: aprovado(a)!`;
+                result.innerHTML = `<i class="fas fa-check-circle mr-1"></i>Com essas notas sua média do ano ficaria em pelo menos <strong>${fmt(rule.passing)}</strong>: aprovado(a)!`;
             } else if (sim.needed !== null) {
                 result.innerHTML = `Ainda faltaria <strong>${fmt(sim.needed)}</strong> em cada bimestre restante${sim.status === 'impossivel' ? ' (acima do máximo)' : ''}.`;
             } else {
-                result.innerHTML = `A soma seria <strong>${fmt(sim.total)}</strong>, abaixo de ${fmt(sim.target)}.`;
+                result.innerHTML = `Sua média do ano seria <strong>${fmt(sim.average)}</strong>, abaixo de ${fmt(rule.passing)}.`;
             }
         });
     }

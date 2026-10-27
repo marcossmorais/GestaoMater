@@ -37,7 +37,7 @@ foreach ($bimester as [$name, $avg, $graded, $rec, $grade, $closed, $recovered, 
     check('bimestre: ' . $name, $ok, $r);
 }
 
-// ---------- Resultado do ano: soma dos 4 bimestres, precisa de 28
+// ---------- Média do ano: soma dos 4 bimestres ÷ 4, precisa de 7 (soma 28)
 $final = [
     // [descrição, bimestres, status esperado, needed esperado]
     ['nada fechado', [1 => null, 2 => null, 3 => null, 4 => null], 'possivel', 7.0],
@@ -55,7 +55,7 @@ foreach ($final as [$name, $units, $status, $needed]) {
     $r = GradeSimulator::simulate($units, 7, 4, 10);
     $ok = $r['status'] === $status && ($needed === null ? $r['needed'] === null : abs($r['needed'] - $needed) < 0.001);
     $sum = array_sum(array_filter($units, function ($v) { return $v !== null; }));
-    $ok = $ok && abs($r['total'] - $sum) < 0.001 && abs($r['target'] - 28) < 0.001;
+    $ok = $ok && abs($r['total'] - $sum) < 0.001 && abs($r['target'] - 28) < 0.001 && abs($r['average'] - round($sum / 4, 2)) < 0.001;
     check('ano: ' . $name, $ok, $r);
 }
 
