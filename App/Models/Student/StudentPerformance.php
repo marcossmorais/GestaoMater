@@ -6,33 +6,36 @@ use MF\Model\Model;
 use App\Tools\GradeSimulator;
 
 /**
- * Desempenho do aluno por disciplina (pontos por unidade, frequência com abonos, simulador)
+ * Desempenho do aluno por disciplina (nota por bimestre com recuperação, simulador, faltas)
  * e cronograma da turma. Tudo filtrado pela matrícula/turma da sessão do aluno.
  */
 class StudentPerformance extends Model
 {
 
     /**
-     * Regra de aprovação (database/14_desempenho_cronograma.sql)
+     * Regra do MATER (database/16_regra_bimestral.sql): 4 bimestres, 3 avaliações, média 7, recuperação abaixo de 7
      */
     public function rule()
     {
 
         $row = $this->db->query(
-            "SELECT total_unidades, pontos_por_unidade, media_aprovacao, frequencia_minima FROM regra_aprovacao WHERE id_regra_aprovacao = 1"
+            "SELECT total_unidades, pontos_por_unidade, media_aprovacao, avaliacoes_por_bimestre, nota_recuperacao
+             FROM regra_aprovacao WHERE id_regra_aprovacao = 1"
         )->fetch(\PDO::FETCH_ASSOC);
 
         return [
-            'units' => (int) ($row['total_unidades'] ?? 3),
+            'units' => (int) ($row['total_unidades'] ?? 4),
             'maxPerUnit' => (float) ($row['pontos_por_unidade'] ?? 10),
-            'passing' => (float) ($row['media_aprovacao'] ?? 6),
-            'minAttendance' => (int) ($row['frequencia_minima'] ?? 75),
+            'passing' => (float) ($row['media_aprovacao'] ?? 7),
+            'perBimester' => (int) ($row['avaliacoes_por_bimestre'] ?? 3),
+            'recoveryBelow' => (float) ($row['nota_recuperacao'] ?? 7),
         ];
     }
 
 
     /**
-     * @return array uma linha por disciplina com units[u] = [earned, distributed, closed], faltas e simulação
+     * Uma linha por disciplina: units[bimestre] = regra aplicada (grade, average, closed, recovered, needsRecovery, graded),
+     * simulação da média final e faltas (só informativo; frequência não entra na nota)
      */
     public function byDiscipline($enrollmentId, $classId)
     {
@@ -40,50 +43,44 @@ class StudentPerformance extends Model
         $rule = $this->rule();
 
         $stmt = $this->db->prepare(
-            "SELECT
-                turma_disciplina.id_turma_disciplina AS id,
-                disciplina.nome_disciplina AS discipline,
-                professor.nome_professor AS teacher,
-                avaliacoes.fk_id_unidade_avaliacao AS unity,
-                SUM(avaliacoes.valor_avaliacao) AS distributed,
-                SUM(nota_avaliacao.valor_nota) AS earned
-            FROM turma_disciplina
-            INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)
-            INNER JOIN professor ON (turma_disciplina.fk_id_professor = professor.id_professor)
-            LEFT JOIN avaliacoes ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
-            LEFT JOIN nota_avaliacao ON (nota_avaliacao.fk_id_avaliacao = avaliacoes.id_avaliacao AND nota_avaliacao.fk_id_matricula_aluno = :enrollment)
-            WHERE turma_disciplina.fk_id_turma = :classId
-            GROUP BY turma_disciplina.id_turma_disciplina, disciplina.nome_disciplina, professor.nome_professor, avaliacoes.fk_id_unidade_avaliacao
-            ORDER BY disciplina.nome_disciplina, avaliacoes.fk_id_unidade_avaliacao"
+            "SELECT turma_disciplina.id_turma_disciplina AS id, disciplina.nome_disciplina AS discipline, professor.nome_professor AS teacher
+             FROM turma_disciplina
+             INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)
+             INNER JOIN professor ON (turma_disciplina.fk_id_professor = professor.id_professor)
+             WHERE turma_disciplina.fk_id_turma = :classId
+             ORDER BY disciplina.nome_disciplina"
         );
 
-        $stmt->execute([':enrollment' => (int) $enrollmentId, ':classId' => (int) $classId]);
+        $stmt->execute([':classId' => (int) $classId]);
+
+        $empty = \App\Tools\GradeSimulator::bimester(null, 0, $rule['perBimester'], null, $rule['passing']) + ['graded' => 0];
 
         $rows = [];
         foreach ($stmt->fetchAll(\PDO::FETCH_OBJ) as $r) {
-            $id = (int) $r->id;
-            if (!isset($rows[$id])) {
-                $rows[$id] = ['id' => $id, 'discipline' => $r->discipline, 'teacher' => $r->teacher, 'units' => []];
-                for ($u = 1; $u <= $rule['units']; $u++) $rows[$id]['units'][$u] = ['earned' => 0.0, 'distributed' => 0.0, 'closed' => false];
-            }
-            $u = (int) $r->unity;
-            if ($u >= 1 && $u <= $rule['units']) {
-                $rows[$id]['units'][$u] = [
-                    'earned' => round((float) $r->earned, 2),
-                    'distributed' => round((float) $r->distributed, 2),
-                    // a unidade entra na média quando todos os pontos já foram distribuídos
-                    'closed' => (float) $r->distributed >= $rule['maxPerUnit'] - 0.001,
-                ];
-            }
+            $rows[(int) $r->id] = ['id' => (int) $r->id, 'discipline' => $r->discipline, 'teacher' => $r->teacher, 'units' => []];
+            for ($u = 1; $u <= $rule['units']; $u++) $rows[(int) $r->id]['units'][$u] = $empty;
+        }
+
+        $Gradebook = new \App\Models\TeacherStudent\Gradebook($this->db);
+
+        foreach ($Gradebook->bimesterGrades($classId, $enrollmentId) as $g) {
+            $id = (int) $g->discipline_class_id;
+            $u = (int) $g->unity;
+            if (!isset($rows[$id]) || $u < 1 || $u > $rule['units']) continue;
+            $rows[$id]['units'][$u] = \App\Models\TeacherStudent\Gradebook::applyRule($g, $rule) + ['graded' => (int) $g->graded];
         }
 
         $attendance = $this->attendance($enrollmentId, $classId);
 
         foreach ($rows as $id => &$row) {
             $grades = [];
-            foreach ($row['units'] as $u => $unit) $grades[$u] = $unit['closed'] ? $unit['earned'] : null;
+            foreach ($row['units'] as $u => $unit) {
+                // bimestre só entra na média final quando fechou e, se ficou abaixo de 7, depois da recuperação
+                $grades[$u] = ($unit['closed'] && !$unit['needsRecovery']) ? $unit['grade'] : null;
+            }
 
             $row['simulation'] = GradeSimulator::simulate($grades, $rule['passing'], $rule['units'], $rule['maxPerUnit']);
+            $row['pendingRecovery'] = array_keys(array_filter($row['units'], function ($unit) { return $unit['needsRecovery']; }));
 
             $a = $attendance[$id] ?? ['absences' => 0, 'excused' => 0, 'lessons' => 0];
             $counted = max(0, $a['absences'] - $a['excused']);

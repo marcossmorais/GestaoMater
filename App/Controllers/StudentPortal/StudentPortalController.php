@@ -257,7 +257,7 @@ class StudentPortalController extends Action
         $rows = $Performance->byDiscipline($enrollmentId, $enrollment->class_id);
 
         $content = ['matricula' => $enrollmentId, 'nome' => $enrollment->name, 'ano' => $enrollment->school_year, 'regra' => $rule, 'disciplinas' => array_map(function ($d) {
-            return [$d['discipline'], array_column($d['units'], 'earned'), $d['absences'], $d['excused'], $d['simulation']['status']];
+            return [$d['discipline'], array_column($d['units'], 'grade'), $d['absences'], $d['excused'], $d['simulation']['status']];
         }, $rows)];
 
         $code = Container::getModel('Student\IssuedDocument')->issue('boletim', $enrollmentId, $enrollment->name, $content, 'aluno', $_SESSION['Student']['id'] ?? null);

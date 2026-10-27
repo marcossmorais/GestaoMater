@@ -1169,3 +1169,14 @@ html body .card.m-att-toolbar:not(.m-att-subjects) { flex-direction: row; justif
   html body .m-att-save { white-space: nowrap; padding: 0 16px !important; }
   .m-att-bar-count { flex-direction: column; gap: 4px; }
 }
+
+/* ---------- Regra bimestral */
+.m-grade-row span small { display: block; font-size: 12px; color: var(--m-muted); font-weight: 400; }
+.m-grade-row.is-muted { opacity: .55; }
+.m-overview td.is-rec { color: #B45309; font-weight: 700; }
+html.nightMode .m-overview td.is-rec { color: #FBBF24; }
+.m-overview td sup { font-size: 10px; margin-left: 2px; }
+.m-perf-unit .m-perf-tag { font-size: 11px; font-weight: 700; border-radius: 6px; padding: 1px 5px; }
+.m-perf-tag.is-rec { background: rgba(248, 168, 8, .18); color: #9A6700; }
+html.nightMode .m-perf-tag.is-rec { color: #FBBF24; }
+.m-perf-tag.is-need { background: rgba(220, 38, 38, .14); color: var(--m-danger); }

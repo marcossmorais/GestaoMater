@@ -22,7 +22,7 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **Diário** (`/portal-docente/diario`, `database/12_diario_aula.sql`): habilidade BNCC (texto + código validado) + observação, vinculado à chamada do dia
 - [x] **Atividades da aula**: teórica, documentário, questionário, revisão, prática, avaliação, outro
 - [x] **Troca de professor/matéria** na aula: substituto e/ou matéria dada, motivo obrigatório, auditado
-- [x] **Lançamento de notas** facilitado (`/portal-docente/notas`): lista por aluno, teclado numérico, Enter avança, validação de valor máximo, auditado
+- [x] **Lançamento de notas** facilitado (`/portal-docente/notas`, até 3 avaliações + 1 recuperação por bimestre; recuperação só para quem fechou abaixo de 7): lista por aluno, teclado numérico, Enter avança, validação de valor máximo, auditado
 - [x] **Roteiro de provas**: avaliação com roteiro (limite de 10 pts por unidade) + desempenho na visão geral da turma
 - [x] **Mural da turma** (`/portal-docente/mural`): publicar por disciplina, fixar até 3 por turma (trigger no banco), excluir, contagem de leituras
 - [ ] Ocorrências disciplinares (lançar) com controle de ciência
@@ -32,7 +32,7 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] Boletim · [x] desempenho/evolução por matéria (pontos por unidade, aba Desempenho)
 - [x] Frequência: faltas, abonos e % por disciplina (aulas dadas = chamadas registradas)
 - [x] **Roteiro de provas** na home · [x] **cronograma** dia/semana/mês/ano (`evento_escolar` + avaliações da turma; cadastro de eventos fica no Admin)
-- [x] **Simulador de notas** (`App/Tools/GradeSimulator.php`, testes em `tests/`): quanto tirar por unidade + simulação interativa. **Regra padrão 6,0 / 3 unidades / 75% em `regra_aprovacao` — confirmar com a direção**
+- [x] **Simulador de notas** (`App/Tools/GradeSimulator.php`, testes em `tests/`). **Regra do MATER (confirmada):** 4 bimestres · 3 avaliações de 0 a 10 · nota do bimestre = média aritmética · abaixo de 7 tem recuperação e vale a **maior** nota (bimestre ou recuperação) · média do ano = **soma dos 4 bimestres ÷ 4**, precisa de 7 · frequência não entra na nota (`database/16_regra_bimestral.sql`)
 - [x] Ocorrências com ciência
 - [x] Declarações (matrícula, frequência) · [x] **assinatura eletrônica** HMAC-SHA256 com código + QR e validação pública em `/validar` (detecta adulteração e documento cancelado) + log de download. Frequência agora vem das chamadas (antes era inventada) e dados da escola vêm do `.env`
 - [x] Boletim com validação (`/portal-aluno/boletim/documento`)

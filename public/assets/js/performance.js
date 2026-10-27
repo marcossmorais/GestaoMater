@@ -1,7 +1,7 @@
 // Mater — Desempenho, simulador de notas e cronograma (portal do aluno)
 (function () {
 
-    const rule = window.MATER_PERFORMANCE || { units: 3, maxPerUnit: 10, passing: 6, minAttendance: 75 };
+    const rule = window.MATER_PERFORMANCE || { units: 4, maxPerUnit: 10, passing: 7, perBimester: 3 };
 
     function fmt(n) {
         return Number(n).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
@@ -20,12 +20,14 @@
             if (grade === null || grade === undefined) missing++;
             else sum += Math.min(grade, rule.maxPerUnit);
         }
-        const remaining = rule.passing * rule.units - sum;
+        const target = rule.passing * rule.units;
+        const remaining = target - sum;
         const average = sum / rule.units;
-        if (remaining <= 0.0001) return { status: 'aprovado', needed: null, average, missing };
-        if (missing === 0) return { status: 'impossivel', needed: null, average, missing };
+        const total = sum;
+        if (remaining <= 0.0001) return { status: 'aprovado', needed: null, average, total, target, missing };
+        if (missing === 0) return { status: 'impossivel', needed: null, average, total, target, missing };
         const needed = Math.ceil(Math.round(remaining / missing * 10000) / 10000 * 10) / 10;
-        return { status: needed > rule.maxPerUnit ? 'impossivel' : 'possivel', needed, average, missing };
+        return { status: needed > rule.maxPerUnit ? 'impossivel' : 'possivel', needed, average, total, target, missing };
     }
 
     // ---------- Simulador por disciplina
@@ -63,11 +65,11 @@
 
             const sim = simulate(units);
             if (sim.status === 'aprovado') {
-                result.innerHTML = `<i class="fas fa-check-circle mr-1"></i>Com essas notas sua média seria <strong>${fmt(sim.average)}</strong>: aprovado(a)!`;
+                result.innerHTML = `<i class="fas fa-check-circle mr-1"></i>Com essas notas sua média do ano ficaria em pelo menos <strong>${fmt(rule.passing)}</strong>: aprovado(a)!`;
             } else if (sim.needed !== null) {
-                result.innerHTML = `Ainda faltaria <strong>${fmt(sim.needed)}</strong> em cada unidade restante${sim.status === 'impossivel' ? ' (acima do máximo)' : ''}.`;
+                result.innerHTML = `Ainda faltaria <strong>${fmt(sim.needed)}</strong> em cada bimestre restante${sim.status === 'impossivel' ? ' (acima do máximo)' : ''}.`;
             } else {
-                result.innerHTML = `Sua média seria <strong>${fmt(sim.average)}</strong>, abaixo de ${fmt(rule.passing)}.`;
+                result.innerHTML = `Sua média do ano seria <strong>${fmt(sim.average)}</strong>, abaixo de ${fmt(rule.passing)}.`;
             }
         });
     }

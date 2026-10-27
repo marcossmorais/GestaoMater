@@ -63,8 +63,8 @@ $statusText = ['aprovado' => 'Média atingida', 'possivel' => 'Em andamento', 'i
                 <thead>
                     <tr>
                         <th>Disciplina</th>
-                        <?php for ($u = 1; $u <= $rule['units']; $u++) { ?><th><?= $u ?>ª un.</th><?php } ?>
-                        <th>Média parcial</th>
+                        <?php for ($u = 1; $u <= $rule['units']; $u++) { ?><th><?= $u ?>º bim.</th><?php } ?>
+                        <th>Média do ano</th>
                         <th>Faltas (abonadas)</th>
                         <th>Situação</th>
                     </tr>
@@ -74,9 +74,9 @@ $statusText = ['aprovado' => 'Média atingida', 'possivel' => 'Em andamento', 'i
                         <tr>
                             <td><?= htmlspecialchars($d['discipline']) ?></td>
                             <?php foreach ($d['units'] as $unit) { ?>
-                                <td class="<?= $unit['closed'] && $unit['earned'] < $rule['passing'] ? 'low' : '' ?>"><?= $unit['distributed'] > 0 ? $fmt($unit['earned']) : '–' ?></td>
+                                <td class="<?= $unit['grade'] !== null && $unit['closed'] && $unit['grade'] < $rule['passing'] ? 'low' : '' ?>"><?= $unit['grade'] === null ? '–' : $fmt($unit['grade']) . ($unit['recovered'] ? ' <small>(R)</small>' : (!$unit['closed'] ? ' <small>*</small>' : '')) ?></td>
                             <?php } ?>
-                            <td><?= $fmt($d['simulation']['average']) ?></td>
+                            <td><?= $d['simulation']['missing'] ? '–' : $fmt($d['simulation']['average']) ?></td>
                             <td><?= (int) $d['absences'] ?> (<?= (int) $d['excused'] ?>)</td>
                             <td><?= $statusText[$d['simulation']['status']] ?></td>
                         </tr>
@@ -84,7 +84,7 @@ $statusText = ['aprovado' => 'Média atingida', 'possivel' => 'Em andamento', 'i
                 </tbody>
             </table>
         </div>
-        <p class="rule">Média para aprovação <?= $fmt($rule['passing']) ?> em <?= $rule['units'] ?> unidades de <?= $fmt($rule['maxPerUnit']) ?> pontos. Unidades com pontos ainda em distribuição mostram a nota parcial.</p>
+        <p class="rule"><?= $rule['units'] ?> bimestres; nota do bimestre = média das <?= (int) $rule['perBimester'] ?> avaliações (0 a <?= $fmt($rule['maxPerUnit']) ?>); média <?= $fmt($rule['passing']) ?> por bimestre. (R) = vale a recuperação (maior que a média do bimestre). * = parcial. Média do ano = soma dos <?= $rule['units'] ?> bimestres ÷ <?= $rule['units'] ?> (precisa de <?= $fmt($rule['passing']) ?>); aparece quando os <?= $rule['units'] ?> bimestres fecham. Faltas são informativas e não entram na nota.</p>
 
         <footer>
             <div>

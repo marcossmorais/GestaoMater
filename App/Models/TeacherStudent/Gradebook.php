@@ -3,15 +3,19 @@
 namespace App\Models\TeacherStudent;
 
 use MF\Model\Model;
+use App\Tools\GradeSimulator;
 
 /**
  * Avaliações, roteiro de provas e lançamento de notas do portal do docente.
- * Cada turma/disciplina tem até 10 pontos por unidade (mesma regra do admin).
+ *
+ * Regra do MATER: 4 bimestres, 3 avaliações (0 a 10) por bimestre, nota do bimestre = média;
+ * abaixo de 7 tem recuperação, que substitui a nota do bimestre (ver App/Tools/GradeSimulator.php).
+ * A tabela legada chama o bimestre de "unidade". Notas antigas com outro valor máximo são normalizadas para 0 a 10.
  */
 class Gradebook extends Model
 {
 
-    const MAX_UNIT_POINTS = 10;
+    const MAX_GRADE = 10;
 
 
     /**
@@ -28,10 +32,11 @@ class Gradebook extends Model
                 avaliacoes.fk_id_unidade_avaliacao AS unity,
                 TO_CHAR(avaliacoes.data_realizada, 'YYYY-MM-DD') AS date,
                 avaliacoes.roteiro AS guide,
+                avaliacoes.recuperacao AS recovery,
                 (SELECT COUNT(*) FROM nota_avaliacao WHERE fk_id_avaliacao = avaliacoes.id_avaliacao) AS graded
             FROM avaliacoes
             WHERE avaliacoes.fk_id_turma_disciplina_avaliacao = :disciplineClass
-            ORDER BY avaliacoes.fk_id_unidade_avaliacao, avaliacoes.data_realizada, avaliacoes.id_avaliacao"
+            ORDER BY avaliacoes.fk_id_unidade_avaliacao, avaliacoes.recuperacao, avaliacoes.data_realizada, avaliacoes.id_avaliacao"
         );
 
         $stmt->execute([':disciplineClass' => (int) $disciplineClassId]);
@@ -45,7 +50,8 @@ class Gradebook extends Model
 
         $stmt = $this->db->prepare(
             "SELECT id_avaliacao AS id, fk_id_turma_disciplina_avaliacao AS discipline_class_id,
-                    fk_id_unidade_avaliacao AS unity, valor_avaliacao AS value, descricao_avaliacao AS description
+                    fk_id_unidade_avaliacao AS unity, valor_avaliacao AS value, descricao_avaliacao AS description,
+                    recuperacao AS recovery
              FROM avaliacoes WHERE id_avaliacao = :id"
         );
 
@@ -56,42 +62,48 @@ class Gradebook extends Model
 
 
     /**
-     * Pontos já distribuídos na unidade (sem contar $exceptExamId)
+     * Avaliações do bimestre: quantas regulares e se já existe a recuperação
+     *
+     * @return array ['regular' => int, 'recovery' => bool]
      */
-    public function unitPoints($disciplineClassId, $unity, $exceptExamId = 0)
+    public function examCount($disciplineClassId, $unity)
     {
 
         $stmt = $this->db->prepare(
-            "SELECT COALESCE(SUM(valor_avaliacao), 0) FROM avaliacoes
-             WHERE fk_id_turma_disciplina_avaliacao = :disciplineClass AND fk_id_unidade_avaliacao = :unity AND id_avaliacao <> :except"
+            "SELECT COUNT(*) FILTER (WHERE NOT recuperacao) AS regular, COALESCE(BOOL_OR(recuperacao), false) AS recovery
+             FROM avaliacoes
+             WHERE fk_id_turma_disciplina_avaliacao = :disciplineClass AND fk_id_unidade_avaliacao = :unity"
         );
 
-        $stmt->execute([':disciplineClass' => (int) $disciplineClassId, ':unity' => (int) $unity, ':except' => (int) $exceptExamId]);
+        $stmt->execute([':disciplineClass' => (int) $disciplineClassId, ':unity' => (int) $unity]);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        return (float) $stmt->fetchColumn();
+        return ['regular' => (int) $row['regular'], 'recovery' => (bool) $row['recovery']];
     }
 
 
     /**
+     * Cria uma avaliação de 0 a 10 (regular ou recuperação do bimestre)
+     *
      * @return int id da avaliação
      */
-    public function createExam($disciplineClassId, $unity, $description, $value, $date, $guide)
+    public function createExam($disciplineClassId, $unity, $description, $date, $guide, $recovery = false)
     {
 
         $stmt = $this->db->prepare(
-            "INSERT INTO avaliacoes (descricao_avaliacao, valor_avaliacao, data_realizada, fk_id_unidade_avaliacao, fk_id_turma_disciplina_avaliacao, roteiro)
-             VALUES (:description, :value, :date, :unity, :disciplineClass, :guide)
+            "INSERT INTO avaliacoes (descricao_avaliacao, valor_avaliacao, data_realizada, fk_id_unidade_avaliacao, fk_id_turma_disciplina_avaliacao, roteiro, recuperacao)
+             VALUES (:description, :value, :date, :unity, :disciplineClass, :guide, :recovery)
              RETURNING id_avaliacao"
         );
 
-        $stmt->execute([
-            ':description' => $description,
-            ':value' => $value,
-            ':date' => $date,
-            ':unity' => (int) $unity,
-            ':disciplineClass' => (int) $disciplineClassId,
-            ':guide' => $guide !== '' ? $guide : null,
-        ]);
+        $stmt->bindValue(':description', $description);
+        $stmt->bindValue(':value', self::MAX_GRADE);
+        $stmt->bindValue(':date', $date);
+        $stmt->bindValue(':unity', (int) $unity, \PDO::PARAM_INT);
+        $stmt->bindValue(':disciplineClass', (int) $disciplineClassId, \PDO::PARAM_INT);
+        $stmt->bindValue(':guide', $guide !== '' ? $guide : null);
+        $stmt->bindValue(':recovery', (bool) $recovery, \PDO::PARAM_BOOL);
+        $stmt->execute();
 
         return (int) $stmt->fetchColumn();
     }
@@ -107,7 +119,8 @@ class Gradebook extends Model
 
 
     /**
-     * Alunos ativos da turma da avaliação, com a nota lançada (ou null)
+     * Alunos ativos da turma da avaliação, com a nota lançada (ou null) e a média do bimestre
+     * (na recuperação, mostra quem ficou abaixo da média)
      */
     public function students($examId)
     {
@@ -117,7 +130,17 @@ class Gradebook extends Model
                 matricula.id_matricula AS enrollment_id,
                 aluno.nome_aluno AS name,
                 aluno.foto_perfil_aluno AS photo,
-                nota_avaliacao.valor_nota AS grade
+                nota_avaliacao.valor_nota AS grade,
+                (SELECT AVG(n.valor_nota / NULLIF(a.valor_avaliacao, 0) * 10)
+                   FROM avaliacoes a
+                   INNER JOIN nota_avaliacao n ON (n.fk_id_avaliacao = a.id_avaliacao AND n.fk_id_matricula_aluno = matricula.id_matricula)
+                  WHERE a.fk_id_turma_disciplina_avaliacao = avaliacoes.fk_id_turma_disciplina_avaliacao
+                    AND a.fk_id_unidade_avaliacao = avaliacoes.fk_id_unidade_avaliacao AND NOT a.recuperacao) AS bimester_average,
+                (SELECT COUNT(*)
+                   FROM avaliacoes a
+                   INNER JOIN nota_avaliacao n ON (n.fk_id_avaliacao = a.id_avaliacao AND n.fk_id_matricula_aluno = matricula.id_matricula)
+                  WHERE a.fk_id_turma_disciplina_avaliacao = avaliacoes.fk_id_turma_disciplina_avaliacao
+                    AND a.fk_id_unidade_avaliacao = avaliacoes.fk_id_unidade_avaliacao AND NOT a.recuperacao) AS bimester_graded
             FROM avaliacoes
             INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
             INNER JOIN matricula ON (matricula.fk_id_turma_matricula = turma_disciplina.fk_id_turma AND matricula.fk_id_situacao_aluno = 1)
@@ -164,18 +187,68 @@ class Gradebook extends Model
 
 
     /**
-     * Desempenho geral da turma: pontos de cada aluno em cada disciplina na unidade
+     * Notas por aluno, disciplina e bimestre (média das avaliações regulares e recuperação), normalizadas de 0 a 10.
+     * Com $enrollmentId, só daquele aluno.
+     *
+     * @return array linhas: enrollment_id, name, discipline_class_id, unity, graded, average, recovery
+     */
+    public function bimesterGrades($classId, $enrollmentId = null)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT
+                matricula.id_matricula AS enrollment_id,
+                aluno.nome_aluno AS name,
+                avaliacoes.fk_id_turma_disciplina_avaliacao AS discipline_class_id,
+                avaliacoes.fk_id_unidade_avaliacao AS unity,
+                COUNT(nota_avaliacao.id_nota) FILTER (WHERE NOT avaliacoes.recuperacao) AS graded,
+                AVG(nota_avaliacao.valor_nota / NULLIF(avaliacoes.valor_avaliacao, 0) * 10) FILTER (WHERE NOT avaliacoes.recuperacao) AS average,
+                MAX(nota_avaliacao.valor_nota / NULLIF(avaliacoes.valor_avaliacao, 0) * 10) FILTER (WHERE avaliacoes.recuperacao) AS recovery
+            FROM matricula
+            INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)
+            INNER JOIN nota_avaliacao ON (nota_avaliacao.fk_id_matricula_aluno = matricula.id_matricula)
+            INNER JOIN avaliacoes ON (nota_avaliacao.fk_id_avaliacao = avaliacoes.id_avaliacao)
+            INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
+            WHERE matricula.fk_id_turma_matricula = :classId AND turma_disciplina.fk_id_turma = :classId
+            AND matricula.fk_id_situacao_aluno = 1
+            " . ($enrollmentId === null ? "" : "AND matricula.id_matricula = :enrollment") . "
+            GROUP BY matricula.id_matricula, aluno.nome_aluno, avaliacoes.fk_id_turma_disciplina_avaliacao, avaliacoes.fk_id_unidade_avaliacao"
+        );
+
+        $stmt->bindValue(':classId', (int) $classId, \PDO::PARAM_INT);
+        if ($enrollmentId !== null) $stmt->bindValue(':enrollment', (int) $enrollmentId, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+
+    /**
+     * Aplica a regra do bimestre a uma linha de bimesterGrades()
+     */
+    public static function applyRule($row, array $rule)
+    {
+        return GradeSimulator::bimester(
+            $row->average === null ? null : (float) $row->average,
+            (int) $row->graded,
+            $rule['perBimester'],
+            $row->recovery === null ? null : (float) $row->recovery,
+            $rule['passing']
+        );
+    }
+
+
+    /**
+     * Desempenho geral da turma: nota de cada aluno em cada disciplina no bimestre (recuperação aplicada)
      *
      * @return array ['disciplines' => [...], 'students' => [...]]
      */
-    public function classOverview($classId, $unity)
+    public function classOverview($classId, $unity, array $rule)
     {
 
         $disciplines = $this->db->prepare(
             "SELECT turma_disciplina.id_turma_disciplina AS id, disciplina.nome_disciplina AS name, disciplina.sigla_disciplina AS acronym,
-                    professor.nome_professor AS teacher,
-                    (SELECT COALESCE(SUM(valor_avaliacao), 0) FROM avaliacoes
-                      WHERE fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina AND fk_id_unidade_avaliacao = :unity) AS distributed
+                    professor.nome_professor AS teacher
              FROM turma_disciplina
              INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)
              INNER JOIN professor ON (turma_disciplina.fk_id_professor = professor.id_professor)
@@ -183,27 +256,25 @@ class Gradebook extends Model
              ORDER BY disciplina.nome_disciplina"
         );
 
-        $disciplines->execute([':classId' => (int) $classId, ':unity' => (int) $unity]);
+        $disciplines->execute([':classId' => (int) $classId]);
 
-        $points = $this->db->prepare(
-            "SELECT matricula.id_matricula AS enrollment_id, aluno.nome_aluno AS name,
-                    avaliacoes.fk_id_turma_disciplina_avaliacao AS discipline_class_id, SUM(nota_avaliacao.valor_nota) AS points
-             FROM matricula
-             INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)
-             LEFT JOIN nota_avaliacao ON (nota_avaliacao.fk_id_matricula_aluno = matricula.id_matricula)
-             LEFT JOIN avaliacoes ON (nota_avaliacao.fk_id_avaliacao = avaliacoes.id_avaliacao AND avaliacoes.fk_id_unidade_avaliacao = :unity)
+        $names = $this->db->prepare(
+            "SELECT matricula.id_matricula AS id, aluno.nome_aluno AS name
+             FROM matricula INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)
              WHERE matricula.fk_id_turma_matricula = :classId AND matricula.fk_id_situacao_aluno = 1
-             GROUP BY matricula.id_matricula, aluno.nome_aluno, avaliacoes.fk_id_turma_disciplina_avaliacao
              ORDER BY aluno.nome_aluno"
         );
 
-        $points->execute([':classId' => (int) $classId, ':unity' => (int) $unity]);
+        $names->execute([':classId' => (int) $classId]);
 
         $students = [];
-        foreach ($points->fetchAll(\PDO::FETCH_OBJ) as $row) {
-            $id = (int) $row->enrollment_id;
-            if (!isset($students[$id])) $students[$id] = ['id' => $id, 'name' => $row->name, 'points' => []];
-            if ($row->discipline_class_id !== null) $students[$id]['points'][(int) $row->discipline_class_id] = round((float) $row->points, 1);
+        foreach ($names->fetchAll(\PDO::FETCH_OBJ) as $n) {
+            $students[(int) $n->id] = ['id' => (int) $n->id, 'name' => $n->name, 'grades' => []];
+        }
+
+        foreach ($this->bimesterGrades($classId) as $row) {
+            if ((int) $row->unity !== (int) $unity || !isset($students[(int) $row->enrollment_id])) continue;
+            $students[(int) $row->enrollment_id]['grades'][(int) $row->discipline_class_id] = self::applyRule($row, $rule);
         }
 
         return ['disciplines' => $disciplines->fetchAll(\PDO::FETCH_OBJ), 'students' => array_values($students)];
@@ -241,7 +312,7 @@ class Gradebook extends Model
         $stmt = $this->db->prepare(
             "SELECT avaliacoes.id_avaliacao AS id, avaliacoes.descricao_avaliacao AS description, avaliacoes.valor_avaliacao AS value,
                     avaliacoes.fk_id_unidade_avaliacao AS unity, TO_CHAR(avaliacoes.data_realizada, 'DD/MM') AS date,
-                    avaliacoes.roteiro AS guide, disciplina.nome_disciplina AS discipline
+                    avaliacoes.roteiro AS guide, avaliacoes.recuperacao AS recovery, disciplina.nome_disciplina AS discipline
              FROM avaliacoes
              INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
              INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)

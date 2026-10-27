@@ -41,7 +41,7 @@ $others = array_values(array_filter($board, function ($p) { return !$p->pinned; 
                 <summary>
                     <span class="m-pill m-pill-info"><?= htmlspecialchars($g->date) ?></span>
                     <strong><?= htmlspecialchars($g->discipline) ?></strong>
-                    <small><?= htmlspecialchars($g->description) ?> · <?= (float) $g->value ?> pts · <?= (int) $g->unity ?>ª un.</small>
+                    <small><?= $g->recovery ? 'Recuperação · ' : '' ?><?= htmlspecialchars($g->description) ?> · <?= (int) $g->unity ?>º bimestre</small>
                 </summary>
                 <p><?= nl2br(htmlspecialchars($g->guide)) ?></p>
             </details>

@@ -19,7 +19,7 @@
     const errors = {
         'turma-nao-encontrada': 'Turma não encontrada para o seu usuário.',
         'sem-permissao': 'Você não tem permissão para lançar nesta turma/disciplina.',
-        'unidade-fechada': 'Esta unidade está fechada para lançamentos.',
+        'unidade-fechada': 'Este bimestre está fechado para lançamentos.',
         'aluno-fora-da-turma': 'A lista de alunos mudou. Abra a turma novamente.',
         'nao-autenticado': 'Sua sessão expirou. Entre novamente.',
         'falha-ao-salvar': 'Não foi possível salvar. Tente de novo.'
@@ -172,7 +172,7 @@
                     <span class="m-att-ring ${ringClass}" style="--p:${ring}">
                         <strong>${lack}</strong>
                     </span>
-                    <small class="m-att-ring-label">faltas na unidade</small>
+                    <small class="m-att-ring-label">faltas no bimestre</small>
                 </button>`;
         }).join('');
 
@@ -320,7 +320,7 @@
         const subject = (data.disciplines && data.disciplines.length) ? data.disciplines.join(', ') : cls.discipline;
         $('[data-att-done-summary]').textContent = data.absent === 0
             ? `${cls.label} · ${subject} (${dateStr}): todos os ${data.present} alunos presentes${lessonsText}.`
-            : `${cls.label} · ${subject} (${dateStr}): ${data.present} presentes e ${data.absent} ausente${data.absent > 1 ? 's' : ''}${lessonsText} na ${data.unity}ª unidade.`;
+            : `${cls.label} · ${subject} (${dateStr}): ${data.present} presentes e ${data.absent} ausente${data.absent > 1 ? 's' : ''}${lessonsText} no ${data.unity}º bimestre.`;
 
         const absentNames = state.students.filter((s) => state.absent.has(s.id));
         $('[data-att-done-list]').innerHTML = absentNames.map((s) =>
