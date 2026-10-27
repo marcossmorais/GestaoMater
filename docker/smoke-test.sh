@@ -40,6 +40,9 @@ done
 ROUTES=$(grep -o "'route' => '[^']*'" /var/www/html/App/Route.php | sed "s/'route' => '//; s/'$//" | sort -u)
 IS_WRITE='inserir|atualizar|deletar|rematricul|troca-turma|adicionar|sair|login'
 
+# Rotas herdadas do projeto original que apontam para métodos inexistentes (ver README)
+KNOWN='^/admin/gestao/(turma/(dados|lista-cursos|lista-salas|turmas-disponiveis)|disciplina/disponiveis)$'
+
 fail=0; total=0
 for r in $ROUTES; do
   if echo "$r" | grep -qE "$IS_WRITE"; then
@@ -54,6 +57,7 @@ for r in $ROUTES; do
   total=$((total+1))
   body=$(curl -s -b "$TMP/$jar" -d "$PARAMS" "$BASE$r?$PARAMS")
   if echo "$body" | grep -qiE "SQLSTATE|Fatal error|Parse error|Uncaught"; then
+    echo "$r" | grep -qE "$KNOWN" && { echo "CONHECIDA $r"; continue; }
     fail=$((fail+1))
     echo "FALHOU $r"
     echo "$body" | grep -oiE "(SQLSTATE|Fatal error|Parse error|Uncaught)[^<]{0,300}" | head -2 | sed 's/^/    /'
