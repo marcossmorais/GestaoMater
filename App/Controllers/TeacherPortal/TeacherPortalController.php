@@ -87,7 +87,7 @@ class TeacherPortalController extends Action
         $this->view->listWarning = $ClasseWarning->readByIdTeacher($Teacher);
         $this->view->tools = $Tools;
 
-        $this->render('home', 'TeacherPortalLayout', 'TeacherPortal');
+        $this->render('home', 'TeacherPortalLayout', 'teacherPortal');
     }
 
 
@@ -114,7 +114,7 @@ class TeacherPortalController extends Action
         $this->view->availableClassRoom = $ClassRoom->listForSelect();
         $this->view->activeSchoolTerm = $SchoolTerm->active();
 
-        $this->render('management/pages/listClass', 'TeacherPortalLayout', 'TeacherPortal');
+        $this->render('management/pages/listClass', 'TeacherPortalLayout', 'teacherPortal');
     }
 
 
@@ -135,7 +135,7 @@ class TeacherPortalController extends Action
 
         $this->view->teacherClasses = $Teacher->seekTeacherClasses($Classe);
 
-        $this->render('management/components/classListing', 'SimpleLayout', 'TeacherPortal');
+        $this->render('management/components/classListing', 'SimpleLayout', 'teacherPortal');
     }
 
 
@@ -153,7 +153,7 @@ class TeacherPortalController extends Action
         $this->view->pcd = $Teacher->pcd();
         $this->view->bloodType = $Teacher->availablebloodType();
 
-        $this->render('settings', 'SimpleLayout', 'TeacherPortal');
+        $this->render('settings', 'SimpleLayout', 'teacherPortal');
     }
 
 

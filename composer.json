@@ -1,7 +1,9 @@
 {
 	"name": "mater/gestao-mater",
+	"description": "Mater - Sistema de Gestão Pedagógica",
+	"license": "proprietary",
 	"require": {
-		"php": ">= 7.0",
+		"php": ">=8.4",
 		"vlucas/phpdotenv": "^5.6",
 		"firebase/php-jwt": "^7.2"
 	},
