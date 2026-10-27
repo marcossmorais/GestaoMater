@@ -24,12 +24,14 @@ services:
       - ./database/11_etapa_turma.sql:/docker-entrypoint-initdb.d/11_etapa_turma.sql:ro
       - ./database/12_diario_aula.sql:/docker-entrypoint-initdb.d/12_diario_aula.sql:ro
       - ./database/13_mural_roteiro.sql:/docker-entrypoint-initdb.d/13_mural_roteiro.sql:ro
+      - ./database/14_desempenho_cronograma.sql:/docker-entrypoint-initdb.d/14_desempenho_cronograma.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro
       - ./database/dev/99c_dev_08_ocorrencias.sql:/docker-entrypoint-initdb.d/99c_dev_08_ocorrencias.sql:ro
       - ./database/dev/99c_dev_09_responsaveis_portaria.sql:/docker-entrypoint-initdb.d/99c_dev_09_responsaveis_portaria.sql:ro
       - ./database/dev/99d_dev_anos_iniciais.sql:/docker-entrypoint-initdb.d/99d_dev_anos_iniciais.sql:ro
+      - ./database/dev/99e_dev_cronograma.sql:/docker-entrypoint-initdb.d/99e_dev_cronograma.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${DB_USER:-mater} -d ${DB_NAME:-mater}"]
       interval: 5s

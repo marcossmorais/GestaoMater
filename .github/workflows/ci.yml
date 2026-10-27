@@ -19,7 +19,9 @@ jobs:
           composer validate --no-check-lock
           composer audit
       - name: PHP lint
-        run: find App public vendor/MF -name '*.php' -not -path 'public/node_modules/*' -print0 | xargs -0 -n1 -P4 php -l > /dev/null
+        run: find App public vendor/MF tests -name '*.php' -not -path 'public/node_modules/*' -print0 | xargs -0 -n1 -P4 php -l > /dev/null
+      - name: Testes unitários
+        run: for t in tests/*Test.php; do php "$t" || exit 1; done
 
   smoke:
     runs-on: ubuntu-latest

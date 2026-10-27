@@ -29,10 +29,10 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 
 ## 3. Portal Aluno / Responsável
 - [x] **Mural em destaque** na home (fixados primeiro) com confirmação de leitura
-- [x] Boletim · [ ] desempenho/evolução por matéria
-- [ ] Frequência: faltas e abonos transparentes
-- [x] **Roteiro de provas** na home · [ ] **cronograma** (anual/mensal/semanal/diário)
-- [ ] **Simulador de notas** (quanto tirar para atingir a média)
+- [x] Boletim · [x] desempenho/evolução por matéria (pontos por unidade, aba Desempenho)
+- [x] Frequência: faltas, abonos e % por disciplina (aulas dadas = chamadas registradas)
+- [x] **Roteiro de provas** na home · [x] **cronograma** dia/semana/mês/ano (`evento_escolar` + avaliações da turma; cadastro de eventos fica no Admin)
+- [x] **Simulador de notas** (`App/Tools/GradeSimulator.php`, testes em `tests/`): quanto tirar por unidade + simulação interativa. **Regra padrão 6,0 / 3 unidades / 75% em `regra_aprovacao` — confirmar com a direção**
 - [x] Ocorrências com ciência
 - [x] Declarações (matrícula, frequência) · [ ] **assinatura digital** com validação (QR/código) + log de download
 - [ ] Boletim com assinatura digital

@@ -117,6 +117,11 @@ class StudentPortalController extends Action
         $this->view->board = Container::getModel('TeacherStudent\ClassBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
         $this->view->guides = Container::getModel('TeacherStudent\Gradebook')->guidesForClass($_SESSION['Student']['classId']);
 
+        $Performance = Container::getModel('Student\StudentPerformance');
+        $this->view->performanceRule = $Performance->rule();
+        $this->view->performance = $Performance->byDiscipline($_SESSION['Student']['enrollmentId'], $_SESSION['Student']['classId']);
+        $this->view->agenda = $Performance->agenda($_SESSION['Student']['classId']);
+
         $this->render("pages/home", "SimpleLayout", "studentPortal");
     }
 

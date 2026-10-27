@@ -30,9 +30,10 @@ cp .env.example .env && docker compose up -d --build   # app em :8000, db em :54
 docker compose down -v && docker compose up -d          # recria banco
 MSYS_NO_PATHCONV=1 docker exec mater-app sh /var/www/html/docker/smoke-test.sh           # leitura
 MSYS_NO_PATHCONV=1 docker exec mater-app sh /var/www/html/docker/smoke-test.sh --writes  # escrita (só dev)
+MSYS_NO_PATHCONV=1 docker exec mater-app php /var/www/html/tests/GradeSimulatorTest.php  # testes unitários (tests/*Test.php)
 docker run --rm -v "$PWD":/app -w /app composer:2 update   # atualizar dependências PHP
 ```
-Antes de abrir PR: smoke test com **0 erros**.
+Smoke test precisa do login por código: suba com `CLERK_*` vazios. Antes de abrir PR: smoke e testes com **0 erros**.
 
 ## Git
 - Nunca commitar direto em `main`. Branch por tarefa: `feat/…`, `fix/…`, `chore/…`, `docs/…`.
