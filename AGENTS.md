@@ -57,6 +57,7 @@ Antes de abrir PR: smoke test com **0 erros**.
 
 ## Segurança
 - Manter PHP e imagem base atualizados (`docker compose build --pull`). Rodar `composer audit` ao mexer em dependências.
+- Atualizar PHP = **recriar o container**, não só trocar binário/imagem: `docker compose up -d --build --pull always`. Processo antigo continua vulnerável na memória. Sem Docker: reiniciar `apache2`/`php-fpm`. Depois, confirmar a versão **servida** (requisição HTTP com `PHP_VERSION`), não só `php -v` no CLI.
 - Em produção: `PHP_DISPLAY_ERRORS=Off`, `APP_URL` real, `DB_SSLMODE=require`.
 - LGPD: dados de menores são sensíveis. Não logar PII em arquivo; não usar dado real em seed.
 
