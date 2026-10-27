@@ -67,8 +67,6 @@ class StudentPortalController extends Action
         $Observation = Container::getModel('TeacherStudent\\Observation');
         $Lack = Container::getModel('TeacherStudent\\Lack');
         $DisciplineAverage = Container::getModel('TeacherStudent\\DisciplineAverage');
-        $StudentRematrug = Container::getModel('Student\\StudentRematrug');
-        $Settings = Container::getModel('Admin\\Settings');
         $SchoolTerm = Container::getModel('GeneralManagement\\SchoolTerm');
         $Exam = Container::getModel('TeacherStudent\\Exam');
         $ClassDiscipline = Container::getModel('GeneralManagement\\ClassDiscipline');
@@ -82,7 +80,6 @@ class StudentPortalController extends Action
         $Observation->__set('fk_id_enrollment', $_SESSION['Student']['enrollmentId']);
         $Lack->__set('fk_id_enrollment', $_SESSION['Student']['enrollmentId']);
         $DisciplineAverage->__set('fk_id_enrollment', $_SESSION['Student']['enrollmentId']);
-        $StudentRematrug->__set('fk_id_enrollment', $_SESSION['Student']['enrollmentId']);
         $StudentEnrollment->__set('studentEnrollmentId', $_SESSION['Student']['enrollmentId']);
         $Classe->__set('classId', $_SESSION['Student']['classId']);
         $ClassDiscipline->__set("fk_id_class", $_SESSION['Student']['classId']);
@@ -99,13 +96,8 @@ class StudentPortalController extends Action
 
         $this->view->listOccurrences = $Occurrence->getForPortal($_SESSION['Student']['enrollmentId']);
 
-        $Guardian = Container::getModel('TeacherStudent\\Guardian');
-        $this->view->guardians = $Guardian->getByStudent($_SESSION['Student']['id']);
         $this->view->lackList = $Lack->readByIdStudent();
         $this->view->disciplineAverageList = $DisciplineAverage->readByIdStudent();
-        $this->view->rematrugSituationList = $StudentRematrug->rematrugSituation();
-        $this->view->checkForRegistration = $StudentRematrug->checkForRegistration();
-        $this->view->currentStatusRematrium = $Settings->currentStatusRematrium();
         $this->view->schoolTermActive = $SchoolTerm->active();
         $this->view->studentDataGeneral = $StudentEnrollment->dataGeneral('<> 0');
         $this->view->listExam = $Exam->readExamByIdClass($Classe);
@@ -126,16 +118,6 @@ class StudentPortalController extends Action
     }
 
 
-    public function sendRematriumRequest()
-    {
-
-        $StudentRematrug = Container::getModel('Student\\StudentRematrug');
-
-        $StudentRematrug->__set('fk_id_rematrug_situation', $_POST['rematrugSituation']);
-        $StudentRematrug->__set('fk_id_enrollment', $_POST['enrollmentId']);
-
-        $StudentRematrug->insert();
-    }
 
 
     public function settings()

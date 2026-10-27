@@ -197,11 +197,6 @@ $("#admin-registration #addAdmin").submit(function (e) {
 })
 
 
-$("#buttonAddRematrug").on("click", function (e) {
-    application.addSinglePart("#addRematrug", "/portal-aluno/rematricular", "")
-})
-
-
 $(document).on('click', "#buttonAddObservationStudent", function (e) {
     application.addSinglePart("#addObservation", "/admin/gestao/turma/perfil-turma/aluno/obervacoes/inserir", "Observação adicionada", "")
     $("#addObservation #description").val('')
