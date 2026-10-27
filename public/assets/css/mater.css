@@ -1049,3 +1049,53 @@ html body .card.m-board-post.is-pinned { border-left: 4px solid #F8A808 !importa
 .m-overview th.is-mine { color: var(--m-primary-text); }
 .m-overview td.is-low { color: var(--m-danger); font-weight: 700; }
 .m-overview small { display: block; color: var(--m-muted); font-weight: 400; font-size: 11px; }
+
+/* ---------- Desempenho e simulador (aluno) */
+.m-pill-bad { background: rgba(220, 38, 38, .14); color: var(--m-danger); }
+.m-perf { margin-bottom: 24px; }
+.m-perf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+html body .card.m-perf-card { padding: 14px 16px !important; border-radius: 14px; display: flex; flex-direction: column; gap: 10px; }
+.m-perf-card header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.m-perf-card header div { display: flex; flex-direction: column; }
+.m-perf-card header strong { font-size: 15px; }
+.m-perf-card header small { color: var(--m-muted); font-size: 12px; }
+.m-perf-units { display: flex; gap: 10px; align-items: flex-end; }
+.m-perf-unit { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.m-perf-unit strong { font-size: 15px; }
+.m-perf-unit small { color: var(--m-muted); font-size: 11px; line-height: 1.3; }
+.m-perf-bar { width: 100%; max-width: 48px; height: 56px; border-radius: 8px; background: var(--m-surface-2); display: flex; align-items: flex-end; overflow: hidden; }
+.m-perf-bar span { width: 100%; background: var(--m-primary); border-radius: 8px 8px 0 0; transition: height .3s ease; }
+.m-perf-bar span.is-low { background: var(--m-danger); }
+.m-perf-sim { margin: 0; font-size: 14px; color: var(--m-text); }
+.m-perf-att { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--m-muted); }
+.m-perf-att .is-low { color: var(--m-danger); font-weight: 700; }
+.m-perf-try summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 700; font-size: 14px; color: var(--m-primary-text); }
+.m-perf-try-fields { display: flex; flex-wrap: wrap; gap: 10px; }
+.m-perf-try-fields label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--m-muted); }
+.m-perf-try-fields input { width: 110px; min-height: 44px; text-align: center; font-size: 16px; font-weight: 700; }
+.m-perf-try-fields input.is-invalid { border-color: var(--m-danger) !important; }
+.m-perf-try-result { margin: 8px 0 0; font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .m-perf-bar span { transition: none; } }
+
+/* ---------- Cronograma (aluno) */
+.m-agenda { margin-bottom: 24px; }
+.m-agenda .m-seg button { min-height: 44px; }
+.m-agenda-list { display: flex; flex-direction: column; gap: 10px; }
+html body .card.m-agenda-item { flex-direction: row; gap: 14px; padding: 12px 14px !important; border-radius: 14px; align-items: flex-start; }
+.m-agenda-item.is-today { border-left: 4px solid var(--m-primary) !important; }
+.m-agenda-item.is-past { opacity: .6; }
+.m-agenda-date { min-width: 56px; display: flex; flex-direction: column; align-items: center; }
+.m-agenda-date strong { font-size: 22px; line-height: 1; }
+.m-agenda-date small { color: var(--m-muted); font-size: 11px; text-transform: uppercase; }
+.m-agenda-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.m-agenda-body strong { font-size: 15px; overflow-wrap: anywhere; }
+.m-agenda-body p { margin: 2px 0 0; font-size: 13px; color: var(--m-muted); }
+.m-agenda-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--m-primary-text); }
+.m-agenda-feriado, .m-agenda-recesso { color: var(--m-success); }
+.m-agenda-prova, .m-agenda-avaliacao { color: #B45309; }
+html.nightMode .m-agenda-prova, html.nightMode .m-agenda-avaliacao { color: #FBBF24; }
+.m-agenda .m-page-head > div:first-child { min-width: 0; }
+@media (max-width: 575.98px) {
+  .m-agenda .m-page-head .m-seg { width: 100%; }
+  .m-agenda .m-page-head .m-seg button { flex: 1; }
+}

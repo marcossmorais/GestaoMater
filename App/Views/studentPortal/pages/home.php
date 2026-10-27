@@ -56,11 +56,11 @@ require __DIR__ . '../../../../config/variables.php';
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#averageNote" href="#">Notas e médias</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#averageNote" href="#">Desempenho</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule">Horários</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule">Agenda</a>
                             </li>
 
 
@@ -629,6 +629,8 @@ function currentDate($array)
 
                     <div class="collapse mt-3" id="averageNote" data-parent="#studentPortal-accordion">
 
+                        <?php require __DIR__ . '/../components/performance.php'; ?>
+
                         <div class="row">
 
                             <div class="col-lg-11 mx-auto">
@@ -867,6 +869,8 @@ function currentDate($array)
 
                                 <div class="collapse mt-3" id="studentSchedule" data-parent="#studentPortal-accordion">
 
+                        <?php require __DIR__ . '/../components/agenda.php'; ?>
+
                         <div class="row">
 
                             <div class="col-lg-11 mx-auto main-content">
@@ -1071,7 +1075,7 @@ function currentDate($array)
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule"><i class="fas fa-calendar-alt"></i> <span>Horários</span></a>
+                            <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule"><i class="fas fa-calendar-alt"></i> <span>Agenda</span></a>
                         </li>
 
                     </ul>
