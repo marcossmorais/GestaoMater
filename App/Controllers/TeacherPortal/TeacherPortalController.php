@@ -5,6 +5,7 @@ namespace App\Controllers\TeacherPortal;
 use MF\Controller\Action;
 use MF\Model\Container;
 use App\Tools\Tools;
+use App\Tools\Audit;
 
 class TeacherPortalController extends Action
 {
@@ -246,8 +247,8 @@ class TeacherPortalController extends Action
         $disciplineClass = $Attendance->findForTeacher($disciplineClassId, $_SESSION['Teacher']['id']);
 
         if (!$disciplineClass) {
-            http_response_code(404);
-            echo json_encode(['error' => 'turma-nao-encontrada']);
+            http_response_code(403);
+            echo json_encode(['error' => 'sem-permissao']);
             return;
         }
 
@@ -282,7 +283,9 @@ class TeacherPortalController extends Action
 
 
     /**
-     * Salva a chamada (POST JSON: disciplineClass, unity, date, lessons, absent[])
+     * Salva a chamada (POST JSON: disciplineClass, unity, date, lessons, absent[], disciplineClasses[]?)
+     *
+     * disciplineClasses: nos Anos Iniciais, o polivalente marca em quais disciplinas da mesma turma a chamada vale.
      */
     public function attendanceSave()
     {
@@ -314,9 +317,26 @@ class TeacherPortalController extends Action
 
         $disciplineClass = $Attendance->findForTeacher($disciplineClassId, $teacherId);
 
-        if (!$disciplineClass) {
-            http_response_code(404);
-            echo json_encode(['error' => 'turma-nao-encontrada']);
+        $targetIds = array_values(array_unique(array_merge(
+            [$disciplineClassId],
+            array_map('intval', (array) ($input['disciplineClasses'] ?? []))
+        )));
+
+        // todas precisam ser editáveis pelo professor; mais de uma só nos Anos Iniciais e na mesma turma
+        $targets = [];
+        foreach ($targetIds as $id) {
+            $row = $Attendance->findForTeacher($id, $teacherId);
+            if (!$row || !$disciplineClass || $row->class_id !== $disciplineClass->class_id) {
+                $targets = null;
+                break;
+            }
+            $targets[] = $row;
+        }
+
+        if (!$disciplineClass || $targets === null || (count($targets) > 1 && $disciplineClass->stage !== 'iniciais')) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', 'chamada', $disciplineClassId, ['disciplineClasses' => $targetIds]);
+            http_response_code(403);
+            echo json_encode(['error' => 'sem-permissao']);
             return;
         }
 
@@ -341,9 +361,17 @@ class TeacherPortalController extends Action
             return;
         }
 
+        $db = \App\Connection::getDb();
+
         try {
-            $id = $Attendance->save($disciplineClassId, $unity, $teacherId, $lessons, $absent, count($enrolled) - count($absent), $date);
+            $db->beginTransaction();
+            foreach ($targets as $target) {
+                $saved = $Attendance->save($target->discipline_class_id, $unity, $teacherId, $lessons, $absent, count($enrolled) - count($absent), $date);
+                if ((int) $target->discipline_class_id === $disciplineClassId) $id = $saved;
+            }
+            $db->commit();
         } catch (\Throwable $e) {
+            if ($db->inTransaction()) $db->rollBack();
             error_log('Chamada: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['error' => 'falha-ao-salvar']);
@@ -355,6 +383,7 @@ class TeacherPortalController extends Action
             'present' => count($enrolled) - count($absent),
             'absent' => count($absent),
             'lessons' => $lessons,
+            'disciplines' => array_map(function ($t) { return $t->discipline_name; }, $targets),
             'unity' => $unity,
             'date' => $date,
             'formattedDate' => date('d/m/Y', strtotime($date)),
