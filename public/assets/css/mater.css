@@ -1143,7 +1143,7 @@ html body #pagina a:focus-visible, html body #pagina button:focus-visible, html 
 /* selos e etiquetas nunca abaixo de 12px */
 html body #pagina .badge, html body #pagina .m-pill { font-size: 12px; }
 /* mural alinhado às postagens do feed (col-11 centralizado) */
-#studentPortal .side-mural > .m-board { width: 91.666%; margin-left: auto; margin-right: auto; }
+#studentPortal .side-mural > .m-board { margin: 0 -15px 24px; padding: 0 4.1667%; }
 /* atalho de chamada: linha (ícone · texto · botão) também no modo escuro */
 html body .card.m-cta { flex-direction: row; text-align: left; }
 html.nightMode body#teacherPortal #pagina .card.m-cta, html.nightMode body .card.m-cta { background: linear-gradient(120deg, var(--m-side-from), var(--m-primary)) !important; }
@@ -1157,4 +1157,15 @@ html.nightMode body#teacherPortal #pagina .card.m-cta, html.nightMode body .card
   .m-panel-head a, .m-breadcrumb a { min-height: 44px; display: inline-flex; align-items: center; }
   .m-view-toggle button, [data-schedule-mode] button, .m-seg button { min-height: 44px; }
   html body #pagina select.form-control, html body #pagina .custom-select { min-height: 44px; }
+}
+/* lista: subtítulo corta com reticências em vez de passar por baixo do selo */
+.m-list .m-list-meta { overflow: hidden; text-overflow: ellipsis; }
+.m-list li > .m-pill { flex: none; }
+/* barra de ferramentas da chamada em linha (o .card do Bootstrap força coluna) */
+html body .card.m-att-toolbar:not(.m-att-subjects) { flex-direction: row; justify-content: flex-start; }
+@media (max-width: 575.98px) {
+  html body .card.m-att-toolbar:not(.m-att-subjects) > .m-att-field { flex: 1 1 auto; }
+  html body .card.m-att-toolbar:not(.m-att-subjects) > .m-att-reset { width: 100%; }
+  html body .m-att-save { white-space: nowrap; padding: 0 16px !important; }
+  .m-att-bar-count { flex-direction: column; gap: 4px; }
 }
