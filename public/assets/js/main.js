@@ -433,8 +433,9 @@ $(document).on("click", "#discipline tr", function () {
 })
 
 
-$(document).on("click", "#teacherPortal #table-class-teacher tbody tr", function (e) {
-    application.showModal(this.id, "/admin/gestao/turma/perfil-turma", "containerClasseProfileModal", "#profileClassModal")
+// docente: abre o desempenho geral da turma (rotas /admin são só do admin)
+$(document).on("click", "#teacherPortal #table-class-teacher tbody tr[id^='class']", function (e) {
+    window.location.href = "/portal-docente/turma?id=" + this.id.replace(/\D/g, "")
 })
 
 

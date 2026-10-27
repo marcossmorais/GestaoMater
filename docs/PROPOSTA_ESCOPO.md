@@ -17,20 +17,21 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] Chamada rápida por carômetro
 - [x] Grade de horários
 - [x] Anos Iniciais: seleção de disciplinas na chamada e no diário
-- [x] Ensino Médio: edição restrita à própria disciplina · [ ] tela de visão geral da turma (`TeacherAccess::canViewClass` pronto; tela com notas na Fase 4)
+- [x] Ensino Médio: edição restrita à própria disciplina + visão geral da turma (`/portal-docente/turma?id=`, pontos por disciplina na unidade)
+- [x] Docente não acessa mais rotas `/admin` (antes podia chamar toda a gestão)
 - [x] **Diário** (`/portal-docente/diario`, `database/12_diario_aula.sql`): habilidade BNCC (texto + código validado) + observação, vinculado à chamada do dia
 - [x] **Atividades da aula**: teórica, documentário, questionário, revisão, prática, avaliação, outro
 - [x] **Troca de professor/matéria** na aula: substituto e/ou matéria dada, motivo obrigatório, auditado
-- [ ] **Lançamento de notas** facilitado (mobile)
-- [ ] **Roteiro de provas**: publicar conteúdo de avaliação + desempenho por aluno
-- [ ] **Quadro de avisos da turma**, fixar até 3
+- [x] **Lançamento de notas** facilitado (`/portal-docente/notas`): lista por aluno, teclado numérico, Enter avança, validação de valor máximo, auditado
+- [x] **Roteiro de provas**: avaliação com roteiro (limite de 10 pts por unidade) + desempenho na visão geral da turma
+- [x] **Mural da turma** (`/portal-docente/mural`): publicar por disciplina, fixar até 3 por turma (trigger no banco), excluir, contagem de leituras
 - [ ] Ocorrências disciplinares (lançar) com controle de ciência
 
 ## 3. Portal Aluno / Responsável
-- [ ] **Mural em destaque** na entrada (até 3 fixados + demais)
+- [x] **Mural em destaque** na home (fixados primeiro) com confirmação de leitura
 - [x] Boletim · [ ] desempenho/evolução por matéria
 - [ ] Frequência: faltas e abonos transparentes
-- [ ] **Roteiro de provas** + **cronograma** (anual/mensal/semanal/diário)
+- [x] **Roteiro de provas** na home · [ ] **cronograma** (anual/mensal/semanal/diário)
 - [ ] **Simulador de notas** (quanto tirar para atingir a média)
 - [x] Ocorrências com ciência
 - [x] Declarações (matrícula, frequência) · [ ] **assinatura digital** com validação (QR/código) + log de download

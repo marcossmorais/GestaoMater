@@ -27,7 +27,11 @@ require __DIR__ . '../../../../config/variables.php';
             </li>
 
             <li class="nav-item">
-                <a name="horario" class="nav-link" href="/portal-docente/horario"><i class="fas fa-calendar-alt"></i> <span>Horários</span></a>
+                <a name="notas" class="nav-link" href="/portal-docente/notas"><i class="fas fa-marker"></i> <span>Notas</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a name="mural" class="nav-link" href="/portal-docente/mural"><i class="fas fa-thumbtack"></i> <span>Mural</span></a>
             </li>
 
             <?php $photo = ($_SESSION['Teacher']['profilePhoto'] ? $_SESSION['Teacher']['profilePhoto'] : 'foto-vazia.jpg') ?>
