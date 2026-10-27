@@ -5,11 +5,11 @@ Admin (importador com diff, mural/cronograma, documentos em lote, painel de logs
 Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 
 ## 0. Remoção (fora de escopo)
-- [-] Rematrícula no portal do aluno (`/portal-aluno/rematricular`, `StudentRematrug`)
-- [-] Portaria / responsáveis autorizados (`database/09_responsaveis_portaria.sql`, `Guardian`) — validar o que o aluno/docente ainda usa antes de apagar
+- [x] Rematrícula removida do portal do aluno (admin e tabelas mantidos)
+- [x] Portaria removida do portal do aluno (admin e tabelas mantidos)
 
 ## 1. Transversal
-- [ ] **Trilha de auditoria** imutável (tabela `auditoria`: autor, ação, entidade, valor antigo/novo, data/hora, IP). Aplicar a notas, chamadas/faltas, abonos, documentos baixados/impressos
+- [x] **Trilha de auditoria** imutável (`database/10_auditoria.sql`, `App/Tools/Audit.php`): triggers em notas, faltas, chamadas, atestados e ocorrências; download de declarações pelo aluno
 - [ ] **RBAC docente**: Anos Iniciais (polivalente) edita todas as disciplinas da turma; Ensino Médio vê desempenho geral e edita só a própria disciplina — checado no servidor
 - [x] Auth Clerk · [x] Responsivo mobile · [ ] Modo noturno
 

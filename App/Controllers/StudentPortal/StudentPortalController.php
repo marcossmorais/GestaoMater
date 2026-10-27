@@ -94,8 +94,8 @@ class StudentPortalController extends Action
 
         $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
 
-        $this->view->listOccurrences = $Occurrence->getForPortal($_SESSION['Student']['enrollmentId']);
-
+        $this->view->listOccurrences = $Occurrence->getForPortal($_SESSION['Student']['enrollmentId']);
+
         $this->view->lackList = $Lack->readByIdStudent();
         $this->view->disciplineAverageList = $DisciplineAverage->readByIdStudent();
         $this->view->schoolTermActive = $SchoolTerm->active();
@@ -242,6 +242,8 @@ class StudentPortalController extends Action
         $this->view->type = $_GET['type'] ?? $type;
         $this->view->authCode = 'MATER-' . date('Y') . '-' . strtoupper(substr(md5($enrollmentId . date('Ymd')), 0, 8));
 
+        \App\Tools\Audit::log(\App\Connection::getDb(), 'DOWNLOAD', 'declaracao_' . $type, $enrollmentId, ['codigo' => $this->view->authCode]);
+
         require __DIR__ . '/../../Views/admin/student/declarations/declaration.php';
     }
 
@@ -256,7 +258,11 @@ class StudentPortalController extends Action
             return;
         }
         $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
-        $Occurrence->acknowledge($id);
+        if (!$Occurrence->acknowledge($id, $_SESSION['Student']['enrollmentId'] ?? 0)) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Ocorrência não encontrada']);
+            return;
+        }
         echo json_encode(['status' => 'success']);
     }
 }
