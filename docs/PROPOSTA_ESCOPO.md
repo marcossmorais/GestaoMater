@@ -36,6 +36,7 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **Ficha do aluno para o docente** (`/portal-docente/aluno`): todas as disciplinas só leitura, a do professor com cada avaliação; observações rápidas de um toque (`database/17_observacao_rapida.sql`, auditadas)
 - [x] **Chamada → diário em sequência**; **busca de habilidade BNCC** por palavra ou código, filtrada pela série/disciplina (`App/Data/bncc-habilidades.tsv`, dados bncc.dev CC BY 4.0)
 - [x] **Notas**: rascunho automático no aparelho, média ao vivo e "precisa de X para fechar 7"
+- [x] **Visual educacional** (`edu.css`): professor lúdico na medida, aluno lúdico completo, cor e ícone por matéria, fonte Nunito; página inicial nova em `/` e login com a cor do portal
 - [x] **App instalável** (manifest + service worker que só guarda arquivos estáticos; em produção exige HTTPS)
 - [x] **Simulador de notas** (`App/Tools/GradeSimulator.php`, testes em `tests/`). **Regra do MATER (confirmada):** 4 bimestres · 3 avaliações de 0 a 10 · nota do bimestre = média aritmética · abaixo de 7 tem recuperação e vale a **maior** nota (bimestre ou recuperação) · média do ano = **soma dos 4 bimestres ÷ 4**, precisa de 7 · frequência não entra na nota (`database/16_regra_bimestral.sql`)
 - [x] Ocorrências com ciência

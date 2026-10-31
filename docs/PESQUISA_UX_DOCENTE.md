@@ -89,3 +89,26 @@ Regras em `public/assets/css/mater.css`, seção "Visual v2".
 | Painel | Cada bloco leva a uma ação (fazer chamada, lançar nota, abrir aluno) | Painel bom é acionável, não só informativo |
 
 Fontes de design: regra dos cantos aninhados — https://hightouch-ui.vercel.hightouch.com/foundation/border-radius · escala de cantos — https://developer.incode.com/design-and-ux/shape/ · select × opções visíveis — https://designsystem.parliament.uk/forms/select/ · item ativo na navegação — https://www.saasui.design/blog/saas-sidebar-navigation-ux-patterns · app instalável — https://web.dev/articles/install-criteria
+
+## Visual educacional (31/10/2026)
+
+Pedido da direção: o sistema parecia "painel de dentista". Pesquisa visual (prints locais em `docs/pesquisa-visual/`, fora do git): ClassDojo, Seesaw, Profez e painéis escolares/apps infantis no Dribbble.
+
+O que veio de cada referência:
+
+| Referência | Padrão adotado |
+| --- | --- |
+| ClassDojo | Ícone redondo colorido por função; ilustrações; fonte gordinha |
+| Profez | Cada função com a sua cor (chamada verde, notas amarelo, diário coral) |
+| Painel de proficiência (Dribbble) | Semáforo de desempenho; blocos coloridos em vez de tabela cinza |
+| Seesaw / apps infantis | Menu claro com ícones coloridos; fundo de papel; adesivos |
+
+Regras (em `public/assets/css/edu.css`):
+
+- **Duas intensidades**: professor = lúdico na medida (fundo creme, cartões brancos tipo adesivo); aluno = lúdico completo (papel pontilhado, bordas tracejadas, selos inclinados).
+- **Cor e ícone por matéria** (`App/Tools/Subject.php`): Matemática azul, Português coral, História âmbar, Geografia verde, Física roxo, Química turquesa, Biologia verde-limão, Inglês rosa, Ed. Física laranja, Artes magenta, Filosofia índigo, Sociologia marrom.
+- **Fonte Nunito** (arredondada, títulos 900), local em `public/assets/fonts/nunito` (OFL).
+- **Cartão adesivo**: borda de 2px + sombra sólida embaixo; **botão com degrau** que afunda ao tocar.
+- **Menu lateral claro**, cada item com o seu ícone colorido; item ativo = fundo azul-claro.
+- **Página inicial** (`/`): apresentação + "Sou professor" / "Sou aluno"; login com a cor do portal (professor azul, aluno âmbar).
+- Modo escuro mantido (tons de índigo, matérias com as mesmas cores).
