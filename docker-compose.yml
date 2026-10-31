@@ -27,6 +27,7 @@ services:
       - ./database/14_desempenho_cronograma.sql:/docker-entrypoint-initdb.d/14_desempenho_cronograma.sql:ro
       - ./database/15_documentos_assinados.sql:/docker-entrypoint-initdb.d/15_documentos_assinados.sql:ro
       - ./database/16_regra_bimestral.sql:/docker-entrypoint-initdb.d/16_regra_bimestral.sql:ro
+      - ./database/17_observacao_rapida.sql:/docker-entrypoint-initdb.d/17_observacao_rapida.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro
