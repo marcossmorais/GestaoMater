@@ -14,6 +14,11 @@ require __DIR__ . '/../../config/variables.php';
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title> Mater - Portal do docente</title>
 	<link rel = "shortcut icon" type = "imagem/x-icon" href = "<?= $app_url ?>/assets/img/logo-components/logo.png"/>
+	<link rel="manifest" href="/manifest.json">
+	<meta name="theme-color" content="#0838B8">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-title" content="Mater">
+	<link rel="apple-touch-icon" href="<?= $app_url ?>/assets/img/app/icon-192.png">
 	<script> if (localStorage.getItem('nightModeTeacher')) { document.documentElement.classList.add('nightMode') } </script>
 	<link rel="stylesheet" href="<?= asset('/assets/css/stylesheet.css') ?>">
 	<link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
@@ -101,6 +106,8 @@ require __DIR__ . '/../../config/variables.php';
 <script src="<?= asset('/assets/js/main.js') ?>"></script>
 
 <script src="<?= asset('/assets/js/mater.js') ?>"></script>
+
+<script src="<?= asset('/assets/js/pwa.js') ?>"></script>
 
 <script src="<?= asset('/assets/js/utilities/Bulletin.js') ?>"></script>
 

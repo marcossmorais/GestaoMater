@@ -69,24 +69,34 @@ class TeacherPortalController extends Action
 
         $Settings = Container::getModel('Admin\\Settings');
         $SchoolTerm = Container::getModel('GeneralManagement\\SchoolTerm');
-        $Teacher = Container::getModel('Teacher\\Teacher');
-        $Exam = Container::getModel('TeacherStudent\\Exam');
-        $ClasseWarning = Container::getModel('GeneralManagement\\ClasseWarning');
-        $Tools = new Tools();
+        $Attendance = Container::getModel('TeacherStudent\\Attendance');
+        $Dashboard = Container::getModel('Teacher\\TeacherDashboard');
 
         if (!isset($_SESSION)) session_start();
 
-        $Teacher->__set('teacherId', $_SESSION['Teacher']['id']);
+        $teacherId = (int) $_SESSION['Teacher']['id'];
+        $openUnits = $this->openUnits($Settings);
+        $disciplineClasses = $Attendance->disciplineClassesByTeacher($teacherId);
+        $rule = Container::getModel('Student\\StudentPerformance')->rule();
 
-        $this->view->unitControlCurrent = $Settings->unitControlCurrent();
+        // aulas de hoje; sem aula hoje (fim de semana, folga), mostra o próximo dia com aulas
+        $today = (new \DateTime('now', new \DateTimeZone('America/Sao_Paulo')))->format('Y-m-d');
+        $lessonsDate = $today;
+        $lessons = $Dashboard->lessonsOn($teacherId, $today);
+        for ($i = 1; !$lessons && $i <= 7; $i++) {
+            $lessonsDate = date('Y-m-d', strtotime("$today +$i day"));
+            $lessons = $Dashboard->lessonsOn($teacherId, $lessonsDate);
+        }
+
         $this->view->SchoolTermActive = $SchoolTerm->active();
-        $this->view->listExam = $Exam->readExamByIdTeacher($Teacher);
-        $this->view->listNote = $Teacher->readNoteByIdTeacher();
-        $this->view->listLack = $Teacher->readLackByIdTeacher();
-        $this->view->listObservation = $Teacher->readObservationByIdTeacher();
-        $this->view->listDisciplineAverage = $Teacher->readByIdTeacherAverage();
-        $this->view->listWarning = $ClasseWarning->readByIdTeacher($Teacher);
-        $this->view->tools = $Tools;
+        $this->view->openUnits = $openUnits;
+        $this->view->disciplineClasses = $disciplineClasses;
+        $this->view->today = $today;
+        $this->view->lessonsDate = $lessonsDate;
+        $this->view->lessons = $lessons;
+        $this->view->pending = $Dashboard->pending(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses), $openUnits);
+        $this->view->atRisk = $Dashboard->atRisk($disciplineClasses, max($openUnits), $rule);
+        $this->view->rule = $rule;
 
         $this->render('home', 'TeacherPortalLayout', 'teacherPortal');
     }
@@ -531,6 +541,34 @@ class TeacherPortalController extends Action
      *
      * @return int[]
      */
+    /**
+     * Habilidades da BNCC para a turma/disciplina do diário (?turma=ID&q=texto ou código)
+     */
+    public function bnccSearch()
+    {
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION)) session_start();
+
+        $id = (int) ($_GET['turma'] ?? 0);
+        $class = null;
+        foreach (Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($_SESSION['Teacher']['id']) as $c) {
+            if ((int) $c->discipline_class_id === $id) $class = $c;
+        }
+
+        if (!$class) {
+            http_response_code(403);
+            echo json_encode(['error' => 'sem-permissao']);
+            return;
+        }
+
+        $query = mb_substr((string) ($_GET['q'] ?? ''), 0, 80);
+        $skills = Container::getModel('TeacherStudent\\Bncc')->search($query, $class->stage, (int) $class->series_acronym, $class->discipline_name);
+
+        echo json_encode(['skills' => $skills], JSON_UNESCAPED_UNICODE);
+    }
+
+
     private function openUnits($Settings)
     {
 

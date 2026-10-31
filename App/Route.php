@@ -904,6 +904,12 @@ class Route extends Bootstrap
 			'action' => 'lessons'
 		);
 
+		$routes['bnccSearchTeacherPortal'] = array(
+			'route' => '/portal-docente/bncc',
+			'controller' => 'TeacherPortal\TeacherPortalController',
+			'action' => 'bnccSearch'
+		);
+
 		$routes['lessonSaveTeacherPortal'] = array(
 			'route' => '/portal-docente/diario/salvar',
 			'controller' => 'TeacherPortal\TeacherPortalController',
@@ -974,6 +980,18 @@ class Route extends Bootstrap
 			'route' => '/portal-docente/turma',
 			'controller' => 'TeacherPortal\TeacherClassController',
 			'action' => 'classOverview'
+		);
+
+		$routes['teacherStudentFile'] = array(
+			'route' => '/portal-docente/aluno',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'studentFile'
+		);
+
+		$routes['teacherStudentNoteSave'] = array(
+			'route' => '/portal-docente/aluno/observacao',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'studentNoteSave'
 		);
 
 		$routes['teacherSchedule'] = array(

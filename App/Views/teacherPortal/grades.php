@@ -18,8 +18,8 @@ require __DIR__ . '/components/classCards.php';
 
                 <div class="m-page-head">
                     <div>
-                        <h5>Notas e roteiro de provas</h5>
-                        <p>3 avaliações de 0 a 10 por bimestre; abaixo de 7, recuperação (substitui a nota do bimestre).</p>
+                        <h5>Notas</h5>
+                        <p>Por bimestre: 1ª, 2ª e 3ª avaliação, de 0 a 10. Média abaixo de 7 vai para a recuperação.</p>
                     </div>
                     <span class="m-pill m-pill-info"><?= max($openUnits) ?>º bimestre aberto</span>
                 </div>
@@ -56,48 +56,25 @@ require __DIR__ . '/components/classCards.php';
                     </div>
                 </div>
 
-                <div class="m-units-info" data-gr-units></div>
+                <div data-gr-bimesters></div>
 
-                <div class="card m-panel mb-3">
-                    <div class="m-panel-head"><h6>Avaliações</h6></div>
-                    <div class="m-exam-list" data-gr-exams></div>
-                </div>
-
-                <details class="card m-panel m-lesson-exception" data-gr-new>
-                    <summary><i class="fas fa-plus mr-2"></i>Nova avaliação ou recuperação</summary>
+                <div class="card m-panel" data-gr-new hidden>
+                    <div class="m-panel-head"><h6 data-gr-new-title></h6></div>
                     <form class="m-lesson-form mb-0" data-gr-exam-form novalidate>
-                        <div class="m-lesson-row">
-                            <label class="m-att-field">
-                                <span class="m-att-label">Descrição</span>
-                                <input type="text" class="form-control" name="description" maxlength="180" placeholder="Ex.: Prova 2" required>
-                            </label>
-                            <label class="m-att-field">
-                                <span class="m-att-label">Bimestre</span>
-                                <select class="form-control" name="unity">
-                                    <?php foreach ($openUnits as $u) { ?>
-                                        <option value="<?= $u ?>" <?= $u === max($openUnits) ? 'selected' : '' ?>><?= $u ?>º bimestre</option>
-                                    <?php } ?>
-                                </select>
-                            </label>
-                            <label class="m-att-field">
-                                <span class="m-att-label">Tipo</span>
-                                <select class="form-control" name="kind">
-                                    <option value="regular">Avaliação (0 a 10)</option>
-                                    <option value="recovery">Recuperação do bimestre</option>
-                                </select>
-                            </label>
-                            <label class="m-att-field">
-                                <span class="m-att-label">Data</span>
-                                <input type="date" class="form-control" name="date" value="<?= date('Y-m-d') ?>" required>
-                            </label>
-                        </div>
                         <label class="m-att-field">
-                            <span class="m-att-label">Roteiro de estudo <small>(o aluno vê no mural)</small></span>
+                            <span class="m-att-label">Data</span>
+                            <input type="date" class="form-control" name="date" value="<?= date('Y-m-d') ?>" required>
+                        </label>
+                        <label class="m-att-field">
+                            <span class="m-att-label">Roteiro de estudo <small>(opcional · o aluno vê no mural)</small></span>
                             <textarea class="form-control" name="guide" rows="4" maxlength="3000" placeholder="Conteúdos, páginas do livro, exercícios para revisar…"></textarea>
                         </label>
-                        <div><button type="submit" class="btn btn-primary"><i class="fas fa-check mr-2"></i>Criar avaliação</button></div>
+                        <div class="m-actions">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-check mr-2"></i>Criar</button>
+                            <button type="button" class="btn btn-light" data-gr-new-cancel>Cancelar</button>
+                        </div>
                     </form>
-                </details>
+                </div>
             </div>
 
             <!-- Passo 3: notas -->

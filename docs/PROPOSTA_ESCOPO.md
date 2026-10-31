@@ -22,8 +22,8 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **Diário** (`/portal-docente/diario`, `database/12_diario_aula.sql`): habilidade BNCC (texto + código validado) + observação, vinculado à chamada do dia
 - [x] **Atividades da aula**: teórica, documentário, questionário, revisão, prática, avaliação, outro
 - [x] **Troca de professor/matéria** na aula: substituto e/ou matéria dada, motivo obrigatório, auditado
-- [x] **Lançamento de notas** facilitado (`/portal-docente/notas`, até 3 avaliações + 1 recuperação por bimestre; recuperação só para quem fechou abaixo de 7): lista por aluno, teclado numérico, Enter avança, validação de valor máximo, auditado
-- [x] **Roteiro de provas**: avaliação com roteiro (limite de 10 pts por unidade) + desempenho na visão geral da turma
+- [x] **Lançamento de notas** facilitado (`/portal-docente/notas`, por bimestre, vagas fixas "1ª, 2ª e 3ª avaliação" + "Recuperação" (liberada após as 3, só para quem fechou abaixo de 7)): lista por aluno, teclado numérico, Enter avança, validação de valor máximo, auditado
+- [x] **Roteiro de provas**: cada avaliação (0 a 10) pode ter roteiro + desempenho na visão geral da turma
 - [x] **Mural da turma** (`/portal-docente/mural`): publicar por disciplina, fixar até 3 por turma (trigger no banco), excluir, contagem de leituras
 - [ ] Ocorrências disciplinares (lançar) com controle de ciência
 
@@ -31,7 +31,12 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **Mural em destaque** na home (fixados primeiro) com confirmação de leitura
 - [x] Boletim · [x] desempenho/evolução por matéria (pontos por unidade, aba Desempenho)
 - [x] Frequência: faltas, abonos e % por disciplina (aulas dadas = chamadas registradas)
-- [x] **Roteiro de provas** na home · [x] **cronograma** dia/semana/mês/ano (`evento_escolar` + avaliações da turma; cadastro de eventos fica no Admin)
+- [x] **cronograma** dia/semana/mês/ano (`evento_escolar` + avaliações da turma; cadastro de eventos fica no Admin)
+- [x] **Home do docente "Hoje"**: aulas do dia pelo horário com status de chamada/diário e próximo passo; pendências (diário sem registro, notas faltando); alunos em atenção (média abaixo de 7, recuperação, 5+ faltas no bimestre)
+- [x] **Ficha do aluno para o docente** (`/portal-docente/aluno`): todas as disciplinas só leitura, a do professor com cada avaliação; observações rápidas de um toque (`database/17_observacao_rapida.sql`, auditadas)
+- [x] **Chamada → diário em sequência**; **busca de habilidade BNCC** por palavra ou código, filtrada pela série/disciplina (`App/Data/bncc-habilidades.tsv`, dados bncc.dev CC BY 4.0)
+- [x] **Notas**: rascunho automático no aparelho, média ao vivo e "precisa de X para fechar 7"
+- [x] **App instalável** (manifest + service worker que só guarda arquivos estáticos; em produção exige HTTPS)
 - [x] **Simulador de notas** (`App/Tools/GradeSimulator.php`, testes em `tests/`). **Regra do MATER (confirmada):** 4 bimestres · 3 avaliações de 0 a 10 · nota do bimestre = média aritmética · abaixo de 7 tem recuperação e vale a **maior** nota (bimestre ou recuperação) · média do ano = **soma dos 4 bimestres ÷ 4**, precisa de 7 · frequência não entra na nota (`database/16_regra_bimestral.sql`)
 - [x] Ocorrências com ciência
 - [x] Declarações (matrícula, frequência) · [x] **assinatura eletrônica** HMAC-SHA256 com código + QR e validação pública em `/validar` (detecta adulteração e documento cancelado) + log de download. Frequência agora vem das chamadas (antes era inventada) e dados da escola vêm do `.env`

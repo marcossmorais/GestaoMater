@@ -91,15 +91,18 @@ $recentJson = array_map(function ($l) use ($activities) {
                             <span class="m-att-label">Data da aula</span>
                             <input type="date" class="form-control" name="date" value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>" required>
                         </label>
-                        <label class="m-att-field">
-                            <span class="m-att-label">Código BNCC <small>(opcional)</small></span>
-                            <input type="text" class="form-control m-lesson-code" name="bnccCode" placeholder="EF05MA01" maxlength="20" autocomplete="off" autocapitalize="characters">
-                        </label>
+                    </div>
+
+                    <div class="m-att-field m-bncc">
+                        <label class="m-att-label" for="bnccSearch">Habilidade BNCC <small>(busque por palavra ou código)</small></label>
+                        <input type="search" id="bnccSearch" class="form-control" data-bncc-search placeholder="Ex.: função, equação, EM13MAT…" autocomplete="off" aria-controls="bnccResults">
+                        <ul class="m-bncc-results" id="bnccResults" data-bncc-results hidden></ul>
+                        <input type="hidden" name="bnccCode">
                     </div>
 
                     <label class="m-att-field">
-                        <span class="m-att-label">Habilidade trabalhada</span>
-                        <textarea class="form-control" name="bnccSkill" rows="2" maxlength="1000" placeholder="Ex.: Resolver problemas de adição e subtração com números naturais"></textarea>
+                        <span class="m-att-label">Habilidade trabalhada <span class="m-lesson-code-tag" data-bncc-tag hidden></span></span>
+                        <textarea class="form-control" name="bnccSkill" rows="2" maxlength="1000" placeholder="Escolha na busca acima ou escreva com suas palavras"></textarea>
                     </label>
 
                     <div class="m-att-field">
