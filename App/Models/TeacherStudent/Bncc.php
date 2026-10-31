@@ -44,7 +44,8 @@ class Bncc extends Model
         if ($rows === null) {
             $rows = [];
             foreach (file(__DIR__ . '/../../Data/bncc-habilidades.tsv', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-                [$code, $text] = explode("\t", $line, 2) + [1 => ''];
+                // rtrim: o checkout no Windows pode trazer o arquivo com CRLF
+                [$code, $text] = explode("\t", rtrim($line, "\r"), 2) + [1 => ''];
                 $rows[] = [$code, $text];
             }
         }
