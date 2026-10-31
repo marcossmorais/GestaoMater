@@ -93,6 +93,9 @@
         state.activities = new Set();
 
         form.reset();
+        setBncc('');
+        bnccResults.innerHTML = '';
+        bnccResults.hidden = true;
         $$('[data-activity]').forEach((b) => chip(b, false));
         $('[data-ls-exception]').open = false;
 
@@ -138,6 +141,62 @@
         const key = button.dataset.activity;
         state.activities.has(key) ? state.activities.delete(key) : state.activities.add(key);
         chip(button, state.activities.has(key));
+    });
+
+    // ---------- Busca de habilidade BNCC (filtrada pela série e disciplina da turma)
+    const bnccInput = $('[data-bncc-search]');
+    const bnccResults = $('[data-bncc-results]');
+    const bnccTag = $('[data-bncc-tag]');
+    let bnccTimer = null;
+    let bnccSkills = [];
+
+    function setBncc(code, text) {
+        form.querySelector('[name="bnccCode"]').value = code || '';
+        bnccTag.hidden = !code;
+        bnccTag.textContent = code || '';
+        if (text !== undefined) form.querySelector('[name="bnccSkill"]').value = text;
+    }
+
+    async function searchBncc() {
+        if (!state.cls) return;
+        try {
+            const response = await fetch(`/portal-docente/bncc?turma=${state.cls.id}&q=${encodeURIComponent(bnccInput.value.trim())}`,
+                { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const data = await response.json();
+            bnccSkills = data.skills || [];
+            bnccResults.innerHTML = bnccSkills.length
+                ? bnccSkills.map((s, i) => `<li><button type="button" data-bncc-pick="${i}"><span class="m-lesson-code-tag">${escapeHtml(s.code)}</span> ${escapeHtml(s.text)}</button></li>`).join('')
+                : '<li class="m-empty">Nenhuma habilidade encontrada para esta turma.</li>';
+            bnccResults.hidden = false;
+        } catch (e) {
+            bnccResults.hidden = true;
+        }
+    }
+
+    bnccInput.addEventListener('input', () => {
+        clearTimeout(bnccTimer);
+        bnccTimer = setTimeout(searchBncc, 250);
+    });
+    bnccInput.addEventListener('focus', () => { if (!bnccResults.innerHTML) searchBncc(); else bnccResults.hidden = false; });
+    bnccInput.addEventListener('keydown', (event) => { if (event.key === 'Escape') bnccResults.hidden = true; });
+
+    bnccResults.addEventListener('click', (event) => {
+        const pick = event.target.closest('[data-bncc-pick]');
+        if (!pick) return;
+        const skill = bnccSkills[parseInt(pick.dataset.bnccPick, 10)];
+        setBncc(skill.code, skill.text);
+        bnccInput.value = '';
+        bnccResults.hidden = true;
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.m-bncc')) bnccResults.hidden = true;
+    });
+
+    // texto da habilidade editado à mão deixa de ser a habilidade oficial escolhida
+    form.querySelector('[name="bnccSkill"]').addEventListener('input', () => {
+        const picked = bnccSkills.find((s) => s.code === form.querySelector('[name="bnccCode"]').value);
+        if (picked && picked.text !== form.querySelector('[name="bnccSkill"]').value) setBncc('');
     });
 
     $('[data-ls-back]').addEventListener('click', () => show('pick'));
@@ -217,6 +276,21 @@
     // Atalho vindo da chamada: /portal-docente/diario?turma=ID&disciplinas=1,2
     const params = new URLSearchParams(window.location.search);
     const preselect = parseInt(params.get('turma') || '', 10);
-    if (preselect) openClass(preselect, (params.get('disciplinas') || '').split(',').map((n) => parseInt(n, 10)).filter(Boolean));
+    if (preselect) {
+        openClass(preselect, (params.get('disciplinas') || '').split(',').map((n) => parseInt(n, 10)).filter(Boolean));
+        if (/^\d{4}-\d{2}-\d{2}$/.test(params.get('data') || '')) form.querySelector('[name="date"]').value = params.get('data');
+
+        // vindo direto da chamada: confirma a chamada aqui mesmo e segue para o registro da aula
+        let saved = null;
+        try { saved = JSON.parse(sessionStorage.getItem('mater-chamada-salva') || 'null'); sessionStorage.removeItem('mater-chamada-salva'); } catch (e) { saved = null; }
+        if (saved && state.cls) {
+            form.querySelector('.m-att-head').insertAdjacentHTML('afterend', `
+                <div class="m-saved-banner">
+                    <i class="fas fa-check-circle"></i>
+                    <span><strong>Chamada salva.</strong> ${escapeHtml(saved.summary)}${saved.absent && saved.absent.length ? `<small>Ausentes: ${escapeHtml(saved.absent.join(', '))}</small>` : ''}</span>
+                    <a href="/portal-docente/chamada">Outra chamada</a>
+                </div>`);
+        }
+    }
 
 })();
