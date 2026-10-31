@@ -1,0 +1,256 @@
+/*
+ * Mater — visual educacional (portais do professor e do aluno).
+ * Carregado por último, depois de mater.css e do Bootstrap.
+ * Professor: lúdico na medida (cores por matéria, fonte arredondada, cartões "adesivo").
+ * Aluno: lúdico completo (papel de caderno, bordas tracejadas, selos).
+ * Referências: docs/PESQUISA_UX_DOCENTE.md, seção "Visual educacional".
+ */
+
+@font-face { font-family: "Nunito"; src: url(../fonts/nunito/nunito-latin-wght-normal.woff2) format("woff2"); font-weight: 200 1000; font-display: swap; }
+
+/* ---------- Cores por matéria: --s (forte), --s-soft (fundo), --s-ink (texto sobre o fundo) */
+.m-subj-blue    { --s: #2F80ED; --s-soft: #E4F0FF; --s-ink: #0F4C9C; }
+.m-subj-coral   { --s: #F2643D; --s-soft: #FFE9E2; --s-ink: #A33A1B; }
+.m-subj-amber   { --s: #F2A40C; --s-soft: #FFF2D6; --s-ink: #8A5A00; }
+.m-subj-green   { --s: #22B07D; --s-soft: #DFF7EC; --s-ink: #0D6B49; }
+.m-subj-purple  { --s: #7B61FF; --s-soft: #EEEAFF; --s-ink: #4A33C2; }
+.m-subj-teal    { --s: #12A9B4; --s-soft: #DDF6F7; --s-ink: #0A6870; }
+.m-subj-lime    { --s: #6DB33F; --s-soft: #ECF7E1; --s-ink: #3E6E1C; }
+.m-subj-pink    { --s: #E8508C; --s-soft: #FFE6F0; --s-ink: #9C2357; }
+.m-subj-orange  { --s: #FF8A1F; --s-soft: #FFEEDC; --s-ink: #9A4B00; }
+.m-subj-magenta { --s: #C04CD9; --s-soft: #F7E6FB; --s-ink: #7A2390; }
+.m-subj-indigo  { --s: #4F5BD5; --s-soft: #E7E9FB; --s-ink: #2E388F; }
+.m-subj-brown   { --s: #B0703B; --s-soft: #F6ECE2; --s-ink: #6E4220; }
+html.nightMode :is(.m-subj, [class*="m-subj-"]) { --s-soft: color-mix(in srgb, var(--s) 22%, #1C1A33); --s-ink: color-mix(in srgb, var(--s) 45%, #fff); }
+
+/* ---------- Tokens dos dois portais */
+body#teacherPortal, body#studentPortal {
+  --m-primary: #2F6FED;
+  --m-primary-hover: #1F5AD2;
+  --m-primary-soft: #E4EDFF;
+  --m-primary-text: #1F4FB8;
+  --m-primary-edge: #1A47A8;
+  --m-accent: #FFB020;
+  --m-success: #1FA971;
+  --m-danger: #E5484D;
+
+  --m-bg: #FFF8EC;
+  --m-surface: #FFFFFF;
+  --m-surface-2: #FFF3DF;
+  --m-text: #2A2754;
+  --m-muted: #6D6A8C;
+  --m-border: #F0E3CC;
+  --m-input-bg: #FFFFFF;
+  --m-input-border: #EADBC2;
+  --m-row-hover: #FFF3DF;
+  --m-nav-bg: rgba(255, 248, 236, .92);
+
+  --m-radius: 22px;
+  --m-radius-md: 14px;
+  --m-radius-sm: 14px;
+  --m-radius-xs: 10px;
+  --m-shadow: 0 4px 0 #F0E3CC;
+  --m-shadow-hover: 0 6px 0 #E6D3B2;
+  --m-shadow-lg: 0 18px 40px rgba(42, 39, 84, .14);
+  --m-focus: 0 0 0 4px rgba(47, 111, 237, .25);
+  --m-side-bg: #FFFFFF;
+}
+html.nightMode body#teacherPortal, html.nightMode body#studentPortal {
+  --m-primary: #5B8CFF;
+  --m-primary-hover: #4677F0;
+  --m-primary-soft: rgba(91, 140, 255, .18);
+  --m-primary-text: #A9C2FF;
+  --m-primary-edge: #2E56C2;
+  --m-bg: #15142A;
+  --m-surface: #1F1D3A;
+  --m-surface-2: #282548;
+  --m-text: #F1EFFF;
+  --m-muted: #A9A6CC;
+  --m-border: #34315C;
+  --m-input-bg: #1A1832;
+  --m-input-border: #3B3866;
+  --m-row-hover: #282548;
+  --m-nav-bg: rgba(21, 20, 42, .92);
+  --m-shadow: 0 4px 0 #0E0D1E;
+  --m-shadow-hover: 0 6px 0 #0B0A18;
+  --m-side-bg: #1A1832;
+}
+
+/* ---------- Tipografia: Nunito, títulos bem gordinhos */
+html body#teacherPortal, html body#studentPortal,
+html body#teacherPortal :is(button, input, select, textarea, .btn, .link-name, h1, h2, h3, h4, h5, h6),
+html body#studentPortal :is(button, input, select, textarea, .btn, h1, h2, h3, h4, h5, h6) {
+  font-family: "Nunito", "Inter", system-ui, sans-serif !important;
+}
+html body#teacherPortal, html body#studentPortal { font-size: 15px; font-weight: 600; background: var(--m-bg) !important; }
+body#teacherPortal :is(h5, .h5), body#studentPortal :is(h5, .h5) { font-weight: 900 !important; letter-spacing: -.01em; }
+body#teacherPortal h6, body#studentPortal h6 { font-weight: 800 !important; }
+body#teacherPortal :is(small, .m-muted-note), body#studentPortal :is(small, .m-muted-note) { font-weight: 600; }
+
+/* ---------- Cartões "adesivo": borda de 2px e sombra sólida embaixo */
+html body#teacherPortal .card, html body#studentPortal .card {
+  border: 2px solid var(--m-border) !important;
+  box-shadow: var(--m-shadow) !important;
+  border-radius: var(--m-radius) !important;
+}
+html body#teacherPortal .card.m-att-class:hover, html body#teacherPortal a.card:hover,
+html body#studentPortal a.card:hover { box-shadow: var(--m-shadow-hover) !important; transform: translateY(-2px) !important; }
+body#teacherPortal .m-panel-head h6 { font-size: 17px; }
+
+/* ---------- Botões com "degrau" (afundam ao tocar) */
+html body#teacherPortal .btn, html body#studentPortal .btn { font-weight: 800 !important; border-radius: var(--m-radius-md) !important; }
+html body#teacherPortal .btn-primary, html body#studentPortal .btn-primary {
+  background: var(--m-primary) !important; border: 0 !important; box-shadow: 0 4px 0 var(--m-primary-edge) !important; color: #fff !important;
+}
+html body#teacherPortal .btn-primary:active, html body#studentPortal .btn-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--m-primary-edge) !important; }
+html body#teacherPortal .btn-light, html body#studentPortal .btn-light {
+  background: var(--m-surface) !important; border: 2px solid var(--m-border) !important; box-shadow: 0 3px 0 var(--m-border) !important; color: var(--m-text) !important;
+}
+html body#teacherPortal .btn-outline-primary { border-width: 2px !important; }
+html body#teacherPortal .m-att-save { box-shadow: 0 4px 0 var(--m-primary-edge) !important; }
+
+/* ---------- Campos */
+html body#teacherPortal :is(.form-control, .custom-select),
+html body#studentPortal :is(.form-control, .custom-select) { border-width: 2px !important; font-weight: 700; }
+
+/* ---------- Selos e pílulas */
+body#teacherPortal .m-pill, body#studentPortal .m-pill { font-weight: 800; font-size: 12px; padding: 5px 11px; }
+body#teacherPortal .m-pill-info, body#studentPortal .m-pill-info { background: var(--m-primary-soft); color: var(--m-primary-text); }
+body#teacherPortal .m-pill-ok, body#studentPortal .m-pill-ok { background: #DDF6EA; color: #0D6B49; }
+body#teacherPortal .m-pill-warn, body#studentPortal .m-pill-warn { background: #FFF0CC; color: #8A5A00; }
+body#teacherPortal .m-pill-bad, body#studentPortal .m-pill-bad { background: #FFE3E3; color: #B42328; }
+html.nightMode body :is(.m-pill-ok) { background: rgba(31, 169, 113, .2); color: #7BE3B6; }
+html.nightMode body :is(.m-pill-warn) { background: rgba(255, 176, 32, .2); color: #FFD27A; }
+html.nightMode body :is(.m-pill-bad) { background: rgba(229, 72, 77, .2); color: #FF9EA1; }
+
+/* ---------- Matéria: selo da turma, ícone e faixa */
+body#teacherPortal .m-subj .m-att-class-badge, body#studentPortal .m-subj .m-att-class-badge { background: var(--s-soft); color: var(--s-ink); }
+body#teacherPortal .m-att-class-badge { border-radius: 16px; font-weight: 900; }
+.m-subj-ico { color: var(--s, var(--m-primary)); margin-right: 8px; width: 18px; text-align: center; }
+html body#teacherPortal .card.m-subj.m-att-class { border-color: color-mix(in srgb, var(--s) 30%, var(--m-border)) !important; }
+body#teacherPortal .m-panel.m-subj { border-top: 6px solid var(--s) !important; }
+body#teacherPortal .m-panel.m-subj .m-att-class-badge { background: var(--s-soft); color: var(--s-ink); }
+body#teacherPortal .m-today-item.m-subj { border: 2px solid color-mix(in srgb, var(--s) 25%, var(--m-border)); border-left: 8px solid var(--s); border-radius: 16px; }
+body#teacherPortal .m-today-item.is-now { box-shadow: 0 0 0 3px color-mix(in srgb, var(--s, var(--m-primary)) 35%, transparent); }
+
+/* ---------- Barra lateral clara, cada item com o seu ícone colorido */
+html body#teacherPortal #left-panel #sidebar { background: var(--m-side-bg) !important; border-right: 2px solid var(--m-border) !important; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists li a,
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-name { color: var(--m-text) !important; font-weight: 800 !important; font-size: 14px !important; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists p { color: var(--m-muted) !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists > li { margin: 2px 6px !important; border-radius: 16px; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists > li > a { padding: 0 6px !important; min-height: 48px; gap: 8px !important; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists > li:hover { background: var(--m-surface-2) !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child {
+  flex: none; width: 34px !important; height: 34px; border-radius: 12px; display: inline-flex !important; align-items: center; justify-content: center;
+  background: var(--m-surface-2); color: var(--m-muted) !important; font-size: 15px;
+}
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="home"] a > i:first-child { background: #E4F0FF; color: #2F80ED !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="turmas"] a > i:first-child { background: #EEEAFF; color: #7B61FF !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="chamada"] a > i:first-child { background: #DFF7EC; color: #22B07D !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="diario"] a > i:first-child { background: #FFE9E2; color: #F2643D !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="notas"] a > i:first-child { background: #FFF2D6; color: #E09400 !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="mural"] a > i:first-child { background: #FFE6F0; color: #E8508C !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="horario"] a > i:first-child { background: #DDF6F7; color: #12A9B4 !important; }
+html.nightMode body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child { background: var(--m-surface-2) !important; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active { background: var(--m-primary-soft) !important; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active::before { display: none; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active .link-name { color: var(--m-primary-text) !important; }
+#left-panel #sidebar .logo .logo-dark { display: none; }
+html.nightMode #left-panel #sidebar .logo .logo-light { display: none; }
+html.nightMode #left-panel #sidebar .logo .logo-dark { display: block; }
+
+/* ---------- Barra superior e barra inferior (celular) */
+html body#teacherPortal #navbar-top { background: var(--m-nav-bg) !important; border-bottom: 2px solid var(--m-border) !important; }
+html body#teacherPortal .navbar.fixed-bottom, html body#studentPortal .navbar.fixed-bottom {
+  background: var(--m-surface) !important; border-top: 2px solid var(--m-border) !important; box-shadow: none !important;
+}
+html body .navbar.fixed-bottom .nav-link.link-active { color: var(--m-primary-text) !important; }
+html body .navbar.fixed-bottom .nav-link.link-active i { color: var(--m-primary) !important; }
+
+/* ---------- Home do professor: boas-vindas e atalhos coloridos */
+.m-hero {
+  display: flex; align-items: center; gap: 20px; padding: 22px 26px; margin-bottom: 18px;
+  background: #E4F0FF; border: 2px solid #C9DEFF; border-radius: 26px; box-shadow: 0 4px 0 #C9DEFF; overflow: hidden;
+}
+html.nightMode .m-hero { background: #222A55; border-color: #313C77; box-shadow: 0 4px 0 #0E0D1E; }
+.m-hero-text { flex: 1; min-width: 0; }
+.m-hero-kicker { display: inline-block; font-size: 13px; font-weight: 800; color: var(--m-primary-text); background: rgba(255, 255, 255, .7); padding: 3px 12px; border-radius: 999px; margin-bottom: 8px; }
+html.nightMode .m-hero-kicker { background: rgba(255, 255, 255, .08); }
+html body .m-hero h5 { font-size: 28px !important; margin: 0 0 4px; }
+html body .m-hero p { margin: 0; color: var(--m-muted) !important; font-size: 15px; }
+.m-hero-art { width: 150px; max-height: 120px; flex: none; }
+.m-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.m-tile {
+  display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 22px; text-decoration: none !important;
+  background: var(--s-soft); border: 2px solid color-mix(in srgb, var(--s) 25%, transparent); box-shadow: 0 4px 0 color-mix(in srgb, var(--s) 30%, transparent);
+}
+.m-tile:hover { transform: translateY(-2px); }
+.m-tile:active { transform: translateY(2px); box-shadow: none; }
+.m-tile-ico { width: 46px; height: 46px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: var(--s); color: #fff; font-size: 20px; margin-bottom: 6px; }
+html body .m-tile strong { color: var(--s-ink) !important; font-size: 16px; font-weight: 900; }
+html body .m-tile small { color: var(--s-ink) !important; opacity: .8; font-size: 12px; }
+@media (max-width: 767.98px) {
+  .m-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .m-hero { padding: 18px; }
+  .m-hero-art { width: 96px; }
+  html body .m-hero h5 { font-size: 22px !important; }
+}
+
+/* ---------- Listas, vazios e tabelas */
+body#teacherPortal .m-empty { font-weight: 700; }
+body#teacherPortal .m-todo a { border: 2px solid transparent; }
+body#teacherPortal .m-todo a:hover { border-color: var(--m-border); }
+body#teacherPortal .m-todo a > i { width: 34px; height: 34px; margin-top: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--m-primary-soft); flex: none; }
+body#teacherPortal .m-todo .fa-marker { background: #FFF2D6; color: #E09400; }
+body#teacherPortal .m-todo .fa-book-open { background: #FFE9E2; color: #F2643D; }
+body#teacherPortal .m-todo .fa-user { background: #FFE6F0; color: #E8508C; }
+body#teacherPortal .m-overview th { background: var(--m-surface-2); font-weight: 900; }
+body#teacherPortal .m-overview th:first-child { border-radius: 12px 0 0 12px; }
+body#teacherPortal .m-overview th:last-child { border-radius: 0 12px 12px 0; }
+body#teacherPortal .m-exam { border: 2px solid var(--m-border); border-radius: 18px; font-weight: 700; }
+body#teacherPortal .m-subj .m-exam:not(.is-empty):not(.is-locked) .m-att-class-badge { background: var(--s); color: #fff; }
+body#teacherPortal .m-grade-row { border: 2px solid var(--m-border); border-radius: 18px; }
+body#teacherPortal .m-att-subject { border-width: 2px; font-weight: 800; }
+body#teacherPortal .m-bim { border-width: 2px; border-radius: 18px; }
+body#teacherPortal .m-att-student { border-width: 2px !important; border-radius: 20px !important; }
+
+/* ==========================================================================
+   Aluno: lúdico completo — papel de caderno, tracejado, selos coloridos
+   ========================================================================== */
+body#studentPortal {
+  --m-radius: 26px;
+  background-color: var(--m-bg) !important;
+  background-image: radial-gradient(color-mix(in srgb, var(--m-border) 90%, transparent) 1.2px, transparent 1.2px) !important;
+  background-size: 22px 22px !important;
+}
+html body#studentPortal .card {
+  border: 2px dashed color-mix(in srgb, var(--m-primary) 25%, var(--m-border)) !important;
+  box-shadow: 0 5px 0 var(--m-border) !important;
+}
+html body#studentPortal #studentPortalNavbar {
+  background: var(--m-surface) !important; border-bottom: 2px solid var(--m-border) !important; box-shadow: none !important;
+}
+html body#studentPortal #studentPortalNavbar .nav-link { font-weight: 800 !important; border-radius: 14px; }
+html body#studentPortal #studentPortalNavbar .nav-link:hover { background: var(--m-surface-2); }
+html body#studentPortal .m-timeline-title { font-weight: 900 !important; }
+html body#studentPortal .m-tag { border-radius: 999px; font-weight: 800; }
+html body#studentPortal .m-day-tab { border-radius: 16px !important; border-width: 2px !important; font-weight: 800; }
+html body#studentPortal .m-day-tab.is-active { background: var(--m-primary) !important; color: #fff !important; box-shadow: 0 4px 0 var(--m-primary-edge); }
+html body#studentPortal .m-perf-card, html body#studentPortal .m-perf-row { border-radius: 20px; }
+html body#studentPortal .m-hero { background: #FFF2D6; border-color: #FFDF9E; box-shadow: 0 5px 0 #FFDF9E; transform: rotate(-.4deg); }
+html.nightMode body#studentPortal .m-hero { background: #3A2F1A; border-color: #5A4622; box-shadow: 0 5px 0 #0E0D1E; }
+html body#studentPortal .m-hero .m-hero-kicker { color: #8A5A00; }
+body#studentPortal .m-sticker { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-weight: 900; font-size: 13px; transform: rotate(-3deg); background: #FFE6F0; color: #9C2357; border: 2px solid #FFC2DA; }
+body#studentPortal .m-nav-ico {
+  width: 30px; height: 30px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--s-soft); color: var(--s); margin-right: 8px; font-size: 14px;
+}
+html body#studentPortal #studentPortalNavbar .nav-link[aria-expanded="true"] { background: var(--m-primary-soft); color: var(--m-primary-text) !important; }
+body#studentPortal .m-hero-student { margin-bottom: 0; }
+body#studentPortal .m-hero-student .m-sticker { margin-bottom: 10px; }
+/* desempenho do aluno: cada matéria com a sua cor e ícone */
+html body#studentPortal .card.m-perf-card.m-subj { border-color: color-mix(in srgb, var(--s) 45%, var(--m-border)) !important; border-top: 8px solid var(--s) !important; }
+body#studentPortal .m-perf-card header { display: flex; align-items: center; gap: 10px; }
+body#studentPortal .m-perf-card header > div { flex: 1; min-width: 0; }
+body#studentPortal .m-perf-ico { width: 40px; height: 40px; flex: none; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; background: var(--s-soft); color: var(--s); font-size: 18px; transform: rotate(-4deg); }

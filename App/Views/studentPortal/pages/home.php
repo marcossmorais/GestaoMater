@@ -18,6 +18,8 @@ require __DIR__ . '../../../../config/variables.php';
     <script> if (localStorage.getItem('nightModeStudent')) { document.documentElement.classList.add('nightMode') } </script>
     <link rel="stylesheet" href="<?= asset('/assets/css/stylesheet.css') ?>">
 	<link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
+    <link rel="preload" href="<?= $app_url ?>/assets/fonts/nunito/nunito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="<?= asset('/assets/css/edu.css') ?>">
     <link rel="shortcut icon" type="imagem/x-icon" href="<?= $app_url ?>/assets/img/logo-components/logo.png" />
 </head>
 
@@ -44,23 +46,23 @@ require __DIR__ . '../../../../config/variables.php';
                         <ul class="navbar-nav d-flex align-items-center justify-content-center">
 
                             <li class="nav-item active">
-                                <a class="nav-link" aria-expanded="true" href="#" data-toggle="collapse" data-target="#mural">Mural</a>
+                                <a class="nav-link" aria-expanded="true" href="#" data-toggle="collapse" data-target="#mural"><i class="fas fa-thumbtack m-nav-ico m-subj-pink"></i>Mural</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#bulletin">Boletim</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#bulletin"><i class="fas fa-star m-nav-ico m-subj-amber"></i>Boletim</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#class" href="#">Turma</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#class" href="#"><i class="fas fa-users m-nav-ico m-subj-purple"></i>Turma</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#averageNote" href="#">Desempenho</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#averageNote" href="#"><i class="fas fa-chart-line m-nav-ico m-subj-green"></i>Desempenho</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule">Agenda</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule"><i class="fas fa-calendar-alt m-nav-ico m-subj-teal"></i>Agenda</a>
                             </li>
 
 
@@ -121,7 +123,22 @@ require __DIR__ . '../../../../config/variables.php';
                     </div>
                 </div>
 
-                <div class="col-lg-12 mt-3">
+                <?php
+                $firstName = explode(' ', trim($_SESSION['Student']['name']))[0];
+                $hour = (int) (new DateTime('now', new DateTimeZone('America/Sao_Paulo')))->format('G');
+                ?>
+                <div class="col-lg-11 mx-auto mt-4">
+                    <div class="m-hero m-hero-student">
+                        <div class="m-hero-text">
+                            <span class="m-sticker"><i class="fas fa-star"></i><?= htmlspecialchars($_SESSION['Student']['class']) ?></span>
+                            <h5><?= $hour < 12 ? 'Bom dia' : ($hour < 18 ? 'Boa tarde' : 'Boa noite') ?>, <?= htmlspecialchars($firstName) ?>!</h5>
+                            <p>Veja os avisos da turma, o seu boletim e o que vem por aí.</p>
+                        </div>
+                        <img class="m-hero-art" src="<?= $app_url ?>/assets/img/illustrations/students.svg" alt="">
+                    </div>
+                </div>
+
+                <div class="col-lg-12">
 
                     <div class="collapse show mt-3" id="mural" data-parent="#studentPortal-accordion">
 
@@ -188,15 +205,13 @@ require __DIR__ . '../../../../config/variables.php';
 
                                                         ?>
 
-                                                        <div class="col-lg-12 exam-description"><?= htmlspecialchars($value->discipline_name) ?> - <?= htmlspecialchars($value->exam_description) ?> - <?= $value->unity ?> ª Unidade </div>
+                                                        <div class="col-lg-12 exam-description"><?= htmlspecialchars($value->discipline_name) ?> · <?= htmlspecialchars($value->exam_description) ?> · <?= (int) $value->unity ?>º bimestre</div>
 
                                                     </div>
 
                                                     <div class="row exam-description-footer">
 
-                                                        <div class="col-6">Valor: <?= $value->exam_value ?> <?= $pointsOrTenths ?></div>
-
-                                                        <div class="col-6">Data: <?= $data[2] ?>-<?= $data[1] ?>-<?= $data[0] ?></div>
+                                                        <div class="col-12"><i class="far fa-calendar mr-1"></i><?= $data[2] ?>/<?= $data[1] ?>/<?= $data[0] ?> · nota de 0 a 10</div>
 
                                                     </div>
 

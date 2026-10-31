@@ -14,6 +14,8 @@ $classesJson = array_map(function ($c) {
         'discipline' => $c->discipline_name,
         'students' => (int) $c->student_total,
         'doneTodayAt' => $c->done_today_at,
+        'subject' => \App\Tools\Subject::css($c->discipline_name),
+        'icon' => \App\Tools\Subject::icon($c->discipline_name),
     ];
 }, $disciplineClasses);
 

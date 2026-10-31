@@ -49,10 +49,10 @@ $recentJson = array_map(function ($l) use ($activities) {
 
                     <div class="m-att-classes">
                         <?php foreach ($cards as $c) { ?>
-                            <button type="button" class="card m-att-class" data-ls-class="<?= $c['id'] ?>">
+                            <button type="button" class="card m-att-class <?= $c['subject'] ?? '' ?>" data-ls-class="<?= $c['id'] ?>">
                                 <span class="m-att-class-badge"><?= htmlspecialchars($c['label']) ?></span>
                                 <span class="m-att-class-body">
-                                    <strong><?= htmlspecialchars($c['discipline']) ?></strong>
+                                    <strong><i class="fas <?= $c['icon'] ?> m-subj-ico" aria-hidden="true"></i><?= htmlspecialchars($c['discipline']) ?></strong>
                                     <small><?= htmlspecialchars($c['course']) ?> · <?= htmlspecialchars($c['shift']) ?></small>
                                 </span>
                                 <i class="fas fa-chevron-right m-att-class-go"></i>

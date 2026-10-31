@@ -143,7 +143,7 @@
                 editable && complete, u, true));
 
             return `
-                <div class="card m-panel mb-3">
+                <div class="card m-panel mb-3 ${state.cls.subject || ''}">
                     <div class="m-panel-head">
                         <h6>${u}º bimestre</h6>
                         <span class="m-pill ${complete ? 'm-pill-ok' : 'm-pill-info'}">${Math.min(regular.length, per)}/${per} avaliações</span>

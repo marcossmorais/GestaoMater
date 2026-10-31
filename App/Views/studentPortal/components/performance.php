@@ -34,8 +34,9 @@ $counts = function ($unit) { return $unit['closed'] && !$unit['needsRecovery']; 
             <?php foreach ($performance as $d) {
                 $sim = $d['simulation'];
                 [$label, $pill] = $d['pendingRecovery'] ? ['Recuperação', 'm-pill-warn'] : $statusLabel[$sim['status']]; ?>
-                <article class="card m-perf-card" data-perf='<?= htmlspecialchars(json_encode(['units' => array_map(function ($u) use ($counts) { return $counts($u) ? $u['grade'] : null; }, $d['units'])]), ENT_QUOTES) ?>'>
+                <article class="card m-perf-card <?= \App\Tools\Subject::css($d['discipline']) ?>" data-perf='<?= htmlspecialchars(json_encode(['units' => array_map(function ($u) use ($counts) { return $counts($u) ? $u['grade'] : null; }, $d['units'])]), ENT_QUOTES) ?>'>
                     <header>
+                        <span class="m-perf-ico"><i class="fas <?= \App\Tools\Subject::icon($d['discipline']) ?>" aria-hidden="true"></i></span>
                         <div>
                             <strong><?= htmlspecialchars($d['discipline']) ?></strong>
                             <small><?= htmlspecialchars($d['teacher']) ?></small>

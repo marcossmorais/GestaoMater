@@ -8,7 +8,10 @@ require __DIR__ . '../../../../config/variables.php';
 
     <nav id="sidebar">
 
-        <div class="col-lg-12 logo d-flex justify-content-center"><img src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca.png" alt=""></div> 
+        <div class="col-lg-12 logo d-flex justify-content-center">
+            <img class="logo-light" src="<?= $app_url ?>/assets/img/logo-components/logo-completa.png" alt="Mater">
+            <img class="logo-dark" src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca.png" alt="Mater">
+        </div>
 
         <ul class="sidebar-lists">
 
@@ -30,7 +33,7 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li name="horario"><a href="/portal-docente/horario"><i class="fas fa-calendar-alt"></i><span class="link-name">Horários</span></a></li>
 
-            <li><a href="#" id="settingsTeacherPortal"><i class="fas fa-cog"></i><span class="link-name">Configurações</span></a></li>
+            <li><a href="#" id="settingsTeacherPortal"><i class="fas fa-cog"></i><span class="link-name">Perfil</span></a></li>
 
             <li data-install-app hidden><a href="#"><i class="fas fa-download"></i><span class="link-name">Instalar app</span></a></li>
 

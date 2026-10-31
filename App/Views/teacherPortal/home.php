@@ -35,23 +35,26 @@ $pendingTotal = count($pending['lessons']) + count($pending['exams']);
 
         <div class="col-lg-11 mx-auto">
 
-            <div class="m-page-head">
-                <div>
-                    <h5>Olá, <?= htmlspecialchars(explode(' ', $_SESSION['Teacher']['name'])[0]) ?></h5>
-                    <p><?= ucfirst($longDate($today)) ?><?= $schoolTerm ? ' · ' . max($openUnits) . 'º bimestre aberto' : ' · nenhum período letivo ativo' ?></p>
+            <?php
+            $hour = (int) substr($now, 0, 2);
+            $greeting = $hour < 12 ? 'Bom dia' : ($hour < 18 ? 'Boa tarde' : 'Boa noite');
+            $todayCount = $isToday ? count($lessons) : 0;
+            ?>
+            <div class="m-hero">
+                <div class="m-hero-text">
+                    <span class="m-hero-kicker"><?= ucfirst($longDate($today)) ?><?= $schoolTerm ? ' · ' . max($openUnits) . 'º bimestre' : '' ?></span>
+                    <h5><?= $greeting ?>, <?= htmlspecialchars(explode(' ', $_SESSION['Teacher']['name'])[0]) ?>!</h5>
+                    <p><?= $todayCount ? "Você tem $todayCount aula" . ($todayCount > 1 ? 's' : '') . ' hoje. Bora começar?' : 'Hoje não tem aula no seu horário. Aproveite para colocar as notas em dia.' ?></p>
                 </div>
+                <img class="m-hero-art" src="<?= $app_url ?>/assets/img/illustrations/teacher.svg" alt="">
             </div>
 
-            <?php if (!$isToday || !$lessons) { ?>
-                <a href="/portal-docente/chamada" class="card m-cta">
-                    <span class="m-cta-icon"><i class="fas fa-bolt"></i></span>
-                    <span class="m-cta-body">
-                        <strong>Chamada rápida</strong>
-                        <span>Todos começam presentes — toque só em quem faltou.</span>
-                    </span>
-                    <span class="m-cta-go">Começar</span>
-                </a>
-            <?php } ?>
+            <nav class="m-tiles" aria-label="Atalhos">
+                <a class="m-tile m-subj-green" href="/portal-docente/chamada"><span class="m-tile-ico"><i class="fas fa-clipboard-check"></i></span><strong>Chamada rápida</strong><small>Toque só em quem faltou</small></a>
+                <a class="m-tile m-subj-coral" href="/portal-docente/diario"><span class="m-tile-ico"><i class="fas fa-book-open"></i></span><strong>Diário</strong><small>Conteúdo e BNCC</small></a>
+                <a class="m-tile m-subj-amber" href="/portal-docente/notas"><span class="m-tile-ico"><i class="fas fa-star"></i></span><strong>Notas</strong><small>1ª, 2ª e 3ª avaliação</small></a>
+                <a class="m-tile m-subj-purple" href="/portal-docente/mural"><span class="m-tile-ico"><i class="fas fa-thumbtack"></i></span><strong>Mural</strong><small>Avisos para a turma</small></a>
+            </nav>
 
             <div class="m-grid">
 
@@ -69,11 +72,11 @@ $pendingTotal = count($pending['lessons']) + count($pending['exams']);
                                 $now_ = $isToday && $now >= $l->start && $now <= $l->finish;
                                 $done = $l->attendance_at && $l->lesson_done;
                             ?>
-                                <li class="m-today-item<?= $now_ ? ' is-now' : '' ?><?= $done ? ' is-done' : '' ?>">
+                                <li class="m-today-item <?= \App\Tools\Subject::css($l->discipline) ?><?= $now_ ? ' is-now' : '' ?><?= $done ? ' is-done' : '' ?>">
                                     <div class="m-today-time"><strong><?= $l->start ?></strong><span><?= $l->finish ?></span></div>
                                     <span class="m-att-class-badge"><?= htmlspecialchars($l->label) ?></span>
                                     <div class="m-today-body">
-                                        <strong><?= htmlspecialchars($l->discipline) ?><?= $now_ ? ' <span class="m-pill m-pill-info">agora</span>' : '' ?></strong>
+                                        <strong><i class="fas <?= \App\Tools\Subject::icon($l->discipline) ?> m-subj-ico" aria-hidden="true"></i><?= htmlspecialchars($l->discipline) ?><?= $now_ ? ' <span class="m-pill m-pill-info">agora</span>' : '' ?></strong>
                                         <small><?= htmlspecialchars($l->course) ?> · <?= htmlspecialchars($l->shift) ?><?= $l->count > 1 ? ' · ' . $l->count . ' aulas seguidas' : '' ?></small>
                                         <?php if ($isToday) { ?>
                                             <span class="m-today-status">

@@ -24,6 +24,8 @@ require __DIR__ . '/../../config/variables.php';
 	<link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
 	<link href="<?= $app_url ?>/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="<?= $app_url ?>/node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet">
+	<link rel="preload" href="<?= $app_url ?>/assets/fonts/nunito/nunito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="stylesheet" href="<?= asset('/assets/css/edu.css') ?>">
 
 </head>
 

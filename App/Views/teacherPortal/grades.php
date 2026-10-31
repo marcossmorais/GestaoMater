@@ -32,10 +32,10 @@ require __DIR__ . '/components/classCards.php';
                 <?php } else { ?>
                     <div class="m-att-classes">
                         <?php foreach ($classesJson as $c) { ?>
-                            <button type="button" class="card m-att-class" data-gr-class="<?= $c['id'] ?>">
+                            <button type="button" class="card m-att-class <?= $c['subject'] ?? '' ?>" data-gr-class="<?= $c['id'] ?>">
                                 <span class="m-att-class-badge"><?= htmlspecialchars($c['label']) ?></span>
                                 <span class="m-att-class-body">
-                                    <strong><?= htmlspecialchars($c['discipline']) ?></strong>
+                                    <strong><i class="fas <?= $c['icon'] ?> m-subj-ico" aria-hidden="true"></i><?= htmlspecialchars($c['discipline']) ?></strong>
                                     <small><?= htmlspecialchars($c['course']) ?> · <?= htmlspecialchars($c['shift']) ?><?= $c['own'] ? '' : ' · polivalente' ?></small>
                                 </span>
                                 <i class="fas fa-chevron-right m-att-class-go"></i>
