@@ -17,12 +17,18 @@
         enrollment: () => config.enrollment,
         onSaved(text, data, option) {
             const discipline = option.textContent;
-            const item = `<li class="${escapeHtml(option.dataset.subject || '')}" data-note-discipline="${escapeHtml(discipline)}"><p>${escapeHtml(text)}</p><small>${escapeHtml(discipline)} · ${escapeHtml(config.teacher || '')}</small></li>`;
-            const first = notes.querySelector('li');
-            if (first && first.hasAttribute('data-day') && first.textContent.startsWith('Hoje')) {
-                first.insertAdjacentHTML('afterend', item);
+            const item = `<li class="${escapeHtml(option.dataset.subject || '')}" data-note-discipline="${escapeHtml(discipline)}"><p>${escapeHtml(text)}</p><small>${escapeHtml(data.time || '')} · ${escapeHtml(discipline)} · ${escapeHtml(config.teacher || '')}</small></li>`;
+            const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            const [, month, year] = data.date.split('/');
+            const monthLabel = `${months[parseInt(month, 10) - 1]} de ${year}`;
+            const today = notes.querySelector(`[data-day="${data.date}"]`);
+            if (today) {
+                today.insertAdjacentHTML('afterend', item);
             } else {
-                notes.insertAdjacentHTML('afterbegin', `<li class="m-day-header" data-day>Hoje · ${data.date.slice(0, 5)}</li>${item}`);
+                const dayHeader = `<li class="m-day-header" data-day="${data.date}">Hoje · ${data.date.slice(0, 5)}</li>${item}`;
+                const first = notes.querySelector('[data-month]');
+                if (first && first.textContent === monthLabel) first.insertAdjacentHTML('afterend', dayHeader);
+                else notes.insertAdjacentHTML('afterbegin', `<li class="m-month-header" data-month>${monthLabel}</li>${dayHeader}`);
             }
             const empty = root.querySelector('[data-notes-empty]');
             if (empty) empty.remove();
@@ -52,20 +58,88 @@
         if (!chipButton) return;
         const value = chipButton.dataset.notesValue;
         root.querySelectorAll('[data-notes-value]').forEach((b) => b.classList.toggle('is-active', b === chipButton));
-        let header = null;
-        let visible = false;
+        let dayHeader = null;
+        let monthHeader = null;
         notes.querySelectorAll('li').forEach((li) => {
-            if (li.hasAttribute('data-day')) {
-                if (header) header.hidden = !visible;
-                header = li;
-                visible = false;
-                return;
+            if (li.hasAttribute('data-month')) {
+                monthHeader = li;
+                li.hidden = true;
+            } else if (li.hasAttribute('data-day')) {
+                dayHeader = li;
+                li.hidden = true;
+            } else {
+                li.hidden = value !== '' && li.dataset.noteDiscipline !== value;
+                if (!li.hidden) {
+                    if (dayHeader) dayHeader.hidden = false;
+                    if (monthHeader) monthHeader.hidden = false;
+                }
             }
-            li.hidden = value !== '' && li.dataset.noteDiscipline !== value;
-            if (!li.hidden) visible = true;
         });
-        if (header) header.hidden = !visible;
     });
+
+    // ---------- Solicitação de ocorrência à coordenação
+    const occForm = root.querySelector('[data-occ-form]');
+    if (occForm) {
+        let category = 'Elogio';
+        let sending = false;
+        const occToast = (message, type) => {
+            if (typeof tools !== 'undefined' && typeof tools.showToast === 'function') tools.showToast(message, type === 'error' ? 'bg-danger' : 'bg-success');
+        };
+        const occErrors = {
+            'texto-obrigatorio': 'Preencha o título e o que aconteceu.',
+            'data-invalida': 'Escolha uma data até hoje.',
+            'sem-permissao': 'Você não tem permissão nesta disciplina.'
+        };
+
+        occForm.querySelector('[data-occ-category]').addEventListener('click', (event) => {
+            const button = event.target.closest('[data-value]');
+            if (!button) return;
+            category = button.dataset.value;
+            occForm.querySelectorAll('[data-occ-category] button').forEach((b) => b.classList.toggle('is-active', b === button));
+            occForm.querySelector('[data-occ-severity]').hidden = category === 'Elogio';
+        });
+
+        occForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (sending) return;
+            const data = new FormData(occForm);
+            const payload = {
+                enrollment: config.enrollment,
+                disciplineClass: parseInt(data.get('disciplineClass'), 10),
+                category,
+                severity: category === 'Elogio' ? 'Baixa' : data.get('severity'),
+                date: data.get('date'),
+                title: (data.get('title') || '').trim(),
+                description: (data.get('description') || '').trim()
+            };
+            if (!payload.title || !payload.description) return occToast(occErrors['texto-obrigatorio'], 'error');
+
+            sending = true;
+            try {
+                const response = await fetch('/portal-docente/aluno/ocorrencia', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(result.error || 'falha');
+                root.querySelector('[data-occ-list]').insertAdjacentHTML('afterbegin', `
+                    <li>
+                        <div><strong>${escapeHtml(payload.title)}</strong> <span class="m-pill m-pill-warn">Aguardando coordenação</span></div>
+                        <small>${escapeHtml(category)} · ${payload.date.split('-').reverse().join('/')} · ${escapeHtml(config.teacher || '')}</small>
+                        <p>${escapeHtml(payload.description).replace(/\n/g, '<br>')}</p>
+                    </li>`);
+                occForm.querySelector('[name="title"]').value = '';
+                occForm.querySelector('[name="description"]').value = '';
+                root.querySelector('[data-occ-box]').open = false;
+                occToast('Solicitação enviada à coordenação');
+            } catch (e) {
+                occToast(occErrors[e.message] || 'Não foi possível enviar. Tente de novo.', 'error');
+            } finally {
+                sending = false;
+            }
+        });
+    }
 
     // ---------- Gráfico: nota do aluno x média da turma em cada matéria, no bimestre escolhido
     const chartData = window.MATER_STUDENT_CHART;

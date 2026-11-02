@@ -79,6 +79,23 @@ class Occurrence extends Model
     }
 
     /**
+     * Categoria e gravidade de cada ocorrência (índice pedagógico)
+     *
+     * @return array [['category' => ..., 'severity' => ...]]
+     */
+    public function severities($enrollmentId)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT categoria AS category, gravidade AS severity FROM ocorrencia_disciplinar WHERE fk_id_matricula = :enrollmentId"
+        );
+
+        $stmt->bindValue(':enrollmentId', (int) $enrollmentId, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Resumo de ocorrências por categoria
      *
      * @param int $enrollmentId

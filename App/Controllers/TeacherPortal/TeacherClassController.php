@@ -531,7 +531,21 @@ class TeacherClassController extends Action
         $this->view->notes = $StudentFile->notes($student->id);
         $this->view->guardians = $StudentFile->guardians($student->student_id);
         $this->view->classAverages = $StudentFile->classAverages($student->class_id, $this->view->rule);
-        $this->view->occurrences = Container::getModel('TeacherStudent\\Occurrence')->getSummaryByEnrollment($student->id);
+        $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
+        $this->view->occurrences = $Occurrence->getSummaryByEnrollment($student->id);
+        $this->view->requests = Container::getModel('TeacherStudent\\OccurrenceRequest')->forEnrollment($student->id);
+
+        // índice pedagógico: todas as disciplinas, observações e ocorrências do aluno
+        $grades = [];
+        $attendance = [];
+        foreach ($this->view->performance as $p) {
+            foreach ($p['units'] as $unit) if ($unit['grade'] !== null) $grades[] = (float) $unit['grade'];
+            if ($p['attendance'] !== null) $attendance[] = (float) $p['attendance'];
+        }
+        $tones = \App\Tools\PedagogicalIndex::countTones(array_map(function ($n) { return $n->text; }, $this->view->notes));
+        $this->view->tones = $tones;
+        $this->view->index = \App\Tools\PedagogicalIndex::compute($grades, $attendance, $tones['positive'], $tones['negative'], $Occurrence->severities($student->id));
+
         $this->view->quickNotes = \App\Models\TeacherStudent\StudentFile::QUICK_NOTES;
         $this->view->unity = max($this->openUnits());
 

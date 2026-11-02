@@ -861,6 +861,38 @@ html.nightMode .m-cal-status, html.nightMode .m-cal-pill { color: var(--m-text);
   .m-cal-quick .btn, .m-plan-actions .btn { flex: 1; }
 }
 
+/* Índice pedagógico do aluno */
+.m-index { --k: var(--m-muted); flex-direction: row; gap: 18px; margin-bottom: 12px; border-left: 4px solid var(--k) !important; }
+.m-index.is-high { --k: #22B07D; }
+.m-index.is-ok { --k: #2F6FED; }
+.m-index.is-mid { --k: #F59E0B; }
+.m-index.is-low { --k: #E5484D; }
+.m-index-score { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 104px; padding: 8px; text-align: center; background: color-mix(in srgb, var(--k) 12%, transparent); border-radius: 10px; }
+.m-index-score strong { font-size: 34px; font-weight: 900; line-height: 1; }
+.m-index-score span { margin-top: 4px; font-size: 12px; font-weight: 800; }
+.m-index-body { flex: 1; min-width: 0; }
+html body .m-index-body h6 { margin: 0 0 8px; font-size: 14px; font-weight: 800; }
+.m-index-bars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 16px; margin-bottom: 8px; }
+.m-index-bar > span { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 12px; font-weight: 700; }
+.m-index-bar b { margin-left: auto; font-weight: 800; }
+.m-index-track { display: block; height: 6px; overflow: hidden; background: var(--m-surface-2); border-radius: 3px; }
+.m-index-track > i { display: block; height: 100%; background: var(--k); }
+@media (max-width: 767.98px) {
+  .m-index { flex-direction: column; }
+  .m-index-score { flex-direction: row; gap: 10px; width: 100%; }
+  .m-index-score span { margin-top: 0; }
+  .m-index-bars { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Observações por mês e dia; solicitações de ocorrência */
+html body#teacherPortal .m-notes li.m-month-header { margin: 14px 0 2px; padding: 0; font-size: 14px; font-weight: 900; list-style: none; background: none !important; border: 0 !important; border-radius: 0; }
+html body#teacherPortal .m-notes li.m-month-header:first-child { margin-top: 0; }
+.m-requests { display: flex; flex-direction: column; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.m-requests:empty { display: none; }
+.m-requests li { padding: 10px 12px; border: 1px solid var(--m-border); border-radius: 10px; }
+.m-requests small { display: block; color: var(--m-muted); }
+html body .m-requests p { margin: 6px 0 0; font-size: 14px; }
+
 /* Roteiro de Provas e recebidos do admin */
 .m-guide-page { padding-bottom: 96px; }
 .m-guide-slots button:disabled { opacity: .45; cursor: not-allowed; }
