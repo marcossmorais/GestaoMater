@@ -44,6 +44,20 @@ class Route extends Bootstrap
 			'action' => 'exit'
 		);
 
+		// Observabilidade 360°: turmas, disciplinas e professores
+
+		$routes['adminObservability'] = array(
+			'route' => '/admin/observabilidade',
+			'controller' => 'Admin\\AdminObservabilityController',
+			'action' => 'index'
+		);
+
+		$routes['adminObservabilityClass'] = array(
+			'route' => '/admin/observabilidade/turma',
+			'controller' => 'Admin\\AdminObservabilityController',
+			'action' => 'classDetail'
+		);
+
 		// Rotas referente aos controles do aluno no portal do administrador
 
 		$routes['adminStudentRegistration'] = array(
