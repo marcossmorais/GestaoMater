@@ -231,19 +231,21 @@ class TeacherClassController extends Action
         if (!$this->canEdit($disciplineClassId)) return $this->deny('avaliacoes', $disciplineClassId);
 
         $unity = (int) ($input['unity'] ?? 0);
-        $description = trim((string) ($input['description'] ?? ''));
         $date = trim((string) ($input['date'] ?? ''));
         $recovery = !empty($input['recovery']);
 
         if (!in_array($unity, $this->openUnits(), true)) return $this->json(['error' => 'unidade-fechada'], 422);
-        if ($description === '' || mb_strlen($description) > 180) return $this->json(['error' => 'descricao-invalida'], 422);
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) return $this->json(['error' => 'data-invalida'], 422);
 
         $count = $Gradebook->examCount($disciplineClassId, $unity);
         $perBimester = Container::getModel('Student\\StudentPerformance')->rule()['perBimester'];
 
         if ($recovery && $count['recovery']) return $this->json(['error' => 'recuperacao-ja-existe'], 422);
+        if ($recovery && $count['regular'] < $perBimester) return $this->json(['error' => 'recuperacao-antes-das-avaliacoes', 'max' => $perBimester], 422);
         if (!$recovery && $count['regular'] >= $perBimester) return $this->json(['error' => 'limite-avaliacoes', 'max' => $perBimester], 422);
+
+        // nome fixo: "1ª avaliação", "2ª avaliação"… ou "Recuperação"
+        $description = $recovery ? 'Recuperação' : ($count['regular'] + 1) . 'ª avaliação';
 
         $this->json(['id' => $Gradebook->createExam($disciplineClassId, $unity, $description, $date, $guide, $recovery)]);
     }
@@ -262,6 +264,7 @@ class TeacherClassController extends Action
             'exam' => ['id' => (int) $exam->id, 'value' => (float) $exam->value, 'unity' => (int) $exam->unity, 'description' => $exam->description, 'recovery' => (bool) $exam->recovery],
             'editable' => in_array((int) $exam->unity, $this->openUnits(), true),
             'passing' => $rule['passing'],
+            'perBimester' => $rule['perBimester'],
             'students' => array_map(function ($s) use ($exam, $rule) {
                 $eligible = $this->recoveryEligible($s, $exam, $rule);
                 return [
@@ -270,6 +273,9 @@ class TeacherClassController extends Action
                     'photo' => $s->photo,
                     'grade' => $s->grade === null ? null : (float) $s->grade,
                     'bimesterAverage' => $s->bimester_average === null ? null : round((float) $s->bimester_average, 2),
+                    // demais avaliações do bimestre (para mostrar a média ao vivo e quanto falta)
+                    'othersSum' => $s->others_sum === null ? 0 : round((float) $s->others_sum, 2),
+                    'othersCount' => (int) $s->others_count,
                     'eligible' => $eligible,
                 ];
             }, $Gradebook->students($exam->id)),
@@ -368,6 +374,66 @@ class TeacherClassController extends Action
         $this->view->editable = array_map(function ($c) { return (int) $c->discipline_class_id; }, Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($this->teacherId()));
 
         $this->render('classOverview', 'TeacherPortalLayout', 'teacherPortal');
+    }
+
+
+    // ------------------------------------------------------------------ Desempenho do aluno
+
+    /**
+     * Ficha do aluno: todas as disciplinas da turma (leitura) e, nas do professor, cada avaliação e as observações rápidas
+     */
+    public function studentFile()
+    {
+        $StudentFile = Container::getModel('TeacherStudent\\StudentFile');
+        $student = $StudentFile->enrollment((int) ($_GET['id'] ?? 0));
+
+        if (!$student || !Container::getModel('Teacher\\TeacherAccess')->canViewClass($this->teacherId(), $student->class_id)) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', 'matricula', $_GET['id'] ?? null, 'ficha do aluno');
+            header('Location: /portal-docente/turmas');
+            return;
+        }
+
+        $Performance = Container::getModel('Student\\StudentPerformance');
+        $mine = array_values(array_filter(
+            array_map(function ($c) { return (int) $c->discipline_class_id; }, Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($this->teacherId())),
+            function ($id) use ($StudentFile, $student) { return $StudentFile->belongsTo($student->id, $id); }
+        ));
+
+        $this->view->student = $student;
+        $this->view->classLabel = Container::getModel('TeacherStudent\\Gradebook')->classLabel($student->class_id);
+        $this->view->rule = $Performance->rule();
+        $this->view->performance = $Performance->byDiscipline($student->id, $student->class_id);
+        $this->view->mine = $mine;
+        $this->view->exams = $StudentFile->exams($student->id, $mine);
+        $this->view->notes = $StudentFile->notes($student->id);
+        $this->view->occurrences = Container::getModel('TeacherStudent\\Occurrence')->getSummaryByEnrollment($student->id);
+        $this->view->quickNotes = \App\Models\TeacherStudent\StudentFile::QUICK_NOTES;
+        $this->view->unity = max($this->openUnits());
+
+        $this->render('studentFile', 'TeacherPortalLayout', 'teacherPortal');
+    }
+
+
+    /**
+     * Observação rápida sobre o aluno, na disciplina do professor
+     */
+    public function studentNoteSave()
+    {
+        if (($input = $this->input()) === null) return;
+
+        $enrollmentId = (int) ($input['enrollment'] ?? 0);
+        $disciplineClassId = (int) ($input['disciplineClass'] ?? 0);
+        $text = trim((string) ($input['text'] ?? ''));
+
+        $StudentFile = Container::getModel('TeacherStudent\\StudentFile');
+        if (!$this->canEdit($disciplineClassId) || !$StudentFile->belongsTo($enrollmentId, $disciplineClassId)) {
+            return $this->deny('observacao_aluno', $enrollmentId);
+        }
+        if ($text === '' || mb_strlen($text) > 1000) return $this->json(['error' => 'texto-invalido'], 422);
+
+        $id = $StudentFile->addNote($enrollmentId, $disciplineClassId, max($this->openUnits()), $this->teacherId(), $text);
+
+        $this->json(['id' => $id, 'date' => date('d/m/Y')]);
     }
 
 }

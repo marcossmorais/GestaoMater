@@ -327,8 +327,20 @@
             `<li><span class="m-att-dot"></span>${escapeHtml(s.name)}<small>${s.totalLack + data.lessons} faltas</small></li>`
         ).join('');
 
-        // 1 toque para o diário, com a mesma turma e disciplinas
-        $('[data-att-lesson]').href = `/portal-docente/diario?turma=${cls.id}&disciplinas=${Array.from(state.subjects).join(',')}`;
+        // chamada e diário em sequência: segue direto para o registro da aula, com a mesma turma, disciplinas e data
+        const lessonUrl = `/portal-docente/diario?turma=${cls.id}&disciplinas=${Array.from(state.subjects).join(',')}${state.date ? `&data=${state.date}` : ''}`;
+        $('[data-att-lesson]').href = lessonUrl;
+
+        try {
+            sessionStorage.setItem('mater-chamada-salva', JSON.stringify({
+                summary: $('[data-att-done-summary]').textContent,
+                absent: absentNames.map((s) => s.name)
+            }));
+            window.location.href = lessonUrl;
+            return;
+        } catch (e) {
+            // sem armazenamento da sessão: mostra a confirmação aqui, com o botão para o diário
+        }
 
         show('done');
         toast('Chamada salva');

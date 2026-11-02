@@ -1034,6 +1034,12 @@ html body .card.m-board-post.is-pinned { border-left: 4px solid #F8A808 !importa
 .m-exam:hover { border-color: var(--m-primary); }
 .m-exam-body { flex: 1; display: flex; flex-direction: column; }
 .m-exam-body small { color: var(--m-muted); }
+.m-exam.is-empty { border-style: dashed; color: var(--m-primary-text); }
+.m-exam.is-empty .m-exam-body small { color: var(--m-primary-text); }
+.m-exam.is-locked { opacity: .55; cursor: default; }
+.m-exam.is-locked:hover { border-color: var(--m-border); }
+a.m-list-body, a.m-list-body:hover { color: inherit; text-decoration: none; }
+.m-muted-note { color: var(--m-muted); font-size: 13px; margin: 4px 4px 16px; }
 .m-grade-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 96px; }
 .m-grade-row { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 1px solid var(--m-border); border-radius: 12px; background: var(--m-surface); }
 .m-grade-row.is-invalid { border-color: var(--m-danger); }
@@ -1180,3 +1186,152 @@ html.nightMode .m-overview td.is-rec { color: #FBBF24; }
 .m-perf-tag.is-rec { background: rgba(248, 168, 8, .18); color: #9A6700; }
 html.nightMode .m-perf-tag.is-rec { color: #FBBF24; }
 .m-perf-tag.is-need { background: rgba(220, 38, 38, .14); color: var(--m-danger); }
+
+/* ==========================================================================
+   Visual v2 (portais docente e aluno) — ver docs/PESQUISA_UX_DOCENTE.md, "Sistema visual".
+   Uma escala só de cantos: 16 cartões · 12 controles e itens de lista · 8 etiquetas · pílula só em selos.
+   Sem gradiente: cor sólida. Controles com 44px (alvo de toque).
+   ========================================================================== */
+body#teacherPortal, #studentPortal {
+  --m-radius: 16px;
+  --m-radius-md: 12px;
+  --m-radius-sm: 12px;
+  --m-radius-xs: 8px;
+  --m-control-h: 44px;
+  --m-side-bg: #0838B8;
+  --m-shadow: 0 1px 2px rgba(16, 32, 72, .06);
+  --m-shadow-hover: 0 4px 16px rgba(16, 32, 72, .08);
+}
+html.nightMode body#teacherPortal, html.nightMode #studentPortal { --m-side-bg: #0A1A3F; --m-shadow: none; --m-shadow-hover: 0 4px 16px rgba(0, 0, 0, .3); }
+
+/* Barra lateral: cor sólida; item ativo = barra à esquerda + texto forte (sem "cartão" nem borda clara) */
+html body#teacherPortal #left-panel #sidebar { background: var(--m-side-bg) !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists > li { margin: 0 !important; border-radius: 0; position: relative; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists > li > a { min-height: 44px; padding: 0 12px 0 16px !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists > li:hover { background: rgba(255, 255, 255, .06) !important; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active { background: rgba(255, 255, 255, .10) !important; box-shadow: none; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active::before {
+  content: ""; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: #fff;
+}
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active a,
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active .link-name { color: #fff !important; font-weight: 700; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li a:focus { outline: none; box-shadow: none; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li a:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
+
+/* Sem gradientes */
+html body#teacherPortal .card.m-cta,
+html.nightMode body#teacherPortal #pagina .card.m-cta { background: var(--m-primary) !important; }
+html.nightMode body#teacherPortal #pagina .card.m-cta { background: var(--m-side-bg) !important; border: 1px solid var(--m-border) !important; }
+body#teacherPortal .m-att-class-badge, #studentPortal .m-att-class-badge { background: var(--m-primary-soft); color: var(--m-primary-text); border-radius: var(--m-radius-md); width: 48px; height: 48px; font-size: 15px; }
+body#teacherPortal .m-cta-icon { border-radius: var(--m-radius-md); }
+body#teacherPortal .m-kpi .m-kpi-icon { border-radius: var(--m-radius-md); }
+
+/* Cartões: borda fina, sombra discreta, sem "pulo" no hover */
+html body#teacherPortal .card { box-shadow: var(--m-shadow) !important; }
+html body#teacherPortal .card.m-att-class:hover { transform: none; box-shadow: var(--m-shadow-hover) !important; }
+body#teacherPortal .m-exam, body#teacherPortal .m-lesson-item, body#teacherPortal .m-grade-row { border-radius: var(--m-radius-md); }
+body#teacherPortal .m-panel { padding: 20px !important; }
+
+/* Campos e seleção: mesma altura, mesmo canto, seta própria */
+html body#teacherPortal .form-control,
+html body#teacherPortal .custom-select,
+html body#teacherPortal select.form-control,
+html body#studentPortal .form-control,
+html body#studentPortal .custom-select { border-radius: var(--m-radius-md) !important; min-height: var(--m-control-h); padding: 0 14px; }
+html body#teacherPortal textarea.form-control, html body#studentPortal textarea.form-control { padding: 10px 14px; min-height: 96px; }
+html body#teacherPortal .custom-select,
+html body#teacherPortal select.form-control,
+html body#studentPortal .custom-select {
+  -webkit-appearance: none; appearance: none; padding-right: 40px !important; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%235B6B84' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important; background-position: right 14px center !important; background-size: 12px 8px !important;
+}
+html body#teacherPortal .form-control:focus,
+html body#teacherPortal .custom-select:focus { border-color: var(--m-primary) !important; box-shadow: var(--m-focus) !important; }
+html body#teacherPortal .btn:not(.btn-sm):not(.btn-link) { min-height: var(--m-control-h); border-radius: var(--m-radius-md) !important; display: inline-flex; align-items: center; justify-content: center; }
+html body#teacherPortal .btn-sm { border-radius: var(--m-radius-xs) !important; }
+body#teacherPortal .m-seg { border-radius: var(--m-radius-md); }
+body#teacherPortal .m-seg button, body#teacherPortal .m-seg .btn { border-radius: var(--m-radius-xs) !important; min-height: 38px; }
+body#teacherPortal .m-att-subject { border-radius: var(--m-radius-md); }
+body#teacherPortal .m-pill { border-radius: 999px; }
+
+
+/* Home do docente: aulas do dia, pendências, atenção */
+.m-today, .m-todo { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.m-today-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--m-border); border-radius: var(--m-radius-md, 12px); background: var(--m-surface); }
+.m-today-item.is-now { border-color: var(--m-primary); box-shadow: inset 3px 0 0 var(--m-primary); }
+.m-today-item.is-done { opacity: .7; }
+.m-today-time { width: 48px; flex: none; display: flex; flex-direction: column; line-height: 1.2; }
+.m-today-time strong { font-size: 15px; }
+.m-today-time span { font-size: 12px; color: var(--m-muted); }
+.m-today-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.m-today-body strong { font-size: 15px; }
+.m-today-body small { color: var(--m-muted); font-size: 12px; }
+.m-today-status { display: flex; gap: 12px; margin-top: 4px; font-size: 12px; color: var(--m-muted); font-weight: 600; }
+.m-today-status i { margin-right: 4px; font-size: 11px; }
+.m-today-status .is-ok { color: var(--m-success); }
+.m-today-item .btn { flex: none; min-width: 96px; }
+.m-todo a { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; min-height: 44px; border-radius: var(--m-radius-md, 12px); color: var(--m-text) !important; text-decoration: none !important; }
+.m-todo a:hover { background: var(--m-row-hover); }
+.m-todo a > i { width: 18px; margin-top: 3px; text-align: center; color: var(--m-primary-text); }
+.m-todo a > span { display: flex; flex-direction: column; min-width: 0; }
+.m-todo strong { font-size: 14px; }
+.m-todo small { color: var(--m-muted); font-size: 12px; }
+@media (max-width: 575.98px) {
+  .m-today-item { flex-wrap: wrap; }
+  .m-today-item .m-att-class-badge { display: none; }
+  .m-today-item .btn, .m-today-item > .m-pill { width: 100%; text-align: center; justify-content: center; }
+}
+
+/* Notas: foto do aluno e linha de apoio (média ao vivo / quanto falta) */
+.m-grade-avatar { flex: none !important; width: 36px; height: 36px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--m-primary-soft); color: var(--m-primary-text); font-size: 12px !important; font-weight: 700; }
+.m-grade-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.m-grade-row small b { font-weight: 700; }
+.m-grade-row small .is-low { color: var(--m-danger); }
+.m-grade-row small .is-ok { color: var(--m-success); }
+
+/* Ficha do aluno (docente) */
+.m-student-avatar { width: 48px; height: 48px; font-size: 15px !important; }
+.m-bim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.m-bim { border: 1px solid var(--m-border); border-radius: var(--m-radius-md, 12px); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.m-bim-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; font-weight: 600; color: var(--m-muted); }
+.m-bim-head strong { font-size: 20px; color: var(--m-text); }
+.m-bim.is-ok .m-bim-head strong { color: var(--m-success); }
+.m-bim.is-low { border-color: rgba(220, 38, 38, .45); }
+.m-bim.is-low .m-bim-head strong { color: var(--m-danger); }
+.m-bim.is-warn .m-bim-head strong { color: #B45309; }
+html.nightMode .m-bim.is-warn .m-bim-head strong { color: #FBBF24; }
+.m-bim ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.m-bim li { display: flex; justify-content: space-between; gap: 8px; }
+.m-bim li small { color: var(--m-muted); }
+.m-bim .m-pill { align-self: flex-start; }
+.m-quick { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--m-border); padding-top: 14px; }
+.m-quick .m-att-subject.is-active { background: var(--m-primary-soft); border-color: var(--m-primary); color: var(--m-primary-text); }
+.m-quick-form { display: flex; gap: 8px; }
+.m-quick-form input { flex: 1; }
+.m-notes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.m-notes li { border-left: 3px solid var(--m-primary-soft); padding: 2px 0 2px 12px; }
+.m-notes p { margin: 0 0 2px; }
+.m-notes small { color: var(--m-muted); font-size: 12px; }
+/* cores das notas vencem o tema escuro (td herdava branco com !important) */
+html body .m-overview td.is-low { color: var(--m-danger) !important; }
+html body .m-overview td.is-rec { color: #B45309 !important; }
+html.nightMode body .m-overview td.is-rec { color: #FBBF24 !important; }
+html body .m-overview td a { color: inherit !important; font-weight: 600; }
+
+/* Diário: busca BNCC e confirmação da chamada */
+.m-bncc { position: relative; }
+.m-bncc-results { list-style: none; margin: 4px 0 0; padding: 6px; max-height: 320px; overflow: auto; border: 1px solid var(--m-border); border-radius: var(--m-radius-md, 12px); background: var(--m-surface); box-shadow: var(--m-shadow-hover); }
+.m-bncc-results button { display: block; width: 100%; text-align: left; border: 0; background: transparent; color: var(--m-text); padding: 10px; border-radius: var(--m-radius-xs, 8px); font-size: 13px; line-height: 1.4; min-height: 44px; cursor: pointer; }
+.m-bncc-results button:hover, .m-bncc-results button:focus-visible { background: var(--m-row-hover); outline: none; }
+.m-bncc-results .m-empty { padding: 12px; }
+.m-saved-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 16px; border-radius: var(--m-radius-md, 12px); background: rgba(22, 163, 74, .12); color: var(--m-text); }
+.m-saved-banner > i { color: var(--m-success); font-size: 20px; }
+.m-saved-banner > span { flex: 1; font-size: 13px; }
+.m-saved-banner small { display: block; color: var(--m-muted); }
+.m-saved-banner a { font-weight: 600; font-size: 13px; white-space: nowrap; }
+/* barra inferior: só o item ativo tem o traço azul (o tema antigo punha borda branca em todos, que virava azul no escuro) */
+html body .navbar.fixed-bottom .nav-link:not(.link-active):not([aria-expanded="true"]) { border-bottom-color: transparent !important; }
+/* cards de turma: sempre em linha (selo · texto · seta), mais compactos no celular */
+html body#teacherPortal .card.m-att-class { flex-direction: row !important; align-items: center !important; text-align: left !important; }
+html body#teacherPortal .card.m-att-class .m-att-class-body { align-items: flex-start; }

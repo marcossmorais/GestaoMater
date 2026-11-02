@@ -1,30 +1,20 @@
 <?php if (count($this->view->teacherClasses) > 0) { ?>
 
-    <?php foreach ($this->view->teacherClasses as $key => $class) { ?>
-
-        <?php $shift = substr($class->shift, 0, 1) ?>
-
-        <tr id="class<?= $class->class_id ?>">
-            <td class="m-td-title"><?= $class->course ?>-<?= $class->series_acronym ?><?= $shift ?>-<?= $class->ballot ?></td>
-            <td data-label="Sala"><?= $class->classroom_number ?></td>
-            <td data-label="Período letivo"><?= $class->school_term ?></td>
-            <td data-label="Disciplinas"><?= $class->discipline_total ?></td>
-            <td data-label="Alunos"><?= $class->student_total ?></td>
-            <td class="m-td-action text-right">
-                <a href="/portal-docente/chamada" class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation()"><i class="fas fa-clipboard-check mr-1"></i>Chamada</a>
-            </td>
-        </tr>
-
-    <?php } ?>
-
-    <tr class="mt-4 m-tr-summary">
-        <td colspan="6" class="font-weight-bold" style="pointer-events:none"><?= count($this->view->teacherClasses) ?> turmas listadas <i class="fas fa-history ml-2"></i></td>
-    </tr>
+    <div class="m-att-classes">
+        <?php foreach ($this->view->teacherClasses as $class) { ?>
+            <a href="/portal-docente/turma?id=<?= (int) $class->class_id ?>" class="card m-att-class">
+                <span class="m-att-class-badge"><?= htmlspecialchars($class->series_acronym) ?>ª <?= htmlspecialchars($class->ballot) ?></span>
+                <span class="m-att-class-body">
+                    <strong><?= htmlspecialchars($class->course) ?> · <?= htmlspecialchars($class->shift) ?></strong>
+                    <small>Sala <?= htmlspecialchars($class->classroom_number) ?> · <?= (int) $class->student_total ?> alunos · <?= (int) $class->discipline_total ?> disciplina<?= $class->discipline_total == 1 ? '' : 's' ?> sua<?= $class->discipline_total == 1 ? '' : 's' ?></small>
+                </span>
+                <i class="fas fa-chevron-right m-att-class-go"></i>
+            </a>
+        <?php } ?>
+    </div>
 
 <?php } else { ?>
 
-    <tr class="mt-4 m-tr-summary">
-        <td colspan="6" style="pointer-events:none">Nenhuma turma encontrada <i class="fas fa-history ml-2"></i></td>
-    </tr>
+    <div class="card m-panel m-empty">Nenhuma turma vinculada no período letivo ativo.</div>
 
 <?php } ?>

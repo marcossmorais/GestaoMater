@@ -140,7 +140,19 @@ class Gradebook extends Model
                    FROM avaliacoes a
                    INNER JOIN nota_avaliacao n ON (n.fk_id_avaliacao = a.id_avaliacao AND n.fk_id_matricula_aluno = matricula.id_matricula)
                   WHERE a.fk_id_turma_disciplina_avaliacao = avaliacoes.fk_id_turma_disciplina_avaliacao
-                    AND a.fk_id_unidade_avaliacao = avaliacoes.fk_id_unidade_avaliacao AND NOT a.recuperacao) AS bimester_graded
+                    AND a.fk_id_unidade_avaliacao = avaliacoes.fk_id_unidade_avaliacao AND NOT a.recuperacao) AS bimester_graded,
+                (SELECT SUM(n.valor_nota / NULLIF(a.valor_avaliacao, 0) * 10)
+                   FROM avaliacoes a
+                   INNER JOIN nota_avaliacao n ON (n.fk_id_avaliacao = a.id_avaliacao AND n.fk_id_matricula_aluno = matricula.id_matricula)
+                  WHERE a.fk_id_turma_disciplina_avaliacao = avaliacoes.fk_id_turma_disciplina_avaliacao
+                    AND a.fk_id_unidade_avaliacao = avaliacoes.fk_id_unidade_avaliacao AND NOT a.recuperacao
+                    AND a.id_avaliacao <> avaliacoes.id_avaliacao) AS others_sum,
+                (SELECT COUNT(*)
+                   FROM avaliacoes a
+                   INNER JOIN nota_avaliacao n ON (n.fk_id_avaliacao = a.id_avaliacao AND n.fk_id_matricula_aluno = matricula.id_matricula)
+                  WHERE a.fk_id_turma_disciplina_avaliacao = avaliacoes.fk_id_turma_disciplina_avaliacao
+                    AND a.fk_id_unidade_avaliacao = avaliacoes.fk_id_unidade_avaliacao AND NOT a.recuperacao
+                    AND a.id_avaliacao <> avaliacoes.id_avaliacao) AS others_count
             FROM avaliacoes
             INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
             INNER JOIN matricula ON (matricula.fk_id_turma_matricula = turma_disciplina.fk_id_turma AND matricula.fk_id_situacao_aluno = 1)

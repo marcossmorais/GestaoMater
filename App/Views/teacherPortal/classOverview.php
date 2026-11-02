@@ -52,7 +52,7 @@ $fmt = function ($n) { return str_replace('.', ',', (string) round((float) $n, 1
                         <tbody>
                             <?php foreach ($overview['students'] as $s) { ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($s['name']) ?></td>
+                                    <td><a href="/portal-docente/aluno?id=<?= (int) $s['id'] ?>"><?= htmlspecialchars($s['name']) ?></a></td>
                                     <?php foreach ($overview['disciplines'] as $d) {
                                         $g = $s['grades'][(int) $d->id] ?? null;
                                         if (!$g || $g['grade'] === null) { echo '<td>–</td>'; continue; }
