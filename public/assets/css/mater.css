@@ -1335,3 +1335,57 @@ html body .navbar.fixed-bottom .nav-link:not(.link-active):not([aria-expanded="t
 /* cards de turma: sempre em linha (selo · texto · seta), mais compactos no celular */
 html body#teacherPortal .card.m-att-class { flex-direction: row !important; align-items: center !important; text-align: left !important; }
 html body#teacherPortal .card.m-att-class .m-att-class-body { align-items: flex-start; }
+
+/* ---------- Observabilidade 360° (admin) */
+.m-obs-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; }
+html body #pagina .m-obs-filters select.form-control { height: 40px; width: auto; min-width: 0; padding: 0 30px 0 12px !important; font-size: 14px !important; font-weight: 500; color: var(--m-text); border-radius: 10px; }
+.m-obs-tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; }
+.m-obs-tabs a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--m-border); color: var(--m-muted); font-weight: 600; font-size: 14px; white-space: nowrap; text-decoration: none; }
+.m-obs-tabs a:hover { color: var(--m-text); text-decoration: none; }
+.m-obs-tabs a.is-active { background: var(--m-primary); border-color: var(--m-primary); color: #fff; }
+.m-obs-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.m-obs-table th { font-size: 12px; font-weight: 700; color: var(--m-muted); text-transform: uppercase; letter-spacing: .03em; padding: 8px 10px; border-bottom: 1px solid var(--m-border); white-space: nowrap; }
+.m-obs-table td { padding: 10px; border-bottom: 1px solid var(--m-border); color: var(--m-text); }
+.m-obs-table tbody tr:hover { background: var(--m-row-hover); }
+.m-obs-table td.is-low, .m-kpi-value.is-low, .m-obs-stats b.is-low { color: var(--m-danger); font-weight: 700; }
+.m-obs-table .m-obs-discipline { text-align: center; }
+.m-obs-link { background: none; border: 0; padding: 0; color: var(--m-primary-text); font-weight: 600; text-align: left; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; }
+.m-obs-link:hover { text-decoration: underline; color: var(--m-primary-text); }
+.m-obs-note { color: var(--m-muted); font-size: 12px; }
+.m-obs-warn { color: #9A6700; }
+html.nightMode .m-obs-warn { color: #FBBF24; }
+.m-obs-help { color: var(--m-muted); font-size: 13px; margin: 0 4px 12px; }
+.m-obs-back { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; }
+.m-obs-group { margin-bottom: 12px; }
+.m-obs-group summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-height: 44px; cursor: pointer; }
+.m-obs-group summary strong { font-size: 15px; color: var(--m-text); }
+.m-obs-group[open] summary { margin-bottom: 12px; }
+.m-obs-stats { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 13px; color: var(--m-muted); }
+.m-obs-stats b { color: var(--m-text); }
+.m-obs-facts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; font-size: 13px; color: var(--m-muted); margin-bottom: 12px; }
+.m-obs-facts b { color: var(--m-text); }
+.m-obs-facts .btn { min-height: 44px; margin-left: auto; }
+@media (min-width: 768px) { .m-obs-scroll { overflow-x: auto; } }
+/* números do topo em faixa baixa: ícone ao lado do valor */
+html body .m-obs-kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+html body .m-obs-kpis .card.m-kpi { flex-direction: row !important; align-items: center !important; text-align: left !important; padding: 10px 14px !important; gap: 12px; min-height: 0; }
+html body .m-obs-kpis .m-kpi-icon { width: 36px; height: 36px; flex: none; margin: 0 !important; }
+html body .m-obs-kpis .m-kpi-label { font-size: 11px; }
+html body .m-obs-kpis .m-kpi-value { font-size: 20px; }
+/* no celular cada linha vira um card com rótulo */
+@media (max-width: 767.98px) {
+  .m-obs-table thead { display: none; }
+  .m-obs-table, .m-obs-table tbody, .m-obs-table tr, .m-obs-table td { display: block; width: 100%; }
+  .m-obs-table tr { border: 1px solid var(--m-border); border-radius: 12px; padding: 6px 12px; margin-bottom: 10px; }
+  .m-obs-table td { display: flex; justify-content: flex-end; align-items: center; gap: 6px; border: 0; padding: 6px 0; text-align: right; }
+  .m-obs-table td::before { margin-right: auto; padding-right: 12px; content: attr(data-label); color: var(--m-muted); font-size: 12px; font-weight: 600; text-align: left; }
+  .m-obs-table .m-obs-discipline { text-align: right; }
+  .m-obs-facts .btn { margin-left: 0; width: 100%; }
+  .m-obs-filters { width: 100%; }
+  html body .m-obs-kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
+  html body .m-obs-kpis .card.m-kpi { padding: 8px 10px !important; gap: 8px; }
+  html body .m-obs-kpis .m-kpi-icon { width: 30px; height: 30px; }
+  html body .m-obs-kpis .m-kpi-label { font-size: 10px; letter-spacing: .02em; }
+  html body .m-obs-kpis .m-kpi-value { font-size: 17px; }
+  html body #pagina .m-obs-filters select.form-control { flex: 1 1 40%; width: auto; height: 44px; font-size: 14px !important; padding: 0 26px 0 12px !important; }
+}

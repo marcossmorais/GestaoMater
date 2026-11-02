@@ -1,7 +1,7 @@
 # Escopo da proposta v2.0 — Portais Docente e Aluno
 
 Fonte: *Proposta Comercial — Gestão Pedagógica MATER* (22/10/2026, válida até 31/12/2026).
-Admin (importador com diff, mural/cronograma, documentos em lote, painel de logs) fica **fora desta fase**.
+Admin (importador com diff, mural/cronograma, documentos em lote, painel de logs): exigências da direção na seção 5, uma issue por item.
 Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 
 ## 0. Remoção (fora de escopo)
@@ -61,3 +61,13 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 4. Mural/avisos (docente publica, aluno vê) + roteiro de provas
 5. Simulador, desempenho, cronograma
 6. Assinatura digital de documentos
+
+## 5. Portal Admin (exigências da direção)
+- [x] **Observabilidade 360°** (#18): `/admin/observabilidade` por turma, disciplina e professor, com filtro de período, bimestre e turno; detalhe da turma com alunos em risco (nota abaixo da média ou frequência abaixo da mínima) abrindo o perfil do aluno; chamadas registradas × aulas previstas pela grade, notas pendentes, avaliações a criar e substituições por professor
+- [ ] **Importação CSV/JSON** com pré-visualização e virada de ano (#19)
+- [ ] **Tela de auditoria** e registro de acessos (#20)
+- [ ] **Cronograma escolar** editável com Notificar no Mural (#21)
+- [ ] **Avisos segmentados** para professores, turmas e responsáveis (#22)
+- [ ] **Ocorrências**: painel de ciência pendente (#23)
+- [ ] **Documentação**: modelo editável, lote e log de downloads (#24)
+- [ ] **Gestão de exceções**: troca de professor ou matéria na aula (#25)
