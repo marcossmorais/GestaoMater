@@ -2,18 +2,18 @@
 // Escolhe a turma, registra habilidade BNCC, atividades, observação e exceções. Sem recarregar a página.
 (function () {
 
-    const config = window.MATER_LESSONS || { classes: [], classDisciplines: [], activities: {}, recent: [] };
+    const config = window.MATER_LESSONS || { classes: [], classDisciplines: [], activities: {} };
     const root = document.getElementById('lessons');
     if (!root) return;
 
     const $ = (sel) => root.querySelector(sel);
     const $$ = (sel) => Array.from(root.querySelectorAll(sel));
 
-    const steps = { pick: $('[data-ls-step="pick"]'), form: $('[data-ls-step="form"]'), done: $('[data-ls-step="done"]') };
+    const steps = { pick: $('[data-ls-step="pick"]'), form: $('[data-ls-step="form"]'), plan: $('[data-ls-step="plan"]'), done: $('[data-ls-step="done"]') };
     const form = steps.form;
     const saveButton = $('[data-ls-save]');
 
-    const state = { cls: null, subjects: new Set(), activities: new Set(), saving: false };
+    const state = { cls: null, subjects: new Set(), activities: new Set(), planId: null, saving: false };
 
     const errors = {
         'sem-permissao': 'Você não tem permissão para registrar aula nesta turma/disciplina.',
@@ -31,7 +31,7 @@
 
     function show(step) {
         Object.keys(steps).forEach((k) => { steps[k].hidden = k !== step; });
-        document.body.classList.toggle('m-att-marking', step === 'form');
+        document.body.classList.toggle('m-att-marking', step === 'form' || step === 'plan');
         window.scrollTo(0, 0);
     }
 
@@ -51,72 +51,6 @@
         button.querySelector('i').className = `fas ${active ? 'fa-check-square' : 'fa-square'}`;
     }
 
-    // ---------- Aulas registradas: separadas por dia, com filtro por turma
-    let recentFilter = '';
-    const weekdays = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
-
-    function dayLabel(iso) {
-        const date = new Date(`${iso}T12:00:00`);
-        const today = new Date();
-        today.setHours(12, 0, 0, 0);
-        const diff = Math.round((today - date) / 86400000);
-        const name = diff === 0 ? 'Hoje' : diff === 1 ? 'Ontem' : weekdays[date.getDay()].replace(/^./, (c) => c.toUpperCase());
-        return `${name} · ${iso.split('-').reverse().slice(0, 2).join('/')}`;
-    }
-
-    function renderFilter() {
-        const box = $('[data-ls-filter]');
-        if (!box) return;
-        const classes = Array.from(new Set(config.recent.map((l) => `${l.class} · ${l.discipline}`)));
-        box.hidden = classes.length < 2;
-        box.innerHTML = ['', ...classes].map((c) =>
-            `<button type="button" class="m-att-subject${c === recentFilter ? ' is-active' : ''}" data-ls-filter-value="${escapeHtml(c)}">${c ? escapeHtml(c) : 'Todas'}</button>`
-        ).join('');
-    }
-
-    function renderRecent() {
-        const box = $('[data-ls-recent]');
-        if (!box) return;
-        renderFilter();
-        const list = config.recent.filter((l) => !recentFilter || `${l.class} · ${l.discipline}` === recentFilter);
-        if (list.length === 0) {
-            box.innerHTML = '<div class="m-empty">Nenhuma aula registrada ainda.</div>';
-            return;
-        }
-        let lastDay = null;
-        box.innerHTML = list.map((l) => {
-            const header = l.isoDate !== lastDay ? `<h6 class="m-day-header">${escapeHtml(dayLabel(l.isoDate))}</h6>` : '';
-            lastDay = l.isoDate;
-            return header + lessonItem(l);
-        }).join('');
-    }
-
-    const filterBox = $('[data-ls-filter]');
-    if (filterBox) filterBox.addEventListener('click', (event) => {
-        const chipButton = event.target.closest('[data-ls-filter-value]');
-        if (!chipButton) return;
-        recentFilter = chipButton.dataset.lsFilterValue;
-        renderRecent();
-    });
-
-    function lessonItem(l) {
-        return [l].map((l) => {
-            const exception = l.substitute || l.taught
-                ? `<div class="m-lesson-item-exc"><i class="fas fa-exchange-alt mr-1"></i>${escapeHtml([l.substitute ? `Substituto: ${l.substitute}` : '', l.taught ? `Matéria dada: ${l.taught}` : ''].filter(Boolean).join(' · '))}${l.reason ? ` — ${escapeHtml(l.reason)}` : ''}</div>`
-                : '';
-            return `
-                <div class="m-lesson-item ${l.subject || ''}">
-                    <div class="m-lesson-item-head">
-                        <strong><span class="m-att-class-badge m-badge-sm">${escapeHtml(l.class)}</span> ${escapeHtml(l.discipline)}</strong>
-                    </div>
-                    ${l.bnccCode || l.bnccSkill ? `<p><span class="m-lesson-code-tag">${escapeHtml(l.bnccCode || 'BNCC')}</span> ${escapeHtml(l.bnccSkill || '')}</p>` : ''}
-                    ${l.activities.length ? `<div class="m-lesson-tags">${l.activities.map((a) => `<span>${escapeHtml(a)}</span>`).join('')}</div>` : ''}
-                    ${l.notes ? `<p class="m-lesson-notes">${escapeHtml(l.notes)}</p>` : ''}
-                    ${exception}
-                </div>`;
-        }).join('');
-    }
-
     // ---------- Passo 1: escolher turma
     root.addEventListener('click', (event) => {
         const card = event.target.closest('[data-ls-class]');
@@ -131,11 +65,11 @@
         state.subjects = new Set((subjects && subjects.length ? subjects : [cls.id]).filter((s) => config.classes.some((c) => c.id === s && c.classId === cls.classId)));
         if (!state.subjects.has(cls.id)) state.subjects.add(cls.id);
         state.activities = new Set();
+        state.planId = null;
 
         form.reset();
-        setBncc('');
-        bnccResults.innerHTML = '';
-        bnccResults.hidden = true;
+        bncc.reset();
+        $('[data-ls-plan-note]').hidden = true;
         $$('[data-activity]').forEach((b) => chip(b, false));
         $('[data-ls-exception]').open = false;
 
@@ -183,60 +117,80 @@
         chip(button, state.activities.has(key));
     });
 
-    // ---------- Busca de habilidade BNCC (filtrada pela série e disciplina da turma)
-    const bnccInput = $('[data-bncc-search]');
-    const bnccResults = $('[data-bncc-results]');
-    const bnccTag = $('[data-bncc-tag]');
-    let bnccTimer = null;
-    let bnccSkills = [];
+    // ---------- Busca de habilidade BNCC (filtrada pela série e disciplina da turma); usada no registro e no plano
+    function bnccWidget(box, fields) {
+        const input = box.querySelector('[data-bncc-search]');
+        const results = box.querySelector('[data-bncc-results]');
+        let timer = null;
+        let skills = [];
 
-    function setBncc(code, text) {
-        form.querySelector('[name="bnccCode"]').value = code || '';
-        bnccTag.hidden = !code;
-        bnccTag.textContent = code || '';
-        if (text !== undefined) form.querySelector('[name="bnccSkill"]').value = text;
-    }
-
-    async function searchBncc() {
-        if (!state.cls) return;
-        try {
-            const response = await fetch(`/portal-docente/bncc?turma=${state.cls.id}&q=${encodeURIComponent(bnccInput.value.trim())}`,
-                { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-            const data = await response.json();
-            bnccSkills = data.skills || [];
-            bnccResults.innerHTML = bnccSkills.length
-                ? bnccSkills.map((s, i) => `<li><button type="button" data-bncc-pick="${i}"><span class="m-lesson-code-tag">${escapeHtml(s.code)}</span> ${escapeHtml(s.text)}</button></li>`).join('')
-                : '<li class="m-empty">Nenhuma habilidade encontrada para esta turma.</li>';
-            bnccResults.hidden = false;
-        } catch (e) {
-            bnccResults.hidden = true;
+        function set(code, text) {
+            fields.code.value = code || '';
+            fields.tag.hidden = !code;
+            fields.tag.textContent = code || '';
+            if (text !== undefined) fields.skill.value = text;
         }
+
+        async function search() {
+            const disciplineClass = fields.disciplineClass();
+            if (!disciplineClass) return;
+            try {
+                const response = await fetch(`/portal-docente/bncc?turma=${disciplineClass}&q=${encodeURIComponent(input.value.trim())}`,
+                    { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                const data = await response.json();
+                skills = data.skills || [];
+                results.innerHTML = skills.length
+                    ? skills.map((s, i) => `<li><button type="button" data-bncc-pick="${i}"><span class="m-lesson-code-tag">${escapeHtml(s.code)}</span> ${escapeHtml(s.text)}</button></li>`).join('')
+                    : '<li class="m-empty">Nenhuma habilidade encontrada para esta turma.</li>';
+                results.hidden = false;
+            } catch (e) {
+                results.hidden = true;
+            }
+        }
+
+        input.addEventListener('input', () => {
+            clearTimeout(timer);
+            timer = setTimeout(search, 250);
+        });
+        input.addEventListener('focus', () => { if (!results.innerHTML) search(); else results.hidden = false; });
+        input.addEventListener('keydown', (event) => { if (event.key === 'Escape') results.hidden = true; });
+
+        results.addEventListener('click', (event) => {
+            const pick = event.target.closest('[data-bncc-pick]');
+            if (!pick) return;
+            const skill = skills[parseInt(pick.dataset.bnccPick, 10)];
+            set(skill.code, skill.text);
+            input.value = '';
+            results.hidden = true;
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!box.contains(event.target)) results.hidden = true;
+        });
+
+        // texto da habilidade editado à mão deixa de ser a habilidade oficial escolhida
+        fields.skill.addEventListener('input', () => {
+            const picked = skills.find((s) => s.code === fields.code.value);
+            if (picked && picked.text !== fields.skill.value) set('');
+        });
+
+        return {
+            set,
+            reset(code, text) {
+                set(code || '', text);
+                input.value = '';
+                skills = [];
+                results.innerHTML = '';
+                results.hidden = true;
+            }
+        };
     }
 
-    bnccInput.addEventListener('input', () => {
-        clearTimeout(bnccTimer);
-        bnccTimer = setTimeout(searchBncc, 250);
-    });
-    bnccInput.addEventListener('focus', () => { if (!bnccResults.innerHTML) searchBncc(); else bnccResults.hidden = false; });
-    bnccInput.addEventListener('keydown', (event) => { if (event.key === 'Escape') bnccResults.hidden = true; });
-
-    bnccResults.addEventListener('click', (event) => {
-        const pick = event.target.closest('[data-bncc-pick]');
-        if (!pick) return;
-        const skill = bnccSkills[parseInt(pick.dataset.bnccPick, 10)];
-        setBncc(skill.code, skill.text);
-        bnccInput.value = '';
-        bnccResults.hidden = true;
-    });
-
-    document.addEventListener('click', (event) => {
-        if (!event.target.closest('.m-bncc')) bnccResults.hidden = true;
-    });
-
-    // texto da habilidade editado à mão deixa de ser a habilidade oficial escolhida
-    form.querySelector('[name="bnccSkill"]').addEventListener('input', () => {
-        const picked = bnccSkills.find((s) => s.code === form.querySelector('[name="bnccCode"]').value);
-        if (picked && picked.text !== form.querySelector('[name="bnccSkill"]').value) setBncc('');
+    const bncc = bnccWidget(form.querySelector('.m-bncc'), {
+        disciplineClass: () => (state.cls ? state.cls.id : 0),
+        code: form.querySelector('[name="bnccCode"]'),
+        skill: form.querySelector('[name="bnccSkill"]'),
+        tag: $('[data-bncc-tag]')
     });
 
     $('[data-ls-back]').addEventListener('click', () => show('pick'));
@@ -258,7 +212,8 @@
             activities: Array.from(state.activities),
             substitute: parseInt(data.get('substitute') || '0', 10) || null,
             taughtDisciplineClass: parseInt(data.get('taughtDisciplineClass') || '0', 10) || null,
-            reason: (data.get('reason') || '').trim()
+            reason: (data.get('reason') || '').trim(),
+            plan: state.planId
         };
 
         if (!payload.bnccCode && !payload.bnccSkill && !payload.notes && payload.activities.length === 0) {
@@ -285,21 +240,7 @@
             const result = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(result.error || 'falha-ao-salvar');
 
-            config.recent.unshift({
-                class: state.cls.label,
-                discipline: result.disciplines.join(', '),
-                date: result.formattedDate.slice(0, 5),
-                isoDate: result.isoDate,
-                subject: result.subject,
-                bnccCode: payload.bnccCode,
-                bnccSkill: payload.bnccSkill,
-                notes: payload.notes,
-                activities: payload.activities.map((a) => config.activities[a] || a),
-                substitute: payload.substitute ? form.querySelector('[name="substitute"]').selectedOptions[0].textContent : null,
-                taught: payload.taughtDisciplineClass ? form.querySelector('[name="taughtDisciplineClass"]').selectedOptions[0].textContent : null,
-                reason: payload.reason
-            });
-            renderRecent();
+            if (window.MATER_DIARY.onLessonSaved) window.MATER_DIARY.onLessonSaved(result.isoDate);
 
             $('[data-ls-done-summary]').textContent = `${state.cls.label} · ${result.disciplines.join(', ')} — ${result.formattedDate}.`;
             show('done');
@@ -313,7 +254,31 @@
         }
     });
 
-    renderRecent();
+    // Usado pelo calendário (lessonCalendar.js)
+    window.MATER_DIARY = {
+        show,
+        escapeHtml,
+        toast,
+        chip,
+        bnccWidget,
+        openLesson(id, date, plan) {
+            openClass(id);
+            if (!state.cls) return;
+            form.querySelector('[name="date"]').value = date;
+            if (!plan) return;
+            state.planId = plan.id;
+            bncc.reset(plan.bnccCode, plan.bnccSkill || '');
+            form.querySelector('[name="notes"]').value = plan.title;
+            plan.activities.forEach((key) => {
+                state.activities.add(key);
+                const button = $(`[data-activity="${key}"]`);
+                if (button) chip(button, true);
+            });
+            const note = $('[data-ls-plan-note]');
+            note.textContent = `Preenchido com o plano "${plan.title}". Ajuste o que mudou na aula.`;
+            note.hidden = false;
+        }
+    };
 
     // Atalho vindo da chamada: /portal-docente/diario?turma=ID&disciplinas=1,2
     const params = new URLSearchParams(window.location.search);

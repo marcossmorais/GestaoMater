@@ -5,23 +5,6 @@ $disciplineClasses = $this->view->disciplineClasses;
 $activities = $this->view->activities;
 
 require __DIR__ . '/components/classCards.php';
-
-$recentJson = array_map(function ($l) use ($activities) {
-    return [
-        'class' => $l->series_acronym . 'ª ' . $l->ballot,
-        'discipline' => $l->discipline,
-        'date' => $l->date,
-        'isoDate' => $l->iso_date,
-        'subject' => \App\Tools\Subject::css($l->discipline),
-        'bnccCode' => $l->bncc_code,
-        'bnccSkill' => $l->bncc_skill,
-        'notes' => $l->notes,
-        'activities' => array_values(array_map(function ($a) use ($activities) { return $activities[$a] ?? $a; }, array_filter(explode(',', $l->activities)))),
-        'substitute' => $l->substitute,
-        'taught' => $l->taught_discipline,
-        'reason' => $l->reason,
-    ];
-}, $this->view->recentLessons);
 ?>
 
 <section id="lessons" class="m-att m-lesson">
@@ -36,7 +19,7 @@ $recentJson = array_map(function ($l) use ($activities) {
                 <div class="m-page-head">
                     <div>
                         <h5>Diário de aula</h5>
-                        <p>Habilidade BNCC, atividades e observações da aula.</p>
+                        <p>Veja o que foi feito em cada dia, registre a aula e planeje as próximas.</p>
                     </div>
                 </div>
 
@@ -49,6 +32,34 @@ $recentJson = array_map(function ($l) use ($activities) {
 
                 <?php } else { ?>
 
+                    <div class="card m-panel m-cal" data-cal>
+                        <div class="m-cal-head">
+                            <div class="m-cal-nav">
+                                <button type="button" class="m-icon-btn" data-cal-move="-1" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+                                <button type="button" class="btn btn-light" data-cal-today>Hoje</button>
+                                <button type="button" class="m-icon-btn" data-cal-move="1" aria-label="Próximo"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <h6 data-cal-title aria-live="polite"></h6>
+                            <div class="m-seg" role="group" aria-label="Ver por">
+                                <button type="button" data-view="month">Mês</button>
+                                <button type="button" data-view="week">Semana</button>
+                            </div>
+                        </div>
+                        <div class="m-filter-chips" data-cal-filter role="group" aria-label="Filtrar por turma" hidden></div>
+                        <div data-cal-grid><div class="m-empty">Carregando o calendário…</div></div>
+                        <div class="m-cal-legend" aria-hidden="true">
+                            <span><i class="is-lesson"></i>Aula dada</span>
+                            <span><i class="is-plan"></i>Planejada</span>
+                            <span><i class="is-late"></i>Planejada, sem registro</span>
+                            <span><i class="is-exam"></i>Avaliação</span>
+                            <span><i class="is-event"></i>Evento da escola</span>
+                        </div>
+                    </div>
+
+                    <div class="card m-panel mt-3" data-cal-day></div>
+
+                    <h6 class="m-section-title">Registrar aula por turma</h6>
+
                     <div class="m-att-classes">
                         <?php foreach ($cards as $c) { ?>
                             <button type="button" class="card m-att-class <?= $c['subject'] ?? '' ?>" data-ls-class="<?= $c['id'] ?>">
@@ -60,12 +71,6 @@ $recentJson = array_map(function ($l) use ($activities) {
                                 <i class="fas fa-chevron-right m-att-class-go"></i>
                             </button>
                         <?php } ?>
-                    </div>
-
-                    <div class="card m-panel mt-4">
-                        <div class="m-panel-head"><h6><i class="fas fa-history mr-2"></i>Aulas registradas</h6></div>
-                        <div class="m-filter-chips" data-ls-filter role="group" aria-label="Filtrar por turma"></div>
-                        <div class="m-lesson-list" data-ls-recent></div>
                     </div>
 
                 <?php } ?>
@@ -86,6 +91,8 @@ $recentJson = array_map(function ($l) use ($activities) {
                     <span class="m-att-label">Vale para as disciplinas</span>
                     <div class="m-att-subjects-list" data-ls-subjects-list></div>
                 </div>
+
+                <p class="m-saved-banner" data-ls-plan-note hidden></p>
 
                 <div class="card m-panel m-lesson-form">
 
@@ -156,6 +163,98 @@ $recentJson = array_map(function ($l) use ($activities) {
                 </div>
             </form>
 
+            <!-- Planejar aula -->
+            <form data-ls-step="plan" hidden novalidate>
+
+                <div class="m-att-head">
+                    <button type="button" class="m-icon-btn" data-plan-back aria-label="Voltar"><i class="fas fa-arrow-left"></i></button>
+                    <div class="m-att-head-title">
+                        <h5 data-plan-title>Planejar aula</h5>
+                        <p>Só o título é obrigatório. Preencha o resto quando puder.</p>
+                    </div>
+                </div>
+
+                <div class="card m-panel m-lesson-form">
+
+                    <div class="m-lesson-row">
+                        <label class="m-att-field">
+                            <span class="m-att-label">Turma e disciplina</span>
+                            <select class="form-control" name="disciplineClass">
+                                <?php foreach ($classesJson as $c) { ?>
+                                    <option value="<?= (int) $c['id'] ?>"><?= htmlspecialchars($c['label'] . ' · ' . $c['discipline']) ?></option>
+                                <?php } ?>
+                            </select>
+                        </label>
+                        <label class="m-att-field">
+                            <span class="m-att-label">Data</span>
+                            <input type="date" class="form-control" name="date" required>
+                        </label>
+                        <label class="m-att-field">
+                            <span class="m-att-label">Nº de aulas</span>
+                            <input type="number" class="form-control" name="lessons" min="1" max="10" value="1" inputmode="numeric">
+                        </label>
+                    </div>
+
+                    <label class="m-att-field">
+                        <span class="m-att-label">Título ou tema da aula</span>
+                        <input type="text" class="form-control" name="title" maxlength="160" required placeholder="Ex.: Introdução à função seno">
+                    </label>
+
+                    <div class="m-att-field m-bncc">
+                        <label class="m-att-label" for="planBnccSearch">Habilidade BNCC <small>(busque por palavra ou código)</small></label>
+                        <input type="search" id="planBnccSearch" class="form-control" data-bncc-search placeholder="Ex.: função, equação, EM13MAT…" autocomplete="off" aria-controls="planBnccResults">
+                        <ul class="m-bncc-results" id="planBnccResults" data-bncc-results hidden></ul>
+                        <input type="hidden" name="bnccCode">
+                    </div>
+
+                    <label class="m-att-field">
+                        <span class="m-att-label">Habilidade trabalhada <span class="m-lesson-code-tag" data-plan-bncc-tag hidden></span></span>
+                        <textarea class="form-control" name="bnccSkill" rows="2" maxlength="1000" placeholder="Escolha na busca acima ou escreva com suas palavras"></textarea>
+                    </label>
+
+                    <label class="m-att-field">
+                        <span class="m-att-label">Objetivos <small>(o que o aluno deve aprender)</small></span>
+                        <textarea class="form-control" name="objectives" rows="2" maxlength="2000" placeholder="Ao final da aula, o aluno será capaz de…"></textarea>
+                    </label>
+
+                    <label class="m-att-field">
+                        <span class="m-att-label">Desenvolvimento <small>(passo a passo)</small></span>
+                        <textarea class="form-control" name="development" rows="4" maxlength="4000" placeholder="Abertura: problema ou pergunta para começar&#10;Desenvolvimento: explicação e prática&#10;Fechamento: o que retomar no final"></textarea>
+                    </label>
+
+                    <div class="m-att-field">
+                        <span class="m-att-label">Atividades previstas</span>
+                        <div class="m-att-subjects-list" data-plan-activities>
+                            <?php foreach ($activities as $key => $label) { ?>
+                                <button type="button" class="m-att-subject" data-plan-activity="<?= $key ?>" aria-pressed="false"><i class="fas fa-square"></i><?= htmlspecialchars($label) ?></button>
+                            <?php } ?>
+                        </div>
+                    </div>
+
+                    <label class="m-att-field">
+                        <span class="m-att-label">Recursos e materiais</span>
+                        <input type="text" class="form-control" name="resources" maxlength="1000" placeholder="Livro p. 80, projetor, régua, vídeo…">
+                    </label>
+
+                    <label class="m-att-field">
+                        <span class="m-att-label">Como avaliar <small>(como saber se aprenderam)</small></span>
+                        <input type="text" class="form-control" name="assessment" maxlength="1000" placeholder="Exercício em dupla, participação, pergunta de saída…">
+                    </label>
+
+                    <label class="m-att-field">
+                        <span class="m-att-label">Tarefa de casa</span>
+                        <input type="text" class="form-control" name="homework" maxlength="1000" placeholder="Lista 3, questões 1 a 5">
+                    </label>
+                </div>
+
+                <div class="m-att-bar">
+                    <div class="m-att-bar-count"><span class="m-att-count">O plano aparece no calendário</span></div>
+                    <button type="submit" class="btn btn-primary m-att-save" data-plan-save>
+                        <i class="fas fa-check mr-2"></i><span>Salvar plano</span>
+                    </button>
+                </div>
+            </form>
+
             <!-- Passo 3: confirmação -->
             <div data-ls-step="done" hidden>
                 <div class="card m-att-done">
@@ -179,7 +278,8 @@ $recentJson = array_map(function ($l) use ($activities) {
         classes: <?= json_encode($classesJson, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
         classDisciplines: <?= json_encode($this->view->classDisciplines, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
         activities: <?= json_encode($activities, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
-        recent: <?= json_encode($recentJson, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>
+        today: <?= json_encode(date('Y-m-d')) ?>
     };
 </script>
 <script src="<?= asset('/assets/js/lessons.js') ?>" defer></script>
+<script src="<?= asset('/assets/js/lessonCalendar.js') ?>" defer></script>
