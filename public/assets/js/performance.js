@@ -76,6 +76,24 @@
         if (event.target.matches && event.target.matches('[data-bim-sim]')) simulateBimester(event.target);
     }, true);
     document.addEventListener('input', (event) => {
+    // ---------- Boletim: expande a matéria (o conteúdo chega por AJAX)
+    function setRow(button, open) {
+        button.setAttribute('aria-expanded', open);
+        button.closest('tr').nextElementSibling.hidden = !open;
+    }
+
+    document.addEventListener('click', (event) => {
+        const toggle = event.target.closest('[data-bul-toggle]');
+        if (toggle) return setRow(toggle, toggle.getAttribute('aria-expanded') !== 'true');
+
+        const all = event.target.closest('[data-bul-all]');
+        if (!all) return;
+        const open = all.getAttribute('aria-expanded') !== 'true';
+        all.setAttribute('aria-expanded', open);
+        all.querySelector('span').textContent = open ? 'Recolher todas' : 'Expandir todas';
+        document.querySelectorAll('[data-bul-toggle]').forEach((button) => setRow(button, open));
+    });
+
         const box = event.target.closest('[data-bim-sim]');
         if (box) simulateBimester(box);
     });

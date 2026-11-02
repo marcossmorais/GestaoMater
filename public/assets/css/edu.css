@@ -993,3 +993,44 @@ body#admin #left-panel #sidebar hr { background: var(--m-border) !important; }
 html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li { padding: 0 8px !important; }
 body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li > a { min-height: 42px; }
 body#admin #left-panel #sidebar { overflow-x: hidden; }
+
+/* Boletim: legível nos dois temas, linhas que expandem */
+#bulletin .m-bulletin, #bulletin .m-bulletin th, #bulletin .m-bulletin td:not(.is-low):not(.is-rec) { color: var(--m-text) !important; }
+#bulletin .m-bulletin th { font-size: 12px; font-weight: 800; background: var(--m-surface-2) !important; }
+#bulletin .m-bulletin td, #bulletin .m-bulletin .m-bulletin-table > tbody > tr > td:first-child { background: var(--m-surface) !important; }
+#bulletin .m-bulletin .m-overview td.is-low, #bulletin .m-bulletin .m-bul-exams td.is-low { color: var(--m-danger) !important; font-weight: 700; }
+html.nightMode #bulletin .m-bulletin td.is-low { color: #FF9A9E !important; }
+.m-bul-tools { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.m-bul-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0; font: inherit; font-weight: 700; color: inherit; text-align: left; background: none; border: 0; cursor: pointer; }
+.m-bul-toggle > .fa-chevron-right { width: 12px; font-size: 11px; color: var(--m-muted); }
+.m-bul-toggle[aria-expanded="true"] > .fa-chevron-right { transform: rotate(90deg); }
+#bulletin .m-bul-detail > td { padding: 10px 12px !important; white-space: normal; text-align: left !important; background: var(--m-surface-2) !important; }
+.m-bul-exams { width: 100%; max-width: 520px; margin-bottom: 8px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+#bulletin .m-bul-exams th, #bulletin .m-bul-exams td { padding: 5px 8px !important; font-size: 13px; text-align: center !important; background: transparent !important; border-bottom: 1px solid var(--m-border) !important; position: static !important; }
+.m-bul-exams .m-bul-final { font-weight: 800; }
+@media (max-width: 767.98px) {
+  .m-bul-toggle { min-height: 44px; }
+  .m-bul-tools .btn { width: 100%; }
+}
+
+/* Boletim no celular: cartão por matéria; a tabela de avaliações continua tabela */
+html body#studentPortal #pagina #bulletin .m-bulletin th { color: var(--m-text) !important; }
+html.nightMode body#studentPortal #pagina #bulletin .m-bulletin th { color: #fff !important; }
+.m-bul-detail[hidden] { display: none !important; }
+@media (max-width: 767.98px) {
+  #bulletin .m-overview-wrap { overflow: visible; }
+  #bulletin .m-bulletin-table > thead { display: none; }
+  #bulletin .m-bulletin-table, #bulletin .m-bulletin-table > tbody { display: block; }
+  #bulletin .m-bulletin-table > tbody > tr:not(.m-bul-detail) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin: 10px 0 0; padding: 8px 10px; background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 12px; }
+  #bulletin .m-bulletin-table > tbody > tr:not(.m-bul-detail) > td { display: flex; flex-direction: column; align-items: center; height: auto; padding: 2px 0; border: 0; position: static; white-space: normal; }
+  #bulletin .m-bulletin-table > tbody > tr:not(.m-bul-detail) > td:first-child { grid-column: 1 / -1; align-items: flex-start; }
+  #bulletin .m-bulletin-table > tbody > tr:not(.m-bul-detail) > td:first-child::before { content: none; }
+  #bulletin .m-bul-detail { display: block; margin: 4px 0 0; padding: 0; background: transparent; border: 0; }
+  #bulletin .m-bul-detail > td { display: block; width: 100%; border-radius: 12px; }
+  #bulletin .m-bul-detail > td::before, #bulletin .m-bul-exams td::before { content: none; }
+  #bulletin .m-bul-exams { display: table; margin: 0 0 8px; padding: 0; background: transparent; border: 0; }
+  #bulletin .m-bul-exams thead { display: table-header-group; }
+  #bulletin .m-bul-exams tbody { display: table-row-group; }
+  #bulletin .m-bul-exams tr { display: table-row; margin: 0; padding: 0; background: transparent; border: 0; }
+  #bulletin .m-bul-exams th, #bulletin .m-bul-exams td { display: table-cell; min-width: 0; height: auto; }
+}
