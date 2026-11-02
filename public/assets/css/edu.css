@@ -677,3 +677,15 @@ html.nightMode .m-gradeline-final.is-ok strong { color: #7BE3B6; }
 
 /* Portal do aluno: tipos da avaliação no roteiro de provas */
 .m-guide-types { display: block; font-weight: 700; }
+
+/* Menu recolhido: barra do topo e barra de ação acompanham a largura de 76 px */
+@media (min-width: 768px) {
+  body#teacherPortal.sidebar-responsive #navbar-top { width: calc(100% - 76px) !important; max-width: calc(100% - 76px) !important; flex: none !important; }
+  body#teacherPortal.sidebar-responsive .m-att-bar { left: 76px; }
+}
+
+/* Perfil: o modal rola (o legado travava em #pagina .modal-profile) e os botões ficam numa faixa sólida */
+body:is(#teacherPortal, #studentPortal) #pagina #settingsModal { overflow-y: auto; }
+.m-profile-bar { z-index: 5; padding: 12px 16px; background: var(--m-surface); border: 2px solid var(--m-border); border-radius: 18px; box-shadow: var(--m-shadow); }
+.m-profile-bar .btn { min-height: 44px; }
+
