@@ -20,7 +20,7 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li id="minimize"><a  href="#"><i class="fas fa-chevron-circle-left text-white"></i><span class="link-name">Recolher</span></a></li>
 
-            <li name="home"><a href="/portal-docente/home" title="Home"><i class="fas fa-home"></i><span class="link-name">Home</span></a></li>
+            <li name="home"><a href="/portal-docente/home" title="Painel"><i class="fas fa-home"></i><span class="link-name">Painel</span></a></li>
 
             <li name="turmas"><a href="/portal-docente/turmas" title="Turmas"><i class="fas fa-boxes"></i><span class="link-name">Turmas</span></a></li>
 

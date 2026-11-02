@@ -792,3 +792,18 @@ html body .m-overview td.m-overview-count.has-low { font-weight: 800; color: var
   .m-overview td.m-overview-count:empty { display: none; }
 }
 html.nightMode body .m-overview td.is-low, html.nightMode body .m-overview td.m-overview-count.has-low { color: #FF9A9E !important; }
+
+/* Menu do docente: largura fixa (o legado usa 16.5vw) e sem animação ao recolher */
+@media (min-width: 768px) {
+  body#teacherPortal:not(.sidebar-responsive) .panel-side { flex: 0 0 208px !important; max-width: 208px !important; }
+  body#teacherPortal:not(.sidebar-responsive) #pagina { flex: 0 0 calc(100% - 208px) !important; max-width: calc(100% - 208px) !important; }
+  html body#teacherPortal:not(.sidebar-responsive) #left-panel #sidebar { width: 208px !important; }
+  body#teacherPortal:not(.sidebar-responsive) #navbar-top { width: calc(100% - 208px) !important; max-width: calc(100% - 208px) !important; flex: none !important; }
+  body#teacherPortal:not(.sidebar-responsive) .m-att-bar { left: 208px; }
+  body#teacherPortal #left-panel #sidebar .logo img.logo-light, body#teacherPortal #left-panel #sidebar .logo img.logo-dark { max-width: 150px; height: auto; }
+  body#teacherPortal #left-panel #sidebar .link-name { white-space: normal; line-height: 1.2; }
+}
+html body#teacherPortal .panel-side, html body#teacherPortal #left-panel, html body#teacherPortal #left-panel *,
+html body#teacherPortal #pagina, html body#teacherPortal #navbar-top, html body#teacherPortal .m-att-bar,
+html body#teacherPortal #pagina .card, html body#teacherPortal .m-chart-box, html body#teacherPortal .m-donut, html body#teacherPortal canvas { transition: none !important; animation: none !important; }
+

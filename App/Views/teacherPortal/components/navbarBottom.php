@@ -11,7 +11,7 @@ require __DIR__ . '../../../../config/variables.php';
         <ul class="navbar-nav">
 
             <li class="nav-item active">
-                <a name="home" class="nav-link" href="/portal-docente/home"><i class="fas fa-home"></i> <span>Home</span></a>
+                <a name="home" class="nav-link" href="/portal-docente/home"><i class="fas fa-home"></i> <span>Painel</span></a>
             </li>
 
             <li class="nav-item">
