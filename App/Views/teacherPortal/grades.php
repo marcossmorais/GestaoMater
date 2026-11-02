@@ -32,10 +32,10 @@ require __DIR__ . '/components/classCards.php';
                 <?php } else { ?>
                     <div class="m-att-classes">
                         <?php foreach ($classesJson as $c) { ?>
-                            <button type="button" class="card m-att-class" data-gr-class="<?= $c['id'] ?>">
+                            <button type="button" class="card m-att-class <?= $c['subject'] ?? '' ?>" data-gr-class="<?= $c['id'] ?>">
                                 <span class="m-att-class-badge"><?= htmlspecialchars($c['label']) ?></span>
                                 <span class="m-att-class-body">
-                                    <strong><?= htmlspecialchars($c['discipline']) ?></strong>
+                                    <strong><i class="fas <?= $c['icon'] ?> m-subj-ico" aria-hidden="true"></i><?= htmlspecialchars($c['discipline']) ?></strong>
                                     <small><?= htmlspecialchars($c['course']) ?> · <?= htmlspecialchars($c['shift']) ?><?= $c['own'] ? '' : ' · polivalente' ?></small>
                                 </span>
                                 <i class="fas fa-chevron-right m-att-class-go"></i>
@@ -65,10 +65,22 @@ require __DIR__ . '/components/classCards.php';
                             <span class="m-att-label">Data</span>
                             <input type="date" class="form-control" name="date" value="<?= date('Y-m-d') ?>" required>
                         </label>
-                        <label class="m-att-field">
-                            <span class="m-att-label">Roteiro de estudo <small>(opcional · o aluno vê no mural)</small></span>
-                            <textarea class="form-control" name="guide" rows="4" maxlength="3000" placeholder="Conteúdos, páginas do livro, exercícios para revisar…"></textarea>
-                        </label>
+                        <fieldset class="m-guide-fields">
+                            <legend><i class="fas fa-route mr-2"></i>Roteiro de estudo <small>(opcional · o aluno vê no mural)</small></legend>
+                            <p class="m-guide-discipline" data-gr-guide-discipline></p>
+                            <label class="m-att-field">
+                                <span class="m-att-label">Assuntos <small>(um por linha)</small></span>
+                                <textarea class="form-control" name="guideTopics" rows="4" maxlength="2000" placeholder="Equação do 2º grau&#10;Fórmula de Bhaskara&#10;Problemas com área"></textarea>
+                            </label>
+                            <label class="m-att-field">
+                                <span class="m-att-label">Material de estudo</span>
+                                <input type="text" class="form-control" name="guideMaterial" maxlength="500" placeholder="Livro cap. 4, p. 80–95 · lista 3">
+                            </label>
+                            <label class="m-att-field">
+                                <span class="m-att-label">Observações</span>
+                                <textarea class="form-control" name="guide" rows="2" maxlength="3000" placeholder="Trazer calculadora"></textarea>
+                            </label>
+                        </fieldset>
                         <div class="m-actions">
                             <button type="submit" class="btn btn-primary"><i class="fas fa-check mr-2"></i>Criar</button>
                             <button type="button" class="btn btn-light" data-gr-new-cancel>Cancelar</button>
@@ -91,9 +103,23 @@ require __DIR__ . '/components/classCards.php';
                 <div class="alert alert-warning" data-gr-closed hidden><i class="fas fa-lock mr-2"></i>Unidade fechada: notas só para consulta.</div>
 
                 <details class="card m-panel m-lesson-exception mb-3" data-gr-guide-box>
-                    <summary><i class="fas fa-route mr-2"></i>Roteiro de estudo</summary>
-                    <textarea class="form-control mb-2" rows="4" maxlength="3000" data-gr-guide></textarea>
-                    <button type="button" class="btn btn-light" data-gr-guide-save><i class="fas fa-save mr-2"></i>Salvar roteiro</button>
+                    <summary><i class="fas fa-route mr-2"></i>Roteiro de estudo <span class="m-pill m-pill-info ml-2" data-gr-guide-count></span></summary>
+                    <div class="m-guide-fields">
+                        <p class="m-guide-discipline" data-gr-guide-discipline></p>
+                        <label class="m-att-field">
+                            <span class="m-att-label">Assuntos <small>(um por linha)</small></span>
+                            <textarea class="form-control" rows="4" maxlength="2000" data-gr-guide-topics placeholder="Equação do 2º grau&#10;Fórmula de Bhaskara"></textarea>
+                        </label>
+                        <label class="m-att-field">
+                            <span class="m-att-label">Material de estudo</span>
+                            <input type="text" class="form-control" maxlength="500" data-gr-guide-material placeholder="Livro cap. 4, p. 80–95 · lista 3">
+                        </label>
+                        <label class="m-att-field">
+                            <span class="m-att-label">Observações</span>
+                            <textarea class="form-control" rows="2" maxlength="3000" data-gr-guide placeholder="Trazer calculadora"></textarea>
+                        </label>
+                        <div><button type="button" class="btn btn-light" data-gr-guide-save><i class="fas fa-save mr-2"></i>Salvar roteiro</button></div>
+                    </div>
                 </details>
 
                 <div class="m-grade-list" data-gr-list></div>

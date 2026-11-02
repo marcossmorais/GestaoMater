@@ -51,23 +51,63 @@
         button.querySelector('i').className = `fas ${active ? 'fa-check-square' : 'fa-square'}`;
     }
 
-    // ---------- Últimas aulas
+    // ---------- Aulas registradas: separadas por dia, com filtro por turma
+    let recentFilter = '';
+    const weekdays = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+
+    function dayLabel(iso) {
+        const date = new Date(`${iso}T12:00:00`);
+        const today = new Date();
+        today.setHours(12, 0, 0, 0);
+        const diff = Math.round((today - date) / 86400000);
+        const name = diff === 0 ? 'Hoje' : diff === 1 ? 'Ontem' : weekdays[date.getDay()].replace(/^./, (c) => c.toUpperCase());
+        return `${name} · ${iso.split('-').reverse().slice(0, 2).join('/')}`;
+    }
+
+    function renderFilter() {
+        const box = $('[data-ls-filter]');
+        if (!box) return;
+        const classes = Array.from(new Set(config.recent.map((l) => `${l.class} · ${l.discipline}`)));
+        box.hidden = classes.length < 2;
+        box.innerHTML = ['', ...classes].map((c) =>
+            `<button type="button" class="m-att-subject${c === recentFilter ? ' is-active' : ''}" data-ls-filter-value="${escapeHtml(c)}">${c ? escapeHtml(c) : 'Todas'}</button>`
+        ).join('');
+    }
+
     function renderRecent() {
         const box = $('[data-ls-recent]');
         if (!box) return;
-        if (config.recent.length === 0) {
+        renderFilter();
+        const list = config.recent.filter((l) => !recentFilter || `${l.class} · ${l.discipline}` === recentFilter);
+        if (list.length === 0) {
             box.innerHTML = '<div class="m-empty">Nenhuma aula registrada ainda.</div>';
             return;
         }
-        box.innerHTML = config.recent.map((l) => {
+        let lastDay = null;
+        box.innerHTML = list.map((l) => {
+            const header = l.isoDate !== lastDay ? `<h6 class="m-day-header">${escapeHtml(dayLabel(l.isoDate))}</h6>` : '';
+            lastDay = l.isoDate;
+            return header + lessonItem(l);
+        }).join('');
+    }
+
+    const filterBox = $('[data-ls-filter]');
+    if (filterBox) filterBox.addEventListener('click', (event) => {
+        const chipButton = event.target.closest('[data-ls-filter-value]');
+        if (!chipButton) return;
+        recentFilter = chipButton.dataset.lsFilterValue;
+        renderRecent();
+    });
+
+    function lessonItem(l) {
+        return [l].map((l) => {
             const exception = l.substitute || l.taught
                 ? `<div class="m-lesson-item-exc"><i class="fas fa-exchange-alt mr-1"></i>${escapeHtml([l.substitute ? `Substituto: ${l.substitute}` : '', l.taught ? `Matéria dada: ${l.taught}` : ''].filter(Boolean).join(' · '))}${l.reason ? ` — ${escapeHtml(l.reason)}` : ''}</div>`
                 : '';
             return `
-                <div class="m-lesson-item">
+                <div class="m-lesson-item ${l.subject || ''}">
                     <div class="m-lesson-item-head">
-                        <strong>${escapeHtml(l.class)} · ${escapeHtml(l.discipline)}</strong>
-                        <span class="m-pill m-pill-info">${escapeHtml(l.date)}</span>
+                        <strong><span class="m-att-class-badge m-badge-sm">${escapeHtml(l.class)}</span> ${escapeHtml(l.discipline)}</strong>
                     </div>
                     ${l.bnccCode || l.bnccSkill ? `<p><span class="m-lesson-code-tag">${escapeHtml(l.bnccCode || 'BNCC')}</span> ${escapeHtml(l.bnccSkill || '')}</p>` : ''}
                     ${l.activities.length ? `<div class="m-lesson-tags">${l.activities.map((a) => `<span>${escapeHtml(a)}</span>`).join('')}</div>` : ''}

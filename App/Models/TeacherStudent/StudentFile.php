@@ -28,16 +28,69 @@ class StudentFile extends Model
     public function enrollment($enrollmentId)
     {
 
+        // só o que o professor precisa (LGPD): sem CPF, endereço ou dados de saúde além da indicação de PCD
         $stmt = $this->db->prepare(
             "SELECT matricula.id_matricula AS id, matricula.fk_id_turma_matricula AS class_id,
-                    aluno.nome_aluno AS name, aluno.foto_perfil_aluno AS photo
-             FROM matricula INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)
+                    aluno.id_aluno AS student_id, aluno.nome_aluno AS name, aluno.foto_perfil_aluno AS photo,
+                    TO_CHAR(aluno.data_nascimento_aluno, 'DD/MM/YYYY') AS birth_date,
+                    DATE_PART('year', AGE(aluno.data_nascimento_aluno))::int AS age,
+                    pcd.pcd AS pcd,
+                    TO_CHAR(matricula.data_hora_matricula, 'DD/MM/YYYY') AS enrolled_at
+             FROM matricula
+             INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)
+             LEFT JOIN pcd ON (aluno.fk_id_aluno_pcd = pcd.id_pcd)
              WHERE matricula.id_matricula = :id AND matricula.fk_id_situacao_aluno = 1"
         );
 
         $stmt->execute([':id' => (int) $enrollmentId]);
 
         return $stmt->fetch(\PDO::FETCH_OBJ) ?: null;
+    }
+
+
+    /**
+     * Responsáveis para contato: nome, parentesco e telefone (sem documentos)
+     */
+    public function guardians($studentId)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT nome AS name, parentesco AS relation, telefone AS phone, email,
+                    responsavel_pedagogico AS pedagogical
+             FROM responsavel_aluno
+             WHERE fk_id_aluno = :student
+             ORDER BY responsavel_pedagogico DESC, CASE WHEN parentesco IN ('Mãe', 'Pai') THEN 1 ELSE 2 END, id_responsavel"
+        );
+
+        $stmt->execute([':student' => (int) $studentId]);
+
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+
+    /**
+     * Média da turma em cada disciplina e bimestre (regra aplicada), para comparar com o aluno
+     *
+     * @return array [disciplineClassId][bimestre] => média
+     */
+    public function classAverages($classId, array $rule, $minGrades = 1)
+    {
+        $sum = [];
+        foreach ((new Gradebook($this->db))->bimesterGrades($classId) as $row) {
+            $grade = Gradebook::applyRule($row, $rule)['grade'];
+            if ($grade === null) continue;
+            $sum[(int) $row->discipline_class_id][(int) $row->unity][] = $grade;
+        }
+
+        $averages = [];
+        foreach ($sum as $dc => $units) {
+            // com poucas notas a média deixaria adivinhar a nota de um colega: não mostra
+            foreach ($units as $u => $grades) {
+                if (count($grades) >= $minGrades) $averages[$dc][$u] = round(array_sum($grades) / count($grades), 2);
+            }
+        }
+
+        return $averages;
     }
 
 

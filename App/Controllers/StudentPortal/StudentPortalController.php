@@ -103,11 +103,11 @@ class StudentPortalController extends Action
         $this->view->schoolTermActive = $SchoolTerm->active();
         $this->view->studentDataGeneral = $StudentEnrollment->dataGeneral('<> 0');
         $this->view->listExam = $Exam->readExamByIdClass($Classe);
-        $Student->__set('fk_id_enrollmentId', 0);
-        $this->view->listStudent = $Student->readStudentsLinkedClass($Classe);
-        $this->view->typeStudentList = "class";
-        $this->view->typeTeacherList = 'class';
-        $this->view->listTeacher = $ClassDiscipline->listTeachersClass();
+        // aba Turma: o aluno não vê dados dos colegas nem contato dos professores, só a média da turma (sem nomes)
+        $this->view->listTeacher = array_map(function ($t) {
+            return (object) ['name' => $t->name, 'photo' => $t->profile_photo, 'discipline' => $t->discipline_name];
+        }, $ClassDiscipline->listTeachersClass());
+        $this->view->classAverages = Container::getModel('TeacherStudent\\StudentFile')->classAverages($_SESSION['Student']['classId'], Container::getModel('Student\\StudentPerformance')->rule(), 5);
         $this->view->linkedDisciplines = $ClassDiscipline->classLinkedSubjects();
         $this->view->unity = ( $this->view->schoolTermActive[0]->option_value == $this->view->studentDataGeneral[0]->school_term_id ? $Unity->readOpenUnits() : $Unity->searchSpecificUniy() );
 
@@ -122,6 +122,15 @@ class StudentPortalController extends Action
         $Performance = Container::getModel('Student\StudentPerformance');
         $this->view->performanceRule = $Performance->rule();
         $this->view->performance = $Performance->byDiscipline($_SESSION['Student']['enrollmentId'], $_SESSION['Student']['classId']);
+
+        // notas de cada avaliação do próprio aluno, para o simulador do bimestre
+        $studentExams = [];
+        foreach (Container::getModel('TeacherStudent\\StudentFile')->exams($_SESSION['Student']['enrollmentId'], array_column($this->view->performance, 'id')) as $e) {
+            if ($e->recovery) continue;
+            $studentExams[(int) $e->discipline_class_id][(int) $e->unity][] = $e->grade === null ? null : round((float) $e->grade, 2);
+        }
+        $this->view->studentExams = $studentExams;
+
         $this->view->agenda = $Performance->agenda($_SESSION['Student']['classId']);
 
         $this->render("pages/home", "SimpleLayout", "studentPortal");
@@ -161,7 +170,16 @@ class StudentPortalController extends Action
 
         if (!isset($_SESSION)) session_start();
 
-        $_SESSION['Student']['enrollmentId'] = $_POST['enrollmentId'];
+        // só troca para uma matrícula do próprio aluno (antes aceitava qualquer id vindo do navegador)
+        $StudentEnrollment->__set('fk_id_student', $_SESSION['Student']['id']);
+        $own = array_map(function ($r) { return (int) $r->enrollment_id; }, $StudentEnrollment->allRegistrations());
+        if (!in_array((int) ($_POST['enrollmentId'] ?? 0), $own, true)) {
+            \App\Tools\Audit::log(\App\Connection::getDb(), 'NEGADO', 'matricula', $_POST['enrollmentId'] ?? null, 'troca de matrícula do aluno');
+            http_response_code(403);
+            return;
+        }
+
+        $_SESSION['Student']['enrollmentId'] = (int) $_POST['enrollmentId'];
         $StudentEnrollment->__set('studentEnrollmentId',  $_SESSION['Student']['enrollmentId']);
         $class = $StudentEnrollment->dataGeneral('<> 0');
 
@@ -183,14 +201,25 @@ class StudentPortalController extends Action
 
         $Tool = new Tools();
 
-        $Address->__set('addressId', $_POST['addressId']);
+        // endereço e telefone são sempre os do próprio aluno (ignora ids vindos do navegador)
+        $StudentEnrollment = Container::getModel('Student\\StudentEnrollment');
+        $StudentEnrollment->__set('studentEnrollmentId', $_SESSION['Student']['enrollmentId']);
+        $StudentEnrollment->__set('fk_id_student', $_SESSION['Student']['id']);
+        $Student->__set('studentId', $_SESSION['Student']['id']);
+        $own = $Student->dataGeneral($StudentEnrollment)[0] ?? null;
+        if (!$own) {
+            http_response_code(404);
+            return;
+        }
+
+        $Address->__set('addressId', $own->address_id);
         $Address->__set('district', $_POST['district']);
         $Address->__set('address', $_POST['address']);
         $Address->__set('uf', $_POST['uf']);
         $Address->__set('county', $_POST['county']);
         $Address->__set('zipCode', $Tool->formatElement($_POST['zipCode']));
 
-        $Telephone->__set('telephoneId', $_POST['telephoneId']);
+        $Telephone->__set('telephoneId', $own->telephone_id);
         $Telephone->__set('telephoneNumber', $Tool->formatElement($_POST['telephoneNumber']));
 
         $Student->__set('accessCode', $_POST['accessCode']);
@@ -232,6 +261,21 @@ class StudentPortalController extends Action
 
         $this->renderDeclaration((int) ($_SESSION['Student']['enrollmentId'] ?? 0), $type, 'aluno', $_SESSION['Student']['id'] ?? null);
     }
+
+    /**
+     * Boletim na tela (aba Boletim): bimestres de 0 a 10 com recuperação, média do ano e faltas — só do próprio aluno
+     */
+    public function bulletin()
+    {
+        if (!isset($_SESSION)) session_start();
+
+        $Performance = Container::getModel('Student\StudentPerformance');
+        $this->view->rule = $Performance->rule();
+        $this->view->rows = $Performance->byDiscipline((int) $_SESSION['Student']['enrollmentId'], (int) $_SESSION['Student']['classId']);
+
+        $this->render('components/bulletin', 'SimpleLayout', 'studentPortal');
+    }
+
 
     /**
      * Boletim para imprimir, com código de validação e QR (só do próprio aluno)

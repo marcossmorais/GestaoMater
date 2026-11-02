@@ -11,6 +11,8 @@ $recentJson = array_map(function ($l) use ($activities) {
         'class' => $l->series_acronym . 'ª ' . $l->ballot,
         'discipline' => $l->discipline,
         'date' => $l->date,
+        'isoDate' => $l->iso_date,
+        'subject' => \App\Tools\Subject::css($l->discipline),
         'bnccCode' => $l->bncc_code,
         'bnccSkill' => $l->bncc_skill,
         'notes' => $l->notes,
@@ -49,10 +51,10 @@ $recentJson = array_map(function ($l) use ($activities) {
 
                     <div class="m-att-classes">
                         <?php foreach ($cards as $c) { ?>
-                            <button type="button" class="card m-att-class" data-ls-class="<?= $c['id'] ?>">
+                            <button type="button" class="card m-att-class <?= $c['subject'] ?? '' ?>" data-ls-class="<?= $c['id'] ?>">
                                 <span class="m-att-class-badge"><?= htmlspecialchars($c['label']) ?></span>
                                 <span class="m-att-class-body">
-                                    <strong><?= htmlspecialchars($c['discipline']) ?></strong>
+                                    <strong><i class="fas <?= $c['icon'] ?> m-subj-ico" aria-hidden="true"></i><?= htmlspecialchars($c['discipline']) ?></strong>
                                     <small><?= htmlspecialchars($c['course']) ?> · <?= htmlspecialchars($c['shift']) ?></small>
                                 </span>
                                 <i class="fas fa-chevron-right m-att-class-go"></i>
@@ -61,7 +63,8 @@ $recentJson = array_map(function ($l) use ($activities) {
                     </div>
 
                     <div class="card m-panel mt-4">
-                        <div class="m-panel-head"><h6>Últimas aulas registradas</h6></div>
+                        <div class="m-panel-head"><h6><i class="fas fa-history mr-2"></i>Aulas registradas</h6></div>
+                        <div class="m-filter-chips" data-ls-filter role="group" aria-label="Filtrar por turma"></div>
                         <div class="m-lesson-list" data-ls-recent></div>
                     </div>
 
