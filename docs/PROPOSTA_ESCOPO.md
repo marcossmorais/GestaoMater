@@ -21,6 +21,9 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] Docente não acessa mais rotas `/admin` (antes podia chamar toda a gestão)
 - [x] **Diário** (`/portal-docente/diario`, `database/12_diario_aula.sql`): habilidade BNCC (texto + código validado) + observação, vinculado à chamada do dia
 - [x] **Calendário e planejamento** (`database/19_planejamento_tipos_avaliacao.sql`): diário por mês ou semana com o que foi dado em cada dia; plano de aula para datas futuras (título, BNCC, objetivos, desenvolvimento, atividades, recursos, como avaliar, tarefa), que pode ser copiado para outra turma ou data e preenche o registro da aula
+- [x] **Frequência do aluno**: presença por matéria, dias de aula perdidos e envio de atestado ou justificativa; o admin aceita (abona as faltas com data) ou recusa em `/admin/pedagogico`. Anexos fora de `public/`, entregues só com permissão
+- [x] **Boletim do aluno**: nota de cada avaliação e simuladores por matéria. Aba Turma com colegas e professores (e-mail)
+- [x] **Admin no padrão dos portais**: mesmo menu lateral e escala de texto e botões
 - [x] **Mural com área geral e tipos de aviso**: a coordenação publica em `/admin/mural`, para a escola ou uma turma, acima dos avisos separados por matéria. Cor e ícone por tipo (aviso, prova, tarefa, material, evento, urgente); fixados em destaque
 - [x] **Portal do aluno**: comparação com a média da turma dentro de Desempenho; aba Turma só com nome e foto dos colegas; mural sem a coluna lateral de avaliações
 - [x] **Planejamento e Horário na mesma tela** (`/portal-docente/diario`; `/portal-docente/horario` só redireciona): calendário com tudo visível em cada dia e cores por situação, lista do dia com uma ação clara por aula e tema direto na lista
