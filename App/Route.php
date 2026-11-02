@@ -1044,6 +1044,60 @@ class Route extends Bootstrap
 			'action' => 'occurrenceRequest'
 		);
 
+		$routes['studentCertificateSend'] = array(
+			'route' => '/portal-aluno/frequencia/atestado',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'certificateSend'
+		);
+
+		$routes['studentCertificateFile'] = array(
+			'route' => '/portal-aluno/frequencia/anexo',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'certificateFile'
+		);
+
+		$routes['adminCertificateAnswer'] = array(
+			'route' => '/admin/pedagogico/atestado/responder',
+			'controller' => 'Admin\\AdminPedagogicalController',
+			'action' => 'certificateAnswer'
+		);
+
+		$routes['adminCertificateFile'] = array(
+			'route' => '/admin/pedagogico/atestado/anexo',
+			'controller' => 'Admin\\AdminPedagogicalController',
+			'action' => 'certificateFile'
+		);
+
+		$routes['adminBoard'] = array(
+			'route' => '/admin/mural',
+			'controller' => 'Admin\\AdminBoardController',
+			'action' => 'index'
+		);
+
+		$routes['adminBoardPost'] = array(
+			'route' => '/admin/mural/publicar',
+			'controller' => 'Admin\\AdminBoardController',
+			'action' => 'post'
+		);
+
+		$routes['adminBoardPin'] = array(
+			'route' => '/admin/mural/fixar',
+			'controller' => 'Admin\\AdminBoardController',
+			'action' => 'pin'
+		);
+
+		$routes['adminBoardDelete'] = array(
+			'route' => '/admin/mural/excluir',
+			'controller' => 'Admin\\AdminBoardController',
+			'action' => 'delete'
+		);
+
+		$routes['studentGeneralBoardRead'] = array(
+			'route' => '/portal-aluno/mural/geral/lido',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'generalBoardRead'
+		);
+
 		$routes['adminPedagogical'] = array(
 			'route' => '/admin/pedagogico',
 			'controller' => 'Admin\\AdminPedagogicalController',

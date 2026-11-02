@@ -1,5 +1,5 @@
 <?php
-// Aba Turma do aluno: a sua nota x média da turma em cada matéria (sem nomes de colegas) e os professores (sem contato)
+// Tela de Desempenho do aluno: a sua nota x média da turma em cada matéria (sem nomes de colegas)
 use App\Tools\Subject;
 
 $rule = $this->view->performanceRule;
@@ -53,16 +53,6 @@ foreach ($rows as $d) foreach ($d['units'] as $u => $unit) if ($unit['grade'] !=
             <p class="m-muted-note mb-0 mt-2"><i class="fas fa-flag mr-1"></i>O traço marca a média <?= $fmt($rule['passing']) ?>.</p>
         </div>
     <?php } ?>
-
-    <h5 class="mt-4 mb-3">Seus professores</h5>
-    <div class="m-teachers">
-        <?php foreach ($this->view->listTeacher as $t) { ?>
-            <div class="m-teacher <?= Subject::css($t->discipline) ?>">
-                <img src="<?= $app_url ?>/assets/img/teacherProfilePhotos/<?= htmlspecialchars($t->photo ?: 'foto-vazia.jpg') ?>" alt="" onerror="this.src='<?= $app_url ?>/assets/img/teacherProfilePhotos/foto-vazia.jpg'">
-                <div><strong><?= htmlspecialchars($t->name) ?></strong><small><i class="fas <?= Subject::icon($t->discipline) ?> m-subj-ico"></i><?= htmlspecialchars($t->discipline) ?></small></div>
-            </div>
-        <?php } ?>
-    </div>
 
 </div>
 

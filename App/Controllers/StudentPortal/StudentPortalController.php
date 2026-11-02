@@ -70,7 +70,6 @@ class StudentPortalController extends Action
         $Lack = Container::getModel('TeacherStudent\\Lack');
         $DisciplineAverage = Container::getModel('TeacherStudent\\DisciplineAverage');
         $SchoolTerm = Container::getModel('GeneralManagement\\SchoolTerm');
-        $Exam = Container::getModel('TeacherStudent\\Exam');
         $ClassDiscipline = Container::getModel('GeneralManagement\\ClassDiscipline');
         $Classe = Container::getModel('GeneralManagement\\Classe');
         $ClasseWarning = Container::getModel('GeneralManagement\\ClasseWarning');
@@ -85,7 +84,6 @@ class StudentPortalController extends Action
         $StudentEnrollment->__set('studentEnrollmentId', $_SESSION['Student']['enrollmentId']);
         $Classe->__set('classId', $_SESSION['Student']['classId']);
         $ClassDiscipline->__set("fk_id_class", $_SESSION['Student']['classId']);
-        $Exam->__set("fk_id_class", $_SESSION['Student']['classId']);
         $Unity->__set('unityId', 0);
 
         $this->view->listWarning = $ClasseWarning->readByIdClasse($Classe);
@@ -102,11 +100,14 @@ class StudentPortalController extends Action
         $this->view->disciplineAverageList = $DisciplineAverage->readByIdStudent();
         $this->view->schoolTermActive = $SchoolTerm->active();
         $this->view->studentDataGeneral = $StudentEnrollment->dataGeneral('<> 0');
-        $this->view->listExam = $Exam->readExamByIdClass($Classe);
-        // aba Turma: o aluno não vê dados dos colegas nem contato dos professores, só a média da turma (sem nomes)
-        $this->view->listTeacher = array_map(function ($t) {
-            return (object) ['name' => $t->name, 'photo' => $t->profile_photo, 'discipline' => $t->discipline_name];
-        }, $ClassDiscipline->listTeachersClass());
+        // aba Turma: colegas só com nome e foto; professores com e-mail. A comparação com a média fica em Desempenho
+        $teachers = [];
+        foreach ($ClassDiscipline->listTeachersClass() as $t) {
+            $teachers[(int) $t->id] = $teachers[(int) $t->id] ?? (object) ['name' => $t->name, 'photo' => $t->profile_photo, 'email' => $t->email, 'disciplines' => []];
+            $teachers[(int) $t->id]->disciplines[] = $t->discipline_name;
+        }
+        $this->view->listTeacher = array_values($teachers);
+        $this->view->classmates = Container::getModel('TeacherStudent\\StudentFile')->classmates($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
         $this->view->classAverages = Container::getModel('TeacherStudent\\StudentFile')->classAverages($_SESSION['Student']['classId'], Container::getModel('Student\\StudentPerformance')->rule(), 5);
         $this->view->linkedDisciplines = $ClassDiscipline->classLinkedSubjects();
         $this->view->unity = ( $this->view->schoolTermActive[0]->option_value == $this->view->studentDataGeneral[0]->school_term_id ? $Unity->readOpenUnits() : $Unity->searchSpecificUniy() );
@@ -117,19 +118,19 @@ class StudentPortalController extends Action
         $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
 
         $this->view->board = Container::getModel('TeacherStudent\ClassBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
+        $this->view->generalBoard = Container::getModel('TeacherStudent\GeneralBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
         $this->view->guides = Container::getModel('TeacherStudent\Gradebook')->guidesForClass($_SESSION['Student']['classId']);
 
         $Performance = Container::getModel('Student\StudentPerformance');
         $this->view->performanceRule = $Performance->rule();
         $this->view->performance = $Performance->byDiscipline($_SESSION['Student']['enrollmentId'], $_SESSION['Student']['classId']);
 
-        // notas de cada avaliação do próprio aluno, para o simulador do bimestre
-        $studentExams = [];
-        foreach (Container::getModel('TeacherStudent\\StudentFile')->exams($_SESSION['Student']['enrollmentId'], array_column($this->view->performance, 'id')) as $e) {
-            if ($e->recovery) continue;
-            $studentExams[(int) $e->discipline_class_id][(int) $e->unity][] = $e->grade === null ? null : round((float) $e->grade, 2);
-        }
-        $this->view->studentExams = $studentExams;
+        $this->view->studentExams = $this->studentExams($this->view->performance);
+
+        // aba Frequência
+        $StudentAttendance = Container::getModel('Student\\StudentAttendance');
+        $this->view->missedDays = $StudentAttendance->missedDays($_SESSION['Student']['enrollmentId']);
+        $this->view->submissions = $StudentAttendance->submissions($_SESSION['Student']['enrollmentId']);
 
         $this->view->agenda = $Performance->agenda($_SESSION['Student']['classId']);
 
@@ -137,6 +138,109 @@ class StudentPortalController extends Action
     }
 
 
+
+
+    /**
+     * Notas de cada avaliação do próprio aluno, para os simuladores do bimestre
+     */
+    private function studentExams(array $rows)
+    {
+        $studentExams = [];
+        foreach (Container::getModel('TeacherStudent\\StudentFile')->exams($_SESSION['Student']['enrollmentId'], array_column($rows, 'id')) as $e) {
+            if ($e->recovery) continue;
+            $studentExams[(int) $e->discipline_class_id][(int) $e->unity][] = $e->grade === null ? null : round((float) $e->grade, 2);
+        }
+
+        return $studentExams;
+    }
+
+
+    /**
+     * Atestado ou justificativa do próprio aluno: fica pendente até a coordenação analisar
+     */
+    public function certificateSend()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        $fail = function ($error, $code = 422) {
+            http_response_code($code);
+            echo json_encode(['error' => $error]);
+        };
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $fail('metodo-invalido', 405);
+
+        $Attendance = '\\App\\Models\\Student\\StudentAttendance';
+        $enrollmentId = (int) $_SESSION['Student']['enrollmentId'];
+        $type = (string) ($_POST['type'] ?? '');
+        $start = trim((string) ($_POST['start'] ?? ''));
+        $end = trim((string) ($_POST['end'] ?? '')) ?: $start;
+        $reason = trim((string) ($_POST['reason'] ?? ''));
+        $isDate = function ($d) { return preg_match('/^\d{4}-\d{2}-\d{2}$/', $d) && \DateTime::createFromFormat('Y-m-d', $d) !== false; };
+
+        if (!isset($Attendance::TYPES[$type])) return $fail('tipo-invalido');
+        if (!$isDate($start) || !$isDate($end) || $start > $end || $end > date('Y-m-d')) return $fail('data-invalida');
+        if ((new \DateTime($start))->diff(new \DateTime($end))->days >= $Attendance::MAX_DAYS) return $fail('periodo-longo');
+        if ($reason === '' || mb_strlen($reason) > 255) return $fail('motivo-obrigatorio');
+
+        $upload = $_FILES['file'] ?? null;
+        $hasFile = $upload && ($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+
+        if ($type === 'atestado' && !$hasFile) return $fail('arquivo-obrigatorio');
+
+        $StudentAttendance = Container::getModel('Student\\StudentAttendance');
+        if ($StudentAttendance->hasPendingOverlap($enrollmentId, $start, $end)) return $fail('ja-enviado', 409);
+
+        $fileName = null;
+        if ($hasFile) {
+            if (in_array($upload['error'], [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true) || $upload['size'] > $Attendance::MAX_BYTES) return $fail('arquivo-grande');
+            if ($upload['error'] !== UPLOAD_ERR_OK) return $fail('arquivo-invalido');
+
+            // o tipo vem do conteúdo, não do nome; o nome no disco é aleatório
+            $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($upload['tmp_name']);
+            if (!isset($Attendance::MIME_TYPES[$mime])) return $fail('arquivo-invalido');
+
+            $dir = $Attendance::storageDir();
+            if (!is_dir($dir) && !mkdir($dir, 0750, true) && !is_dir($dir)) {
+                error_log('atestado: não foi possível criar o armazenamento');
+                return $fail('falha-ao-salvar', 500);
+            }
+
+            $fileName = bin2hex(random_bytes(16)) . '.' . $Attendance::MIME_TYPES[$mime];
+            if (!move_uploaded_file($upload['tmp_name'], $dir . $fileName)) {
+                error_log('atestado: não foi possível gravar o anexo');
+                return $fail('falha-ao-salvar', 500);
+            }
+        }
+
+        $id = $StudentAttendance->submit([
+            'enrollmentId' => $enrollmentId,
+            'studentId' => (int) $_SESSION['Student']['id'],
+            'type' => $type,
+            'start' => $start,
+            'end' => $end,
+            'reason' => $reason,
+            'file' => $fileName,
+        ]);
+
+        echo json_encode(['id' => $id]);
+    }
+
+
+    public function certificateFile()
+    {
+        if (!isset($_SESSION)) session_start();
+
+        $file = Container::getModel('Student\\StudentAttendance')->privateFile((int) ($_GET['id'] ?? 0), (int) $_SESSION['Student']['enrollmentId']);
+
+        if (!$file) {
+            http_response_code(404);
+            echo 'Arquivo não encontrado.';
+            return;
+        }
+
+        \App\Models\Student\StudentAttendance::sendFile($file);
+    }
 
 
     public function settings()
@@ -272,6 +376,14 @@ class StudentPortalController extends Action
         $Performance = Container::getModel('Student\StudentPerformance');
         $this->view->rule = $Performance->rule();
         $this->view->rows = $Performance->byDiscipline((int) $_SESSION['Student']['enrollmentId'], (int) $_SESSION['Student']['classId']);
+        $this->view->studentExams = $this->studentExams($this->view->rows);
+
+        // cada avaliação com tipo e data, para o detalhe por matéria
+        $exams = [];
+        foreach (Container::getModel('TeacherStudent\\StudentFile')->exams((int) $_SESSION['Student']['enrollmentId'], array_column($this->view->rows, 'id')) as $e) {
+            $exams[(int) $e->discipline_class_id][(int) $e->unity][] = $e;
+        }
+        $this->view->exams = $exams;
 
         $this->render('components/bulletin', 'SimpleLayout', 'studentPortal');
     }
@@ -328,6 +440,29 @@ class StudentPortalController extends Action
         if (!isset($_SESSION)) session_start();
 
         $ok = Container::getModel('TeacherStudent\ClassBoard')->markRead(
+            (int) ($_POST['id'] ?? 0),
+            $_SESSION['Student']['enrollmentId'] ?? 0,
+            $_SESSION['Student']['classId'] ?? 0
+        );
+
+        if (!$ok) {
+            http_response_code(404);
+            echo json_encode(['error' => 'aviso-nao-encontrado']);
+            return;
+        }
+
+        echo json_encode(['status' => 'success']);
+    }
+
+    /**
+     * Confirma a leitura de um aviso geral (da escola ou da turma do aluno)
+     */
+    public function generalBoardRead()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        $ok = Container::getModel('TeacherStudent\GeneralBoard')->markRead(
             (int) ($_POST['id'] ?? 0),
             $_SESSION['Student']['enrollmentId'] ?? 0,
             $_SESSION['Student']['classId'] ?? 0

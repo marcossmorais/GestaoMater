@@ -52,7 +52,7 @@ $(document).ready(function () {
 
 // Função que bloqueia o show de links quando a sidebar estiver no modo responsive
 
-$(document).on('click', 'body:not(#teacherPortal).sidebar-responsive .sidebar-lists li a', function (e) {
+$(document).on('click', 'body:not(#teacherPortal).sidebar-responsive .sidebar-lists li[data-toggle="collapse"] a', function (e) {
     e.preventDefault()
     $('.sidebar-responsive .sidebar-lists div').removeClass('show')
     sideState()

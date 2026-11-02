@@ -6,5 +6,6 @@ Thumbs.db
 composer.phar
 *.log
 .idea/
+storage/
 public/assets/uploads/*
 !public/assets/uploads/.gitkeep

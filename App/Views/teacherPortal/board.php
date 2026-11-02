@@ -59,6 +59,14 @@ require __DIR__ . '/components/classCards.php';
                 </div>
 
                 <form class="card m-panel m-post-form" data-bd-form novalidate>
+                    <div class="m-att-field">
+                        <span class="m-att-label">Tipo de aviso</span>
+                        <div class="m-board-types" data-board-types>
+                            <?php foreach ($this->view->boardTypes as $key => $t) { ?>
+                                <button type="button" class="m-board-type is-type-<?= $key ?> <?= $key === 'aviso' ? 'is-active' : '' ?>" data-type="<?= $key ?>" aria-pressed="<?= $key === 'aviso' ? 'true' : 'false' ?>"><i class="fas <?= $t['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($t['label']) ?></button>
+                            <?php } ?>
+                        </div>
+                    </div>
                     <label class="m-att-field">
                         <span class="m-att-label">Novo aviso</span>
                         <textarea class="form-control" name="text" rows="3" maxlength="2000" placeholder="Ex.: Amanhã traremos o material de Ciências para a aula prática." required></textarea>
@@ -85,6 +93,9 @@ require __DIR__ . '/components/classCards.php';
 </section>
 
 <script>
-    window.MATER_BOARD = { classes: <?= json_encode($classesJson, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?> };
+    window.MATER_BOARD = {
+        classes: <?= json_encode($classesJson, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
+        types: <?= json_encode($this->view->boardTypes, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>
+    };
 </script>
 <script src="<?= asset('/assets/js/board.js') ?>" defer></script>

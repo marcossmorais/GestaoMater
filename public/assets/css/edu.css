@@ -24,7 +24,7 @@
 html.nightMode :is(.m-subj, [class*="m-subj-"]) { --s-soft: color-mix(in srgb, var(--s) 16%, #121212); --s-ink: color-mix(in srgb, var(--s) 45%, #fff); }
 
 /* ---------- Tokens dos dois portais */
-body#teacherPortal, body#studentPortal {
+body:is(#teacherPortal, #admin), body#studentPortal {
   --m-primary: #2F6FED;
   --m-primary-hover: #1F5AD2;
   --m-primary-soft: #E4EDFF;
@@ -55,7 +55,7 @@ body#teacherPortal, body#studentPortal {
   --m-focus: 0 0 0 4px rgba(47, 111, 237, .25);
   --m-side-bg: #FFFFFF;
 }
-html.nightMode body#teacherPortal, html.nightMode body#studentPortal {
+html.nightMode body:is(#teacherPortal, #admin), html.nightMode body#studentPortal {
   --m-primary: #5B8CFF;
   --m-primary-hover: #4677F0;
   --m-primary-soft: rgba(91, 140, 255, .18);
@@ -77,92 +77,92 @@ html.nightMode body#teacherPortal, html.nightMode body#studentPortal {
 }
 
 /* ---------- Tipografia: Nunito, títulos bem gordinhos */
-html body#teacherPortal, html body#studentPortal,
-html body#teacherPortal :is(button, input, select, textarea, .btn, .link-name, h1, h2, h3, h4, h5, h6),
+html body:is(#teacherPortal, #admin), html body#studentPortal,
+html body:is(#teacherPortal, #admin) :is(button, input, select, textarea, .btn, .link-name, h1, h2, h3, h4, h5, h6),
 html body#studentPortal :is(button, input, select, textarea, .btn, h1, h2, h3, h4, h5, h6) {
   font-family: "Nunito", "Inter", system-ui, sans-serif !important;
 }
-html body#teacherPortal, html body#studentPortal { font-size: 15px; font-weight: 600; background: var(--m-bg) !important; }
-body#teacherPortal :is(h5, .h5), body#studentPortal :is(h5, .h5) { font-weight: 900 !important; letter-spacing: -.01em; }
-body#teacherPortal h6, body#studentPortal h6 { font-weight: 800 !important; }
-body#teacherPortal :is(small, .m-muted-note), body#studentPortal :is(small, .m-muted-note) { font-weight: 600; }
+html body:is(#teacherPortal, #admin), html body#studentPortal { font-size: 15px; font-weight: 600; background: var(--m-bg) !important; }
+body:is(#teacherPortal, #admin) :is(h5, .h5), body#studentPortal :is(h5, .h5) { font-weight: 900 !important; letter-spacing: -.01em; }
+body:is(#teacherPortal, #admin) h6, body#studentPortal h6 { font-weight: 800 !important; }
+body:is(#teacherPortal, #admin) :is(small, .m-muted-note), body#studentPortal :is(small, .m-muted-note) { font-weight: 600; }
 
 /* ---------- Cartões "adesivo": borda de 2px e sombra sólida embaixo */
-html body#teacherPortal .card, html body#studentPortal .card {
+html body:is(#teacherPortal, #admin) .card, html body#studentPortal .card {
   border: 2px solid var(--m-border) !important;
   box-shadow: var(--m-shadow) !important;
   border-radius: var(--m-radius) !important;
 }
-html body#teacherPortal .card.m-att-class:hover, html body#teacherPortal a.card:hover,
+html body:is(#teacherPortal, #admin) .card.m-att-class:hover, html body:is(#teacherPortal, #admin) a.card:hover,
 html body#studentPortal a.card:hover { box-shadow: var(--m-shadow-hover) !important; transform: translateY(-2px) !important; }
-body#teacherPortal .m-panel-head h6 { font-size: 17px; }
+body:is(#teacherPortal, #admin) .m-panel-head h6 { font-size: 17px; }
 
 /* ---------- Botões com "degrau" (afundam ao tocar) */
-html body#teacherPortal .btn, html body#studentPortal .btn { font-weight: 800 !important; border-radius: var(--m-radius-md) !important; }
-html body#teacherPortal .btn-primary, html body#studentPortal .btn-primary {
+html body:is(#teacherPortal, #admin) .btn, html body#studentPortal .btn { font-weight: 800 !important; border-radius: var(--m-radius-md) !important; }
+html body:is(#teacherPortal, #admin) .btn-primary, html body#studentPortal .btn-primary {
   background: var(--m-primary) !important; border: 0 !important; box-shadow: 0 4px 0 var(--m-primary-edge) !important; color: #fff !important;
 }
-html body#teacherPortal .btn-primary:active, html body#studentPortal .btn-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--m-primary-edge) !important; }
-html body#teacherPortal .btn-light, html body#studentPortal .btn-light {
+html body:is(#teacherPortal, #admin) .btn-primary:active, html body#studentPortal .btn-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--m-primary-edge) !important; }
+html body:is(#teacherPortal, #admin) .btn-light, html body#studentPortal .btn-light {
   background: var(--m-surface) !important; border: 2px solid var(--m-border) !important; box-shadow: 0 3px 0 var(--m-border) !important; color: var(--m-text) !important;
 }
-html body#teacherPortal .btn-outline-primary { border-width: 2px !important; }
-html body#teacherPortal .m-att-save { box-shadow: 0 4px 0 var(--m-primary-edge) !important; }
+html body:is(#teacherPortal, #admin) .btn-outline-primary { border-width: 2px !important; }
+html body:is(#teacherPortal, #admin) .m-att-save { box-shadow: 0 4px 0 var(--m-primary-edge) !important; }
 
 /* ---------- Campos */
-html body#teacherPortal :is(.form-control, .custom-select),
+html body:is(#teacherPortal, #admin) :is(.form-control, .custom-select),
 html body#studentPortal :is(.form-control, .custom-select) { border-width: 2px !important; font-weight: 700; }
 
 /* ---------- Selos e pílulas */
-body#teacherPortal .m-pill, body#studentPortal .m-pill { font-weight: 800; font-size: 12px; padding: 5px 11px; }
-body#teacherPortal .m-pill-info, body#studentPortal .m-pill-info { background: var(--m-primary-soft); color: var(--m-primary-text); }
-body#teacherPortal .m-pill-ok, body#studentPortal .m-pill-ok { background: #DDF6EA; color: #0D6B49; }
-body#teacherPortal .m-pill-warn, body#studentPortal .m-pill-warn { background: #FFE9E2; color: #075985; }
-body#teacherPortal .m-pill-bad, body#studentPortal .m-pill-bad { background: #FFE3E3; color: #B42328; }
+body:is(#teacherPortal, #admin) .m-pill, body#studentPortal .m-pill { font-weight: 800; font-size: 12px; padding: 5px 11px; }
+body:is(#teacherPortal, #admin) .m-pill-info, body#studentPortal .m-pill-info { background: var(--m-primary-soft); color: var(--m-primary-text); }
+body:is(#teacherPortal, #admin) .m-pill-ok, body#studentPortal .m-pill-ok { background: #DDF6EA; color: #0D6B49; }
+body:is(#teacherPortal, #admin) .m-pill-warn, body#studentPortal .m-pill-warn { background: #FFE9E2; color: #075985; }
+body:is(#teacherPortal, #admin) .m-pill-bad, body#studentPortal .m-pill-bad { background: #FFE3E3; color: #B42328; }
 html.nightMode body :is(.m-pill-ok) { background: rgba(31, 169, 113, .2); color: #7BE3B6; }
 html.nightMode body :is(.m-pill-warn) { background: rgba(242, 100, 61, .2); color: #FFB49E; }
 html.nightMode body :is(.m-pill-bad) { background: rgba(229, 72, 77, .2); color: #FF9EA1; }
 
 /* ---------- Matéria: selo da turma, ícone e faixa */
-body#teacherPortal .m-subj .m-att-class-badge, body#studentPortal .m-subj .m-att-class-badge { background: var(--s-soft); color: var(--s-ink); }
-body#teacherPortal .m-att-class-badge { border-radius: 16px; font-weight: 900; }
+body:is(#teacherPortal, #admin) .m-subj .m-att-class-badge, body#studentPortal .m-subj .m-att-class-badge { background: var(--s-soft); color: var(--s-ink); }
+body:is(#teacherPortal, #admin) .m-att-class-badge { border-radius: 16px; font-weight: 900; }
 .m-subj-ico { color: var(--s, var(--m-primary)); margin-right: 8px; width: 18px; text-align: center; }
-html body#teacherPortal .card.m-subj.m-att-class { border-color: color-mix(in srgb, var(--s) 30%, var(--m-border)) !important; }
-body#teacherPortal .m-panel.m-subj { border-top: 6px solid var(--s) !important; }
-body#teacherPortal .m-panel.m-subj .m-att-class-badge { background: var(--s-soft); color: var(--s-ink); }
-body#teacherPortal .m-today-item.m-subj { border: 2px solid color-mix(in srgb, var(--s) 25%, var(--m-border)); border-left: 8px solid var(--s); border-radius: 16px; }
-body#teacherPortal .m-today-item.is-now { box-shadow: 0 0 0 3px color-mix(in srgb, var(--s, var(--m-primary)) 35%, transparent); }
+html body:is(#teacherPortal, #admin) .card.m-subj.m-att-class { border-color: color-mix(in srgb, var(--s) 30%, var(--m-border)) !important; }
+body:is(#teacherPortal, #admin) .m-panel.m-subj { border-top: 6px solid var(--s) !important; }
+body:is(#teacherPortal, #admin) .m-panel.m-subj .m-att-class-badge { background: var(--s-soft); color: var(--s-ink); }
+body:is(#teacherPortal, #admin) .m-today-item.m-subj { border: 2px solid color-mix(in srgb, var(--s) 25%, var(--m-border)); border-left: 8px solid var(--s); border-radius: 16px; }
+body:is(#teacherPortal, #admin) .m-today-item.is-now { box-shadow: 0 0 0 3px color-mix(in srgb, var(--s, var(--m-primary)) 35%, transparent); }
 
 /* ---------- Barra lateral clara, cada item com o seu ícone colorido */
-html body#teacherPortal #left-panel #sidebar { background: var(--m-side-bg) !important; border-right: 2px solid var(--m-border) !important; }
-html body#teacherPortal #left-panel #sidebar .sidebar-lists li a,
-html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-name { color: var(--m-text) !important; font-weight: 800 !important; font-size: 14px !important; }
-html body#teacherPortal #left-panel #sidebar .sidebar-lists p { color: var(--m-muted) !important; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists > li { margin: 2px 6px !important; border-radius: 16px; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists > li > a { padding: 0 6px !important; min-height: 48px; gap: 8px !important; }
-html body#teacherPortal #left-panel #sidebar .sidebar-lists > li:hover { background: var(--m-surface-2) !important; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child {
+html body:is(#teacherPortal, #admin) #left-panel #sidebar { background: var(--m-side-bg) !important; border-right: 2px solid var(--m-border) !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li a,
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists .link-name { color: var(--m-text) !important; font-weight: 800 !important; font-size: 14px !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists p { color: var(--m-muted) !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li { margin: 2px 6px !important; border-radius: 16px; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li > a { padding: 0 6px !important; min-height: 48px; gap: 8px !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li:hover { background: var(--m-surface-2) !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li a > i:first-child {
   flex: none; width: 34px !important; height: 34px; border-radius: 12px; display: inline-flex !important; align-items: center; justify-content: center;
   background: var(--m-surface-2); color: var(--m-muted) !important; font-size: 15px;
 }
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="home"] a > i:first-child { background: #E4F0FF; color: #2F80ED !important; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="turmas"] a > i:first-child { background: #EEEAFF; color: #7B61FF !important; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="chamada"] a > i:first-child { background: #DFF7EC; color: #22B07D !important; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="diario"] a > i:first-child { background: #FFE9E2; color: #F2643D !important; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="notas"] a > i:first-child { background: #E0F4FD; color: #0EA5E9 !important; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="mural"] a > i:first-child { background: #FFE6F0; color: #E8508C !important; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="horario"] a > i:first-child { background: #DDF6F7; color: #12A9B4 !important; }
-html.nightMode body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child { background: var(--m-surface-2) !important; }
-html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active { background: var(--m-primary-soft) !important; }
-html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active::before { display: none; }
-html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active .link-name { color: var(--m-primary-text) !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li[name="home"] a > i:first-child { background: #E4F0FF; color: #2F80ED !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li[name="turmas"] a > i:first-child { background: #EEEAFF; color: #7B61FF !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li[name="chamada"] a > i:first-child { background: #DFF7EC; color: #22B07D !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li[name="diario"] a > i:first-child { background: #FFE9E2; color: #F2643D !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li[name="notas"] a > i:first-child { background: #E0F4FD; color: #0EA5E9 !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li[name="mural"] a > i:first-child { background: #FFE6F0; color: #E8508C !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li[name="horario"] a > i:first-child { background: #DDF6F7; color: #12A9B4 !important; }
+html.nightMode body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li a > i:first-child { background: var(--m-surface-2) !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists .link-active { background: var(--m-primary-soft) !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists .link-active::before { display: none; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists .link-active .link-name { color: var(--m-primary-text) !important; }
 #left-panel #sidebar .logo .logo-dark { display: none; }
 html.nightMode #left-panel #sidebar .logo .logo-light { display: none; }
 html.nightMode #left-panel #sidebar .logo .logo-dark { display: block; }
 
 /* ---------- Barra superior e barra inferior (celular) */
-html body#teacherPortal #navbar-top { background: var(--m-nav-bg) !important; border-bottom: 2px solid var(--m-border) !important; }
-html body#teacherPortal .navbar.fixed-bottom, html body#studentPortal .navbar.fixed-bottom {
+html body:is(#teacherPortal, #admin) #navbar-top { background: var(--m-nav-bg) !important; border-bottom: 2px solid var(--m-border) !important; }
+html body:is(#teacherPortal, #admin) .navbar.fixed-bottom, html body#studentPortal .navbar.fixed-bottom {
   background: var(--m-surface) !important; border-top: 2px solid var(--m-border) !important; box-shadow: none !important;
 }
 html body .navbar.fixed-bottom .nav-link.link-active { color: var(--m-primary-text) !important; }
@@ -198,22 +198,22 @@ html body .m-tile small { color: var(--s-ink) !important; opacity: .8; font-size
 }
 
 /* ---------- Listas, vazios e tabelas */
-body#teacherPortal .m-empty { font-weight: 700; }
-body#teacherPortal .m-todo a { border: 2px solid transparent; }
-body#teacherPortal .m-todo a:hover { border-color: var(--m-border); }
-body#teacherPortal .m-todo a > i { width: 34px; height: 34px; margin-top: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--m-primary-soft); flex: none; }
-body#teacherPortal .m-todo .fa-marker { background: #E0F4FD; color: #0EA5E9; }
-body#teacherPortal .m-todo .fa-book-open { background: #FFE9E2; color: #F2643D; }
-body#teacherPortal .m-todo .fa-user { background: #FFE6F0; color: #E8508C; }
-body#teacherPortal .m-overview th { background: var(--m-surface-2); font-weight: 900; }
-body#teacherPortal .m-overview th:first-child { border-radius: 12px 0 0 12px; }
-body#teacherPortal .m-overview th:last-child { border-radius: 0 12px 12px 0; }
-body#teacherPortal .m-exam { border: 2px solid var(--m-border); border-radius: 18px; font-weight: 700; }
-body#teacherPortal .m-subj .m-exam:not(.is-empty):not(.is-locked) .m-att-class-badge { background: var(--s); color: #fff; }
-body#teacherPortal .m-grade-row { border: 2px solid var(--m-border); border-radius: 18px; }
-body#teacherPortal .m-att-subject { border-width: 2px; font-weight: 800; }
-body#teacherPortal .m-bim { border-width: 2px; border-radius: 18px; }
-body#teacherPortal .m-att-student { border-width: 2px !important; border-radius: 20px !important; }
+body:is(#teacherPortal, #admin) .m-empty { font-weight: 700; }
+body:is(#teacherPortal, #admin) .m-todo a { border: 2px solid transparent; }
+body:is(#teacherPortal, #admin) .m-todo a:hover { border-color: var(--m-border); }
+body:is(#teacherPortal, #admin) .m-todo a > i { width: 34px; height: 34px; margin-top: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--m-primary-soft); flex: none; }
+body:is(#teacherPortal, #admin) .m-todo .fa-marker { background: #E0F4FD; color: #0EA5E9; }
+body:is(#teacherPortal, #admin) .m-todo .fa-book-open { background: #FFE9E2; color: #F2643D; }
+body:is(#teacherPortal, #admin) .m-todo .fa-user { background: #FFE6F0; color: #E8508C; }
+body:is(#teacherPortal, #admin) .m-overview th { background: var(--m-surface-2); font-weight: 900; }
+body:is(#teacherPortal, #admin) .m-overview th:first-child { border-radius: 12px 0 0 12px; }
+body:is(#teacherPortal, #admin) .m-overview th:last-child { border-radius: 0 12px 12px 0; }
+body:is(#teacherPortal, #admin) .m-exam { border: 2px solid var(--m-border); border-radius: 18px; font-weight: 700; }
+body:is(#teacherPortal, #admin) .m-subj .m-exam:not(.is-empty):not(.is-locked) .m-att-class-badge { background: var(--s); color: #fff; }
+body:is(#teacherPortal, #admin) .m-grade-row { border: 2px solid var(--m-border); border-radius: 18px; }
+body:is(#teacherPortal, #admin) .m-att-subject { border-width: 2px; font-weight: 800; }
+body:is(#teacherPortal, #admin) .m-bim { border-width: 2px; border-radius: 18px; }
+body:is(#teacherPortal, #admin) .m-att-student { border-width: 2px !important; border-radius: 20px !important; }
 
 /* ==========================================================================
    Aluno: lúdico completo — papel de caderno, tracejado, selos coloridos
@@ -275,11 +275,11 @@ body#studentPortal .m-perf-ico { width: 40px; height: 40px; flex: none; border-r
 .m-filter-chips .m-att-subject.is-active { background: var(--m-primary); border-color: var(--m-primary); color: #fff; }
 .m-day-header { list-style: none; margin: 16px 0 6px !important; padding: 0 !important; border: 0 !important; font-size: 13px !important; font-weight: 900 !important; color: var(--m-primary-text) !important; text-transform: uppercase; letter-spacing: .04em; }
 .m-day-header:first-child { margin-top: 0 !important; }
-body#teacherPortal .m-notes li:not(.m-day-header) { border-left: 0; padding: 10px 14px; border-radius: 14px; background: var(--s-soft, var(--m-surface-2)); }
-body#teacherPortal .m-notes li:not(.m-day-header) small { color: var(--s-ink, var(--m-muted)); }
-body#teacherPortal .m-lesson-item.m-subj { border: 2px solid color-mix(in srgb, var(--s) 25%, var(--m-border)); background: var(--m-surface); }
+body:is(#teacherPortal, #admin) .m-notes li:not(.m-day-header) { border-left: 0; padding: 10px 14px; border-radius: 14px; background: var(--s-soft, var(--m-surface-2)); }
+body:is(#teacherPortal, #admin) .m-notes li:not(.m-day-header) small { color: var(--s-ink, var(--m-muted)); }
+body:is(#teacherPortal, #admin) .m-lesson-item.m-subj { border: 2px solid color-mix(in srgb, var(--s) 25%, var(--m-border)); background: var(--m-surface); }
 .m-badge-sm { width: auto !important; height: auto !important; display: inline-flex !important; padding: 2px 8px; border-radius: 8px !important; font-size: 12px !important; margin-right: 6px; }
-body#teacherPortal .m-file-data .m-muted-note { font-size: 13px !important; }
+body:is(#teacherPortal, #admin) .m-file-data .m-muted-note { font-size: 13px !important; }
 
 /* ---------- Meu horário: semana em colunas e dia em cartões */
 .m-week { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; align-items: start; }
@@ -323,26 +323,26 @@ html body .m-slot-body strong { font-size: 15px; font-weight: 900; color: var(--
 .m-subj-sky { --s: #0EA5E9; --s-soft: #E0F4FD; --s-ink: #075985; }
 
 /* aulas do dia: borda inteira na cor da matéria (sem faixa grossa à esquerda) */
-body#teacherPortal .m-today-item.m-subj { border: 2px solid color-mix(in srgb, var(--s) 30%, var(--m-border)) !important; border-radius: 18px; background: var(--m-surface); }
-body#teacherPortal .m-today-item.is-now { box-shadow: 0 0 0 3px color-mix(in srgb, var(--s, var(--m-primary)) 35%, transparent) !important; }
-body#teacherPortal .m-today-item .m-att-class-badge { background: var(--s-soft); color: var(--s-ink); }
+body:is(#teacherPortal, #admin) .m-today-item.m-subj { border: 2px solid color-mix(in srgb, var(--s) 30%, var(--m-border)) !important; border-radius: 18px; background: var(--m-surface); }
+body:is(#teacherPortal, #admin) .m-today-item.is-now { box-shadow: 0 0 0 3px color-mix(in srgb, var(--s, var(--m-primary)) 35%, transparent) !important; }
+body:is(#teacherPortal, #admin) .m-today-item .m-att-class-badge { background: var(--s-soft); color: var(--s-ink); }
 
 /* notas no menu e destaques: azul-céu no lugar do amarelo */
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="notas"] a > i:first-child { background: #E0F4FD; color: #0EA5E9 !important; }
-body#teacherPortal .m-todo .fa-marker { background: #E0F4FD; color: #0EA5E9; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li[name="notas"] a > i:first-child { background: #E0F4FD; color: #0EA5E9 !important; }
+body:is(#teacherPortal, #admin) .m-todo .fa-marker { background: #E0F4FD; color: #0EA5E9; }
 html body#studentPortal .m-hero { background: #E0F4FD; border-color: #B5E2F8; box-shadow: 0 5px 0 #B5E2F8; }
 html.nightMode body#studentPortal .m-hero { background: #121212; border-color: #2E2E2E; }
 html body#studentPortal .m-hero .m-hero-kicker { color: #075985; }
 
 /* logo maior, a partir da versão de 480px (a original de 1.721px serrilhava ao reduzir) */
-body#teacherPortal #left-panel #sidebar .logo img { width: 100% !important; max-width: 170px !important; padding: 10px 4px !important; }
-body#teacherPortal #logo-mater { width: 140px !important; height: auto !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .logo img { width: 100% !important; max-width: 170px !important; padding: 10px 4px !important; }
+body:is(#teacherPortal, #admin) #logo-mater { width: 140px !important; height: auto !important; }
 body#studentPortal #logo-mater-main { width: 170px !important; height: auto !important; max-height: none !important; }
 /* menu lateral estreito (tablet / janela pequena): ícone e texto menores para o nome caber */
 @media (max-width: 1199.98px) {
-  html body#teacherPortal #left-panel #sidebar .sidebar-lists li a, html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-name { font-size: 12.5px !important; }
-  body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child { width: 28px !important; height: 28px; font-size: 13px; }
-  body#teacherPortal #left-panel #sidebar .sidebar-lists > li { margin: 2px 4px !important; }
+  html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li a, html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists .link-name { font-size: 12.5px !important; }
+  body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li a > i:first-child { width: 28px !important; height: 28px; font-size: 13px; }
+  body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li { margin: 2px 4px !important; }
 }
 
 /* ---------- Aba Turma do aluno: você x turma */
@@ -426,11 +426,11 @@ html body .m-profile .form-control:disabled, html body .m-profile .form-control[
 @media (max-width: 575.98px) { .m-data-list-3, .m-form-grid { grid-template-columns: 1fr; } .m-span-2 { grid-column: auto; } }
 
 /* ---------- Botões: sem o "degrau" grosso; sombra discreta e cantos iguais aos campos */
-html body#teacherPortal .btn-primary, html body#studentPortal .btn-primary { box-shadow: 0 2px 0 var(--m-primary-edge) !important; }
-html body#teacherPortal .btn-primary:active, html body#studentPortal .btn-primary:active { transform: translateY(1px); box-shadow: none !important; }
-html body#teacherPortal .btn-light, html body#studentPortal .btn-light { box-shadow: none !important; }
-html body#teacherPortal .btn-sm, html body#studentPortal .btn-sm { box-shadow: none !important; border-radius: 10px !important; min-height: 36px; padding: 0 12px; font-size: 13px; display: inline-flex; align-items: center; }
-html body#teacherPortal .m-att-save { box-shadow: 0 2px 0 var(--m-primary-edge) !important; }
+html body:is(#teacherPortal, #admin) .btn-primary, html body#studentPortal .btn-primary { box-shadow: 0 2px 0 var(--m-primary-edge) !important; }
+html body:is(#teacherPortal, #admin) .btn-primary:active, html body#studentPortal .btn-primary:active { transform: translateY(1px); box-shadow: none !important; }
+html body:is(#teacherPortal, #admin) .btn-light, html body#studentPortal .btn-light { box-shadow: none !important; }
+html body:is(#teacherPortal, #admin) .btn-sm, html body#studentPortal .btn-sm { box-shadow: none !important; border-radius: 10px !important; min-height: 36px; padding: 0 12px; font-size: 13px; display: inline-flex; align-items: center; }
+html body:is(#teacherPortal, #admin) .m-att-save { box-shadow: 0 2px 0 var(--m-primary-edge) !important; }
 
 /* ---------- Menu "Declarações" do aluno por cima dos cartões */
 html body#studentPortal #studentPortalNavbar { position: relative; z-index: 1030; }
@@ -474,23 +474,23 @@ html body#studentPortal #studentPortalNavbar .dropdown-item { border-radius: 10p
 @media (max-width: 575.98px) { .m-activity { flex-direction: column; align-items: stretch; } .m-donut-sm { margin: 0 auto; } }
 
 /* Tons antigos de amarelo/âmbar que vinham do tema anterior */
-body#teacherPortal, body#studentPortal { --m-gold: #0EA5E9; }
+body:is(#teacherPortal, #admin), body#studentPortal { --m-gold: #0EA5E9; }
 html body .m-overview td.is-rec, html.nightMode body .m-overview td.is-rec { color: #6D4AE0 !important; }
 html.nightMode body .m-overview td.is-rec { color: #B5A6FF !important; }
-body :is(#teacherPortal, #studentPortal) .m-att-warning, body#teacherPortal .m-att-warning, body#studentPortal .m-att-warning { background: var(--m-primary-soft) !important; color: var(--m-primary-text) !important; }
-body#teacherPortal .alert-warning, body#studentPortal .alert-warning { background: var(--m-primary-soft) !important; border-color: transparent !important; color: var(--m-primary-text) !important; }
-body#studentPortal .m-perf-tag.is-rec, body#teacherPortal .m-perf-tag.is-rec { background: #EEEAFF; color: #4A33C2; }
-body#teacherPortal :is(.text-warning, .badge-warning), body#studentPortal :is(.text-warning, .badge-warning) { color: var(--m-primary-text) !important; }
+body :is(#teacherPortal, #studentPortal) .m-att-warning, body:is(#teacherPortal, #admin) .m-att-warning, body#studentPortal .m-att-warning { background: var(--m-primary-soft) !important; color: var(--m-primary-text) !important; }
+body:is(#teacherPortal, #admin) .alert-warning, body#studentPortal .alert-warning { background: var(--m-primary-soft) !important; border-color: transparent !important; color: var(--m-primary-text) !important; }
+body#studentPortal .m-perf-tag.is-rec, body:is(#teacherPortal, #admin) .m-perf-tag.is-rec { background: #EEEAFF; color: #4A33C2; }
+body:is(#teacherPortal, #admin) :is(.text-warning, .badge-warning), body#studentPortal :is(.text-warning, .badge-warning) { color: var(--m-primary-text) !important; }
 
 /* Navegação limpa: sem quadradinhos coloridos, sem cartão, sem borda. Ativo = azul e negrito */
-html body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child,
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name] a > i:first-child,
-html.nightMode body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child { background: transparent !important; color: var(--m-muted) !important; width: 24px !important; height: 24px; font-size: 16px; }
-html body#teacherPortal #left-panel #sidebar .sidebar-lists > li:hover { background: var(--m-surface-2) !important; }
-html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active { background: transparent !important; box-shadow: none !important; border: 0 !important; }
-html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active a > i:first-child,
-html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active .link-name { color: var(--m-primary) !important; font-weight: 900 !important; }
-html body#teacherPortal #left-panel #sidebar { border-right: 1px solid var(--m-border) !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li a > i:first-child,
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li[name] a > i:first-child,
+html.nightMode body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists li a > i:first-child { background: transparent !important; color: var(--m-muted) !important; width: 24px !important; height: 24px; font-size: 16px; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li:hover { background: var(--m-surface-2) !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists .link-active { background: transparent !important; box-shadow: none !important; border: 0 !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists .link-active a > i:first-child,
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists .link-active .link-name { color: var(--m-primary) !important; font-weight: 900 !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar { border-right: 1px solid var(--m-border) !important; }
 
 body#studentPortal .m-nav-ico { background: transparent !important; color: inherit !important; width: auto; height: auto; font-size: 15px; margin-right: 6px; }
 html body#studentPortal #studentPortalNavbar .nav-link,
@@ -505,29 +505,29 @@ html body .navbar.fixed-bottom .nav-link, html body .navbar.fixed-bottom .nav-li
 .m-donut-center small { font-size: 12px; line-height: 1.15; }
 
 /* Modo escuro preto: atalhos neutros (só o ícone colorido) e faixa dos avisos sem azul-marinho */
-html.nightMode body#teacherPortal, html.nightMode body#studentPortal { --m-side-from: #121212; --m-side-to: #0A0A0A; }
+html.nightMode body:is(#teacherPortal, #admin), html.nightMode body#studentPortal { --m-side-from: #121212; --m-side-to: #0A0A0A; }
 html.nightMode .m-tile { background: var(--m-surface); border-color: var(--m-border); box-shadow: none; }
 html.nightMode body .m-tile strong { color: var(--m-text) !important; }
 html.nightMode body .m-tile small { color: var(--m-muted) !important; opacity: 1; }
 html.nightMode body #toastContainer .toast-header { background: #1E1E1E !important; }
-html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-ok { background: rgba(31, 169, 113, .2); color: #7BE3B6; }
-html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-warn { background: rgba(242, 100, 61, .2); color: #FFB49E; }
-html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-bad { background: rgba(229, 72, 77, .2); color: #FF9EA1; }
+html.nightMode body:is(#teacherPortal, #studentPortal, #admin) .m-pill-ok { background: rgba(31, 169, 113, .2); color: #7BE3B6; }
+html.nightMode body:is(#teacherPortal, #studentPortal, #admin) .m-pill-warn { background: rgba(242, 100, 61, .2); color: #FFB49E; }
+html.nightMode body:is(#teacherPortal, #studentPortal, #admin) .m-pill-bad { background: rgba(229, 72, 77, .2); color: #FF9EA1; }
 
 /* ---------- Menu recolhido do docente: estreito, só ícones e a logo pequena */
 #left-panel #sidebar .logo .logo-mini { display: none; }
 @media (min-width: 768px) {
-  body#teacherPortal.sidebar-responsive .panel-side { flex: 0 0 76px !important; max-width: 76px !important; }
-  body#teacherPortal.sidebar-responsive #pagina { flex: 0 0 calc(100% - 76px) !important; max-width: calc(100% - 76px) !important; }
-  html body#teacherPortal.sidebar-responsive #left-panel #sidebar { width: 76px !important; padding: 8px 0 !important; overflow-x: hidden; }
-  body#teacherPortal.sidebar-responsive #left-panel #sidebar .logo { padding: 0 !important; }
-  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .logo .logo-light,
-  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .logo .logo-dark { display: none !important; }
-  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .logo .logo-mini { display: block !important; width: 44px !important; max-width: 44px !important; height: 44px; padding: 0 !important; margin: 4px auto 10px; border-radius: 12px; }
-  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .sidebar-lists { padding: 0; }
-  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .sidebar-lists > li { margin: 2px 10px !important; padding: 0 !important; }
-  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .sidebar-lists > li > a { justify-content: center; padding: 0 !important; min-height: 48px; }
-  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .sidebar-lists li a > i:first-child { display: flex; align-items: center; justify-content: center; margin: 0 !important; padding: 0 !important; font-size: 18px; }
+  body:is(#teacherPortal, #admin).sidebar-responsive .panel-side { flex: 0 0 76px !important; max-width: 76px !important; }
+  body:is(#teacherPortal, #admin).sidebar-responsive #pagina { flex: 0 0 calc(100% - 76px) !important; max-width: calc(100% - 76px) !important; }
+  html body:is(#teacherPortal, #admin).sidebar-responsive #left-panel #sidebar { width: 76px !important; padding: 8px 0 !important; overflow-x: hidden; }
+  body:is(#teacherPortal, #admin).sidebar-responsive #left-panel #sidebar .logo { padding: 0 !important; }
+  html body:is(#teacherPortal, #admin).sidebar-responsive #left-panel #sidebar .logo .logo-light,
+  html body:is(#teacherPortal, #admin).sidebar-responsive #left-panel #sidebar .logo .logo-dark { display: none !important; }
+  html body:is(#teacherPortal, #admin).sidebar-responsive #left-panel #sidebar .logo .logo-mini { display: block !important; width: 44px !important; max-width: 44px !important; height: 44px; padding: 0 !important; margin: 4px auto 10px; border-radius: 12px; }
+  html body:is(#teacherPortal, #admin).sidebar-responsive #left-panel #sidebar .sidebar-lists { padding: 0; }
+  html body:is(#teacherPortal, #admin).sidebar-responsive #left-panel #sidebar .sidebar-lists > li { margin: 2px 10px !important; padding: 0 !important; }
+  html body:is(#teacherPortal, #admin).sidebar-responsive #left-panel #sidebar .sidebar-lists > li > a { justify-content: center; padding: 0 !important; min-height: 48px; }
+  html body:is(#teacherPortal, #admin).sidebar-responsive #left-panel #sidebar .sidebar-lists li a > i:first-child { display: flex; align-items: center; justify-content: center; margin: 0 !important; padding: 0 !important; font-size: 18px; }
 }
 
 /* ---------- Calendário do diário */
@@ -639,7 +639,7 @@ html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-bad { background:
 .m-sheet[hidden] { display: none; }
 .m-sheet-box { width: 100%; max-width: 560px; max-height: calc(100vh - 32px); overflow: auto; }
 .m-sheet-box .m-panel-head h6 { margin: 0; }
-body#teacherPortal #toastContainer { z-index: 1050; }
+body:is(#teacherPortal, #admin) #toastContainer { z-index: 1050; }
 @media (max-width: 767.98px) {
   .m-sheet { align-items: flex-end; padding: 0; }
   .m-sheet-box { max-width: none; border-radius: 20px 20px 0 0 !important; padding-bottom: 24px; }
@@ -680,23 +680,23 @@ html.nightMode .m-gradeline-final.is-ok strong { color: #7BE3B6; }
 
 /* Menu recolhido: barra do topo e barra de ação acompanham a largura de 76 px */
 @media (min-width: 768px) {
-  body#teacherPortal.sidebar-responsive #navbar-top { width: calc(100% - 76px) !important; max-width: calc(100% - 76px) !important; flex: none !important; }
-  body#teacherPortal.sidebar-responsive .m-att-bar { left: 76px; }
+  body:is(#teacherPortal, #admin).sidebar-responsive #navbar-top { width: calc(100% - 76px) !important; max-width: calc(100% - 76px) !important; flex: none !important; }
+  body:is(#teacherPortal, #admin).sidebar-responsive .m-att-bar { left: 76px; }
 }
 
 /* Perfil: o modal rola (o legado travava em #pagina .modal-profile) e os botões ficam numa faixa sólida */
-body:is(#teacherPortal, #studentPortal) #pagina #settingsModal { overflow-y: auto; }
+body:is(#teacherPortal, #studentPortal, #admin) #pagina #settingsModal { overflow-y: auto; }
 .m-profile-bar { z-index: 5; padding: 12px 16px; background: var(--m-surface); border: 2px solid var(--m-border); border-radius: 18px; box-shadow: var(--m-shadow); }
 .m-profile-bar .btn { min-height: 44px; }
 
 /* Controles em link dentro de .m-seg: legíveis nos dois temas */
-body:is(#teacherPortal, #studentPortal) .m-seg a.btn { height: 34px; min-height: 34px; min-width: 44px; padding: 0 12px; font-size: 13px; font-weight: 700 !important; color: var(--m-muted) !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
-body:is(#teacherPortal, #studentPortal) .m-seg a.btn.is-active { color: var(--m-primary-text) !important; background: var(--m-surface) !important; box-shadow: 0 1px 3px rgba(16, 32, 72, .14) !important; }
+body:is(#teacherPortal, #studentPortal, #admin) .m-seg a.btn { height: 34px; min-height: 34px; min-width: 44px; padding: 0 12px; font-size: 13px; font-weight: 700 !important; color: var(--m-muted) !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+body:is(#teacherPortal, #studentPortal, #admin) .m-seg a.btn.is-active { color: var(--m-primary-text) !important; background: var(--m-surface) !important; box-shadow: 0 1px 3px rgba(16, 32, 72, .14) !important; }
 #classOverview .m-att-toolbar { align-items: flex-end; }
 
 /* Carômetro: botão de observação discreto */
-html body#teacherPortal .m-roster-note { width: auto; min-height: 32px !important; padding: 0 10px; font-size: 12px; font-weight: 700 !important; border-width: 1px !important; border-radius: 8px !important; box-shadow: none !important; }
-@media (max-width: 767.98px) { html body#teacherPortal .m-roster-note { min-height: 44px !important; width: calc(100% - 16px); } }
+html body:is(#teacherPortal, #admin) .m-roster-note { width: auto; min-height: 32px !important; padding: 0 10px; font-size: 12px; font-weight: 700 !important; border-width: 1px !important; border-radius: 8px !important; box-shadow: none !important; }
+@media (max-width: 767.98px) { html body:is(#teacherPortal, #admin) .m-roster-note { min-height: 44px !important; width: calc(100% - 16px); } }
 
 /* Perfil do professor: página própria, compacta */
 .m-profile-page { padding-bottom: 96px; }
@@ -717,56 +717,56 @@ html body .m-profile-box h6 { display: flex; align-items: baseline; justify-cont
 .m-profile-box dl { margin: 0; }
 .m-profile-box dd { margin: 0; font-size: 14px; font-weight: 600; }
 .m-profile-box dt { font-size: 11px; font-weight: 700; color: var(--m-muted); }
-html body#teacherPortal .m-profile-box .form-control { height: 36px !important; min-height: 36px !important; padding: 0 10px; font-size: 14px; font-weight: 600; border-width: 1px !important; border-radius: 8px !important; }
-html body#teacherPortal .m-profile-box .form-control:disabled { opacity: 1; color: var(--m-text) !important; background-color: var(--m-surface-2) !important; border-color: transparent !important; }
-html body#teacherPortal .m-profile-box .custom-select:disabled { background-image: none !important; }
+html body:is(#teacherPortal, #admin) .m-profile-box .form-control { height: 36px !important; min-height: 36px !important; padding: 0 10px; font-size: 14px; font-weight: 600; border-width: 1px !important; border-radius: 8px !important; }
+html body:is(#teacherPortal, #admin) .m-profile-box .form-control:disabled { opacity: 1; color: var(--m-text) !important; background-color: var(--m-surface-2) !important; border-color: transparent !important; }
+html body:is(#teacherPortal, #admin) .m-profile-box .custom-select:disabled { background-image: none !important; }
 .m-profile-page .m-code-input { max-width: 240px; }
 .m-profile-actions { display: flex; gap: 8px; }
-html body#teacherPortal .m-profile-page .btn { min-height: 36px !important; padding: 0 14px; font-size: 13px; font-weight: 700 !important; border-radius: 8px !important; box-shadow: none !important; }
-html body#teacherPortal .m-profile-page .btn-light { border-width: 1px !important; }
+html body:is(#teacherPortal, #admin) .m-profile-page .btn { min-height: 36px !important; padding: 0 14px; font-size: 13px; font-weight: 700 !important; border-radius: 8px !important; box-shadow: none !important; }
+html body:is(#teacherPortal, #admin) .m-profile-page .btn-light { border-width: 1px !important; }
 @media (max-width: 767.98px) {
   .m-profile-grid, .m-form-grid-2 { grid-template-columns: minmax(0, 1fr); }
   .m-profile-box .m-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  html body#teacherPortal .m-profile-box .form-control { height: 44px !important; min-height: 44px !important; }
-  html body#teacherPortal .m-profile-page .btn { min-height: 44px !important; height: 44px; }
+  html body:is(#teacherPortal, #admin) .m-profile-box .form-control { height: 44px !important; min-height: 44px !important; }
+  html body:is(#teacherPortal, #admin) .m-profile-page .btn { min-height: 44px !important; height: 44px; }
 }
 
 /* Modo escuro: fundos preenchidos mais escuros, para o texto branco ficar legível */
-html.nightMode body:is(#teacherPortal, #studentPortal) .btn-primary,
+html.nightMode body:is(#teacherPortal, #studentPortal, #admin) .btn-primary,
 html.nightMode .m-filter-chips .m-att-subject.is-active,
 html.nightMode .m-cal-num.is-today,
 html.nightMode .m-week-head em { background: #2563EB !important; border-color: #2563EB; }
 
 /* Escala de texto fixa nos portais: o legado usa clamp(13px, …vw, 20px), que chega a 20px em telas grandes */
-@media (min-width: 768px) { body:is(#teacherPortal, #studentPortal) { --m-control-h: 38px; } }
-html body:is(#teacherPortal, #studentPortal) #pagina .btn { font-size: 14px !important; }
-html body:is(#teacherPortal, #studentPortal) #pagina .m-seg a.btn { font-size: 13px !important; }
-html body#teacherPortal #pagina .m-roster-note.btn { font-size: 12px !important; }
-html body:is(#teacherPortal, #studentPortal) #pagina p { font-size: 14px; }
-html body:is(#teacherPortal, #studentPortal) #pagina p.m-muted-note, html body:is(#teacherPortal, #studentPortal) #pagina p.m-empty { font-size: 13px; }
-html body:is(#teacherPortal, #studentPortal) #pagina table th, html body:is(#teacherPortal, #studentPortal) #pagina table td { font-size: 13px; }
-html body:is(#teacherPortal, #studentPortal) #pagina form .m-att-label { font-size: 12px; }
-html body:is(#teacherPortal, #studentPortal) #pagina form input.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form select.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form textarea.form-control, html body:is(#teacherPortal, #studentPortal) #pagina .m-quick input.form-control { font-size: 14px; }
-html body:is(#teacherPortal, #studentPortal) #pagina .m-guide-fields .form-control { font-size: 14px; }
+@media (min-width: 768px) { body:is(#teacherPortal, #studentPortal, #admin) { --m-control-h: 38px; } }
+html body:is(#teacherPortal, #studentPortal, #admin) #pagina .btn { font-size: 14px !important; }
+html body:is(#teacherPortal, #studentPortal, #admin) #pagina .m-seg a.btn { font-size: 13px !important; }
+html body:is(#teacherPortal, #admin) #pagina .m-roster-note.btn { font-size: 12px !important; }
+html body:is(#teacherPortal, #studentPortal, #admin) #pagina p { font-size: 14px; }
+html body:is(#teacherPortal, #studentPortal, #admin) #pagina p.m-muted-note, html body:is(#teacherPortal, #studentPortal, #admin) #pagina p.m-empty { font-size: 13px; }
+html body:is(#teacherPortal, #studentPortal, #admin) #pagina table th, html body:is(#teacherPortal, #studentPortal, #admin) #pagina table td { font-size: 13px; }
+html body:is(#teacherPortal, #studentPortal, #admin) #pagina form .m-att-label { font-size: 12px; }
+html body:is(#teacherPortal, #studentPortal, #admin) #pagina form input.form-control, html body:is(#teacherPortal, #studentPortal, #admin) #pagina form select.form-control, html body:is(#teacherPortal, #studentPortal, #admin) #pagina form textarea.form-control, html body:is(#teacherPortal, #studentPortal, #admin) #pagina .m-quick input.form-control { font-size: 14px; }
+html body:is(#teacherPortal, #studentPortal, #admin) #pagina .m-guide-fields .form-control { font-size: 14px; }
 /* no celular, 16px evita o zoom automático do navegador ao tocar no campo */
 @media (max-width: 767.98px) {
-  html body:is(#teacherPortal, #studentPortal) #pagina form input.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form select.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form textarea.form-control, html body:is(#teacherPortal, #studentPortal) #pagina .m-quick input.form-control, html body:is(#teacherPortal, #studentPortal) #pagina .m-guide-fields .form-control { font-size: 16px; }
+  html body:is(#teacherPortal, #studentPortal, #admin) #pagina form input.form-control, html body:is(#teacherPortal, #studentPortal, #admin) #pagina form select.form-control, html body:is(#teacherPortal, #studentPortal, #admin) #pagina form textarea.form-control, html body:is(#teacherPortal, #studentPortal, #admin) #pagina .m-quick input.form-control, html body:is(#teacherPortal, #studentPortal, #admin) #pagina .m-guide-fields .form-control { font-size: 16px; }
 }
 
 /* Tela da turma: filtro e abas na mesma barra */
 .m-class-filter { min-width: 200px; margin: 0; }
-@media (max-width: 767.98px) { .m-class-filter { width: 100%; } .m-class-tabs { display: flex; width: 100%; } html body#teacherPortal #pagina .m-class-tabs a.btn { flex: 1; min-height: 44px; padding: 0 6px; font-size: 12px !important; } .m-class-tabs a.btn i { display: none; } }
+@media (max-width: 767.98px) { .m-class-filter { width: 100%; } .m-class-tabs { display: flex; width: 100%; } html body:is(#teacherPortal, #admin) #pagina .m-class-tabs a.btn { flex: 1; min-height: 44px; padding: 0 6px; font-size: 12px !important; } .m-class-tabs a.btn i { display: none; } }
 
 /* Notas da turma: grade com cabeçalho e nomes fixos, linhas alternadas e notas alinhadas */
 .m-overview-low { display: inline-flex; align-items: center; gap: 8px; min-height: var(--m-control-h, 38px); margin: 0; font-size: 13px; font-weight: 700; cursor: pointer; }
 .m-overview-low input { width: 16px; height: 16px; accent-color: var(--m-primary); }
-html body#teacherPortal #classOverview .m-overview-wrap { max-height: calc(100vh - 270px); min-height: 320px; padding: 0 !important; overflow: auto; border: 1px solid var(--m-border); border-radius: 12px; box-shadow: none; }
-html body#teacherPortal #pagina table.m-overview { width: 100%; border-collapse: separate; border-spacing: 0; }
-html body#teacherPortal #pagina .m-overview th, html body#teacherPortal #pagina .m-overview td { height: 36px; padding: 4px 6px; font-size: 14px; font-variant-numeric: tabular-nums; text-align: center; border-bottom: 1px solid var(--m-border); }
-html body#teacherPortal #pagina .m-overview th { position: sticky; top: 0; z-index: 2; font-size: 12px; font-weight: 800; color: var(--m-muted); letter-spacing: .03em; background: var(--m-surface-2) !important; border-radius: 0; }
-html body#teacherPortal #pagina .m-overview th.is-mine { color: var(--m-primary-text); }
-html body#teacherPortal #pagina .m-overview th:first-child, html body#teacherPortal #pagina .m-overview td:first-child { position: sticky; left: 0; z-index: 1; min-width: 240px; padding-left: 14px; font-size: 13px; text-align: left; border-right: 1px solid var(--m-border); }
-html body#teacherPortal #pagina .m-overview thead th:first-child { z-index: 3; }
+html body:is(#teacherPortal, #admin) #classOverview .m-overview-wrap { max-height: calc(100vh - 270px); min-height: 320px; padding: 0 !important; overflow: auto; border: 1px solid var(--m-border); border-radius: 12px; box-shadow: none; }
+html body:is(#teacherPortal, #admin) #pagina table.m-overview { width: 100%; border-collapse: separate; border-spacing: 0; }
+html body:is(#teacherPortal, #admin) #pagina .m-overview th, html body:is(#teacherPortal, #admin) #pagina .m-overview td { height: 36px; padding: 4px 6px; font-size: 14px; font-variant-numeric: tabular-nums; text-align: center; border-bottom: 1px solid var(--m-border); }
+html body:is(#teacherPortal, #admin) #pagina .m-overview th { position: sticky; top: 0; z-index: 2; font-size: 12px; font-weight: 800; color: var(--m-muted); letter-spacing: .03em; background: var(--m-surface-2) !important; border-radius: 0; }
+html body:is(#teacherPortal, #admin) #pagina .m-overview th.is-mine { color: var(--m-primary-text); }
+html body:is(#teacherPortal, #admin) #pagina .m-overview th:first-child, html body:is(#teacherPortal, #admin) #pagina .m-overview td:first-child { position: sticky; left: 0; z-index: 1; min-width: 240px; padding-left: 14px; font-size: 13px; text-align: left; border-right: 1px solid var(--m-border); }
+html body:is(#teacherPortal, #admin) #pagina .m-overview thead th:first-child { z-index: 3; }
 .m-overview tbody td { background: var(--m-surface); }
 .m-overview tbody tr:nth-child(even) td { background: var(--m-surface-2); }
 .m-overview tbody tr:hover td { background: var(--m-primary-soft); }
@@ -775,19 +775,19 @@ html body#teacherPortal #pagina .m-overview thead th:first-child { z-index: 3; }
 .m-overview td > span { display: inline-block; min-width: 44px; padding: 2px 4px; border-radius: 6px; }
 .m-overview td.is-low > span { background: rgba(229, 72, 77, .14); }
 .m-overview td.is-rec > span { background: rgba(109, 74, 224, .14); }
-html body#teacherPortal #pagina .m-overview tfoot td { position: sticky; bottom: 0; z-index: 1; font-weight: 800; background: var(--m-surface-2) !important; border-top: 2px solid var(--m-border); border-bottom: 0; }
-html body#teacherPortal #pagina .m-overview tfoot td:first-child { z-index: 2; }
+html body:is(#teacherPortal, #admin) #pagina .m-overview tfoot td { position: sticky; bottom: 0; z-index: 1; font-weight: 800; background: var(--m-surface-2) !important; border-top: 2px solid var(--m-border); border-bottom: 0; }
+html body:is(#teacherPortal, #admin) #pagina .m-overview tfoot td:first-child { z-index: 2; }
 .m-overview-count { min-width: 60px; color: var(--m-muted); }
 html body .m-overview td.m-overview-count.has-low { font-weight: 800; color: var(--m-danger) !important; }
 @media (max-width: 767.98px) {
-  html body#teacherPortal #classOverview .m-overview-wrap { max-height: none; overflow: visible; background: transparent; border: 0; }
+  html body:is(#teacherPortal, #admin) #classOverview .m-overview-wrap { max-height: none; overflow: visible; background: transparent; border: 0; }
   .m-overview-low { min-height: 44px; }
   .m-overview, .m-overview tbody, .m-overview tfoot { display: block; }
   .m-overview thead { display: none; }
   .m-overview tr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-bottom: 10px; padding: 10px; background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 12px; }
-  html body#teacherPortal #pagina .m-overview td, html body#teacherPortal #pagina .m-overview tfoot td { position: static; display: flex; flex-direction: column; align-items: center; height: auto; padding: 4px 0; background: transparent !important; border: 0; box-shadow: none; }
+  html body:is(#teacherPortal, #admin) #pagina .m-overview td, html body:is(#teacherPortal, #admin) #pagina .m-overview tfoot td { position: static; display: flex; flex-direction: column; align-items: center; height: auto; padding: 4px 0; background: transparent !important; border: 0; box-shadow: none; }
   .m-overview td::before { content: attr(data-label); font-size: 11px; font-weight: 700; color: var(--m-muted); }
-  html body#teacherPortal #pagina .m-overview td:first-child { grid-column: 1 / -1; min-width: 0; min-height: 44px; flex-direction: row; padding-left: 0; font-size: 15px; font-weight: 800; }
+  html body:is(#teacherPortal, #admin) #pagina .m-overview td:first-child { grid-column: 1 / -1; min-width: 0; min-height: 44px; flex-direction: row; padding-left: 0; font-size: 15px; font-weight: 800; }
   .m-overview td:first-child a { display: flex; align-items: center; width: 100%; min-height: 44px; }
   .m-overview td.m-overview-count:empty { display: none; }
 }
@@ -795,17 +795,17 @@ html.nightMode body .m-overview td.is-low, html.nightMode body .m-overview td.m-
 
 /* Menu do docente: largura fixa (o legado usa 16.5vw) e sem animação ao recolher */
 @media (min-width: 768px) {
-  body#teacherPortal:not(.sidebar-responsive) .panel-side { flex: 0 0 208px !important; max-width: 208px !important; }
-  body#teacherPortal:not(.sidebar-responsive) #pagina { flex: 0 0 calc(100% - 208px) !important; max-width: calc(100% - 208px) !important; }
-  html body#teacherPortal:not(.sidebar-responsive) #left-panel #sidebar { width: 208px !important; }
-  body#teacherPortal:not(.sidebar-responsive) #navbar-top { width: calc(100% - 208px) !important; max-width: calc(100% - 208px) !important; flex: none !important; }
-  body#teacherPortal:not(.sidebar-responsive) .m-att-bar { left: 208px; }
-  body#teacherPortal #left-panel #sidebar .logo img.logo-light, body#teacherPortal #left-panel #sidebar .logo img.logo-dark { max-width: 150px; height: auto; }
-  body#teacherPortal #left-panel #sidebar .link-name { white-space: normal; line-height: 1.2; }
+  body:is(#teacherPortal, #admin):not(.sidebar-responsive) .panel-side { flex: 0 0 208px !important; max-width: 208px !important; }
+  body:is(#teacherPortal, #admin):not(.sidebar-responsive) #pagina { flex: 0 0 calc(100% - 208px) !important; max-width: calc(100% - 208px) !important; }
+  html body:is(#teacherPortal, #admin):not(.sidebar-responsive) #left-panel #sidebar { width: 208px !important; }
+  body:is(#teacherPortal, #admin):not(.sidebar-responsive) #navbar-top { width: calc(100% - 208px) !important; max-width: calc(100% - 208px) !important; flex: none !important; }
+  body:is(#teacherPortal, #admin):not(.sidebar-responsive) .m-att-bar { left: 208px; }
+  body:is(#teacherPortal, #admin) #left-panel #sidebar .logo img.logo-light, body:is(#teacherPortal, #admin) #left-panel #sidebar .logo img.logo-dark { max-width: 150px; height: auto; }
+  body:is(#teacherPortal, #admin) #left-panel #sidebar .link-name { white-space: normal; line-height: 1.2; }
 }
-html body#teacherPortal .panel-side, html body#teacherPortal #left-panel, html body#teacherPortal #left-panel *,
-html body#teacherPortal #pagina, html body#teacherPortal #navbar-top, html body#teacherPortal .m-att-bar,
-html body#teacherPortal #pagina .card, html body#teacherPortal .m-chart-box, html body#teacherPortal .m-donut, html body#teacherPortal canvas { transition: none !important; animation: none !important; }
+html body:is(#teacherPortal, #admin) .panel-side, html body:is(#teacherPortal, #admin) #left-panel, html body:is(#teacherPortal, #admin) #left-panel *,
+html body:is(#teacherPortal, #admin) #pagina, html body:is(#teacherPortal, #admin) #navbar-top, html body:is(#teacherPortal, #admin) .m-att-bar,
+html body:is(#teacherPortal, #admin) #pagina .card, html body:is(#teacherPortal, #admin) .m-chart-box, html body:is(#teacherPortal, #admin) .m-donut, html body:is(#teacherPortal, #admin) canvas { transition: none !important; animation: none !important; }
 
 /* Planejamento: passos, cores e cada aula do dia com uma ação clara */
 .m-cal { --cal-open: #7A869A; }
@@ -843,7 +843,7 @@ html body#teacherPortal #pagina .card, html body#teacherPortal .m-chart-box, htm
 .m-cal-entry-head small { color: var(--m-muted); }
 .m-cal-status { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; padding: 2px 8px; font-size: 12px; font-weight: 700; color: var(--m-text); background: color-mix(in srgb, var(--k) 16%, transparent); border-radius: 10px; }
 .m-cal-status i { font-size: 10px; color: var(--k); }
-html body#teacherPortal #pagina .m-cal-entry-theme { margin: 6px 0 0; font-size: 15px; font-weight: 700; }
+html body:is(#teacherPortal, #admin) #pagina .m-cal-entry-theme { margin: 6px 0 0; font-size: 15px; font-weight: 700; }
 .m-cal-quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .m-cal-quick input { flex: 1 1 220px; min-width: 0; }
 .m-cal-more-info { margin-top: 8px; font-size: 13px; }
@@ -885,8 +885,8 @@ html body .m-index-body h6 { margin: 0 0 8px; font-size: 14px; font-weight: 800;
 }
 
 /* Observações por mês e dia; solicitações de ocorrência */
-html body#teacherPortal .m-notes li.m-month-header { margin: 14px 0 2px; padding: 0; font-size: 14px; font-weight: 900; list-style: none; background: none !important; border: 0 !important; border-radius: 0; }
-html body#teacherPortal .m-notes li.m-month-header:first-child { margin-top: 0; }
+html body:is(#teacherPortal, #admin) .m-notes li.m-month-header { margin: 14px 0 2px; padding: 0; font-size: 14px; font-weight: 900; list-style: none; background: none !important; border: 0 !important; border-radius: 0; }
+html body:is(#teacherPortal, #admin) .m-notes li.m-month-header:first-child { margin-top: 0; }
 .m-requests { display: flex; flex-direction: column; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
 .m-requests:empty { display: none; }
 .m-requests li { padding: 10px 12px; border: 1px solid var(--m-border); border-radius: 10px; }
@@ -904,4 +904,92 @@ html body #pagina .card.m-inbox-item.is-new { border-left: 4px solid var(--m-pri
 .m-inbox-topics { margin: 6px 0; padding-left: 18px; font-size: 14px; }
 html body .m-inbox-item p { margin: 2px 0; font-size: 14px; }
 .m-inbox-topics li { list-style: disc; }
-@media (max-width: 767.98px) { html body#teacherPortal #pagina .m-page-head .m-class-tabs button, html body#teacherPortal #pagina .m-guide-page .m-seg button, html body#teacherPortal #pagina .m-lesson-form .m-seg button { min-height: 44px; } .m-page-head .m-class-tabs { display: flex; width: 100%; } .m-page-head .m-class-tabs button { flex: 1; } }
+@media (max-width: 767.98px) { html body:is(#teacherPortal, #admin) #pagina .m-page-head .m-class-tabs button, html body:is(#teacherPortal, #admin) #pagina .m-guide-page .m-seg button, html body:is(#teacherPortal, #admin) #pagina .m-lesson-form .m-seg button { min-height: 44px; } .m-page-head .m-class-tabs { display: flex; width: 100%; } .m-page-head .m-class-tabs button { flex: 1; } }
+
+/* Mural: cor e ícone por tipo; fixado ganha fundo da cor do tipo */
+.is-type-aviso { --k: #2F6FED; }
+.is-type-prova { --k: #E8508C; }
+.is-type-tarefa { --k: #D97706; }
+.is-type-material { --k: #12A9B4; }
+.is-type-evento { --k: #7B61FF; }
+.is-type-urgente { --k: #E5484D; }
+html body #pagina .card.m-board-post[class*="is-type-"] { border-left: 4px solid var(--k) !important; }
+html body #pagina .card.m-board-post[class*="is-type-"].is-pinned { border-style: solid !important; background: color-mix(in srgb, var(--k) 12%, var(--m-surface)) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--k) 45%, transparent) !important; }
+.m-board-tag { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; font-size: 12px; font-weight: 800; color: var(--m-text); background: color-mix(in srgb, var(--k) 18%, transparent); border-radius: 10px; }
+.m-board-tag i { font-size: 11px; color: var(--k); }
+.m-board-pin { display: inline-flex; align-items: center; padding: 2px 8px; font-size: 12px; font-weight: 800; color: #fff; background: var(--k); border-radius: 10px; }
+html.nightMode .m-board-pin { background: color-mix(in srgb, var(--k) 70%, #000); }
+.m-board-count { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; margin-left: 4px; padding: 0 5px; font-size: 11px; color: #fff; background: var(--m-danger); border-radius: 9px; }
+.m-board-types { display: flex; flex-wrap: wrap; gap: 6px; }
+.m-board-type { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 12px; font: inherit; font-size: 13px; font-weight: 700; color: var(--m-text); cursor: pointer; background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 8px; }
+.m-board-type i { color: var(--k); }
+.m-board-type.is-active { background: color-mix(in srgb, var(--k) 18%, var(--m-surface)); border-color: var(--k); box-shadow: inset 0 0 0 1px var(--k); }
+@media (max-width: 767.98px) { .m-board-type { min-height: 44px; flex: 1 1 calc(50% - 6px); justify-content: center; } }
+#studentBoard .m-filter-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+#studentBoard .m-filter-chips .m-att-subject { flex: none; }
+@media (max-width: 767.98px) { #studentBoard .m-filter-chips .m-att-subject { min-height: 44px; } }
+
+/* Aba Turma do aluno: só os colegas */
+.m-classmates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.m-classmate { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 10px; text-align: center; background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 12px; }
+.m-classmate strong { font-size: 13px; font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+.m-classmate small { font-size: 11px; font-weight: 800; color: var(--m-primary-text); }
+.m-classmate.is-me { border-color: var(--m-primary); }
+@media (max-width: 575.98px) { .m-classmates-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+#studentPortal #mural .side-mural { height: auto !important; max-height: none !important; overflow: visible !important; }
+@media (min-width: 992px) { #studentPortalNavbar .navbar-collapse { min-width: 0; flex-wrap: wrap; } }
+
+/* Aba Frequência do aluno */
+.m-freq-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+html body #pagina .card.m-freq-tile { display: flex; flex-direction: column; align-items: center; padding: 14px 8px; text-align: center; }
+.m-freq-tile strong { font-size: 26px; font-weight: 900; line-height: 1.1; }
+.m-freq-tile small { margin-top: 2px; font-size: 12px; font-weight: 700; color: var(--m-muted); }
+.m-freq-tile.is-low strong, .m-freq-list .is-low { color: var(--m-danger); }
+.m-freq-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+.m-freq-list { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.m-freq-list li > div { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 3px; font-size: 13px; font-weight: 700; }
+.m-freq-list small { font-size: 12px; color: var(--m-muted); }
+.m-freq-list .m-index-track > i { background: var(--s, var(--m-primary)); }
+.m-freq-days { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.m-freq-month { margin: 8px 0 2px; font-size: 14px; font-weight: 900; }
+.m-freq-month:first-child { margin-top: 0; }
+.m-freq-day { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border: 1px solid var(--m-border); border-radius: 10px; }
+.m-freq-date { flex: none; display: flex; flex-direction: column; align-items: center; width: 40px; line-height: 1.1; }
+.m-freq-date strong { font-size: 18px; font-weight: 900; }
+.m-freq-date small { font-size: 11px; font-weight: 700; color: var(--m-muted); }
+.m-freq-subjects { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 13px; font-weight: 700; }
+.m-freq-subjects small { font-weight: 500; color: var(--m-muted); }
+#studentFrequency .m-seg button { min-height: 38px; }
+@media (max-width: 767.98px) {
+  .m-freq-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .m-freq-grid { grid-template-columns: minmax(0, 1fr); }
+  #studentFrequency .m-seg button, .m-freq-day .btn { min-height: 44px; }
+}
+
+/* Boletim: nota de cada avaliação e simuladores por matéria */
+html body .m-bul-title { margin: 20px 0 4px; font-size: 15px; font-weight: 800; }
+.m-bul-subjects { display: flex; flex-direction: column; gap: 8px; }
+.m-bul-subject { padding: 0 12px; border: 1px solid var(--m-border); border-left: 4px solid var(--s, var(--m-primary)); border-radius: 10px; }
+.m-bul-subject > summary { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-height: 44px; font-size: 14px; cursor: pointer; }
+.m-bul-subject > summary small { margin-left: auto; font-size: 12px; color: var(--m-muted); }
+.m-bul-subject[open] { padding-bottom: 12px; }
+.m-bul-unit { margin-bottom: 10px; }
+.m-bul-unit-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 4px; font-size: 13px; }
+.m-bul-unit-head .is-low b { color: var(--m-danger); }
+
+/* Professores na aba Turma */
+.m-class-teachers { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.m-class-teacher-photo { width: 56px; height: 56px; object-fit: cover; border-radius: 50%; }
+.m-classmate .m-class-teacher-mail { display: block; max-width: 100%; font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+.m-class-teachers .m-classmate small { font-weight: 600; color: var(--m-muted); }
+@media (max-width: 575.98px) { .m-class-teachers { grid-template-columns: minmax(0, 1fr); } .m-class-teacher-mail { padding: 12px 0; } }
+
+/* Admin no padrão dos portais: submenus e rodapé do menu lateral */
+body#admin #left-panel #sidebar .sidebar-lists .collapse li, body#admin #left-panel #sidebar .sidebar-lists .collapsing li { margin: 0 6px 0 34px !important; }
+html body#admin #left-panel #sidebar .sidebar-lists .collapse li a, html body#admin #left-panel #sidebar .sidebar-lists .collapsing li a { min-height: 38px; font-size: 13px !important; font-weight: 700 !important; color: var(--m-muted) !important; }
+body#admin #left-panel #sidebar .sidebar-lists .footer-panel { position: static; background: none; }
+body#admin.sidebar-responsive #left-panel #sidebar .sidebar-lists hr, body#admin.sidebar-responsive #left-panel #sidebar .sidebar-lists p, body#admin.sidebar-responsive #left-panel #sidebar [fa-angle-right] { display: none; }
+body#admin #left-panel #sidebar hr { background: var(--m-border) !important; }
+html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li { padding: 0 8px !important; }
+body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li > a { min-height: 42px; }
+body#admin #left-panel #sidebar { overflow-x: hidden; }

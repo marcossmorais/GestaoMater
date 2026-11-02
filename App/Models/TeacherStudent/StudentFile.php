@@ -78,6 +78,26 @@ class StudentFile extends Model
 
 
     /**
+     * Colegas de turma para o portal do aluno: só nome e foto (LGPD)
+     */
+    public function classmates($classId, $enrollmentId)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT aluno.nome_aluno AS name, aluno.foto_perfil_aluno AS photo, matricula.id_matricula = :enrollment AS is_me
+             FROM matricula
+             INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)
+             WHERE matricula.fk_id_turma_matricula = :class AND matricula.fk_id_situacao_aluno = 1
+             ORDER BY aluno.nome_aluno"
+        );
+
+        $stmt->execute([':class' => (int) $classId, ':enrollment' => (int) $enrollmentId]);
+
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+
+    /**
      * Responsáveis para contato: nome, parentesco e telefone (sem documentos)
      */
     public function guardians($studentId)

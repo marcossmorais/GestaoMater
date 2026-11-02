@@ -18,10 +18,13 @@ require __DIR__ . '/../../config/variables.php';
 	<script> if (localStorage.getItem('nightModeAdmin')) { document.documentElement.classList.add('nightMode') } </script>
 	<link rel="stylesheet" href="<?= asset('/assets/css/stylesheet.css') ?>">
 	<link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
+	<link rel="stylesheet" href="<?= asset('/assets/css/edu.css') ?>">
 	<link rel = "shortcut icon" type = "imagem/x-icon" href = "<?= $app_url ?>/assets/img/logo-components/logo.png"/>
 </head>
 
 <body id="admin">
+
+	<script> try { if (localStorage.getItem('mater-menu-recolhido')) { document.body.classList.add('sidebar-responsive') } } catch (e) {} </script>
 
 	<div class="container-fluid">
 

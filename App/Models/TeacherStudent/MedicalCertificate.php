@@ -37,6 +37,7 @@ class MedicalCertificate extends Model
                 am.faltas_abonadas,
                 am.observacao,
                 am.anexo_documento,
+                am.anexo_privado,
                 am.registrado_por,
                 TO_CHAR(am.criado_em, 'DD/MM/YYYY HH24:MI') AS criado_em_formatado
             FROM atestado_medico am

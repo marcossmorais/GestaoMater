@@ -56,7 +56,47 @@ $status = [
                 </tbody>
             </table>
         </div>
-        <p class="m-muted-note mt-2 mb-0"><sup>R</sup> nota da recuperação · <sup>*</sup> parcial (faltam avaliações) · em vermelho: abaixo de <?= $fmt($rule['passing']) ?> · a média do ano aparece quando os <?= (int) $rule['units'] ?> bimestres fecham</p>
+        <p class="m-muted-note mt-2 mb-0"><sup>R</sup> nota da recuperação · <sup>*</sup> parcial (faltam avaliações) · em vermelho: abaixo de <?= $fmt($rule['passing']) ?></p>
+
+        <h6 class="m-bul-title">Notas por avaliação e simulador</h6>
+        <p class="m-muted-note">Abra a matéria para ver a nota de cada avaliação e simular as que faltam.</p>
+
+        <div class="m-bul-subjects">
+            <?php
+            $studentExams = $this->view->studentExams;
+            foreach ($rows as $d) {
+                $doneUnits = array_filter($d['units'], function ($unit) { return $unit['grade'] !== null; });
+            ?>
+                <details class="m-bul-subject <?= \App\Tools\Subject::css($d['discipline']) ?>" data-perf='<?= htmlspecialchars(json_encode(['units' => array_map(function ($u) use ($counts) { return $counts($u) ? $u['grade'] : null; }, $d['units'])]), ENT_QUOTES) ?>'>
+                    <summary>
+                        <i class="fas <?= \App\Tools\Subject::icon($d['discipline']) ?> m-subj-ico" aria-hidden="true"></i>
+                        <strong><?= htmlspecialchars($d['discipline']) ?></strong>
+                        <small><?= count($doneUnits) ?> de <?= (int) $rule['units'] ?> bimestres com nota</small>
+                    </summary>
+                    <?php foreach ($d['units'] as $u => $unit) {
+                        $list = $this->view->exams[(int) $d['id']][$u] ?? [];
+                        if (!$list && $unit['grade'] === null) continue;
+                    ?>
+                        <div class="m-bul-unit">
+                            <div class="m-bul-unit-head">
+                                <strong><?= (int) $u ?>º bimestre</strong>
+                                <span class="<?= $unit['grade'] !== null && $unit['grade'] < $rule['passing'] ? 'is-low' : '' ?>">Nota do bimestre: <b><?= $fmt($unit['grade']) ?></b></span>
+                            </div>
+                            <ul class="m-gradeline-exams">
+                                <?php foreach ($list as $e) { $types = \App\Models\TeacherStudent\Gradebook::typeLabels($e->types ?? ''); ?>
+                                    <li class="<?= $e->grade !== null && $e->grade < $rule['passing'] ? 'is-low' : '' ?>">
+                                        <span><?= htmlspecialchars($e->recovery ? 'Recuperação' : $e->description) ?></span>
+                                        <b><?= $fmt($e->grade) ?></b>
+                                        <small><?= htmlspecialchars($types ?: $e->date) ?></small>
+                                    </li>
+                                <?php } ?>
+                            </ul>
+                        </div>
+                    <?php } ?>
+                    <?php require __DIR__ . '/gradeSimulators.php'; ?>
+                </details>
+            <?php } ?>
+        </div>
     <?php } ?>
 
 </div>
