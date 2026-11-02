@@ -1,5 +1,5 @@
 <?php
-// Aba Turma do aluno: só os colegas, com nome e foto. Sem matrícula, contato, faltas ou notas (LGPD).
+// Aba Turma do aluno: colegas só com nome e foto, sem matrícula, contato, faltas ou notas (LGPD); professores com o e-mail.
 $classmates = $this->view->classmates ?? [];
 ?>
 
@@ -28,5 +28,17 @@ $classmates = $this->view->classmates ?? [];
             <?php } ?>
         </ul>
     <?php } ?>
+
+    <h5 class="mt-4 mb-3">Professores</h5>
+    <ul class="m-classmates-grid m-class-teachers">
+        <?php foreach ($this->view->listTeacher as $t) { ?>
+            <li class="m-classmate">
+                <img class="m-class-teacher-photo" src="<?= $app_url ?>/assets/img/teacherProfilePhotos/<?= htmlspecialchars($t->photo ?: 'foto-vazia.jpg') ?>" alt="" loading="lazy">
+                <strong><?= htmlspecialchars($t->name) ?></strong>
+                <small><?= htmlspecialchars(implode(' · ', $t->disciplines)) ?></small>
+                <?php if ($t->email) { ?><a class="m-class-teacher-mail" href="mailto:<?= htmlspecialchars($t->email) ?>"><i class="fas fa-envelope mr-1" aria-hidden="true"></i><?= htmlspecialchars($t->email) ?></a><?php } ?>
+            </li>
+        <?php } ?>
+    </ul>
 
 </div>

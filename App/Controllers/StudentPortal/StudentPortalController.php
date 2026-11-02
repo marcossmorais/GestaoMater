@@ -100,7 +100,13 @@ class StudentPortalController extends Action
         $this->view->disciplineAverageList = $DisciplineAverage->readByIdStudent();
         $this->view->schoolTermActive = $SchoolTerm->active();
         $this->view->studentDataGeneral = $StudentEnrollment->dataGeneral('<> 0');
-        // aba Turma: só os colegas, com nome e foto; a comparação com a média (sem nomes) fica em Desempenho
+        // aba Turma: colegas só com nome e foto; professores com e-mail. A comparação com a média fica em Desempenho
+        $teachers = [];
+        foreach ($ClassDiscipline->listTeachersClass() as $t) {
+            $teachers[(int) $t->id] = $teachers[(int) $t->id] ?? (object) ['name' => $t->name, 'photo' => $t->profile_photo, 'email' => $t->email, 'disciplines' => []];
+            $teachers[(int) $t->id]->disciplines[] = $t->discipline_name;
+        }
+        $this->view->listTeacher = array_values($teachers);
         $this->view->classmates = Container::getModel('TeacherStudent\\StudentFile')->classmates($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
         $this->view->classAverages = Container::getModel('TeacherStudent\\StudentFile')->classAverages($_SESSION['Student']['classId'], Container::getModel('Student\\StudentPerformance')->rule(), 5);
         $this->view->linkedDisciplines = $ClassDiscipline->classLinkedSubjects();
@@ -221,12 +227,6 @@ class StudentPortalController extends Action
     }
 
 
-
-
-    public function settings()
-    {
-
-
     public function certificateFile()
     {
         if (!isset($_SESSION)) session_start();
@@ -241,6 +241,12 @@ class StudentPortalController extends Action
 
         \App\Models\Student\StudentAttendance::sendFile($file);
     }
+
+
+    public function settings()
+    {
+
+
         $Student = Container::getModel('Student\\Student');
         $StudentEnrollment = Container::getModel('Student\\StudentEnrollment');
 
@@ -370,12 +376,6 @@ class StudentPortalController extends Action
         $Performance = Container::getModel('Student\StudentPerformance');
         $this->view->rule = $Performance->rule();
         $this->view->rows = $Performance->byDiscipline((int) $_SESSION['Student']['enrollmentId'], (int) $_SESSION['Student']['classId']);
-
-        $this->render('components/bulletin', 'SimpleLayout', 'studentPortal');
-    }
-
-
-    /**
         $this->view->studentExams = $this->studentExams($this->view->rows);
 
         // cada avaliação com tipo e data, para o detalhe por matéria
@@ -384,6 +384,12 @@ class StudentPortalController extends Action
             $exams[(int) $e->discipline_class_id][(int) $e->unity][] = $e;
         }
         $this->view->exams = $exams;
+
+        $this->render('components/bulletin', 'SimpleLayout', 'studentPortal');
+    }
+
+
+    /**
      * Boletim para imprimir, com código de validação e QR (só do próprio aluno)
      */
     public function bulletinDocument()
