@@ -11,7 +11,7 @@ use MF\Model\Model;
 class StudentFile extends Model
 {
 
-    // botões de um toque; o texto livre continua disponível
+    // caixas marcáveis (uma ou mais); o texto livre continua disponível
     const QUICK_NOTES = [
         'Participou bem da aula',
         'Não fez a tarefa',
@@ -45,6 +45,33 @@ class StudentFile extends Model
         $stmt->execute([':id' => (int) $enrollmentId]);
 
         return $stmt->fetch(\PDO::FETCH_OBJ) ?: null;
+    }
+
+
+    /**
+     * Carômetro: alunos ativos da turma, com as faltas não abonadas do bimestre nas disciplinas informadas
+     *
+     * @param int[] $disciplineClassIds disciplinas do professor na turma
+     */
+    public function classRoster($classId, array $disciplineClassIds, $unity)
+    {
+
+        $ids = implode(',', array_map('intval', $disciplineClassIds)) ?: '0';
+
+        $stmt = $this->db->prepare(
+            "SELECT matricula.id_matricula AS id, aluno.nome_aluno AS name, aluno.foto_perfil_aluno AS photo,
+                    COALESCE((SELECT SUM(f.total_faltas - COALESCE(f.faltas_abonadas, 0)) FROM falta_aluno f
+                              WHERE f.fk_id_matricula_falta = matricula.id_matricula AND f.fk_id_unidade_falta = :unity
+                                AND f.fk_id_turma_disciplina_falta IN ($ids)), 0)::int AS absences
+             FROM matricula
+             INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)
+             WHERE matricula.fk_id_turma_matricula = :class AND matricula.fk_id_situacao_aluno = 1
+             ORDER BY aluno.nome_aluno"
+        );
+
+        $stmt->execute([':class' => (int) $classId, ':unity' => (int) $unity]);
+
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
     }
 
 

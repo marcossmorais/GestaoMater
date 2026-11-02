@@ -1,4 +1,4 @@
-// Mater — Ficha do aluno no portal do docente: observações rápidas (um toque) e texto livre
+// Mater — Perfil do aluno no portal do docente: abas, notas por bimestre, gráfico e observações
 (function () {
 
     const config = window.MATER_STUDENT || {};
@@ -6,32 +6,18 @@
     if (!root) return;
 
     const notes = root.querySelector('[data-notes]');
-    let busy = false;
 
     function escapeHtml(text) {
         return String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
 
-    function toast(message, type) {
-        if (typeof tools !== 'undefined' && typeof tools.showToast === 'function') {
-            tools.showToast(message, type === 'error' ? 'bg-danger' : 'bg-success');
-        }
-    }
-
-    async function save(box, text) {
-        if (busy || !text) return false;
-        busy = true;
-        try {
-            const response = await fetch('/portal-docente/aluno/observacao', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                body: JSON.stringify({ enrollment: config.enrollment, disciplineClass: parseInt(box.dataset.dc, 10), text })
-            });
-            const data = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(data.error || 'falha');
-
-            const discipline = box.closest('.card').querySelector('.m-panel-head h6').firstChild.textContent.trim();
-            const item = `<li class="${box.closest('.card').className.match(/m-subj m-subj-\w+/)?.[0] || ''}" data-note-discipline="${escapeHtml(discipline)}"><p>${escapeHtml(text)}</p><small>${escapeHtml(discipline)} · ${escapeHtml(config.teacher || '')}</small></li>`;
+    // ---------- Observação rápida: entra no histórico assim que salva
+    const quick = root.querySelector('[data-quick]');
+    if (quick) window.MaterQuickNote.bind(quick, {
+        enrollment: () => config.enrollment,
+        onSaved(text, data, option) {
+            const discipline = option.textContent;
+            const item = `<li class="${escapeHtml(option.dataset.subject || '')}" data-note-discipline="${escapeHtml(discipline)}"><p>${escapeHtml(text)}</p><small>${escapeHtml(discipline)} · ${escapeHtml(config.teacher || '')}</small></li>`;
             const first = notes.querySelector('li');
             if (first && first.hasAttribute('data-day') && first.textContent.startsWith('Hoje')) {
                 first.insertAdjacentHTML('afterend', item);
@@ -40,22 +26,24 @@
             }
             const empty = root.querySelector('[data-notes-empty]');
             if (empty) empty.remove();
-            toast('Observação salva');
-            return true;
-        } catch (e) {
-            toast(e.message === 'sem-permissao' ? 'Você não tem permissão nesta disciplina.' : 'Não foi possível salvar. Tente de novo.', 'error');
-            return false;
-        } finally {
-            busy = false;
         }
+    });
+
+    // ---------- Abas (?aba=notas abre direto) e bimestre das notas
+    function openTab(tab) {
+        root.querySelectorAll('[data-tab]').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === tab));
+        root.querySelectorAll('[data-tab-panel]').forEach((panel) => { panel.hidden = panel.dataset.tabPanel !== tab; });
+        if (tab === 'resumo' && chartData) drawChart(chartUnit);
     }
 
-    root.addEventListener('click', async (event) => {
-        const chip = event.target.closest('[data-quick-note]');
-        if (!chip) return;
-        chip.classList.add('is-active');
-        const ok = await save(chip.closest('[data-quick]'), chip.dataset.quickNote);
-        setTimeout(() => chip.classList.remove('is-active'), ok ? 600 : 0);
+    root.addEventListener('click', (event) => {
+        const tab = event.target.closest('[data-tab]');
+        if (tab) return openTab(tab.dataset.tab);
+
+        const unit = event.target.closest('[data-grades-unit] [data-unit]');
+        if (!unit) return;
+        root.querySelectorAll('[data-grades-unit] button').forEach((b) => b.classList.toggle('is-active', b === unit));
+        root.querySelectorAll('[data-grades-panel]').forEach((panel) => { panel.hidden = panel.dataset.gradesPanel !== unit.dataset.unit; });
     });
 
     // ---------- Filtro das observações por matéria (cabeçalhos de dia vazios somem)
@@ -134,17 +122,9 @@
         drawChart(parseInt(button.dataset.unit, 10));
     });
 
-    if (chartData) {
-        drawChart(chartData.unity);
-        MATER_CHART.onThemeChange(() => drawChart(chartUnit));
-    }
+    if (chartData) MATER_CHART.onThemeChange(() => { if (canvas.offsetParent) drawChart(chartUnit); });
 
-    root.addEventListener('submit', async (event) => {
-        const form = event.target.closest('[data-quick-form]');
-        if (!form) return;
-        event.preventDefault();
-        const input = form.querySelector('input');
-        if (await save(form.closest('[data-quick]'), input.value.trim())) input.value = '';
-    });
+    const startTab = new URLSearchParams(window.location.search).get('aba');
+    openTab(['notas', 'observacoes'].includes(startTab) ? startTab : 'resumo');
 
 })();

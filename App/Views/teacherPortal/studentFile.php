@@ -15,6 +15,9 @@ $own = array_values(array_filter($performance, function ($p) use ($mine) { retur
 $words = preg_split('/\s+/', trim($student->name));
 $initials = mb_strtoupper(mb_substr($words[0], 0, 1) . (count($words) > 1 ? mb_substr(end($words), 0, 1) : ''));
 $occ = $this->view->occurrences;
+$examTypes = $this->view->examTypes;
+// suas disciplinas primeiro; as demais só para consulta
+$ordered = array_merge($own, array_values(array_filter($performance, function ($p) use ($mine) { return !in_array((int) $p['id'], $mine, true); })));
 ?>
 
 <section id="studentFile" class="m-att">
@@ -46,6 +49,14 @@ $occ = $this->view->occurrences;
             }
             $absences = array_sum(array_column($performance, 'absences'));
             ?>
+
+            <div class="m-seg m-file-tabs" role="group" aria-label="Seções do perfil" data-file-tabs>
+                <button type="button" class="is-active" data-tab="resumo"><i class="fas fa-id-card mr-2"></i>Resumo</button>
+                <button type="button" data-tab="notas"><i class="fas fa-marker mr-2"></i>Notas</button>
+                <button type="button" data-tab="observacoes"><i class="fas fa-comment-dots mr-2"></i>Observações</button>
+            </div>
+
+            <div data-tab-panel="resumo">
 
             <div class="m-file-grid">
                 <div class="card m-panel m-file-data">
@@ -89,56 +100,69 @@ $occ = $this->view->occurrences;
 
             <script>window.MATER_STUDENT_CHART = <?= json_encode($chart, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;</script>
 
-            <?php foreach ($own as $p) { $dc = (int) $p['id']; ?>
-                <div class="card m-panel mb-3 <?= \App\Tools\Subject::css($p['discipline']) ?>">
-                    <div class="m-panel-head">
-                        <h6><?= htmlspecialchars($p['discipline']) ?> <span class="m-pill m-pill-info ml-1">sua disciplina</span></h6>
-                        <a href="/portal-docente/notas?turma=<?= $dc ?>">Lançar notas</a>
-                    </div>
+            </div>
 
-                    <div class="m-bim-grid">
-                        <?php for ($u = 1; $u <= $rule['units']; $u++) {
-                            $unit = $p['units'][$u];
-                            $list = $exams[$dc][$u] ?? [];
-                            $state = $unit['grade'] === null ? '' : ($unit['needsRecovery'] ? 'is-low' : ($unit['grade'] < $rule['passing'] ? ($unit['closed'] ? 'is-low' : 'is-warn') : 'is-ok'));
-                        ?>
-                            <div class="m-bim <?= $state ?>">
-                                <div class="m-bim-head">
-                                    <span><?= $u ?>º bimestre</span>
-                                    <strong><?= $fmt($unit['grade']) ?><?= $unit['recovered'] ? '<sup>R</sup>' : ($unit['grade'] !== null && !$unit['closed'] ? '<sup>*</sup>' : '') ?></strong>
-                                </div>
-                                <?php if (!$list) { ?>
-                                    <p class="m-muted-note m-0">Sem avaliações.</p>
-                                <?php } else { ?>
-                                    <ul>
-                                        <?php foreach ($list as $e) { ?>
-                                            <li><span><?= htmlspecialchars($e->description) ?> <small><?= htmlspecialchars($e->date) ?></small></span><b><?= $fmt($e->grade) ?></b></li>
-                                        <?php } ?>
-                                    </ul>
-                                <?php } ?>
-                                <?php if ($unit['needsRecovery']) { ?><span class="m-pill m-pill-bad">Aguarda recuperação</span><?php } ?>
-                            </div>
-                        <?php } ?>
-                    </div>
-
-                    <div class="m-quick" data-quick data-dc="<?= $dc ?>">
-                        <span class="m-att-label">Observação rápida</span>
-                        <div class="m-att-subjects-list">
-                            <?php foreach ($this->view->quickNotes as $q) { ?>
-                                <button type="button" class="m-att-subject" data-quick-note="<?= htmlspecialchars($q) ?>"><?= htmlspecialchars($q) ?></button>
-                            <?php } ?>
-                        </div>
-                        <form class="m-quick-form" data-quick-form>
-                            <input type="text" class="form-control" maxlength="1000" placeholder="Ou escreva uma observação…" aria-label="Observação sobre o aluno">
-                            <button type="submit" class="btn btn-primary">Salvar</button>
-                        </form>
-                    </div>
-                </div>
-            <?php } ?>
+            <div data-tab-panel="notas" hidden>
 
             <div class="card m-panel mb-3">
                 <div class="m-panel-head">
-                    <h6>Todas as disciplinas</h6>
+                    <h6>Notas de cada avaliação</h6>
+                    <div class="m-seg" role="group" aria-label="Bimestre" data-grades-unit>
+                        <?php for ($u = 1; $u <= $rule['units']; $u++) { ?>
+                            <button type="button" class="<?= $u === (int) $this->view->unity ? 'is-active' : '' ?>" data-unit="<?= $u ?>"><?= $u ?>º</button>
+                        <?php } ?>
+                    </div>
+                </div>
+
+                <?php for ($u = 1; $u <= $rule['units']; $u++) { ?>
+                    <div class="m-gradelines" data-grades-panel="<?= $u ?>" <?= $u === (int) $this->view->unity ? '' : 'hidden' ?>>
+                        <?php foreach ($ordered as $p) {
+                            $dc = (int) $p['id'];
+                            $isMine = in_array($dc, $mine, true);
+                            $unit = $p['units'][$u];
+                            $list = $exams[$dc][$u] ?? [];
+                            $regular = array_values(array_filter($list, function ($e) { return !$e->recovery; }));
+                            $recovery = array_values(array_filter($list, function ($e) { return $e->recovery; }));
+                            $state = $unit['grade'] === null ? '' : ($unit['grade'] < $rule['passing'] ? 'is-low' : 'is-ok');
+                            $slots = max((int) $rule['perBimester'], count($regular));
+                        ?>
+                            <div class="m-gradeline <?= \App\Tools\Subject::css($p['discipline']) ?>">
+                                <div class="m-gradeline-name">
+                                    <strong><i class="fas <?= \App\Tools\Subject::icon($p['discipline']) ?> m-subj-ico" aria-hidden="true"></i><?= htmlspecialchars($p['discipline']) ?></strong>
+                                    <small><?= htmlspecialchars($p['teacher']) ?></small>
+                                    <?php if ($isMine) { ?><a href="/portal-docente/notas?turma=<?= $dc ?>">Lançar notas</a><?php } ?>
+                                </div>
+                                <ul class="m-gradeline-exams">
+                                    <?php for ($i = 0; $i < $slots; $i++) { $e = $regular[$i] ?? null; $types = $e ? array_map(function ($t) use ($examTypes) { return $examTypes[$t] ?? $t; }, array_filter(explode(',', $e->types))) : []; ?>
+                                        <li class="<?= $e && $e->grade !== null && $e->grade < $rule['passing'] ? 'is-low' : '' ?>" <?= $e ? 'title="' . htmlspecialchars($e->description) . '"' : '' ?>>
+                                            <span><?= $i + 1 ?>ª</span>
+                                            <b><?= $e ? $fmt($e->grade) : '–' ?></b>
+                                            <small><?= $e ? htmlspecialchars(implode(', ', $types) ?: $e->date) : 'não aplicada' ?></small>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if ($recovery) { $e = $recovery[0]; ?>
+                                        <li class="<?= $e->grade !== null && $e->grade < $rule['passing'] ? 'is-low' : '' ?>" title="Recuperação">
+                                            <span>Rec.</span>
+                                            <b><?= $fmt($e->grade) ?></b>
+                                            <small><?= htmlspecialchars($e->date) ?></small>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                                <div class="m-gradeline-final <?= $state ?>">
+                                    <span>Bimestre</span>
+                                    <strong><?= $fmt($unit['grade']) ?><?= $unit['recovered'] ? '<sup>R</sup>' : ($unit['grade'] !== null && !$unit['closed'] ? '<sup>*</sup>' : '') ?></strong>
+                                    <?php if ($unit['needsRecovery']) { ?><span class="m-pill m-pill-bad">Aguarda recuperação</span><?php } ?>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+                <p class="m-muted-note mb-0 mt-2">Em vermelho: abaixo de <?= $fmt($rule['passing']) ?> · <sup>R</sup> recuperação · <sup>*</sup> parcial</p>
+            </div>
+
+            <div class="card m-panel mb-3">
+                <div class="m-panel-head">
+                    <h6>Resumo do ano</h6>
                     <span class="m-muted-note m-0"><i class="fas fa-eye mr-1"></i>só leitura nas outras</span>
                 </div>
                 <div class="m-overview-wrap">
@@ -170,8 +194,21 @@ $occ = $this->view->occurrences;
                 <p class="m-muted-note mb-0 mt-2"><sup>R</sup> recuperação · <sup>*</sup> parcial · em vermelho: abaixo de <?= $fmt($rule['passing']) ?> · <i class="fas fa-pen fa-xs"></i> você edita</p>
             </div>
 
+            </div>
+
+            <div data-tab-panel="observacoes" hidden>
+
+            <?php if ($own) {
+                $quickNotes = $this->view->quickNotes;
+                $quickDisciplines = array_map(function ($p) { return ['id' => (int) $p['id'], 'name' => $p['discipline'], 'subject' => \App\Tools\Subject::css($p['discipline'])]; }, $own);
+            ?>
+                <div class="card m-panel mb-3">
+                    <?php require __DIR__ . '/components/quickNote.php'; ?>
+                </div>
+            <?php } ?>
+
             <div class="card m-panel mb-3">
-                <div class="m-panel-head"><h6><i class="fas fa-comment-dots mr-2"></i>Observações</h6></div>
+                <div class="m-panel-head"><h6><i class="fas fa-comment-dots mr-2"></i>Histórico</h6></div>
                 <?php $noteDisciplines = array_values(array_unique(array_map(function ($n) { return $n->discipline; }, $this->view->notes))); ?>
                 <?php if (count($noteDisciplines) > 1) { ?>
                     <div class="m-filter-chips" data-notes-filter role="group" aria-label="Filtrar por matéria">
@@ -188,6 +225,8 @@ $occ = $this->view->occurrences;
                 <?php if (!$this->view->notes) { ?><p class="m-empty mb-0" data-notes-empty>Nenhuma observação ainda.</p><?php } ?>
             </div>
 
+            </div>
+
         </div>
     </div>
 
@@ -196,4 +235,5 @@ $occ = $this->view->occurrences;
 <script>
     window.MATER_STUDENT = { enrollment: <?= (int) $student->id ?>, teacher: <?= json_encode($_SESSION['Teacher']['name'], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?> };
 </script>
+<script src="<?= asset('/assets/js/quickNote.js') ?>" defer></script>
 <script src="<?= asset('/assets/js/studentFile.js') ?>" defer></script>

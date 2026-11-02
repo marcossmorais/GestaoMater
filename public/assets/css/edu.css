@@ -621,5 +621,59 @@ html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-bad { background:
 .m-rank-bar i { display: block; height: 100%; border-radius: 4px; background: #0EA5E9; }
 .m-rank b { font-size: 13px; white-space: nowrap; }
 
+/* ---------- Observação rápida marcável */
+.m-quick { display: flex; flex-direction: column; gap: 10px; }
+.m-quick .m-att-subject { min-height: 44px; }
+.m-quick .m-att-subject i { margin-right: 8px; }
+.m-quick-form { display: flex; gap: 8px; }
+.m-quick-form .btn { min-height: 44px; flex: none; }
+
+/* ---------- Carômetro da turma */
+.m-roster-card { cursor: default; padding: 0 0 10px; }
+.m-roster-card:active { transform: none; }
+.m-roster-link { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; padding: 18px 12px 8px; color: inherit; border-radius: inherit; }
+.m-roster-link:hover { color: inherit; text-decoration: none; }
+.m-roster-link:focus-visible { outline: none; box-shadow: var(--m-focus); }
+.m-roster-note { min-height: 44px; width: calc(100% - 20px); font-size: 13px; font-weight: 800; }
+.m-sheet { position: fixed; inset: 0; z-index: 1035; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(10, 20, 45, .5); }
+.m-sheet[hidden] { display: none; }
+.m-sheet-box { width: 100%; max-width: 560px; max-height: calc(100vh - 32px); overflow: auto; }
+.m-sheet-box .m-panel-head h6 { margin: 0; }
+body#teacherPortal #toastContainer { z-index: 1050; }
+@media (max-width: 767.98px) {
+  .m-sheet { align-items: flex-end; padding: 0; }
+  .m-sheet-box { max-width: none; border-radius: 20px 20px 0 0 !important; padding-bottom: 24px; }
+}
+
+/* ---------- Perfil do aluno: abas e notas por avaliação */
+.m-file-tabs { display: flex; width: fit-content; max-width: 100%; margin-bottom: 14px; }
+.m-file-tabs button { min-height: 44px; padding: 0 16px; white-space: nowrap; }
+.m-gradelines { display: flex; flex-direction: column; gap: 8px; }
+.m-gradelines[hidden] { display: none; }
+.m-gradeline { display: grid; grid-template-columns: minmax(150px, 1.1fr) minmax(0, 3fr) 160px; align-items: center; gap: 12px; padding: 10px 12px; border: 1.5px solid var(--m-border); border-radius: 14px; }
+.m-gradeline-name { display: flex; flex-direction: column; min-width: 0; }
+.m-gradeline-name small { color: var(--m-muted); }
+.m-gradeline-name a { display: inline-block; font-size: 13px; font-weight: 800; }
+.m-gradeline-exams { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 6px; margin: 0; padding: 0; }
+.m-gradeline-exams li { display: flex; flex-direction: column; min-width: 0; padding: 6px 8px; border-radius: 10px; background: var(--m-surface-2); }
+.m-gradeline-exams span { font-size: 11px; font-weight: 800; color: var(--m-muted); }
+.m-gradeline-exams b { font-size: 17px; font-weight: 900; }
+.m-gradeline-exams small { overflow: hidden; font-size: 11px; line-height: 1.25; color: var(--m-muted); overflow-wrap: anywhere; }
+.m-gradeline-exams li.is-low b, .m-gradeline-final.is-low strong { color: #D92D3A; }
+html.nightMode .m-gradeline-exams li.is-low b, html.nightMode .m-gradeline-final.is-low strong { color: #FF9EA1; }
+.m-gradeline-final { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; }
+.m-gradeline-final > span:first-child { font-size: 11px; font-weight: 800; color: var(--m-muted); }
+.m-gradeline-final strong { font-size: 22px; font-weight: 900; }
+.m-gradeline-final.is-ok strong { color: #1A8F63; }
+html.nightMode .m-gradeline-final.is-ok strong { color: #7BE3B6; }
+@media (max-width: 767.98px) {
+  .m-gradeline { grid-template-columns: minmax(0, 1fr) auto; }
+  .m-gradeline-exams { grid-column: 1 / -1; grid-row: 2; }
+  .m-gradeline-final { grid-column: 2; grid-row: 1; }
+  .m-file-tabs { width: 100%; }
+  .m-file-tabs button { flex: 1; padding: 0 6px; font-size: 13px; }
+  .m-file-tabs button i { display: none; }
+}
+
 /* Portal do aluno: tipos da avaliação no roteiro de provas */
 .m-guide-types { display: block; font-weight: 700; }
