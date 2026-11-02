@@ -43,6 +43,7 @@ $others = array_values(array_filter($board, function ($p) { return !$p->pinned; 
                     <span class="m-guide-title">
                         <strong><i class="fas <?= \App\Tools\Subject::icon($g->discipline) ?> m-subj-ico"></i><?= htmlspecialchars($g->discipline) ?></strong>
                         <small><?= $g->recovery ? 'Recuperação' : htmlspecialchars($g->description) ?> · <?= (int) $g->unity ?>º bimestre · <?= htmlspecialchars($g->teacher) ?></small>
+                        <?php if ($types = \App\Models\TeacherStudent\Gradebook::typeLabels($g->types)) { ?><small class="m-guide-types"><i class="fas fa-tasks mr-1"></i><?= htmlspecialchars($types) ?></small><?php } ?>
                     </span>
                 </summary>
                 <div class="m-guide-body">

@@ -621,3 +621,5 @@ html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-bad { background:
 .m-rank-bar i { display: block; height: 100%; border-radius: 4px; background: #0EA5E9; }
 .m-rank b { font-size: 13px; white-space: nowrap; }
 
+/* Portal do aluno: tipos da avaliação no roteiro de provas */
+.m-guide-types { display: block; font-weight: 700; }

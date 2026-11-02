@@ -17,6 +17,22 @@ class Gradebook extends Model
 
     const MAX_GRADE = 10;
 
+    // o que pode valer ponto em uma avaliação; o professor marca um ou mais
+    const EXAM_TYPES = [
+        'prova' => 'Prova',
+        'teste' => 'Teste ou simulado',
+        'atividade' => 'Atividade em sala',
+        'tarefa' => 'Lista ou tarefa',
+        'trabalho' => 'Trabalho escrito',
+        'apresentacao' => 'Trabalho apresentado',
+        'projeto' => 'Projeto',
+        'pesquisa' => 'Pesquisa',
+        'redacao' => 'Redação',
+        'pratica' => 'Prática ou laboratório',
+        'participacao' => 'Participação',
+        'outro' => 'Outro',
+    ];
+
 
     /**
      * Avaliações de uma turma/disciplina, com quantas notas já foram lançadas
@@ -35,6 +51,7 @@ class Gradebook extends Model
                 avaliacoes.roteiro_assuntos AS guide_topics,
                 avaliacoes.roteiro_material AS guide_material,
                 avaliacoes.recuperacao AS recovery,
+                COALESCE((SELECT string_agg(tipo, ',' ORDER BY tipo) FROM avaliacao_tipo WHERE fk_id_avaliacao = avaliacoes.id_avaliacao), '') AS types,
                 (SELECT COUNT(*) FROM nota_avaliacao WHERE fk_id_avaliacao = avaliacoes.id_avaliacao) AS graded
             FROM avaliacoes
             WHERE avaliacoes.fk_id_turma_disciplina_avaliacao = :disciplineClass
@@ -127,6 +144,39 @@ class Gradebook extends Model
         foreach (['notes', 'topics', 'material'] as $key) $params[":$key"] = ($guide[$key] ?? '') !== '' ? $guide[$key] : null;
 
         return $stmt->execute($params);
+    }
+
+
+    /**
+     * Nomes dos tipos a partir da lista gravada ("prova,trabalho" => "Prova, Trabalho escrito")
+     */
+    public static function typeLabels($types)
+    {
+        return implode(', ', array_map(function ($type) { return self::EXAM_TYPES[$type] ?? $type; }, array_filter(explode(',', (string) $types))));
+    }
+
+
+    /**
+     * Troca os tipos da avaliação (prova, trabalho, apresentação…)
+     */
+    public function saveTypes($examId, array $types)
+    {
+
+        $this->db->beginTransaction();
+
+        try {
+            $this->db->prepare("DELETE FROM avaliacao_tipo WHERE fk_id_avaliacao = :id")->execute([':id' => (int) $examId]);
+
+            $insert = $this->db->prepare("INSERT INTO avaliacao_tipo (fk_id_avaliacao, tipo) VALUES (:id, :type)");
+            foreach ($types as $type) {
+                $insert->execute([':id' => (int) $examId, ':type' => $type]);
+            }
+
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $e;
+        }
     }
 
 
@@ -337,7 +387,8 @@ class Gradebook extends Model
             "SELECT avaliacoes.id_avaliacao AS id, avaliacoes.descricao_avaliacao AS description, avaliacoes.valor_avaliacao AS value,
                     avaliacoes.fk_id_unidade_avaliacao AS unity, TO_CHAR(avaliacoes.data_realizada, 'DD/MM') AS date,
                     avaliacoes.roteiro AS guide, avaliacoes.roteiro_assuntos AS guide_topics, avaliacoes.roteiro_material AS guide_material,
-                    avaliacoes.recuperacao AS recovery, disciplina.nome_disciplina AS discipline, professor.nome_professor AS teacher
+                    avaliacoes.recuperacao AS recovery, disciplina.nome_disciplina AS discipline, professor.nome_professor AS teacher,
+                    COALESCE((SELECT string_agg(tipo, ',' ORDER BY tipo) FROM avaliacao_tipo WHERE fk_id_avaliacao = avaliacoes.id_avaliacao), '') AS types
              FROM avaliacoes
              INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
              INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)

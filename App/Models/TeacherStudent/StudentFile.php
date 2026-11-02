@@ -127,6 +127,7 @@ class StudentFile extends Model
             "SELECT avaliacoes.fk_id_turma_disciplina_avaliacao AS discipline_class_id, avaliacoes.fk_id_unidade_avaliacao AS unity,
                     avaliacoes.descricao_avaliacao AS description, avaliacoes.recuperacao AS recovery,
                     TO_CHAR(avaliacoes.data_realizada, 'DD/MM') AS date,
+                    COALESCE((SELECT string_agg(tipo, ',' ORDER BY tipo) FROM avaliacao_tipo WHERE fk_id_avaliacao = avaliacoes.id_avaliacao), '') AS types,
                     nota_avaliacao.valor_nota / NULLIF(avaliacoes.valor_avaliacao, 0) * 10 AS grade
              FROM avaliacoes
              LEFT JOIN nota_avaliacao ON (nota_avaliacao.fk_id_avaliacao = avaliacoes.id_avaliacao AND nota_avaliacao.fk_id_matricula_aluno = :enrollment)

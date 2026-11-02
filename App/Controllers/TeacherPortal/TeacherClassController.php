@@ -199,6 +199,7 @@ class TeacherClassController extends Action
                     'guideTopics' => $e->guide_topics,
                     'guideMaterial' => $e->guide_material,
                     'recovery' => (bool) $e->recovery,
+                    'types' => array_values(array_filter(explode(',', $e->types))),
                     'graded' => (int) $e->graded,
                 ];
             }, $Gradebook->exams($disciplineClassId)),
@@ -230,11 +231,15 @@ class TeacherClassController extends Action
             return $this->json(['error' => 'texto-muito-longo'], 422);
         }
 
+        $types = array_values(array_unique(array_filter((array) ($input['types'] ?? []), 'is_string')));
+        if (array_diff($types, array_keys(\App\Models\TeacherStudent\Gradebook::EXAM_TYPES))) return $this->json(['error' => 'tipo-invalido'], 422);
+
         if (!empty($input['exam'])) {
             $exam = $Gradebook->exam((int) $input['exam']);
             if (!$exam || !$this->canEdit($exam->discipline_class_id)) return $this->deny('avaliacoes', $input['exam']);
 
-            $Gradebook->updateGuide($exam->id, $guide);
+            if (array_key_exists('types', $input)) $Gradebook->saveTypes($exam->id, $types);
+            if (array_key_exists('guideTopics', $input)) $Gradebook->updateGuide($exam->id, $guide);
             return $this->json(['id' => (int) $exam->id]);
         }
 
@@ -258,7 +263,10 @@ class TeacherClassController extends Action
         // nome fixo: "1ª avaliação", "2ª avaliação"… ou "Recuperação"
         $description = $recovery ? 'Recuperação' : ($count['regular'] + 1) . 'ª avaliação';
 
-        $this->json(['id' => $Gradebook->createExam($disciplineClassId, $unity, $description, $date, $guide, $recovery)]);
+        $id = $Gradebook->createExam($disciplineClassId, $unity, $description, $date, $guide, $recovery);
+        $Gradebook->saveTypes($id, $types);
+
+        $this->json(['id' => $id]);
     }
 
 

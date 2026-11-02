@@ -12,12 +12,30 @@
     const saveButton = $('[data-gr-save]');
 
     const state = { cls: null, exams: [], exam: null, students: [], editable: false, dirty: false, busy: false };
+    const examTypes = (window.MATER_GRADES && window.MATER_GRADES.examTypes) || {};
+
+    function typeChips(selected) {
+        return Object.keys(examTypes).map((key) => {
+            const active = selected.includes(key);
+            return `<button type="button" class="m-att-subject${active ? ' is-active' : ''}" data-exam-type="${key}" aria-pressed="${active}"><i class="fas ${active ? 'fa-check-square' : 'fa-square'}"></i>${escapeHtml(examTypes[key])}</button>`;
+        }).join('');
+    }
+
+    function toggleType(button) {
+        const active = !button.classList.contains('is-active');
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', active);
+        button.querySelector('i').className = `fas ${active ? 'fa-check-square' : 'fa-square'}`;
+    }
+
+    const markedTypes = (box) => Array.from(box.querySelectorAll('[data-exam-type].is-active')).map((b) => b.dataset.examType);
 
     const errors = {
         'sem-permissao': 'Você não tem permissão nesta turma/disciplina.',
         'unidade-fechada': 'Este bimestre está fechado para lançamentos.',
         'limite-avaliacoes': 'Este bimestre já tem as 3 avaliações.',
         'recuperacao-ja-existe': 'Este bimestre já tem recuperação.',
+        'tipo-invalido': 'Tipo de avaliação inválido.',
         'recuperacao-antes-das-avaliacoes': 'A recuperação só abre depois das 3 avaliações do bimestre.',
         'sem-recuperacao': 'Só lança recuperação quem fechou o bimestre abaixo de 7.',
         'descricao-invalida': 'Informe a descrição da avaliação.',
@@ -102,7 +120,7 @@
                     <span class="m-att-class-badge">${badge}</span>
                     <span class="m-exam-body">
                         <strong>${title}</strong>
-                        <small>${exam.date.split('-').reverse().join('/')} · ${exam.graded} nota${exam.graded === 1 ? '' : 's'}${(exam.guideTopics || exam.guideMaterial || exam.guide) ? ' · com roteiro' : ''}${custom}</small>
+                        <small>${exam.date.split('-').reverse().join('/')} · ${exam.graded} nota${exam.graded === 1 ? '' : 's'}${(exam.guideTopics || exam.guideMaterial || exam.guide) ? ' · com roteiro' : ''}${custom}${exam.types.length ? ` · ${escapeHtml(exam.types.map((t) => examTypes[t] || t).join(', '))}` : ''}</small>
                     </span>
                     <i class="fas fa-chevron-right m-att-class-go"></i>
                 </button>`;
@@ -174,10 +192,43 @@
     const newBox = $('[data-gr-new]');
     const newForm = $('[data-gr-exam-form]');
 
+    const newTypes = $('[data-gr-new-types]');
+
     function closeNew() {
         newBox.hidden = true;
         newForm.reset();
+        newTypes.innerHTML = typeChips([]);
         state.newExam = null;
+    }
+
+    newTypes.innerHTML = typeChips([]);
+    newTypes.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-exam-type]');
+        if (button) toggleType(button);
+    });
+
+    // Tipos da avaliação aberta: salvam ao marcar ou desmarcar
+    const examTypeBox = $('[data-gr-exam-types]');
+    examTypeBox.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-exam-type]');
+        if (!button || !state.exam) return;
+        toggleType(button);
+        const types = markedTypes(examTypeBox);
+        try {
+            await api('/portal-docente/notas/avaliacao/salvar', { exam: state.exam.id, types });
+            const meta = state.exams.find((e) => e.id === state.exam.id);
+            if (meta) meta.types = types;
+            renderTypeHint();
+        } catch (e) {
+            toggleType(button);
+            toast(errors[e.message] || errors['falha-ao-salvar'], 'error');
+        }
+    });
+
+    function renderTypeHint() {
+        const hint = $('[data-gr-types-count]');
+        const count = markedTypes(examTypeBox).length;
+        hint.textContent = count ? `${count} marcado${count > 1 ? 's' : ''}` : 'nenhum marcado';
     }
 
     $('[data-gr-bimesters]').addEventListener('click', (event) => {
@@ -200,6 +251,12 @@
         event.preventDefault();
         if (state.busy || !state.newExam) return;
         const data = new FormData(event.target);
+        const types = markedTypes(newTypes);
+        if (!types.length) {
+            toast('Marque ao menos um tipo de avaliação.', 'error');
+            newTypes.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
         state.busy = true;
         try {
             const created = await api('/portal-docente/notas/avaliacao/salvar', {
@@ -207,6 +264,7 @@
                 unity: state.newExam.unity,
                 recovery: state.newExam.recovery,
                 date: data.get('date'),
+                types,
                 guideTopics: (data.get('guideTopics') || '').trim(),
                 guideMaterial: (data.get('guideMaterial') || '').trim(),
                 guide: (data.get('guide') || '').trim()
@@ -235,6 +293,9 @@
         const topicsCount = meta && meta.guideTopics ? meta.guideTopics.split('\n').length : 0;
         $('[data-gr-guide-count]').textContent = topicsCount ? `${topicsCount} assunto${topicsCount > 1 ? 's' : ''}` : 'vazio';
         $('[data-gr-guide-box]').open = false;
+        examTypeBox.innerHTML = typeChips(meta ? meta.types : []);
+        renderTypeHint();
+        state.exam = null;
         show('grades');
 
         try {
