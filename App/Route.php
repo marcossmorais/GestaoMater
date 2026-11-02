@@ -1012,6 +1012,42 @@ class Route extends Bootstrap
 			'action' => 'studentNoteSave'
 		);
 
+		$routes['teacherGuides'] = array(
+			'route' => '/portal-docente/roteiros',
+			'controller' => 'TeacherPortal\\TeacherClassController',
+			'action' => 'guides'
+		);
+
+		$routes['teacherGuideSave'] = array(
+			'route' => '/portal-docente/roteiros/salvar',
+			'controller' => 'TeacherPortal\\TeacherClassController',
+			'action' => 'guideSave'
+		);
+
+		$routes['teacherOccurrenceRequest'] = array(
+			'route' => '/portal-docente/aluno/ocorrencia',
+			'controller' => 'TeacherPortal\\TeacherClassController',
+			'action' => 'occurrenceRequest'
+		);
+
+		$routes['adminPedagogical'] = array(
+			'route' => '/admin/pedagogico',
+			'controller' => 'Admin\\AdminPedagogicalController',
+			'action' => 'index'
+		);
+
+		$routes['adminGuideSeen'] = array(
+			'route' => '/admin/pedagogico/roteiro/visto',
+			'controller' => 'Admin\\AdminPedagogicalController',
+			'action' => 'guideSeen'
+		);
+
+		$routes['adminOccurrenceRequestAnswer'] = array(
+			'route' => '/admin/pedagogico/solicitacao/responder',
+			'controller' => 'Admin\\AdminPedagogicalController',
+			'action' => 'requestAnswer'
+		);
+
 		$routes['teacherSchedule'] = array(
 			'route' => '/portal-docente/horario',
 			'controller' => 'TeacherPortal\\TeacherPortalController',

@@ -1,4 +1,4 @@
-// Mater — Avaliações, roteiro de provas e notas (portal do docente)
+// Mater — Avaliações e notas (portal do docente)
 (function () {
 
     const config = window.MATER_GRADES || { classes: [] };
@@ -239,7 +239,6 @@
         if (!empty) return;
         state.newExam = { unity: parseInt(empty.dataset.newUnity, 10), recovery: empty.dataset.newRecovery === '1' };
         $('[data-gr-new-title]').textContent = `${empty.dataset.newTitle} · ${state.newExam.unity}º bimestre`;
-        newBox.querySelector('[data-gr-guide-discipline]').innerHTML = guideHeader(`${empty.dataset.newTitle} · ${state.newExam.unity}º bimestre`);
         newBox.hidden = false;
         newBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         newForm.querySelector('[name="date"]').focus();
@@ -264,10 +263,7 @@
                 unity: state.newExam.unity,
                 recovery: state.newExam.recovery,
                 date: data.get('date'),
-                types,
-                guideTopics: (data.get('guideTopics') || '').trim(),
-                guideMaterial: (data.get('guideMaterial') || '').trim(),
-                guide: (data.get('guide') || '').trim()
+                types
             });
             closeNew();
             toast('Avaliação criada');
@@ -286,13 +282,6 @@
         list.innerHTML = '<div class="m-empty">Carregando…</div>';
         $('[data-gr-exam-title]').textContent = meta ? meta.description : 'Avaliação';
         $('[data-gr-exam-subtitle]').textContent = `${state.cls.label} · ${state.cls.discipline}`;
-        $('[data-gr-guide]').value = meta && meta.guide ? meta.guide : '';
-        $('[data-gr-guide-topics]').value = meta && meta.guideTopics ? meta.guideTopics : '';
-        $('[data-gr-guide-material]').value = meta && meta.guideMaterial ? meta.guideMaterial : '';
-        $('[data-gr-guide-box] [data-gr-guide-discipline]').innerHTML = guideHeader(`${meta ? meta.description : ''} · ${meta ? meta.unity : ''}º bimestre`);
-        const topicsCount = meta && meta.guideTopics ? meta.guideTopics.split('\n').length : 0;
-        $('[data-gr-guide-count]').textContent = topicsCount ? `${topicsCount} assunto${topicsCount > 1 ? 's' : ''}` : 'vazio';
-        $('[data-gr-guide-box]').open = false;
         examTypeBox.innerHTML = typeChips(meta ? meta.types : []);
         renderTypeHint();
         state.exam = null;
@@ -312,11 +301,6 @@
         } catch (e) {
             list.innerHTML = `<div class="m-empty">${escapeHtml(errors[e.message] || 'Não foi possível carregar.')}</div>`;
         }
-    }
-
-    // cabeçalho do roteiro: disciplina e turma vêm sozinhos (o professor só preenche assuntos e material)
-    function guideHeader(exam) {
-        return `<i class="fas ${state.cls.icon || 'fa-book'} m-subj-ico"></i><strong>${escapeHtml(state.cls.discipline)}</strong> · ${escapeHtml(state.cls.label)} · ${escapeHtml(exam)}`;
     }
 
     function initials(name) {
@@ -472,21 +456,6 @@
             state.busy = false;
             saveButton.classList.remove('is-loading');
             updateCount();
-        }
-    });
-
-    $('[data-gr-guide-save]').addEventListener('click', async () => {
-        try {
-            await api('/portal-docente/notas/avaliacao/salvar', {
-                exam: state.exam.id,
-                guideTopics: $('[data-gr-guide-topics]').value.trim(),
-                guideMaterial: $('[data-gr-guide-material]').value.trim(),
-                guide: $('[data-gr-guide]').value.trim()
-            });
-            toast('Roteiro salvo');
-            await loadExams();
-        } catch (e) {
-            toast(errors[e.message] || errors['falha-ao-salvar'], 'error');
         }
     });
 

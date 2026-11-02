@@ -186,9 +186,10 @@ class TeacherClassController extends Action
         $rule = Container::getModel('Student\\StudentPerformance')->rule();
         $units = [];
         foreach ($this->openUnits() as $u) $units[$u] = $Gradebook->examCount($disciplineClassId, $u);
+        $status = $Gradebook->guideStatus($disciplineClassId);
 
         $this->json([
-            'exams' => array_map(function ($e) {
+            'exams' => array_map(function ($e) use ($status) {
                 return [
                     'id' => (int) $e->id,
                     'description' => $e->description,
@@ -198,6 +199,7 @@ class TeacherClassController extends Action
                     'guide' => $e->guide,
                     'guideTopics' => $e->guide_topics,
                     'guideMaterial' => $e->guide_material,
+                    'guideStatus' => $status[(int) $e->id] ?? null,
                     'recovery' => (bool) $e->recovery,
                     'types' => array_values(array_filter(explode(',', $e->types))),
                     'graded' => (int) $e->graded,
@@ -212,24 +214,14 @@ class TeacherClassController extends Action
 
 
     /**
-     * Cria avaliação de 0 a 10 (até 3 por bimestre) ou a recuperação do bimestre; com "exam", atualiza só o roteiro
+     * Cria avaliação de 0 a 10 (até 3 por bimestre) ou a recuperação do bimestre; com "exam", atualiza só os tipos.
+     * O roteiro é escrito na aba Roteiro de Provas (guideSave).
      */
     public function examSave()
     {
         if (($input = $this->input()) === null) return;
 
         $Gradebook = Container::getModel('TeacherStudent\\Gradebook');
-
-        // roteiro: assuntos (um por linha, sem linhas vazias), material e observações
-        $topics = implode("\n", array_filter(array_map('trim', preg_split('/\R/', (string) ($input['guideTopics'] ?? ''))), 'strlen'));
-        $guide = [
-            'topics' => $topics,
-            'material' => trim((string) ($input['guideMaterial'] ?? '')),
-            'notes' => trim((string) ($input['guide'] ?? '')),
-        ];
-        if (mb_strlen($guide['topics']) > 2000 || mb_strlen($guide['material']) > 500 || mb_strlen($guide['notes']) > 3000) {
-            return $this->json(['error' => 'texto-muito-longo'], 422);
-        }
 
         $types = array_values(array_unique(array_filter((array) ($input['types'] ?? []), 'is_string')));
         if (array_diff($types, array_keys(\App\Models\TeacherStudent\Gradebook::EXAM_TYPES))) return $this->json(['error' => 'tipo-invalido'], 422);
@@ -239,32 +231,110 @@ class TeacherClassController extends Action
             if (!$exam || !$this->canEdit($exam->discipline_class_id)) return $this->deny('avaliacoes', $input['exam']);
 
             if (array_key_exists('types', $input)) $Gradebook->saveTypes($exam->id, $types);
-            if (array_key_exists('guideTopics', $input)) $Gradebook->updateGuide($exam->id, $guide);
             return $this->json(['id' => (int) $exam->id]);
         }
 
+        $id = $this->createExam($input, $types);
+        if ($id === null) return;
+
+        $this->json(['id' => $id]);
+    }
+
+
+    /**
+     * Nova avaliação da disciplina no bimestre, dentro do limite; em caso de erro, já responde e devolve null
+     */
+    private function createExam(array $input, array $types)
+    {
+        $Gradebook = Container::getModel('TeacherStudent\\Gradebook');
+
         $disciplineClassId = (int) ($input['disciplineClass'] ?? 0);
-        if (!$this->canEdit($disciplineClassId)) return $this->deny('avaliacoes', $disciplineClassId);
+        if (!$this->canEdit($disciplineClassId)) {
+            $this->deny('avaliacoes', $disciplineClassId);
+            return null;
+        }
 
         $unity = (int) ($input['unity'] ?? 0);
         $date = trim((string) ($input['date'] ?? ''));
         $recovery = !empty($input['recovery']);
 
-        if (!in_array($unity, $this->openUnits(), true)) return $this->json(['error' => 'unidade-fechada'], 422);
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) return $this->json(['error' => 'data-invalida'], 422);
-
         $count = $Gradebook->examCount($disciplineClassId, $unity);
         $perBimester = Container::getModel('Student\\StudentPerformance')->rule()['perBimester'];
 
-        if ($recovery && $count['recovery']) return $this->json(['error' => 'recuperacao-ja-existe'], 422);
-        if ($recovery && $count['regular'] < $perBimester) return $this->json(['error' => 'recuperacao-antes-das-avaliacoes', 'max' => $perBimester], 422);
-        if (!$recovery && $count['regular'] >= $perBimester) return $this->json(['error' => 'limite-avaliacoes', 'max' => $perBimester], 422);
+        $error = null;
+        if (!in_array($unity, $this->openUnits(), true)) $error = ['error' => 'unidade-fechada'];
+        elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) $error = ['error' => 'data-invalida'];
+        elseif ($recovery && $count['recovery']) $error = ['error' => 'recuperacao-ja-existe'];
+        elseif ($recovery && $count['regular'] < $perBimester) $error = ['error' => 'recuperacao-antes-das-avaliacoes', 'max' => $perBimester];
+        elseif (!$recovery && $count['regular'] >= $perBimester) $error = ['error' => 'limite-avaliacoes', 'max' => $perBimester];
+
+        if ($error) {
+            $this->json($error, 422);
+            return null;
+        }
 
         // nome fixo: "1ª avaliação", "2ª avaliação"… ou "Recuperação"
         $description = $recovery ? 'Recuperação' : ($count['regular'] + 1) . 'ª avaliação';
 
-        $id = $Gradebook->createExam($disciplineClassId, $unity, $description, $date, $guide, $recovery);
+        $id = $Gradebook->createExam($disciplineClassId, $unity, $description, $date, [], $recovery);
         $Gradebook->saveTypes($id, $types);
+
+        return $id;
+    }
+
+
+    // ------------------------------------------------------------------ Roteiro de provas
+
+    public function guides()
+    {
+        $this->loadClasses();
+        $this->view->openUnits = $this->openUnits();
+        $this->view->examTypes = \App\Models\TeacherStudent\Gradebook::EXAM_TYPES;
+        $this->render('examGuides', 'TeacherPortalLayout', 'teacherPortal');
+    }
+
+
+    /**
+     * Grava o roteiro de uma avaliação (existente ou nova) e envia à coordenação
+     */
+    public function guideSave()
+    {
+        if (($input = $this->input()) === null) return;
+
+        $Gradebook = Container::getModel('TeacherStudent\\Gradebook');
+
+        // assuntos: um por linha, sem linhas vazias
+        $guide = [
+            'topics' => implode("\n", array_filter(array_map('trim', preg_split('/\R/', (string) ($input['topics'] ?? ''))), 'strlen')),
+            'material' => trim((string) ($input['material'] ?? '')),
+            'notes' => trim((string) ($input['notes'] ?? '')),
+        ];
+
+        $types = array_values(array_unique(array_filter((array) ($input['types'] ?? []), 'is_string')));
+
+        if (!empty($input['exam'])) {
+            $exam = $Gradebook->exam((int) $input['exam']);
+            if (!$exam || !$this->canEdit($exam->discipline_class_id)) return $this->deny('avaliacoes', $input['exam']);
+            if (!in_array((int) $exam->unity, $this->openUnits(), true)) return $this->json(['error' => 'unidade-fechada'], 422);
+        } elseif (!$this->canEdit((int) ($input['disciplineClass'] ?? 0))) {
+            return $this->deny('avaliacoes', $input['disciplineClass'] ?? null);
+        }
+
+        if ($guide['topics'] === '') return $this->json(['error' => 'assuntos-obrigatorios'], 422);
+        if (mb_strlen($guide['topics']) > 2000 || mb_strlen($guide['material']) > 500 || mb_strlen($guide['notes']) > 3000) {
+            return $this->json(['error' => 'texto-muito-longo'], 422);
+        }
+        if (array_diff($types, array_keys(\App\Models\TeacherStudent\Gradebook::EXAM_TYPES))) return $this->json(['error' => 'tipo-invalido'], 422);
+
+        if (!empty($input['exam'])) {
+            $id = (int) $exam->id;
+            $Gradebook->saveTypes($id, $types);
+        } else {
+            $id = $this->createExam($input, $types);
+            if ($id === null) return;
+        }
+
+        $Gradebook->sendGuide($id, $guide, $this->teacherId());
 
         $this->json(['id' => $id]);
     }
@@ -488,7 +558,50 @@ class TeacherClassController extends Action
 
         $id = $StudentFile->addNote($enrollmentId, $disciplineClassId, max($this->openUnits()), $this->teacherId(), $text);
 
-        $this->json(['id' => $id, 'date' => date('d/m/Y')]);
+        $this->json(['id' => $id, 'date' => date('d/m/Y'), 'time' => date('H:i')]);
+    }
+
+
+    /**
+     * Pedido de ocorrência (algo mais sério, positivo ou negativo): o admin aceita ou recusa
+     */
+    public function occurrenceRequest()
+    {
+        if (($input = $this->input()) === null) return;
+
+        $enrollmentId = (int) ($input['enrollment'] ?? 0);
+        $disciplineClassId = (int) ($input['disciplineClass'] ?? 0);
+
+        $StudentFile = Container::getModel('TeacherStudent\\StudentFile');
+        if (!$this->canEdit($disciplineClassId) || !$StudentFile->belongsTo($enrollmentId, $disciplineClassId)) {
+            return $this->deny('solicitacao_ocorrencia', $enrollmentId);
+        }
+
+        $Request = '\\App\\Models\\TeacherStudent\\OccurrenceRequest';
+        $category = (string) ($input['category'] ?? '');
+        $severity = (string) ($input['severity'] ?? 'Média');
+        $title = trim((string) ($input['title'] ?? ''));
+        $description = trim((string) ($input['description'] ?? ''));
+        $date = trim((string) ($input['date'] ?? ''));
+
+        if (!in_array($category, $Request::CATEGORIES, true)) return $this->json(['error' => 'categoria-invalida'], 422);
+        if (!in_array($severity, $Request::SEVERITIES, true)) return $this->json(['error' => 'gravidade-invalida'], 422);
+        if ($title === '' || $description === '') return $this->json(['error' => 'texto-obrigatorio'], 422);
+        if (mb_strlen($title) > 150 || mb_strlen($description) > 2000) return $this->json(['error' => 'texto-muito-longo'], 422);
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || $date > date('Y-m-d')) return $this->json(['error' => 'data-invalida'], 422);
+
+        $id = Container::getModel('TeacherStudent\\OccurrenceRequest')->create([
+            'enrollmentId' => $enrollmentId,
+            'disciplineClassId' => $disciplineClassId,
+            'teacherId' => $this->teacherId(),
+            'category' => $category,
+            'title' => $title,
+            'description' => $description,
+            'severity' => $severity,
+            'date' => $date,
+        ]);
+
+        $this->json(['id' => $id]);
     }
 
 }

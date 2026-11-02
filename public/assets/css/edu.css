@@ -861,3 +861,15 @@ html.nightMode .m-cal-status, html.nightMode .m-cal-pill { color: var(--m-text);
   .m-cal-quick .btn, .m-plan-actions .btn { flex: 1; }
 }
 
+/* Roteiro de Provas e recebidos do admin */
+.m-guide-page { padding-bottom: 96px; }
+.m-guide-slots button:disabled { opacity: .45; cursor: not-allowed; }
+.m-inbox { display: flex; flex-direction: column; gap: 10px; }
+.m-inbox-item { display: flex; flex-direction: column; gap: 4px; }
+html body #pagina .card.m-inbox-item.is-new { border-left: 4px solid var(--m-primary); }
+.m-inbox-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+.m-inbox-item small { color: var(--m-muted); }
+.m-inbox-topics { margin: 6px 0; padding-left: 18px; font-size: 14px; }
+html body .m-inbox-item p { margin: 2px 0; font-size: 14px; }
+.m-inbox-topics li { list-style: disc; }
+@media (max-width: 767.98px) { html body#teacherPortal #pagina .m-page-head .m-class-tabs button, html body#teacherPortal #pagina .m-guide-page .m-seg button, html body#teacherPortal #pagina .m-lesson-form .m-seg button { min-height: 44px; } .m-page-head .m-class-tabs { display: flex; width: 100%; } .m-page-head .m-class-tabs button { flex: 1; } }
