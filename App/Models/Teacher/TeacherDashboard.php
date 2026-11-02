@@ -121,6 +121,144 @@ class TeacherDashboard extends Model
 
 
     /**
+     * Números dos gráficos da home, nas disciplinas do professor e no bimestre:
+     * situação dos alunos, faixas de nota e, por turma, média, faltas e alunos em atenção
+     *
+     * @param array $disciplineClasses linhas de Attendance::disciplineClassesByTeacher
+     * @param array $atRisk            resultado de atRisk()
+     */
+    public function charts(array $disciplineClasses, $unity, array $rule, array $atRisk)
+    {
+        $status = ['ok' => 0, 'partial' => 0, 'recovery' => 0, 'none' => 0];
+        $bands = ['0 a 4,9' => 0, '5 a 6,9' => 0, '7 a 8,9' => 0, '9 a 10' => 0];
+        $byClass = [];
+        $mine = [];
+
+        // mais de uma disciplina na mesma turma (polivalente): o rótulo precisa dizer qual é
+        $perLabel = [];
+        foreach ($disciplineClasses as $dc) {
+            $label = $dc->series_acronym . 'ª ' . $dc->ballot;
+            $perLabel[$label] = ($perLabel[$label] ?? 0) + 1;
+        }
+
+        foreach ($disciplineClasses as $dc) {
+            $id = (int) $dc->discipline_class_id;
+            $label = $dc->series_acronym . 'ª ' . $dc->ballot;
+            $mine[$id] = $dc;
+            $byClass[$id] = [
+                'label' => $perLabel[$label] > 1 ? $label . ' · ' . ($dc->discipline_acronym ?: $dc->discipline_name) : $label,
+                'turma' => $label,
+                'students' => (int) $dc->student_total,
+                'graded' => 0, 'sum' => 0, 'average' => null, 'absences' => 0,
+                'recovery' => 0, 'partial' => 0, 'attention' => 0,
+            ];
+        }
+
+        if (!$mine) return ['status' => $status, 'bands' => $bands, 'classes' => []];
+
+        $Gradebook = new Gradebook($this->db);
+        foreach (array_unique(array_map(function ($dc) { return (int) $dc->class_id; }, $disciplineClasses)) as $classId) {
+            foreach ($Gradebook->bimesterGrades($classId) as $row) {
+                $id = (int) $row->discipline_class_id;
+                if (!isset($mine[$id]) || (int) $row->unity !== (int) $unity || (int) $row->graded === 0) continue;
+
+                $b = Gradebook::applyRule($row, $rule);
+                $grade = (float) $b['grade'];
+                $byClass[$id]['graded']++;
+                $byClass[$id]['sum'] += $grade;
+
+                if ($b['needsRecovery']) $status['recovery']++;
+                elseif ($grade < $rule['passing']) $status['partial']++;
+                else $status['ok']++;
+
+                $bands[$grade < 5 ? '0 a 4,9' : ($grade < 7 ? '5 a 6,9' : ($grade < 9 ? '7 a 8,9' : '9 a 10'))]++;
+            }
+        }
+
+        $ids = implode(',', array_keys($mine));
+        $stmt = $this->db->prepare(
+            "SELECT fk_id_turma_disciplina_falta AS id, SUM(total_faltas - COALESCE(faltas_abonadas, 0)) AS absences
+             FROM falta_aluno WHERE fk_id_turma_disciplina_falta IN ($ids) AND fk_id_unidade_falta = :unity GROUP BY 1"
+        );
+        $stmt->execute([':unity' => (int) $unity]);
+        foreach ($stmt->fetchAll(\PDO::FETCH_OBJ) as $row) $byClass[(int) $row->id]['absences'] = (int) $row->absences;
+
+        foreach ($byClass as &$class) {
+            $class['average'] = $class['graded'] ? round($class['sum'] / $class['graded'], 1) : null;
+            $status['none'] += max(0, $class['students'] - $class['graded']);
+            unset($class['sum']);
+        }
+        unset($class);
+
+        foreach ($atRisk as $s) {
+            foreach ($byClass as &$class) {
+                if ($class['turma'] !== $s['label']) continue;
+                if (in_array('recovery', $s['kinds'], true)) $class['recovery']++;
+                if (in_array('partial', $s['kinds'], true)) $class['partial']++;
+                $class['attention']++;
+                break;
+            }
+            unset($class);
+        }
+
+        return ['status' => $status, 'bands' => $bands, 'classes' => array_values($byClass)];
+    }
+
+
+    /**
+     * O que os alunos andam fazendo: leitura dos avisos do professor (taxa e últimas confirmações)
+     *
+     * @param int[] $disciplineClassIds
+     */
+    public function activity(array $disciplineClassIds)
+    {
+        $empty = ['read' => 0, 'expected' => 0, 'notices' => [], 'feed' => []];
+        if (!$disciplineClassIds) return $empty;
+        $ids = implode(',', array_map('intval', $disciplineClassIds));
+
+        $notices = $this->db->query(
+            "SELECT aviso_turma.id_aviso_turma AS id, LEFT(aviso_turma.aviso, 70) AS text,
+                    TO_CHAR(aviso_turma.data_postagem, 'DD/MM') AS date,
+                    serie.sigla || 'ª ' || cedula_turma.cedula AS label,
+                    (SELECT COUNT(*) FROM aviso_leitura WHERE fk_id_aviso_turma = aviso_turma.id_aviso_turma) AS read_total,
+                    (SELECT COUNT(*) FROM matricula WHERE fk_id_turma_matricula = turma.id_turma AND fk_id_situacao_aluno = 1) AS students
+             FROM aviso_turma
+             INNER JOIN turma_disciplina ON (aviso_turma.fk_id_turma_disciplina = turma_disciplina.id_turma_disciplina)
+             INNER JOIN turma ON (turma_disciplina.fk_id_turma = turma.id_turma)
+             INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
+             INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
+             WHERE aviso_turma.fk_id_turma_disciplina IN ($ids)
+             ORDER BY aviso_turma.data_postagem DESC, aviso_turma.id_aviso_turma DESC"
+        )->fetchAll(\PDO::FETCH_OBJ);
+
+        $read = 0;
+        $expected = 0;
+        foreach ($notices as $n) {
+            $read += (int) $n->read_total;
+            $expected += (int) $n->students;
+        }
+
+        $feed = $this->db->query(
+            "SELECT aluno.nome_aluno AS name, matricula.id_matricula AS enrollment_id, LEFT(aviso_turma.aviso, 60) AS text,
+                    TO_CHAR(aviso_leitura.lido_em, 'DD/MM HH24:MI') AS at,
+                    serie.sigla || 'ª ' || cedula_turma.cedula AS label
+             FROM aviso_leitura
+             INNER JOIN aviso_turma ON (aviso_leitura.fk_id_aviso_turma = aviso_turma.id_aviso_turma)
+             INNER JOIN matricula ON (aviso_leitura.fk_id_matricula = matricula.id_matricula)
+             INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)
+             INNER JOIN turma ON (matricula.fk_id_turma_matricula = turma.id_turma)
+             INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
+             INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
+             WHERE aviso_turma.fk_id_turma_disciplina IN ($ids)
+             ORDER BY aviso_leitura.lido_em DESC
+             LIMIT 6"
+        )->fetchAll(\PDO::FETCH_OBJ);
+
+        return ['read' => $read, 'expected' => $expected, 'notices' => array_slice($notices, 0, 4), 'feed' => $feed];
+    }
+
+
+    /**
      * Alunos que pedem atenção no bimestre: média parcial abaixo da média, aguardando recuperação ou com muitas faltas
      *
      * @param array $disciplineClasses linhas de Attendance::disciplineClassesByTeacher
@@ -137,17 +275,18 @@ class TeacherDashboard extends Model
         $Gradebook = new Gradebook($this->db);
         $students = [];
 
-        $add = function ($enrollmentId, $name, $dcId, $reason, $weight) use (&$students, $mine) {
+        $add = function ($enrollmentId, $name, $dcId, $reason, $weight, $kind) use (&$students, $mine) {
             $key = $enrollmentId . '-' . $dcId;
             if (!isset($students[$key])) {
                 $dc = $mine[$dcId];
                 $students[$key] = [
                     'enrollmentId' => (int) $enrollmentId, 'name' => $name, 'classId' => (int) $dc->class_id,
                     'label' => $dc->series_acronym . 'ª ' . $dc->ballot, 'discipline' => $dc->discipline_name,
-                    'reasons' => [], 'weight' => 0,
+                    'reasons' => [], 'kinds' => [], 'weight' => 0,
                 ];
             }
             $students[$key]['reasons'][] = $reason;
+            $students[$key]['kinds'][] = $kind;
             $students[$key]['weight'] += $weight;
         };
 
@@ -161,9 +300,9 @@ class TeacherDashboard extends Model
                 $grade = str_replace('.', ',', (string) round((float) $b['average'], 1));
 
                 if ($b['needsRecovery']) {
-                    $add($row->enrollment_id, $row->name, $dcId, "Aguarda recuperação (média $grade)", 3);
+                    $add($row->enrollment_id, $row->name, $dcId, "Aguarda recuperação (média $grade)", 3, 'recovery');
                 } elseif (!$b['closed'] && $b['average'] < $rule['passing']) {
-                    $add($row->enrollment_id, $row->name, $dcId, "Média parcial $grade ({$row->graded} de {$rule['perBimester']})", 2);
+                    $add($row->enrollment_id, $row->name, $dcId, "Média parcial $grade ({$row->graded} de {$rule['perBimester']})", 2, 'partial');
                 }
             }
         }
@@ -182,7 +321,7 @@ class TeacherDashboard extends Model
         $stmt->execute([':unity' => (int) $unity, ':limit' => self::ABSENCE_ALERT]);
 
         foreach ($stmt->fetchAll(\PDO::FETCH_OBJ) as $row) {
-            $add($row->enrollment_id, $row->name, (int) $row->discipline_class_id, "{$row->absences} faltas no bimestre", 1);
+            $add($row->enrollment_id, $row->name, (int) $row->discipline_class_id, "{$row->absences} faltas no bimestre", 1, 'absences');
         }
 
         $students = array_values($students);

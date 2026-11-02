@@ -41,7 +41,7 @@ $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Entrar — <?= $portal['title'] ?> | Mater</title>
-    <link rel="preload" href="<?= $app_url ?>/assets/fonts/inter/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<?= $app_url ?>/assets/fonts/nunito/nunito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= asset('/assets/css/auth.css') ?>">
     <link rel="icon" type="image/png" href="<?= $app_url ?>/favicon.png">
 </head>
@@ -50,8 +50,8 @@ $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) 
 
     <div class="auth">
 
-        <aside class="auth-side brand-bg">
-            <a class="logo" href="/"><img src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca.png" alt="Mater" width="200" height="65"></a>
+        <aside class="auth-side auth-<?= $loginPortal ?>">
+            <a class="logo" href="/"><img src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca-480.png" alt="Mater" width="200" height="65"></a>
 
             <div>
                 <h1><?= $portal['headline'] ?></h1>

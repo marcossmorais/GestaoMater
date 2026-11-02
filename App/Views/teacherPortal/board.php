@@ -34,7 +34,7 @@ require __DIR__ . '/components/classCards.php';
                         foreach ($cards as $c) {
                             if (isset($seen[$c['classId']])) continue;
                             $seen[$c['classId']] = true; ?>
-                            <button type="button" class="card m-att-class" data-bd-class="<?= $c['classId'] ?>">
+                            <button type="button" class="card m-att-class <?= $c['subject'] ?? '' ?>" data-bd-class="<?= $c['classId'] ?>">
                                 <span class="m-att-class-badge"><?= htmlspecialchars($c['label']) ?></span>
                                 <span class="m-att-class-body">
                                     <strong><?= htmlspecialchars($c['course']) ?> · <?= htmlspecialchars($c['shift']) ?></strong>

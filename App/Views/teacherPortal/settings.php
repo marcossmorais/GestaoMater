@@ -1,332 +1,138 @@
-<?php 
-
+<?php
 require __DIR__ . '../../../config/variables.php';
 
+$teacher = $this->view->Data[0];
+$photoDir = "$app_url/assets/img/teacherProfilePhotos/";
+$photo = $teacher->profile_photo ? $photoDir . $teacher->profile_photo : $photoDir . 'foto-vazia.jpg';
+$cpf = preg_replace('/^(\d{3})(\d{3})(\d{3})(\d{2})$/', '$1.$2.$3-$4', str_pad((string) $teacher->cpf, 11, '0', STR_PAD_LEFT));
+$birth = $teacher->birth_date ? date('d/m/Y', strtotime($teacher->birth_date)) : '–';
 ?>
 
-<div class="row mb-4 d-flex justify-content-around" id="main-accordion">
+<div class="m-profile" id="teacherProfile">
 
-    <div class="col-lg-3 col-11 mx-auto">
+    <aside class="m-profile-side">
+        <img class="m-profile-photo" src="<?= htmlspecialchars($photo) ?>" alt="" onerror="this.src='<?= $photoDir ?>foto-vazia.jpg'">
+        <h5><?= htmlspecialchars($teacher->name) ?></h5>
+        <span class="m-pill m-pill-info"><i class="fas fa-chalkboard-teacher mr-1"></i><?= htmlspecialchars($teacher->hierarchy_function) ?></span>
+        <nav class="m-profile-nav" aria-label="Seções do perfil">
+            <button type="button" class="is-active" data-profile-tab="dados"><i class="fas fa-user"></i>Meus dados</button>
+            <button type="button" data-profile-tab="aparencia"><i class="fas fa-palette"></i>Aparência</button>
+        </nav>
+    </aside>
 
-        <div class="col-lg-12 modal-sidebar">
+    <div class="m-profile-main">
 
-            <div class="row p-3">
+        <form id="teacherProfileForm" data-profile-panel="dados" novalidate>
 
-                <div class="col-lg-12">
+            <section class="m-profile-card">
+                <header><h6><i class="fas fa-id-card"></i>Dados pessoais</h6><small>Para corrigir, fale com a secretaria.</small></header>
+                <dl class="m-data-list m-data-list-3">
+                    <div><dt>Nome</dt><dd><?= htmlspecialchars($teacher->name) ?></dd></div>
+                    <div><dt>CPF</dt><dd><?= htmlspecialchars($cpf) ?></dd></div>
+                    <div><dt>Nascimento</dt><dd><?= htmlspecialchars($birth) ?></dd></div>
+                    <div><dt>Sexo</dt><dd><?= htmlspecialchars($teacher->sex) ?></dd></div>
+                    <div><dt>Nacionalidade</dt><dd><?= htmlspecialchars($teacher->nationality) ?></dd></div>
+                    <div><dt>Naturalidade</dt><dd><?= htmlspecialchars($teacher->naturalness) ?></dd></div>
+                </dl>
+            </section>
 
-                    <div class="row">
-
-                        <?php $photoDir =  "$app_url/assets/img/teacherProfilePhotos/" ?>
-
-                        <img class="mx-auto mb-2" src='<?= $this->view->Data[0]->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $this->view->Data[0]->profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>" ' data-toggle="modal" data-target="#profilePhotoModal">
-
-                        <div class="col-lg-12 main-sheet d-none d-sm-block">
-                            <div class="row p-3">
-                                <span class="col-lg-12"><?= $this->view->Data[0]->name ?></span>
-                                <span class="col-lg-12"><?= $this->view->Data[0]->hierarchy_function ?></span>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-
-                        <div class="col-lg-12 container-list-group mt-3 p-0">
-
-                            <nav>
-
-                                <ul>
-
-                                    <a class="collapse" href="#" data-toggle="collapse" aria-expanded="true" data-target="#accordion-data-admin"><i class="fas fa-user mr-3"></i> Seu perfil</a>
-
-                                    <a class="collapse" href="#" data-toggle="collapse" aria-expanded="false" data-target="#accordion-interface-teacher">
-                                            <span class="box-icon"><i class="fas fa-magic"></i></span> Interface</a>
-
-                                </ul>
-
-                            </nav>
-                        </div>
-                    </div>
+            <section class="m-profile-card">
+                <header><h6><i class="fas fa-address-book"></i>Contato e endereço</h6></header>
+                <div class="m-form-grid">
+                    <label class="m-att-field m-span-2"><span class="m-att-label">E-mail</span><input class="form-control" name="email" type="email" value="<?= htmlspecialchars($teacher->email) ?>" disabled></label>
+                    <label class="m-att-field"><span class="m-att-label">Telefone</span><input class="form-control" id="telephoneNumber" name="telephoneNumber" value="<?= htmlspecialchars($teacher->telephone_number) ?>" disabled inputmode="tel"></label>
+                    <label class="m-att-field"><span class="m-att-label">CEP</span><input class="form-control" id="zipCode" name="zipCode" value="<?= htmlspecialchars($teacher->zip_code) ?>" disabled inputmode="numeric"></label>
+                    <label class="m-att-field m-span-2"><span class="m-att-label">Endereço</span><input class="form-control" name="address" value="<?= htmlspecialchars($teacher->address) ?>" disabled></label>
+                    <label class="m-att-field"><span class="m-att-label">Bairro</span><input class="form-control" name="district" value="<?= htmlspecialchars($teacher->district) ?>" disabled></label>
+                    <label class="m-att-field"><span class="m-att-label">Município</span><input class="form-control" name="county" value="<?= htmlspecialchars($teacher->county) ?>" disabled></label>
+                    <label class="m-att-field"><span class="m-att-label">UF</span><input class="form-control" name="uf" value="<?= htmlspecialchars($teacher->uf) ?>" maxlength="2" disabled></label>
                 </div>
+            </section>
 
-            </div>
-
-        </div>
-
-        <div class="modal fade" id="profilePhotoModal" tabindex="-1" aria-labelledby="profilePhotoModal" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title" id="profilePhotoModal">Foto do perfil</h5>
-                        <div class="row">
-                            <div class="col-lg-12"> <button type="button" class="close text-rig close-modal" data-toggle="modal" data-target="#profilePhotoModal">
-                                    <span><i class="fas fa-times-circle text-dark mr-3 mt-2"></i></span>
-                                </button></div>
-                        </div>
-                    </div>
-
-                    <div class="modal-body mb-3">
-
-                        <div class="container-img col-lg-12 d-flex justify-content-center">
-
-                            <img style="border-radius:50%" class="mx-auto" src='<?= $this->view->Data[0]->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $this->view->Data[0]->profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>" '>
-
-                        </div>
-
-                    </div>
-
-
+            <section class="m-profile-card">
+                <header><h6><i class="fas fa-heartbeat"></i>Saúde e acessibilidade</h6></header>
+                <div class="m-form-grid">
+                    <label class="m-att-field"><span class="m-att-label">Tipo sanguíneo</span>
+                        <select class="form-control custom-select" name="bloodType" disabled>
+                            <option value="<?= (int) $teacher->blood_type_id ?>"><?= htmlspecialchars($teacher->blood_type) ?></option>
+                            <?php foreach ($this->view->bloodType as $b) { if ($b->option_value == $teacher->blood_type_id) continue; ?><option value="<?= (int) $b->option_value ?>"><?= htmlspecialchars($b->option_text) ?></option><?php } ?>
+                        </select>
+                    </label>
+                    <label class="m-att-field"><span class="m-att-label">Pessoa com deficiência</span>
+                        <select class="form-control custom-select" name="pcd" disabled>
+                            <option value="<?= (int) $teacher->pcd_id ?>"><?= htmlspecialchars($teacher->pcd) ?></option>
+                            <?php foreach ($this->view->pcd as $p) { if ($p->option_value == $teacher->pcd_id) continue; ?><option value="<?= (int) $p->option_value ?>"><?= htmlspecialchars($p->option_text) ?></option><?php } ?>
+                        </select>
+                    </label>
                 </div>
+            </section>
+
+            <section class="m-profile-card">
+                <header><h6><i class="fas fa-key"></i>Acesso ao portal</h6></header>
+                <label class="m-att-field m-code-field"><span class="m-att-label">Código de acesso</span>
+                    <span class="m-code-input">
+                        <input class="form-control" name="accessCode" type="password" value="<?= htmlspecialchars($teacher->access_code) ?>" maxlength="30" disabled autocomplete="off">
+                        <button type="button" class="m-icon-btn" data-reveal aria-label="Mostrar código"><i class="fas fa-eye"></i></button>
+                    </span>
+                </label>
+            </section>
+
+            <div class="m-profile-bar">
+                <button type="button" class="btn btn-primary" data-profile-edit><i class="fas fa-pen mr-2"></i>Editar meus dados</button>
+                <button type="submit" class="btn btn-primary" data-profile-save hidden><i class="fas fa-check mr-2"></i>Salvar</button>
+                <button type="button" class="btn btn-light" data-profile-cancel hidden>Cancelar</button>
             </div>
-        </div>
+        </form>
+
+        <section class="m-profile-card" data-profile-panel="aparencia" hidden>
+            <header><h6><i class="fas fa-palette"></i>Aparência</h6></header>
+            <div class="custom-control custom-switch m-switch">
+                <input type="checkbox" class="custom-control-input" id="nightMode" portal="Teacher">
+                <label class="custom-control-label" for="nightMode">Modo escuro</label>
+            </div>
+            <p class="m-muted-note mt-2 mb-0">Fica salvo neste aparelho.</p>
+        </section>
 
     </div>
-
-
-
-
-    <div class="col-lg-9 col-12 mx-auto">
-
-        <div class="col-lg-12 card main-content">
-
-            <div class="row">
-
-                <?php foreach ($this->view->Data as $key => $teacher) { ?>
-
-                    <div class="col-lg-11 mx-auto collapse show" id="accordion-data-admin" data-parent="#main-accordion">
-
-                        <form id="adminDate<?= $teacher->id ?>" class="col-lg-12" action="">
-
-                            <input type="hidden" value="<?= $teacher->id ?>" name="teacherId">
-                            <input type="hidden" value="<?= $teacher->telephone_id ?>" name="telephoneId">
-                            <input type="hidden" value="<?= $teacher->address_id ?>" name="addressId">
-
-                            <div class="row mb-3 mt-2 ml-2 d-flex align-items-center">
-
-                                <div class="col-lg-12">
-
-                                    <div class="row d-flex align-items-center">
-
-                                        <h5 class="col-8">Dados pessoais</h5>
-
-                                        <div class="col-4 d-flex justify-content-end">
-
-                                            <span idElement="#adminDate<?= $teacher->id ?>" formGroup="containerSettingsModal" class="mr-2 edit-data-icon" data-toggle="tooltip" data-placement="left" title="Editar"><i class="fas fa-edit"></i></span>
-
-                                            <span idElement="#adminDate<?= $teacher->id ?>" routeUpdate="/portal-docente/perfil/atualizar" toastData="Dados atualizados" routeData="#adminDate<?= $teacher->id ?>" container="containerSettingsModal" routeList="/portal-docente/configuracoes" class="mr-2 update-data-icon" data-toggle="tooltip" data-placement="top" title="Atualizar"><i class="fas fa-check"></i></span>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-
-
-                            <div class="input-group d-flex col-12 col-lg-11 mt-2 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Nome:</span>
-                                </div>
-                                <input type="text" id="name" name="name" disabled class="form-control" value="<?= $teacher->name ?>" aria-label="Username" aria-describedby="addon-wrapping" style="pointer-events:none">
-                            </div>
-
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">CPF:</span>
-                                </div>
-                                <input type="text" onload="this.value = this.value.mask('000.000.000-00')" id="cpf" name="cpf" disabled class="form-control" value="<?= $teacher->cpf ?>" aria-label="Username" aria-describedby="addon-wrapping" style="pointer-events:none">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Sexo:</span>
-                                </div>
-
-                                <select id="sex" name="sex" disabled class="form-control custom-select" style="pointer-events:none">
-                                    <option value="<?= $teacher->sex_id ?>"><?= $teacher->sex ?></option>
-                                    <?php foreach ($this->view->availableSex as $key => $sex) { ?>
-                                        <?php if ($sex->option_value != $teacher->sex_id) { ?>
-                                            <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
-                                    <?php }
-                                    } ?>
-                                </select>
-
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Nacionalidade:</span>
-                                </div>
-                                <input type="text" id="nationality" name="nationality" disabled class="form-control" value="<?= $teacher->nationality ?>" aria-label="Username" aria-describedby="addon-wrapping" style="pointer-events:none">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Naturalidade:</span>
-                                </div>
-                                <input type="text" id="naturalness" name="naturalness" disabled class="form-control" value="<?= $teacher->naturalness ?>" aria-label="Username" aria-describedby="addon-wrapping" style="pointer-events:none">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Data de Nascimento:</span>
-                                </div>
-                                <input type="date" id="birthDate" name="birthDate" disabled class="form-control" value="<?= $teacher->birth_date ?>" max="2006-01-31" min="1940-01-31" aria-label="Username" aria-describedby="addon-wrapping" style="pointer-events:none">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">PcD:</span>
-                                </div>
-
-                                <select id="pcd" name="pcd" disabled class="form-control custom-select">
-                                    <option value="<?= $teacher->pcd_id ?>"><?= $teacher->pcd ?></option>
-                                    <?php foreach ($this->view->pcd as $key => $pcd) { ?>
-                                        <?php if ($pcd->option_value != $teacher->pcd_id) { ?>
-                                            <option value="<?= $pcd->option_value ?>"><?= $pcd->option_text ?></option>
-                                    <?php }
-                                    } ?>
-                                </select>
-
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Tipo sanguíneo:</span>
-                                </div>
-
-                                <select id="bloodType" name="bloodType" disabled class="form-control custom-select" style="pointer-events:none">
-                                    <option value="<?= $teacher->blood_type_id ?>"><?= $teacher->blood_type ?></option>
-                                    <?php foreach ($this->view->bloodType as $key => $bloodType) { ?>
-                                        <?php if ($bloodType->option_value != $teacher->blood_type_id) { ?>
-                                            <option value="<?= $bloodType->option_value ?>"><?= $bloodType->option_text ?></option>
-                                    <?php }
-                                    } ?>
-                                </select>
-
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-9 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Código de acesso ao portal:</span>
-                                </div>
-                                <input id="accessCode" name="accessCode" type="password" disabled class="form-control" value="<?= $teacher->access_code ?>" maxlength="30" aria-label="Username" aria-describedby="addon-wrapping">
-                                <div class="input-group-append">
-                                <div class="input-group-text input-group-accessCode"><i class="fas fa-eye-slash"></i></div>
-                                </div>
-                            </div>
-
-
-                            <div class="input-group d-flex justify-content-start col-lg-9 flex-nowrap">
-
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Hierarquia no sistema:</span>
-                                </div>
-
-                                <input id="hierarchyFunction" name="hierarchyFunction" type="text" disabled class="form-control" value="<?= $teacher->hierarchy_function ?>" aria-label="Username" aria-describedby="addon-wrapping" style="pointer-events:none">
-
-                            </div>
-
-
-                            <h5 class="mt-5 mb-3 ml-4">Endereço e contato:</h5>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">CEP:</span>
-                                </div>
-                                <input type="text" id="zipCode" name="zipCode" disabled class="form-control" value="<?= $teacher->zip_code ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">UF:</span>
-                                </div>
-                                <input type="text" id="uf" name="uf" disabled class="form-control" value="<?= $teacher->uf ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Município:</span>
-                                </div>
-                                <input type="text" id="county" name="county" disabled class="form-control" value="<?= $teacher->county ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Bairro:</span>
-                                </div>
-                                <input type="text" id="district" name="district" disabled class="form-control" value="<?= $teacher->district ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <input type="hidden" value="1" name="accountState">
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Endereço:</span>
-                                </div>
-                                <input type="text" id="address" name="address" disabled class="form-control" value="<?= $teacher->address ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Telefone: </span>
-                                </div>
-                                <input id="telephoneNumber" name="telephoneNumber" type="text" disabled class="form-control" value="<?= $teacher->telephone_number ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Email: </span>
-                                </div>
-                                <input id="email" name="email" type="text" disabled class="form-control" value="<?= $teacher->email ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-
-
-                        <?php } ?>
-
-                        </form>
-
-                    </div>
-
-                    <div class="col-11 mx-auto collapse" id="accordion-interface-teacher" data-parent="#main-accordion">
-
-                        <div class="row mb-3 mt-2 ml-2 d-flex align-items-center">
-
-                            <div class="col-lg-12">
-
-                                <div class="row d-flex align-items-center">
-
-                                    <h5 class="col-8 p-0">Interface do portal</h5>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="row">
-                            <div class="col-lg-11 ml-2">
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="nightMode" portal="Teacher">
-                                <label class="custom-control-label" for="nightMode">Modo Noturno</label>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
 </div>
+
+<script>
+    (function () {
+        const root = document.getElementById('teacherProfile');
+        const form = document.getElementById('teacherProfileForm');
+        const fields = () => form.querySelectorAll('.form-control');
+        const toggle = (editing) => {
+            fields().forEach((f) => { f.disabled = !editing; });
+            form.querySelector('[data-profile-edit]').hidden = editing;
+            form.querySelector('[data-profile-save]').hidden = !editing;
+            form.querySelector('[data-profile-cancel]').hidden = !editing;
+            if (editing) form.querySelector('[name="email"]').focus();
+        };
+
+        root.querySelectorAll('[data-profile-tab]').forEach((tab) => tab.addEventListener('click', () => {
+            root.querySelectorAll('[data-profile-tab]').forEach((t) => t.classList.toggle('is-active', t === tab));
+            root.querySelectorAll('[data-profile-panel]').forEach((p) => { p.hidden = p.dataset.profilePanel !== tab.dataset.profileTab; });
+        }));
+
+        form.querySelector('[data-profile-edit]').addEventListener('click', () => toggle(true));
+        form.querySelector('[data-profile-cancel]').addEventListener('click', () => { form.reset(); toggle(false); });
+        form.querySelector('[data-reveal]').addEventListener('click', (e) => {
+            const input = form.querySelector('[name="accessCode"]');
+            input.type = input.type === 'password' ? 'text' : 'password';
+            e.currentTarget.querySelector('i').className = `fas ${input.type === 'password' ? 'fa-eye' : 'fa-eye-slash'}`;
+        });
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const body = new URLSearchParams(new FormData(form));
+            try {
+                const response = await fetch('/portal-docente/perfil/atualizar', { method: 'POST', body, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (!response.ok) throw new Error();
+                toggle(false);
+                if (typeof tools !== 'undefined') tools.showToast('Dados atualizados', 'bg-success');
+            } catch (e) {
+                if (typeof tools !== 'undefined') tools.showToast('Não foi possível salvar. Tente de novo.', 'bg-danger');
+            }
+        });
+    })();
+</script>

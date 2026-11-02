@@ -196,6 +196,8 @@ class TeacherClassController extends Action
                     'unity' => (int) $e->unity,
                     'date' => $e->date,
                     'guide' => $e->guide,
+                    'guideTopics' => $e->guide_topics,
+                    'guideMaterial' => $e->guide_material,
                     'recovery' => (bool) $e->recovery,
                     'graded' => (int) $e->graded,
                 ];
@@ -216,8 +218,17 @@ class TeacherClassController extends Action
         if (($input = $this->input()) === null) return;
 
         $Gradebook = Container::getModel('TeacherStudent\\Gradebook');
-        $guide = trim((string) ($input['guide'] ?? ''));
-        if (mb_strlen($guide) > 3000) return $this->json(['error' => 'texto-muito-longo'], 422);
+
+        // roteiro: assuntos (um por linha, sem linhas vazias), material e observações
+        $topics = implode("\n", array_filter(array_map('trim', preg_split('/\R/', (string) ($input['guideTopics'] ?? ''))), 'strlen'));
+        $guide = [
+            'topics' => $topics,
+            'material' => trim((string) ($input['guideMaterial'] ?? '')),
+            'notes' => trim((string) ($input['guide'] ?? '')),
+        ];
+        if (mb_strlen($guide['topics']) > 2000 || mb_strlen($guide['material']) > 500 || mb_strlen($guide['notes']) > 3000) {
+            return $this->json(['error' => 'texto-muito-longo'], 422);
+        }
 
         if (!empty($input['exam'])) {
             $exam = $Gradebook->exam((int) $input['exam']);
@@ -406,6 +417,8 @@ class TeacherClassController extends Action
         $this->view->mine = $mine;
         $this->view->exams = $StudentFile->exams($student->id, $mine);
         $this->view->notes = $StudentFile->notes($student->id);
+        $this->view->guardians = $StudentFile->guardians($student->student_id);
+        $this->view->classAverages = $StudentFile->classAverages($student->class_id, $this->view->rule);
         $this->view->occurrences = Container::getModel('TeacherStudent\\Occurrence')->getSummaryByEnrollment($student->id);
         $this->view->quickNotes = \App\Models\TeacherStudent\StudentFile::QUICK_NOTES;
         $this->view->unity = max($this->openUnits());

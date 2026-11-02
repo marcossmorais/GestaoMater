@@ -32,6 +32,8 @@ class Gradebook extends Model
                 avaliacoes.fk_id_unidade_avaliacao AS unity,
                 TO_CHAR(avaliacoes.data_realizada, 'YYYY-MM-DD') AS date,
                 avaliacoes.roteiro AS guide,
+                avaliacoes.roteiro_assuntos AS guide_topics,
+                avaliacoes.roteiro_material AS guide_material,
                 avaliacoes.recuperacao AS recovery,
                 (SELECT COUNT(*) FROM nota_avaliacao WHERE fk_id_avaliacao = avaliacoes.id_avaliacao) AS graded
             FROM avaliacoes
@@ -85,14 +87,16 @@ class Gradebook extends Model
     /**
      * Cria uma avaliação de 0 a 10 (regular ou recuperação do bimestre)
      *
+     * @param array $guide ['topics' => assuntos (um por linha), 'material' => material/páginas, 'notes' => observações]
      * @return int id da avaliação
      */
-    public function createExam($disciplineClassId, $unity, $description, $date, $guide, $recovery = false)
+    public function createExam($disciplineClassId, $unity, $description, $date, array $guide, $recovery = false)
     {
 
         $stmt = $this->db->prepare(
-            "INSERT INTO avaliacoes (descricao_avaliacao, valor_avaliacao, data_realizada, fk_id_unidade_avaliacao, fk_id_turma_disciplina_avaliacao, roteiro, recuperacao)
-             VALUES (:description, :value, :date, :unity, :disciplineClass, :guide, :recovery)
+            "INSERT INTO avaliacoes (descricao_avaliacao, valor_avaliacao, data_realizada, fk_id_unidade_avaliacao, fk_id_turma_disciplina_avaliacao,
+                                     roteiro, roteiro_assuntos, roteiro_material, recuperacao)
+             VALUES (:description, :value, :date, :unity, :disciplineClass, :notes, :topics, :material, :recovery)
              RETURNING id_avaliacao"
         );
 
@@ -101,7 +105,7 @@ class Gradebook extends Model
         $stmt->bindValue(':date', $date);
         $stmt->bindValue(':unity', (int) $unity, \PDO::PARAM_INT);
         $stmt->bindValue(':disciplineClass', (int) $disciplineClassId, \PDO::PARAM_INT);
-        $stmt->bindValue(':guide', $guide !== '' ? $guide : null);
+        foreach (['notes', 'topics', 'material'] as $key) $stmt->bindValue(":$key", ($guide[$key] ?? '') !== '' ? $guide[$key] : null);
         $stmt->bindValue(':recovery', (bool) $recovery, \PDO::PARAM_BOOL);
         $stmt->execute();
 
@@ -109,12 +113,20 @@ class Gradebook extends Model
     }
 
 
-    public function updateGuide($examId, $guide)
+    /**
+     * @param array $guide ['topics', 'material', 'notes'] (string vazia apaga)
+     */
+    public function updateGuide($examId, array $guide)
     {
 
-        $stmt = $this->db->prepare("UPDATE avaliacoes SET roteiro = :guide WHERE id_avaliacao = :id");
+        $stmt = $this->db->prepare(
+            "UPDATE avaliacoes SET roteiro = :notes, roteiro_assuntos = :topics, roteiro_material = :material WHERE id_avaliacao = :id"
+        );
 
-        return $stmt->execute([':guide' => $guide !== '' ? $guide : null, ':id' => (int) $examId]);
+        $params = [':id' => (int) $examId];
+        foreach (['notes', 'topics', 'material'] as $key) $params[":$key"] = ($guide[$key] ?? '') !== '' ? $guide[$key] : null;
+
+        return $stmt->execute($params);
     }
 
 
@@ -324,11 +336,14 @@ class Gradebook extends Model
         $stmt = $this->db->prepare(
             "SELECT avaliacoes.id_avaliacao AS id, avaliacoes.descricao_avaliacao AS description, avaliacoes.valor_avaliacao AS value,
                     avaliacoes.fk_id_unidade_avaliacao AS unity, TO_CHAR(avaliacoes.data_realizada, 'DD/MM') AS date,
-                    avaliacoes.roteiro AS guide, avaliacoes.recuperacao AS recovery, disciplina.nome_disciplina AS discipline
+                    avaliacoes.roteiro AS guide, avaliacoes.roteiro_assuntos AS guide_topics, avaliacoes.roteiro_material AS guide_material,
+                    avaliacoes.recuperacao AS recovery, disciplina.nome_disciplina AS discipline, professor.nome_professor AS teacher
              FROM avaliacoes
              INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
              INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)
-             WHERE turma_disciplina.fk_id_turma = :classId AND avaliacoes.roteiro IS NOT NULL
+             INNER JOIN professor ON (turma_disciplina.fk_id_professor = professor.id_professor)
+             WHERE turma_disciplina.fk_id_turma = :classId
+             AND (avaliacoes.roteiro IS NOT NULL OR avaliacoes.roteiro_assuntos IS NOT NULL OR avaliacoes.roteiro_material IS NOT NULL)
              AND avaliacoes.data_realizada >= CURRENT_DATE - INTERVAL '7 days'
              ORDER BY avaliacoes.data_realizada
              LIMIT 20"

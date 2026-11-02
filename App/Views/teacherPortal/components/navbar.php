@@ -12,7 +12,7 @@ require __DIR__ . '../../../../config/variables.php';
 		<i class="fas fa-bars"></i>
 	</button>
 
-	<a class="logo" href=""><img id="logo-mater" src="<?= $app_url ?>/assets/img/logo-components/logo-completa.png" alt=""></a>
+	<a class="logo" href=""><img id="logo-mater" src="<?= $app_url ?>/assets/img/logo-components/logo-completa-480.png" alt=""></a>
 
 
 	<div class="collapse navbar-collapse" id="navbarText">

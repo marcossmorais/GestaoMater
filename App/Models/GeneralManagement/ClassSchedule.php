@@ -45,6 +45,7 @@ class ClassSchedule extends Model
         $stmt = $this->db->prepare(
             "SELECT
                 gh.id_grade_horario,
+                gh.fk_id_turma_disciplina AS discipline_class_id,
                 gh.dia_semana,
                 ha.ordem_aula,
                 TO_CHAR(ha.hora_inicio, 'HH24:MI') AS hora_inicio,
@@ -82,6 +83,7 @@ class ClassSchedule extends Model
         $stmt = $this->db->prepare(
             "SELECT
                 gh.id_grade_horario,
+                gh.fk_id_turma_disciplina AS discipline_class_id,
                 gh.dia_semana,
                 ha.ordem_aula,
                 TO_CHAR(ha.hora_inicio, 'HH24:MI') AS hora_inicio,

@@ -18,6 +18,8 @@ require __DIR__ . '../../../../config/variables.php';
     <script> if (localStorage.getItem('nightModeStudent')) { document.documentElement.classList.add('nightMode') } </script>
     <link rel="stylesheet" href="<?= asset('/assets/css/stylesheet.css') ?>">
 	<link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
+    <link rel="preload" href="<?= $app_url ?>/assets/fonts/nunito/nunito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="<?= asset('/assets/css/edu.css') ?>">
     <link rel="shortcut icon" type="imagem/x-icon" href="<?= $app_url ?>/assets/img/logo-components/logo.png" />
 </head>
 
@@ -32,7 +34,7 @@ require __DIR__ . '../../../../config/variables.php';
                 <nav id="studentPortalNavbar" class="navbar navbar-expand d-flex align-items-center">
 
                     <a class="logo" href="#">
-                        <img class="d-block" id="logo-mater-main" src="<?= $app_url ?>/assets/img/logo-components/logo-completa.png" alt="">
+                        <img class="d-block" id="logo-mater-main" src="<?= $app_url ?>/assets/img/logo-components/logo-completa-480.png" alt="">
                     </a>
 
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,23 +46,23 @@ require __DIR__ . '../../../../config/variables.php';
                         <ul class="navbar-nav d-flex align-items-center justify-content-center">
 
                             <li class="nav-item active">
-                                <a class="nav-link" aria-expanded="true" href="#" data-toggle="collapse" data-target="#mural">Mural</a>
+                                <a class="nav-link" aria-expanded="true" href="#" data-toggle="collapse" data-target="#mural"><i class="fas fa-thumbtack m-nav-ico m-subj-pink"></i>Mural</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#bulletin">Boletim</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#bulletin"><i class="fas fa-star m-nav-ico m-subj-sky"></i>Boletim</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#class" href="#">Turma</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#class" href="#"><i class="fas fa-users m-nav-ico m-subj-purple"></i>Turma</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#averageNote" href="#">Desempenho</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#averageNote" href="#"><i class="fas fa-chart-line m-nav-ico m-subj-green"></i>Desempenho</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule">Agenda</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule"><i class="fas fa-calendar-alt m-nav-ico m-subj-teal"></i>Agenda</a>
                             </li>
 
 
@@ -121,7 +123,22 @@ require __DIR__ . '../../../../config/variables.php';
                     </div>
                 </div>
 
-                <div class="col-lg-12 mt-3">
+                <?php
+                $firstName = explode(' ', trim($_SESSION['Student']['name']))[0];
+                $hour = (int) (new DateTime('now', new DateTimeZone('America/Sao_Paulo')))->format('G');
+                ?>
+                <div class="col-lg-11 mx-auto mt-4">
+                    <div class="m-hero m-hero-student">
+                        <div class="m-hero-text">
+                            <span class="m-sticker"><i class="fas fa-star"></i><?= htmlspecialchars($_SESSION['Student']['class']) ?></span>
+                            <h5><?= $hour < 12 ? 'Bom dia' : ($hour < 18 ? 'Boa tarde' : 'Boa noite') ?>, <?= htmlspecialchars($firstName) ?>!</h5>
+                            <p>Veja os avisos da turma, o seu boletim e o que vem por aí.</p>
+                        </div>
+                        <img class="m-hero-art" src="<?= $app_url ?>/assets/img/illustrations/students.svg" alt="">
+                    </div>
+                </div>
+
+                <div class="col-lg-12">
 
                     <div class="collapse show mt-3" id="mural" data-parent="#studentPortal-accordion">
 
@@ -188,15 +205,13 @@ require __DIR__ . '../../../../config/variables.php';
 
                                                         ?>
 
-                                                        <div class="col-lg-12 exam-description"><?= htmlspecialchars($value->discipline_name) ?> - <?= htmlspecialchars($value->exam_description) ?> - <?= $value->unity ?> ª Unidade </div>
+                                                        <div class="col-lg-12 exam-description"><?= htmlspecialchars($value->discipline_name) ?> · <?= htmlspecialchars($value->exam_description) ?> · <?= (int) $value->unity ?>º bimestre</div>
 
                                                     </div>
 
                                                     <div class="row exam-description-footer">
 
-                                                        <div class="col-6">Valor: <?= $value->exam_value ?> <?= $pointsOrTenths ?></div>
-
-                                                        <div class="col-6">Data: <?= $data[2] ?>-<?= $data[1] ?>-<?= $data[0] ?></div>
+                                                        <div class="col-12"><i class="far fa-calendar mr-1"></i><?= $data[2] ?>/<?= $data[1] ?>/<?= $data[0] ?> · nota de 0 a 10</div>
 
                                                     </div>
 
@@ -299,7 +314,7 @@ function currentDate($array)
 
                                                             <div class="col-sm-11">
 
-                                                                <p class="mt-2 text-description mb-2"><?= $value['value']->teacher_name ?> atribuiu sua nota na avaliação - <?= $value['value']->exam_description ?> - da <?= $value['value']->unity ?> unidade de <?= $value['value']->discipline_name ?></p>
+                                                                <p class="mt-2 text-description mb-2"><?= $value['value']->teacher_name ?> atribuiu sua nota na avaliação - <?= $value['value']->exam_description ?> - do <?= (int) $value['value']->unity ?>º bimestre de <?= $value['value']->discipline_name ?></p>
 
                                                             </div>
 
@@ -309,7 +324,7 @@ function currentDate($array)
 
                                                             <div class="col-12">
                                                                 <div class="row">
-                                                                    <div class="col-lg-8"><small class="font-weight-bold text-important">Você obteve <?= number_format($value['value']->note_value, 1, '.', '') ?> de um total de <?= number_format($value['value']->exam_value, 1, '.', '') ?> pontos</small></div>
+                                                                    <div class="col-lg-8"><small class="font-weight-bold text-important">Você tirou <?= str_replace(".", ",", (string) round($value['value']->note_value / max($value['value']->exam_value, 0.01) * 10, 1)) ?> de 10</small></div>
 
                                                                     <div class="col-lg-4 d-flex justify-content-end"><small class="text-muted p-0 mt-3"> <i class="fas fa-history mr-2"></i>Postado <?= currentDate($value['value']->post_date) ?></small></div>
                                                                 </div>
@@ -328,7 +343,7 @@ function currentDate($array)
 
                                                             <div class="col-sm-11">
 
-                                                                <p class="mt-2 text-description mb-3">Você recebeu uma observação de <?= $value['value']->teacher_name ?> referente a <?= $value['value']->unity ?> unidade de <?= $value['value']->discipline_name ?></p>
+                                                                <p class="mt-2 text-description mb-3">Você recebeu uma observação de <?= $value['value']->teacher_name ?> referente ao <?= (int) $value['value']->unity ?>º bimestre de <?= $value['value']->discipline_name ?></p>
 
                                                             </div>
 
@@ -359,7 +374,7 @@ function currentDate($array)
 
                                                             <div class="col-sm-11">
 
-                                                                <p class="mt-2 text-description mb-2"><?= $value['value']->teacher_name ?> atribuiu suas faltas da <?= $value['value']->unity ?> unidade de <?= $value['value']->discipline_name ?></p>
+                                                                <p class="mt-2 text-description mb-2"><?= $value['value']->teacher_name ?> atribuiu suas faltas do <?= (int) $value['value']->unity ?>º bimestre de <?= $value['value']->discipline_name ?></p>
 
                                                             </div>
 
@@ -545,80 +560,7 @@ function currentDate($array)
 
                             <div class="col-lg-11 mx-auto">
 
-                                <div class="row mt-3 d-flex mb-4">
-
-                                    <div class="accordion col-lg-12" id="studentsTeachersAccordion">
-
-                                        <p class="text-right">
-
-                                            <a class="btn" type="button" data-toggle="collapse" data-target="#students" aria-expanded="true" aria-controls="students">
-                                                <span><i class="fas fa-users mr-2"></i> Alunos</span>
-                                            </a>
-
-                                            <a class="btn" type="button" data-toggle="collapse" data-target="#teachers" aria-expanded="false" aria-controls="teachers">
-                                                <span><i class="fas fa-chalkboard-teacher mr-2"></i> Docentes</span>
-                                            </a>
-
-                                        </p>
-
-
-                                        <div id="students" class="collapse show" data-parent="#studentsTeachersAccordion">
-
-                                            <div class="card col-lg-12 table-responsive mb-5">
-
-                                                <table class="table table-hover mt-3 table-borderless" id="table-students">
-
-                                                    <thead>
-                                                        <tr>
-                                                            <th colspan="2">Nome do aluno</th>
-                                                            <th>Email</th>
-                                                            <th>Status</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody class="">
-
-                                                        <?php require '../App/Views/admin/student/components/studentListing.php' ?>
-
-                                                    </tbody>
-
-                                                </table>
-
-                                            </div>
-
-                                        </div>
-
-                                        <div id="teachers" class="collapse" data-parent="#studentsTeachersAccordion">
-
-                                            <div class="card col-lg-12 table-responsive mb-5">
-
-                                                <table class="table table-hover mt-3 table-borderless" id="table-teachers">
-
-                                                    <thead>
-                                                        <tr>
-                                                            <th colspan="2">Nome do docente</th>
-                                                            <th>Email</th>
-                                                            <th>Disciplina</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody class="">
-
-                                                        <?php require '../App/Views/admin/teacher/components/teacherListing.php' ?>
-
-                                                    </tbody>
-
-                                                </table>
-
-
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
+                                <?php require __DIR__ . '/../components/classCompare.php'; ?>
 
                             </div>
 
@@ -883,6 +825,16 @@ function currentDate($array)
 <script src="<?= asset('/assets/js/mater.js') ?>"></script>
 
 <script src="<?= asset('/assets/js/utilities/Bulletin.js') ?>"></script>
+
+<script>
+    // tocar de novo na aba aberta não fecha a seção (a tela ficava vazia)
+    document.querySelectorAll('#studentPortalNavbar [data-toggle="collapse"], #navbarBottomStudentPortal [data-toggle="collapse"]').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            var target = document.querySelector(link.dataset.target);
+            if (target && target.classList.contains('show')) { event.preventDefault(); event.stopPropagation(); }
+        }, true);
+    });
+</script>
 
 </html>
 <script>
