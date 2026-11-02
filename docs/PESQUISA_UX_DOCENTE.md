@@ -105,10 +105,10 @@ O que veio de cada referência:
 
 Regras (em `public/assets/css/edu.css`):
 
-- **Duas intensidades**: professor = lúdico na medida (fundo creme, cartões brancos tipo adesivo); aluno = lúdico completo (papel pontilhado, bordas tracejadas, selos inclinados).
-- **Cor e ícone por matéria** (`App/Tools/Subject.php`): Matemática azul, Português coral, História âmbar, Geografia verde, Física roxo, Química turquesa, Biologia verde-limão, Inglês rosa, Ed. Física laranja, Artes magenta, Filosofia índigo, Sociologia marrom.
+- **Duas intensidades**: professor = lúdico na medida (fundo azul bem claro, cartões brancos tipo adesivo); aluno = lúdico completo (papel pontilhado, bordas tracejadas, selos inclinados).
+- **Cor e ícone por matéria** (`App/Tools/Subject.php`): Matemática azul, Português coral, História azul-céu, Geografia verde, Física roxo, Química turquesa, Biologia verde-limão, Inglês rosa, Ed. Física rosa-escuro, Artes magenta, Filosofia índigo, Sociologia cinza-azulado.
 - **Fonte Nunito** (arredondada, títulos 900), local em `public/assets/fonts/nunito` (OFL).
 - **Cartão adesivo**: borda de 2px + sombra sólida embaixo; **botão com degrau** que afunda ao tocar.
-- **Menu lateral claro**, cada item com o seu ícone colorido; item ativo = fundo azul-claro.
+- **Menus limpos**: sem quadradinhos coloridos nem borda; item ativo = azul e negrito.
 - **Página inicial** (`/`): apresentação + "Sou professor" / "Sou aluno"; login com a cor do portal (professor azul, aluno âmbar).
-- Modo escuro mantido (tons de índigo, matérias com as mesmas cores).
+- Sem amarelo na paleta. Modo escuro preto (fundo `#000`, cartões `#121212`), matérias com as mesmas cores.

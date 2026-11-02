@@ -37,6 +37,10 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **Chamada → diário em sequência**; **busca de habilidade BNCC** por palavra ou código, filtrada pela série/disciplina (`App/Data/bncc-habilidades.tsv`, dados bncc.dev CC BY 4.0)
 - [x] **Notas**: rascunho automático no aparelho, média ao vivo e "precisa de X para fechar 7"
 - [x] **Visual educacional** (`edu.css`): professor lúdico na medida, aluno lúdico completo, cor e ícone por matéria, fonte Nunito; página inicial nova em `/` e login com a cor do portal
+- [x] **Home do docente com gráficos** (situação dos alunos, faixas de nota, média, atenção e faltas por turma) e atividade dos alunos (leitura dos avisos)
+- [x] **Boletim do aluno na regra do MATER** (bimestres de 0 a 10, média do ano); **simulador do bimestre** por avaliação; **aba Turma** só com a média da turma, sem dados de colegas
+- [x] **Roteiro de estudo estruturado** (assuntos, material, observações; `database/18_roteiro_estruturado.sql`); juntar no Admin: issue #13
+- [x] **Horário** em semana/dia e **perfil** refeitos; diário e observações separados por dia
 - [x] **App instalável** (manifest + service worker que só guarda arquivos estáticos; em produção exige HTTPS)
 - [x] **Simulador de notas** (`App/Tools/GradeSimulator.php`, testes em `tests/`). **Regra do MATER (confirmada):** 4 bimestres · 3 avaliações de 0 a 10 · nota do bimestre = média aritmética · abaixo de 7 tem recuperação e vale a **maior** nota (bimestre ou recuperação) · média do ano = **soma dos 4 bimestres ÷ 4**, precisa de 7 · frequência não entra na nota (`database/16_regra_bimestral.sql`)
 - [x] Ocorrências com ciência
