@@ -544,6 +544,8 @@ class TeacherPortalController extends Action
             'ids' => $ids,
             'disciplines' => array_map(function ($t) { return $t->discipline_name; }, $targets),
             'formattedDate' => date('d/m/Y', strtotime($date)),
+            'isoDate' => $date,
+            'subject' => \App\Tools\Subject::css($targets[0]->discipline_name),
         ]);
     }
 

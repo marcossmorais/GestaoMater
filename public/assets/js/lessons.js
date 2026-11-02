@@ -289,6 +289,8 @@
                 class: state.cls.label,
                 discipline: result.disciplines.join(', '),
                 date: result.formattedDate.slice(0, 5),
+                isoDate: result.isoDate,
+                subject: result.subject,
                 bnccCode: payload.bnccCode,
                 bnccSkill: payload.bnccSkill,
                 notes: payload.notes,
