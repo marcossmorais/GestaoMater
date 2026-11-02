@@ -513,3 +513,167 @@ html.nightMode body #toastContainer .toast-header { background: #1E1E1E !importa
 html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-ok { background: rgba(31, 169, 113, .2); color: #7BE3B6; }
 html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-warn { background: rgba(242, 100, 61, .2); color: #FFB49E; }
 html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-bad { background: rgba(229, 72, 77, .2); color: #FF9EA1; }
+
+/* ---------- Menu recolhido do docente: estreito, só ícones e a logo pequena */
+#left-panel #sidebar .logo .logo-mini { display: none; }
+@media (min-width: 768px) {
+  body#teacherPortal.sidebar-responsive .panel-side { flex: 0 0 76px !important; max-width: 76px !important; }
+  body#teacherPortal.sidebar-responsive #pagina { flex: 0 0 calc(100% - 76px) !important; max-width: calc(100% - 76px) !important; }
+  html body#teacherPortal.sidebar-responsive #left-panel #sidebar { width: 76px !important; padding: 8px 0 !important; overflow-x: hidden; }
+  body#teacherPortal.sidebar-responsive #left-panel #sidebar .logo { padding: 0 !important; }
+  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .logo .logo-light,
+  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .logo .logo-dark { display: none !important; }
+  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .logo .logo-mini { display: block !important; width: 44px !important; max-width: 44px !important; height: 44px; padding: 0 !important; margin: 4px auto 10px; border-radius: 12px; }
+  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .sidebar-lists { padding: 0; }
+  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .sidebar-lists > li { margin: 2px 10px !important; padding: 0 !important; }
+  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .sidebar-lists > li > a { justify-content: center; padding: 0 !important; min-height: 48px; }
+  html body#teacherPortal.sidebar-responsive #left-panel #sidebar .sidebar-lists li a > i:first-child { display: flex; align-items: center; justify-content: center; margin: 0 !important; padding: 0 !important; font-size: 18px; }
+}
+
+/* ---------- Calendário do diário */
+.m-cal { --cal-lesson: #22B07D; --cal-plan: #2F6FED; --cal-late: #F2643D; --cal-exam: #E8508C; --cal-event: #7B61FF; }
+.m-cal-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 16px; margin-bottom: 12px; }
+.m-cal-head h6 { margin: 0; font-size: 18px; font-weight: 900; flex: 1 1 200px; text-align: center; }
+.m-cal-nav { display: flex; align-items: center; gap: 6px; }
+.m-cal-head .m-seg button { min-height: 44px; min-width: 76px; }
+.m-cal .m-filter-chips { margin-bottom: 12px; }
+.m-cal .m-filter-chips[hidden] { display: none; }
+.m-cal-weekdays { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-bottom: 4px; }
+.m-cal-weekdays span { padding: 2px 6px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--m-muted); }
+.m-cal-month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.m-cal-day, .m-cal-col {
+  display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-width: 0; padding: 6px; font: inherit; text-align: left; cursor: pointer;
+  color: var(--m-text); background: var(--m-surface); border: 1.5px solid var(--m-border); border-radius: 12px; transition-property: border-color, background;
+}
+.m-cal-day { min-height: 112px; }
+.m-cal-day:hover, .m-cal-col:hover { border-color: var(--m-primary); }
+.m-cal-day:focus-visible, .m-cal-col:focus-visible { outline: none; box-shadow: var(--m-focus); }
+.m-cal-day.is-out { background: var(--m-surface-2); opacity: .6; }
+.m-cal-day.is-selected, .m-cal-col.is-selected { border-color: var(--m-primary); box-shadow: 0 0 0 1.5px var(--m-primary); }
+.m-cal-num { align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; border-radius: 13px; font-size: 13px; font-weight: 800; }
+.m-cal-num.is-today { background: var(--m-primary); color: #fff; }
+.m-cal-pills { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.m-cal-pill { --k: var(--m-muted); display: block; padding: 2px 6px; overflow: hidden; font-size: 11px; font-weight: 700; line-height: 1.35; white-space: nowrap; text-overflow: ellipsis; border-radius: 6px; color: var(--m-text); background: color-mix(in srgb, var(--k) 16%, transparent); box-shadow: inset 2px 0 0 var(--k); }
+.m-cal-pill.is-lesson { --k: var(--cal-lesson); }
+.m-cal-pill.is-plan { --k: var(--cal-plan); }
+.m-cal-pill.is-late { --k: var(--cal-late); }
+.m-cal-pill.is-exam { --k: var(--cal-exam); }
+.m-cal-pill.is-event { --k: var(--cal-event); }
+.m-cal-more, .m-cal-open { font-size: 11px; font-weight: 700; color: var(--m-muted); padding: 0 6px; }
+.m-cal-dots { display: none; flex-wrap: wrap; gap: 3px; }
+.m-cal-dots i, .m-cal-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--m-muted); }
+.m-cal-dots .is-lesson, .m-cal-legend .is-lesson { background: var(--cal-lesson); }
+.m-cal-dots .is-plan, .m-cal-legend .is-plan { background: var(--cal-plan); }
+.m-cal-dots .is-late, .m-cal-legend .is-late { background: var(--cal-late); }
+.m-cal-dots .is-exam, .m-cal-legend .is-exam { background: var(--cal-exam); }
+.m-cal-dots .is-event, .m-cal-legend .is-event { background: var(--cal-event); }
+.m-cal-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 12px; font-size: 12px; font-weight: 700; color: var(--m-muted); }
+.m-cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.m-cal-week { display: grid; grid-template-columns: repeat(5, minmax(0, 1.2fr)) repeat(2, minmax(0, .7fr)); gap: 6px; }
+.m-cal-col { min-height: 220px; }
+.m-cal-col-head { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--m-muted); }
+.m-cal-slot { --k: var(--m-border); display: block; padding: 5px 7px; font-size: 12px; font-weight: 700; line-height: 1.3; border: 1px solid color-mix(in srgb, var(--k) 45%, var(--m-border)); border-left: 3px solid var(--k); border-radius: 7px; overflow-wrap: anywhere; }
+.m-cal-slot b { display: block; font-weight: 900; }
+.m-cal-slot small { display: block; font-weight: 600; color: var(--m-muted); }
+.m-cal-slot.is-lesson { --k: var(--cal-lesson); background: color-mix(in srgb, var(--k) 12%, transparent); }
+.m-cal-slot.is-plan { --k: var(--cal-plan); background: color-mix(in srgb, var(--k) 12%, transparent); }
+.m-cal-slot.is-late { --k: var(--cal-late); background: color-mix(in srgb, var(--k) 12%, transparent); }
+.m-cal-free { font-size: 12px; color: var(--m-muted); }
+[data-cal-day] { --cal-exam: #E8508C; --cal-event: #7B61FF; }
+[data-cal-day] .m-panel-head .btn { min-height: 44px; }
+.m-cal-notes { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.m-cal-notes li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.m-cal-slot-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.m-cal-slot-actions .btn, .m-plan-actions .btn { min-height: 44px; }
+.m-plan-item summary { display: flex; flex-direction: column; gap: 2px; cursor: pointer; min-height: 44px; list-style: none; }
+.m-plan-item summary::-webkit-details-marker { display: none; }
+.m-plan-item summary small { color: var(--m-muted); }
+.m-plan-item .m-lesson-item-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.m-plan-item[open] summary { margin-bottom: 10px; }
+.m-plan-field { margin-top: 8px; }
+.m-plan-field p { margin: 2px 0 0; font-size: 14px; }
+.m-plan-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.m-lesson-item .m-lesson-item-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+#lessons .m-section-title { margin-top: 24px; font-size: 16px !important; }
+@media (max-width: 991.98px) {
+  .m-cal-week { grid-template-columns: minmax(0, 1fr); }
+  .m-cal-col { min-height: 0; }
+}
+@media (max-width: 767.98px) {
+  .m-cal-head h6 { order: -1; flex-basis: 100%; }
+  .m-cal-day { min-height: 56px; padding: 4px; align-items: center; }
+  .m-cal-num { align-self: center; }
+  .m-cal-day .m-cal-pills { display: none; }
+  .m-cal-dots { display: flex; justify-content: center; }
+  .m-cal-weekdays span { padding: 2px; text-align: center; font-size: 11px; }
+  .m-cal-slot-actions { width: 100%; justify-content: stretch; }
+  .m-cal-slot-actions .btn { flex: 1; }
+}
+
+/* ---------- Home: quem mais está faltando */
+.m-rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.m-rank a { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(40px, 1fr) auto; align-items: center; gap: 10px; min-height: 44px; padding: 4px 6px; border-radius: 10px; color: var(--m-text); }
+.m-rank a:hover { background: var(--m-surface-2); text-decoration: none; }
+.m-rank-name { display: flex; flex-direction: column; min-width: 0; }
+.m-rank-name strong { overflow: hidden; font-size: 13px; white-space: nowrap; text-overflow: ellipsis; }
+.m-rank-name small { color: var(--m-muted); }
+.m-rank-bar { height: 8px; overflow: hidden; border-radius: 4px; background: var(--m-surface-2); }
+.m-rank-bar i { display: block; height: 100%; border-radius: 4px; background: #0EA5E9; }
+.m-rank b { font-size: 13px; white-space: nowrap; }
+
+/* ---------- Observação rápida marcável */
+.m-quick { display: flex; flex-direction: column; gap: 10px; }
+.m-quick .m-att-subject { min-height: 44px; }
+.m-quick .m-att-subject i { margin-right: 8px; }
+.m-quick-form { display: flex; gap: 8px; }
+.m-quick-form .btn { min-height: 44px; flex: none; }
+
+/* ---------- Carômetro da turma */
+.m-roster-card { cursor: default; padding: 0 0 10px; }
+.m-roster-card:active { transform: none; }
+.m-roster-link { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; padding: 18px 12px 8px; color: inherit; border-radius: inherit; }
+.m-roster-link:hover { color: inherit; text-decoration: none; }
+.m-roster-link:focus-visible { outline: none; box-shadow: var(--m-focus); }
+.m-roster-note { min-height: 44px; width: calc(100% - 20px); font-size: 13px; font-weight: 800; }
+.m-sheet { position: fixed; inset: 0; z-index: 1035; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(10, 20, 45, .5); }
+.m-sheet[hidden] { display: none; }
+.m-sheet-box { width: 100%; max-width: 560px; max-height: calc(100vh - 32px); overflow: auto; }
+.m-sheet-box .m-panel-head h6 { margin: 0; }
+body#teacherPortal #toastContainer { z-index: 1050; }
+@media (max-width: 767.98px) {
+  .m-sheet { align-items: flex-end; padding: 0; }
+  .m-sheet-box { max-width: none; border-radius: 20px 20px 0 0 !important; padding-bottom: 24px; }
+}
+
+/* ---------- Perfil do aluno: abas e notas por avaliação */
+.m-file-tabs { display: flex; width: fit-content; max-width: 100%; margin-bottom: 14px; }
+.m-file-tabs button { min-height: 44px; padding: 0 16px; white-space: nowrap; }
+.m-gradelines { display: flex; flex-direction: column; gap: 8px; }
+.m-gradelines[hidden] { display: none; }
+.m-gradeline { display: grid; grid-template-columns: minmax(150px, 1.1fr) minmax(0, 3fr) 160px; align-items: center; gap: 12px; padding: 10px 12px; border: 1.5px solid var(--m-border); border-radius: 14px; }
+.m-gradeline-name { display: flex; flex-direction: column; min-width: 0; }
+.m-gradeline-name small { color: var(--m-muted); }
+.m-gradeline-name a { display: inline-block; font-size: 13px; font-weight: 800; }
+.m-gradeline-exams { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 6px; margin: 0; padding: 0; }
+.m-gradeline-exams li { display: flex; flex-direction: column; min-width: 0; padding: 6px 8px; border-radius: 10px; background: var(--m-surface-2); }
+.m-gradeline-exams span { font-size: 11px; font-weight: 800; color: var(--m-muted); }
+.m-gradeline-exams b { font-size: 17px; font-weight: 900; }
+.m-gradeline-exams small { overflow: hidden; font-size: 11px; line-height: 1.25; color: var(--m-muted); overflow-wrap: anywhere; }
+.m-gradeline-exams li.is-low b, .m-gradeline-final.is-low strong { color: #D92D3A; }
+html.nightMode .m-gradeline-exams li.is-low b, html.nightMode .m-gradeline-final.is-low strong { color: #FF9EA1; }
+.m-gradeline-final { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; }
+.m-gradeline-final > span:first-child { font-size: 11px; font-weight: 800; color: var(--m-muted); }
+.m-gradeline-final strong { font-size: 22px; font-weight: 900; }
+.m-gradeline-final.is-ok strong { color: #1A8F63; }
+html.nightMode .m-gradeline-final.is-ok strong { color: #7BE3B6; }
+@media (max-width: 767.98px) {
+  .m-gradeline { grid-template-columns: minmax(0, 1fr) auto; }
+  .m-gradeline-exams { grid-column: 1 / -1; grid-row: 2; }
+  .m-gradeline-final { grid-column: 2; grid-row: 1; }
+  .m-file-tabs { width: 100%; }
+  .m-file-tabs button { flex: 1; padding: 0 6px; font-size: 13px; }
+  .m-file-tabs button i { display: none; }
+}
+
+/* Portal do aluno: tipos da avaliação no roteiro de provas */
+.m-guide-types { display: block; font-weight: 700; }

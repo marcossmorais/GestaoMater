@@ -910,6 +910,24 @@ class Route extends Bootstrap
 			'action' => 'bnccSearch'
 		);
 
+		$routes['lessonCalendarTeacherPortal'] = array(
+			'route' => '/portal-docente/diario/calendario',
+			'controller' => 'TeacherPortal\\TeacherPlanningController',
+			'action' => 'calendar'
+		);
+
+		$routes['lessonPlanSaveTeacherPortal'] = array(
+			'route' => '/portal-docente/planejamento/salvar',
+			'controller' => 'TeacherPortal\\TeacherPlanningController',
+			'action' => 'planSave'
+		);
+
+		$routes['lessonPlanDeleteTeacherPortal'] = array(
+			'route' => '/portal-docente/planejamento/excluir',
+			'controller' => 'TeacherPortal\\TeacherPlanningController',
+			'action' => 'planDelete'
+		);
+
 		$routes['lessonSaveTeacherPortal'] = array(
 			'route' => '/portal-docente/diario/salvar',
 			'controller' => 'TeacherPortal\TeacherPortalController',

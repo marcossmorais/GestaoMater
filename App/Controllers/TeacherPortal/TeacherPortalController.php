@@ -96,6 +96,7 @@ class TeacherPortalController extends Action
         $this->view->lessons = $lessons;
         $this->view->pending = $Dashboard->pending(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses), $openUnits);
         $this->view->atRisk = $Dashboard->atRisk($disciplineClasses, max($openUnits), $rule);
+        $this->view->topAbsences = $Dashboard->topAbsences($disciplineClasses, max($openUnits));
         $this->view->charts = $Dashboard->charts($disciplineClasses, max($openUnits), $rule, $this->view->atRisk);
         $this->view->activity = $Dashboard->activity(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses));
         $this->view->rule = $rule;
@@ -445,7 +446,6 @@ class TeacherPortalController extends Action
         $this->view->activities = \App\Models\TeacherStudent\Lesson::ACTIVITIES;
         $this->view->teachers = $Lesson->teachers();
         $this->view->classDisciplines = $Lesson->classDisciplines(array_unique(array_map(function ($c) { return $c->class_id; }, $classes)));
-        $this->view->recentLessons = $Lesson->recent(array_map(function ($c) { return $c->discipline_class_id; }, $classes));
 
         $this->render('lessons', 'TeacherPortalLayout', 'teacherPortal');
     }
@@ -453,7 +453,7 @@ class TeacherPortalController extends Action
 
     /**
      * Salva a aula (POST JSON: disciplineClass, disciplineClasses[]?, date, bnccCode, bnccSkill, notes, activities[],
-     * substitute?, taughtDisciplineClass?, reason?)
+     * substitute?, taughtDisciplineClass?, reason?, plan?)
      */
     public function lessonSave()
     {
@@ -531,6 +531,13 @@ class TeacherPortalController extends Action
                     'reason' => $reason,
                 ]);
             }
+            // aula dada a partir de um plano do próprio professor, na mesma turma/disciplina
+            $Plan = Container::getModel('TeacherStudent\\LessonPlan');
+            $plan = $Plan->find((int) ($input['plan'] ?? 0));
+            if ($plan && (int) $plan->teacher_id === $teacherId && (int) $plan->discipline_class_id === (int) $targets[0]->discipline_class_id) {
+                $Plan->markGiven($plan->id, $ids[0]);
+            }
+
             $db->commit();
         } catch (\Throwable $e) {
             if ($db->inTransaction()) $db->rollBack();
@@ -544,6 +551,7 @@ class TeacherPortalController extends Action
             'ids' => $ids,
             'disciplines' => array_map(function ($t) { return $t->discipline_name; }, $targets),
             'formattedDate' => date('d/m/Y', strtotime($date)),
+            'isoDate' => $date,
         ]);
     }
 

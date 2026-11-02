@@ -20,6 +20,9 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] Ensino Médio: edição restrita à própria disciplina + visão geral da turma (`/portal-docente/turma?id=`, pontos por disciplina na unidade)
 - [x] Docente não acessa mais rotas `/admin` (antes podia chamar toda a gestão)
 - [x] **Diário** (`/portal-docente/diario`, `database/12_diario_aula.sql`): habilidade BNCC (texto + código validado) + observação, vinculado à chamada do dia
+- [x] **Calendário e planejamento** (`database/19_planejamento_tipos_avaliacao.sql`): diário por mês ou semana com o que foi dado em cada dia; plano de aula para datas futuras (título, BNCC, objetivos, desenvolvimento, atividades, recursos, como avaliar, tarefa), que pode ser copiado para outra turma ou data e preenche o registro da aula
+- [x] **Carômetro em Turmas**: fotos dos alunos, faltas do bimestre, observação sem sair da tela e clique para o perfil. Perfil em abas (resumo, notas, observações), com a nota de cada avaliação por bimestre em todas as disciplinas
+- [x] **Observação rápida marcável** (uma ou mais opções + texto) · **Quem mais está faltando** na home · **Tipos de avaliação** (prova, trabalho apresentado etc., um ou mais) no lançamento de notas, que o aluno vê no roteiro de provas e no cronograma
 - [x] **Atividades da aula**: teórica, documentário, questionário, revisão, prática, avaliação, outro
 - [x] **Troca de professor/matéria** na aula: substituto e/ou matéria dada, motivo obrigatório, auditado
 - [x] **Lançamento de notas** facilitado (`/portal-docente/notas`, por bimestre, vagas fixas "1ª, 2ª e 3ª avaliação" + "Recuperação" (liberada após as 3, só para quem fechou abaixo de 7)): lista por aluno, teclado numérico, Enter avança, validação de valor máximo, auditado

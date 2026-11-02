@@ -71,12 +71,12 @@ class Lesson extends Model
 
 
     /**
-     * Últimas aulas registradas nas turmas/disciplinas informadas
+     * Aulas registradas no período, nas turmas/disciplinas informadas
      *
      * @param int[] $disciplineClassIds
      * @return array
      */
-    public function recent(array $disciplineClassIds, $limit = 30)
+    public function between(array $disciplineClassIds, $from, $to)
     {
 
         if (!$disciplineClassIds) return [];
@@ -113,14 +113,12 @@ class Lesson extends Model
             LEFT JOIN turma_disciplina td_ministrada ON (aula.fk_id_turma_disciplina_ministrada = td_ministrada.id_turma_disciplina)
             LEFT JOIN disciplina ministrada ON (td_ministrada.fk_id_disciplina = ministrada.id_disciplina)
 
-            WHERE aula.fk_id_turma_disciplina IN ($ids)
+            WHERE aula.fk_id_turma_disciplina IN ($ids) AND aula.data_aula BETWEEN :from AND :to
 
-            ORDER BY aula.data_aula DESC, aula.id_aula DESC
-            LIMIT :limit"
+            ORDER BY aula.data_aula, aula.id_aula"
         );
 
-        $stmt->bindValue(':limit', (int) $limit, \PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute([':from' => $from, ':to' => $to]);
 
         return $stmt->fetchAll(\PDO::FETCH_OBJ);
     }

@@ -3,6 +3,13 @@
 
 function sideState() {
 
+    // portal do docente: largura fixa no CSS e a logo pequena já está na página; a escolha fica salva entre as telas
+    if (document.body.id === 'teacherPortal') {
+        const mini = document.body.classList.toggle('sidebar-responsive')
+        try { mini ? localStorage.setItem('mater-menu-recolhido', '1') : localStorage.removeItem('mater-menu-recolhido') } catch (e) { /* preferência opcional */ }
+        return
+    }
+
     let $sidebarLogo = $('#left-panel .logo img')
 
     $('body').toggleClass('sidebar-responsive')

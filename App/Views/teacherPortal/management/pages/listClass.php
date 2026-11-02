@@ -7,7 +7,7 @@
             <div class="m-page-head">
                 <div>
                     <h5>Minhas turmas</h5>
-                    <p>Toque na turma para ver o desempenho de cada aluno.</p>
+                    <p>Toque na turma para ver os alunos, fazer observações e abrir o perfil de cada um.</p>
                 </div>
             </div>
 

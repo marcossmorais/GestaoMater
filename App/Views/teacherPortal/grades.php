@@ -65,6 +65,10 @@ require __DIR__ . '/components/classCards.php';
                             <span class="m-att-label">Data</span>
                             <input type="date" class="form-control" name="date" value="<?= date('Y-m-d') ?>" required>
                         </label>
+                        <div class="m-att-field">
+                            <span class="m-att-label">O que vale nota nesta avaliação <small>(marque um ou mais)</small></span>
+                            <div class="m-att-subjects-list" data-gr-new-types></div>
+                        </div>
                         <fieldset class="m-guide-fields">
                             <legend><i class="fas fa-route mr-2"></i>Roteiro de estudo <small>(opcional · o aluno vê no mural)</small></legend>
                             <p class="m-guide-discipline" data-gr-guide-discipline></p>
@@ -102,6 +106,11 @@ require __DIR__ . '/components/classCards.php';
 
                 <div class="alert alert-warning" data-gr-closed hidden><i class="fas fa-lock mr-2"></i>Unidade fechada: notas só para consulta.</div>
 
+                <details class="card m-panel m-lesson-exception mb-3" data-gr-types-box open>
+                    <summary><i class="fas fa-tasks mr-2"></i>O que vale nota nesta avaliação <span class="m-pill m-pill-info ml-2" data-gr-types-count></span></summary>
+                    <div class="m-att-subjects-list" data-gr-exam-types></div>
+                </details>
+
                 <details class="card m-panel m-lesson-exception mb-3" data-gr-guide-box>
                     <summary><i class="fas fa-route mr-2"></i>Roteiro de estudo <span class="m-pill m-pill-info ml-2" data-gr-guide-count></span></summary>
                     <div class="m-guide-fields">
@@ -136,6 +145,9 @@ require __DIR__ . '/components/classCards.php';
 </section>
 
 <script>
-    window.MATER_GRADES = { classes: <?= json_encode($classesJson, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?> };
+    window.MATER_GRADES = {
+        classes: <?= json_encode($classesJson, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
+        examTypes: <?= json_encode(\App\Models\TeacherStudent\Gradebook::EXAM_TYPES, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>
+    };
 </script>
 <script src="<?= asset('/assets/js/grades.js') ?>" defer></script>

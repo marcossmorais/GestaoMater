@@ -199,6 +199,7 @@ class TeacherClassController extends Action
                     'guideTopics' => $e->guide_topics,
                     'guideMaterial' => $e->guide_material,
                     'recovery' => (bool) $e->recovery,
+                    'types' => array_values(array_filter(explode(',', $e->types))),
                     'graded' => (int) $e->graded,
                 ];
             }, $Gradebook->exams($disciplineClassId)),
@@ -230,11 +231,15 @@ class TeacherClassController extends Action
             return $this->json(['error' => 'texto-muito-longo'], 422);
         }
 
+        $types = array_values(array_unique(array_filter((array) ($input['types'] ?? []), 'is_string')));
+        if (array_diff($types, array_keys(\App\Models\TeacherStudent\Gradebook::EXAM_TYPES))) return $this->json(['error' => 'tipo-invalido'], 422);
+
         if (!empty($input['exam'])) {
             $exam = $Gradebook->exam((int) $input['exam']);
             if (!$exam || !$this->canEdit($exam->discipline_class_id)) return $this->deny('avaliacoes', $input['exam']);
 
-            $Gradebook->updateGuide($exam->id, $guide);
+            if (array_key_exists('types', $input)) $Gradebook->saveTypes($exam->id, $types);
+            if (array_key_exists('guideTopics', $input)) $Gradebook->updateGuide($exam->id, $guide);
             return $this->json(['id' => (int) $exam->id]);
         }
 
@@ -258,7 +263,10 @@ class TeacherClassController extends Action
         // nome fixo: "1ª avaliação", "2ª avaliação"… ou "Recuperação"
         $description = $recovery ? 'Recuperação' : ($count['regular'] + 1) . 'ª avaliação';
 
-        $this->json(['id' => $Gradebook->createExam($disciplineClassId, $unity, $description, $date, $guide, $recovery)]);
+        $id = $Gradebook->createExam($disciplineClassId, $unity, $description, $date, $guide, $recovery);
+        $Gradebook->saveTypes($id, $types);
+
+        $this->json(['id' => $id]);
     }
 
 
@@ -382,7 +390,18 @@ class TeacherClassController extends Action
         $this->view->rule = Container::getModel('Student\\StudentPerformance')->rule();
         $this->view->overview = $Gradebook->classOverview($classId, $unity, $this->view->rule);
         $this->view->classLabel = $Gradebook->classLabel($classId);
-        $this->view->editable = array_map(function ($c) { return (int) $c->discipline_class_id; }, Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($this->teacherId()));
+
+        // disciplinas do professor nesta turma: as editáveis, as faltas do carômetro e a observação rápida
+        $own = array_values(array_filter(Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($this->teacherId()), function ($c) use ($classId) { return (int) $c->class_id === $classId; }));
+        $ownIds = array_map(function ($c) { return (int) $c->discipline_class_id; }, $own);
+
+        $this->view->editable = $ownIds;
+        $this->view->tab = ($_GET['ver'] ?? '') === 'notas' ? 'notas' : 'alunos';
+        $this->view->roster = Container::getModel('TeacherStudent\\StudentFile')->classRoster($classId, $ownIds, $unity);
+        $this->view->quickNotes = \App\Models\TeacherStudent\StudentFile::QUICK_NOTES;
+        $this->view->quickDisciplines = array_map(function ($c) {
+            return ['id' => (int) $c->discipline_class_id, 'name' => $c->discipline_name, 'subject' => \App\Tools\Subject::css($c->discipline_name)];
+        }, $own);
 
         $this->render('classOverview', 'TeacherPortalLayout', 'teacherPortal');
     }
@@ -415,7 +434,8 @@ class TeacherClassController extends Action
         $this->view->rule = $Performance->rule();
         $this->view->performance = $Performance->byDiscipline($student->id, $student->class_id);
         $this->view->mine = $mine;
-        $this->view->exams = $StudentFile->exams($student->id, $mine);
+        $this->view->exams = $StudentFile->exams($student->id, array_map(function ($p) { return (int) $p['id']; }, $this->view->performance));
+        $this->view->examTypes = \App\Models\TeacherStudent\Gradebook::EXAM_TYPES;
         $this->view->notes = $StudentFile->notes($student->id);
         $this->view->guardians = $StudentFile->guardians($student->student_id);
         $this->view->classAverages = $StudentFile->classAverages($student->class_id, $this->view->rule);

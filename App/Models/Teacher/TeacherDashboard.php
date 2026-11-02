@@ -259,6 +259,41 @@ class TeacherDashboard extends Model
 
 
     /**
+     * Quem mais faltou no bimestre nas disciplinas do professor (sem as abonadas)
+     *
+     * @param array $disciplineClasses linhas de Attendance::disciplineClassesByTeacher
+     * @return array [id, name, label, absences]
+     */
+    public function topAbsences(array $disciplineClasses, $unity, $limit = 5)
+    {
+
+        if (!$disciplineClasses) return [];
+
+        $ids = implode(',', array_map(function ($dc) { return (int) $dc->discipline_class_id; }, $disciplineClasses));
+
+        $stmt = $this->db->prepare(
+            "SELECT matricula.id_matricula AS id, aluno.nome_aluno AS name, serie.sigla || 'ª ' || cedula_turma.cedula AS label,
+                    SUM(f.total_faltas - COALESCE(f.faltas_abonadas, 0))::int AS absences
+             FROM falta_aluno f
+             INNER JOIN matricula ON (matricula.id_matricula = f.fk_id_matricula_falta AND matricula.fk_id_situacao_aluno = 1)
+             INNER JOIN aluno ON (aluno.id_aluno = matricula.fk_id_aluno)
+             INNER JOIN turma ON (turma.id_turma = matricula.fk_id_turma_matricula)
+             INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
+             INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
+             WHERE f.fk_id_turma_disciplina_falta IN ($ids) AND f.fk_id_unidade_falta = :unity
+             GROUP BY 1, 2, 3
+             HAVING SUM(f.total_faltas - COALESCE(f.faltas_abonadas, 0)) > 0
+             ORDER BY absences DESC, name
+             LIMIT " . (int) $limit
+        );
+
+        $stmt->execute([':unity' => (int) $unity]);
+
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+
+    /**
      * Alunos que pedem atenção no bimestre: média parcial abaixo da média, aguardando recuperação ou com muitas faltas
      *
      * @param array $disciplineClasses linhas de Attendance::disciplineClassesByTeacher
