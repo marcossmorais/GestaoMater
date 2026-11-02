@@ -6,7 +6,11 @@ require __DIR__ . '../../../../config/variables.php';
 
     <nav id="sidebar">
 
-    <div class="col-lg-12 logo d-flex justify-content-center mb-3"><img src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca.png" alt=""></div>
+    <div class="col-lg-12 logo d-flex justify-content-center">
+        <img class="logo-light" src="<?= $app_url ?>/assets/img/logo-components/logo-completa-480.png" alt="Mater">
+        <img class="logo-dark" src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca-480.png" alt="Mater">
+        <img class="logo-mini" src="<?= $app_url ?>/assets/img/app/icon-192.png" alt="Mater">
+    </div>
 
         <ul class="sidebar-lists">
 

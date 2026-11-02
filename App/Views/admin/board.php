@@ -5,8 +5,6 @@ $types = ClassBoard::TYPES;
 $posts = $this->view->posts;
 ?>
 
-<link rel="stylesheet" href="<?= asset('/assets/css/edu.css') ?>">
-
 <section id="adminBoard" class="m-att">
 
     <div class="row main-container">
