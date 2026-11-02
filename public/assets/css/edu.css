@@ -966,6 +966,17 @@ html body #pagina .card.m-freq-tile { display: flex; flex-direction: column; ali
   #studentFrequency .m-seg button, .m-freq-day .btn { min-height: 44px; }
 }
 
+/* Boletim: nota de cada avaliação e simuladores por matéria */
+html body .m-bul-title { margin: 20px 0 4px; font-size: 15px; font-weight: 800; }
+.m-bul-subjects { display: flex; flex-direction: column; gap: 8px; }
+.m-bul-subject { padding: 0 12px; border: 1px solid var(--m-border); border-left: 4px solid var(--s, var(--m-primary)); border-radius: 10px; }
+.m-bul-subject > summary { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-height: 44px; font-size: 14px; cursor: pointer; }
+.m-bul-subject > summary small { margin-left: auto; font-size: 12px; color: var(--m-muted); }
+.m-bul-subject[open] { padding-bottom: 12px; }
+.m-bul-unit { margin-bottom: 10px; }
+.m-bul-unit-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 4px; font-size: 13px; }
+.m-bul-unit-head .is-low b { color: var(--m-danger); }
+
 /* Admin no padrão dos portais: submenus e rodapé do menu lateral */
 body#admin #left-panel #sidebar .sidebar-lists .collapse li, body#admin #left-panel #sidebar .sidebar-lists .collapsing li { margin: 0 6px 0 34px !important; }
 html body#admin #left-panel #sidebar .sidebar-lists .collapse li a, html body#admin #left-panel #sidebar .sidebar-lists .collapsing li a { min-height: 38px; font-size: 13px !important; font-weight: 700 !important; color: var(--m-muted) !important; }

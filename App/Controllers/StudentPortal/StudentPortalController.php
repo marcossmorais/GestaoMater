@@ -376,6 +376,14 @@ class StudentPortalController extends Action
 
 
     /**
+        $this->view->studentExams = $this->studentExams($this->view->rows);
+
+        // cada avaliação com tipo e data, para o detalhe por matéria
+        $exams = [];
+        foreach (Container::getModel('TeacherStudent\\StudentFile')->exams((int) $_SESSION['Student']['enrollmentId'], array_column($this->view->rows, 'id')) as $e) {
+            $exams[(int) $e->discipline_class_id][(int) $e->unity][] = $e;
+        }
+        $this->view->exams = $exams;
      * Boletim para imprimir, com código de validação e QR (só do próprio aluno)
      */
     public function bulletinDocument()

@@ -70,15 +70,19 @@
             : `<i class="fas fa-redo mr-1"></i>Média do ${base.unit}º bimestre: <strong>${fmt(average)}</strong>. Vai para a recuperação, onde precisa tirar ${fmt(rule.passing)}.`;
     }
 
-    document.querySelectorAll('[data-bim-sim]').forEach((box) => {
-        simulateBimester(box);
-        box.addEventListener('input', () => simulateBimester(box));
+    // o Boletim chega depois, por AJAX: os eventos ficam no documento
+    document.querySelectorAll('[data-bim-sim]').forEach(simulateBimester);
+    document.addEventListener('toggle', (event) => {
+        if (event.target.matches && event.target.matches('[data-bim-sim]')) simulateBimester(event.target);
+    }, true);
+    document.addEventListener('input', (event) => {
+        const box = event.target.closest('[data-bim-sim]');
+        if (box) simulateBimester(box);
     });
 
     // ---------- Simulador da média do ano, por disciplina
-    const performance = document.getElementById('studentPerformance');
-    if (performance) {
-        performance.addEventListener('input', (event) => {
+    {
+        document.addEventListener('input', (event) => {
             const input = event.target.closest('[data-try-unit]');
             if (!input) return;
             const card = input.closest('[data-perf]');
