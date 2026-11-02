@@ -689,6 +689,15 @@ body:is(#teacherPortal, #studentPortal) #pagina #settingsModal { overflow-y: aut
 .m-profile-bar { z-index: 5; padding: 12px 16px; background: var(--m-surface); border: 2px solid var(--m-border); border-radius: 18px; box-shadow: var(--m-shadow); }
 .m-profile-bar .btn { min-height: 44px; }
 
+/* Controles em link dentro de .m-seg: legíveis nos dois temas */
+body:is(#teacherPortal, #studentPortal) .m-seg a.btn { height: 34px; min-height: 34px; min-width: 44px; padding: 0 12px; font-size: 13px; font-weight: 700 !important; color: var(--m-muted) !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+body:is(#teacherPortal, #studentPortal) .m-seg a.btn.is-active { color: var(--m-primary-text) !important; background: var(--m-surface) !important; box-shadow: 0 1px 3px rgba(16, 32, 72, .14) !important; }
+#classOverview .m-att-toolbar { align-items: flex-end; }
+
+/* Carômetro: botão de observação discreto */
+html body#teacherPortal .m-roster-note { width: auto; min-height: 32px !important; padding: 0 10px; font-size: 12px; font-weight: 700 !important; border-width: 1px !important; border-radius: 8px !important; box-shadow: none !important; }
+@media (max-width: 767.98px) { html body#teacherPortal .m-roster-note { min-height: 44px !important; width: calc(100% - 16px); } }
+
 /* Perfil do professor: página própria, compacta */
 .m-profile-page { padding-bottom: 96px; }
 .m-profile-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
@@ -720,5 +729,27 @@ html body#teacherPortal .m-profile-page .btn-light { border-width: 1px !importan
   .m-profile-box .m-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   html body#teacherPortal .m-profile-box .form-control { height: 44px !important; min-height: 44px !important; }
   html body#teacherPortal .m-profile-page .btn { min-height: 44px !important; height: 44px; }
+}
+
+/* Modo escuro: fundos preenchidos mais escuros, para o texto branco ficar legível */
+html.nightMode body:is(#teacherPortal, #studentPortal) .btn-primary,
+html.nightMode .m-filter-chips .m-att-subject.is-active,
+html.nightMode .m-cal-num.is-today,
+html.nightMode .m-week-head em { background: #2563EB !important; border-color: #2563EB; }
+
+/* Escala de texto fixa nos portais: o legado usa clamp(13px, …vw, 20px), que chega a 20px em telas grandes */
+@media (min-width: 768px) { body:is(#teacherPortal, #studentPortal) { --m-control-h: 38px; } }
+html body:is(#teacherPortal, #studentPortal) #pagina .btn { font-size: 14px !important; }
+html body:is(#teacherPortal, #studentPortal) #pagina .m-seg a.btn { font-size: 13px !important; }
+html body#teacherPortal #pagina .m-roster-note.btn { font-size: 12px !important; }
+html body:is(#teacherPortal, #studentPortal) #pagina p { font-size: 14px; }
+html body:is(#teacherPortal, #studentPortal) #pagina p.m-muted-note, html body:is(#teacherPortal, #studentPortal) #pagina p.m-empty { font-size: 13px; }
+html body:is(#teacherPortal, #studentPortal) #pagina table th, html body:is(#teacherPortal, #studentPortal) #pagina table td { font-size: 13px; }
+html body:is(#teacherPortal, #studentPortal) #pagina form .m-att-label { font-size: 12px; }
+html body:is(#teacherPortal, #studentPortal) #pagina form input.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form select.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form textarea.form-control, html body:is(#teacherPortal, #studentPortal) #pagina .m-quick input.form-control { font-size: 14px; }
+html body:is(#teacherPortal, #studentPortal) #pagina .m-guide-fields .form-control { font-size: 14px; }
+/* no celular, 16px evita o zoom automático do navegador ao tocar no campo */
+@media (max-width: 767.98px) {
+  html body:is(#teacherPortal, #studentPortal) #pagina form input.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form select.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form textarea.form-control, html body:is(#teacherPortal, #studentPortal) #pagina .m-quick input.form-control, html body:is(#teacherPortal, #studentPortal) #pagina .m-guide-fields .form-control { font-size: 16px; }
 }
 
