@@ -86,7 +86,9 @@ require __DIR__ . '/../../config/variables.php';
 
 <script src="<?= asset('/assets/js/utilities/style.js') ?>"></script>
 
+<?php if (in_array($this->view->page, ['home', 'studentFile'], true)) { ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<?php } ?>
 
 <script src="<?= asset('/assets/js/utilities/chartJs/config.js') ?>"></script> 
 
