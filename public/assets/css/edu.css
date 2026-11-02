@@ -994,6 +994,17 @@ html body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li { 
 body:is(#teacherPortal, #admin) #left-panel #sidebar .sidebar-lists > li > a { min-height: 42px; }
 body#admin #left-panel #sidebar { overflow-x: hidden; }
 
+/* Portal do aluno: cards lisos; o tracejado fica só em estados vazios */
+html body#studentPortal #pagina .card { border: 1px solid var(--m-border) !important; box-shadow: 0 1px 3px rgba(16, 32, 72, .08) !important; }
+html body#studentPortal #pagina .card.m-empty, html body#studentPortal #pagina .card.m-board-empty { border: 1px dashed var(--m-border) !important; box-shadow: none !important; }
+
+/* Cards do mesmo tipo com a mesma altura */
+.m-perf-grid { grid-auto-rows: auto; align-items: stretch; }
+html body .card.m-perf-card .m-perf-sim { flex: 1; min-height: 58px; }
+.m-classmate { min-height: 132px; justify-content: flex-start; }
+.m-class-teachers .m-classmate { min-height: 176px; }
+.m-freq-grid { align-items: stretch; }
+
 /* Boletim: legível nos dois temas, linhas que expandem */
 #bulletin .m-bulletin, #bulletin .m-bulletin th, #bulletin .m-bulletin td:not(.is-low):not(.is-rec) { color: var(--m-text) !important; }
 #bulletin .m-bulletin th { font-size: 12px; font-weight: 800; background: var(--m-surface-2) !important; }
@@ -1044,3 +1055,8 @@ html.nightMode body#studentPortal #pagina #bulletin .m-bulletin th { color: #fff
   #bulletin .m-bul-exams tr { display: table-row; margin: 0; padding: 0; background: transparent; border: 0; }
   #bulletin .m-bul-exams th, #bulletin .m-bul-exams td { display: table-cell; min-width: 0; height: auto; }
 }
+
+/* Cards de desempenho: nome e professor em uma linha, para todos ficarem iguais */
+body#studentPortal .m-perf-card header strong, body#studentPortal .m-perf-card header small { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+html body#studentPortal #pagina .card.m-updates + .card.m-updates { margin-top: 12px; }
+.m-mural-layout > .m-mural-aside .card { margin-top: 0; }
