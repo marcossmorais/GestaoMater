@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../../config/variables.php';
+// Aba Horário de Planejamento e Horário. Entrada: $this->view->scheduleByDay, dayNames, shortDayNames, totalClasses.
 
 use App\Tools\Subject;
 
@@ -56,13 +56,9 @@ $slotCard = function ($slot, $d, $compact) use ($state, $today, $time, &$nextMar
 
 <section id="schedule" class="m-schedule-view">
 
-    <div class="row main-container">
-
-        <div class="col-lg-11 mx-auto">
-
             <div class="m-page-head">
                 <div>
-                    <h5>Meu horário</h5>
+                    <h6 class="m-0">Meu horário</h6>
                     <p>Semana de <?= $dates[2] ?> a <?= $dates[6] ?> · <?= (int) $totalClasses ?> aula<?= $totalClasses == 1 ? '' : 's' ?> por semana</p>
                 </div>
                 <div class="m-seg" data-schedule-mode role="group" aria-label="Modo de exibição">
@@ -112,10 +108,6 @@ $slotCard = function ($slot, $d, $compact) use ($state, $today, $time, &$nextMar
                     </div>
                 <?php } ?>
             </div>
-
-        </div>
-
-    </div>
 
 </section>
 

@@ -148,6 +148,94 @@ class Gradebook extends Model
 
 
     /**
+     * Grava o roteiro e envia à coordenação: volta a ficar "não visto" a cada alteração
+     *
+     * @param array $guide ['topics', 'material', 'notes']
+     */
+    public function sendGuide($examId, array $guide, $teacherId)
+    {
+
+        $this->updateGuide($examId, $guide);
+
+        $stmt = $this->db->prepare(
+            "UPDATE avaliacoes SET roteiro_enviado_em = CURRENT_TIMESTAMP, roteiro_visto_em = NULL, roteiro_enviado_por = :teacher WHERE id_avaliacao = :id"
+        );
+
+        return $stmt->execute([':teacher' => (int) $teacherId, ':id' => (int) $examId]);
+    }
+
+
+    /**
+     * Situação de envio dos roteiros de uma disciplina/turma, por avaliação
+     *
+     * @return array [id da avaliação => ['sentAt' => 'dd/mm/aaaa às hh:mm', 'seen' => bool]]
+     */
+    public function guideStatus($disciplineClassId)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT id_avaliacao AS id, TO_CHAR(roteiro_enviado_em, 'DD/MM/YYYY \"às\" HH24:MI') AS sent_at, roteiro_visto_em IS NOT NULL AS seen
+             FROM avaliacoes
+             WHERE fk_id_turma_disciplina_avaliacao = :disciplineClass AND roteiro_enviado_em IS NOT NULL"
+        );
+
+        $stmt->execute([':disciplineClass' => (int) $disciplineClassId]);
+
+        $status = [];
+        foreach ($stmt->fetchAll(\PDO::FETCH_OBJ) as $row) {
+            $status[(int) $row->id] = ['sentAt' => $row->sent_at, 'seen' => (bool) $row->seen];
+        }
+
+        return $status;
+    }
+
+
+    /**
+     * Roteiros enviados, para o admin: não vistos primeiro; $unity 0 = todos os bimestres
+     */
+    public function sentGuides($unity = 0)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT avaliacoes.id_avaliacao AS id, avaliacoes.descricao_avaliacao AS description, avaliacoes.fk_id_unidade_avaliacao AS unity,
+                    TO_CHAR(avaliacoes.data_realizada, 'DD/MM/YYYY') AS date, avaliacoes.roteiro AS notes,
+                    avaliacoes.roteiro_assuntos AS topics, avaliacoes.roteiro_material AS material,
+                    TO_CHAR(avaliacoes.roteiro_enviado_em, 'DD/MM/YYYY \"às\" HH24:MI') AS sent_at, avaliacoes.roteiro_visto_em IS NOT NULL AS seen,
+                    COALESCE((SELECT string_agg(tipo, ',' ORDER BY tipo) FROM avaliacao_tipo WHERE fk_id_avaliacao = avaliacoes.id_avaliacao), '') AS types,
+                    disciplina.nome_disciplina AS discipline, COALESCE(autor.nome_professor, titular.nome_professor) AS teacher,
+                    serie.sigla || 'ª ' || cedula_turma.cedula AS class_label
+             FROM avaliacoes
+             INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
+             INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)
+             INNER JOIN professor titular ON (turma_disciplina.fk_id_professor = titular.id_professor)
+             LEFT JOIN professor autor ON (avaliacoes.roteiro_enviado_por = autor.id_professor)
+             INNER JOIN turma ON (turma_disciplina.fk_id_turma = turma.id_turma)
+             INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
+             INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
+             WHERE avaliacoes.roteiro_enviado_em IS NOT NULL AND (:unity = 0 OR avaliacoes.fk_id_unidade_avaliacao = :unity)
+             ORDER BY (avaliacoes.roteiro_visto_em IS NULL) DESC, avaliacoes.roteiro_enviado_em DESC
+             LIMIT 200"
+        );
+
+        $stmt->bindValue(':unity', (int) $unity, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+
+    public function markGuideSeen($examId)
+    {
+
+        $stmt = $this->db->prepare(
+            "UPDATE avaliacoes SET roteiro_visto_em = CURRENT_TIMESTAMP WHERE id_avaliacao = :id AND roteiro_enviado_em IS NOT NULL"
+        );
+
+        return $stmt->execute([':id' => (int) $examId]);
+    }
+
+
+    /**
      * Nomes dos tipos a partir da lista gravada ("prova,trabalho" => "Prova, Trabalho escrito")
      */
     public static function typeLabels($types)

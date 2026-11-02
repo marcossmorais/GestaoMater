@@ -98,18 +98,52 @@
     }
 
     // ---------- Desenho
+    const kinds = {
+        lesson: ['fa-check', 'Aula dada'],
+        plan: ['fa-pen', 'Planejada'],
+        late: ['fa-exclamation', 'Sem registro'],
+        open: ['fa-plus', 'Sem plano'],
+        exam: ['fa-file-alt', 'Avaliação'],
+        event: ['fa-flag', 'Evento da escola']
+    };
+
     function pill(kind, text, title) {
-        return `<span class="m-cal-pill is-${kind}" title="${escapeHtml(title || text)}">${escapeHtml(text)}</span>`;
+        return `<span class="m-cal-pill is-${kind}" title="${escapeHtml(title || text)}"><i class="fas ${kinds[kind][0]}" aria-hidden="true"></i><span>${escapeHtml(text)}</span></span>`;
+    }
+
+    function openSlots(date, items) {
+        if (date < config.today) return 0;
+        return items.slots.filter((s) => !items.lessons.some((l) => l.dc === s.dc) && !items.plans.some((p) => p.dc === s.dc)).length;
     }
 
     function dayPills(date) {
         const items = dayItems(date);
         const pills = [];
+        const label = (dc) => (classOf(dc) || {}).label || '';
         items.events.forEach((e) => pills.push(pill('event', e.title, `${eventTypes[e.type] || 'Evento'}: ${e.title}`)));
-        items.exams.forEach((e) => pills.push(pill('exam', `${(classOf(e.dc) || {}).label || ''} ${e.description}`, `${classLabel(e.dc)}: ${e.description}`)));
-        items.lessons.forEach((l) => pills.push(pill('lesson', `${(classOf(l.dc) || {}).label || ''} dada`, `Aula dada: ${classLabel(l.dc)}`)));
-        items.plans.filter((p) => !p.given).forEach((p) => pills.push(pill(date < config.today ? 'late' : 'plan', `${(classOf(p.dc) || {}).label || ''} ${p.title}`, `Planejada: ${classLabel(p.dc)} · ${p.title}`)));
+        items.exams.forEach((e) => pills.push(pill('exam', `${label(e.dc)}: ${e.description}`, `${classLabel(e.dc)}: ${e.description}`)));
+        items.lessons.forEach((l) => {
+            const plan = items.plans.find((p) => p.dc === l.dc && p.given);
+            pills.push(pill('lesson', `${label(l.dc)}: ${plan ? plan.title : (classOf(l.dc) || {}).discipline || ''}`, `Aula dada: ${classLabel(l.dc)}${plan ? ` · ${plan.title}` : ''}`));
+        });
+        items.plans.filter((p) => !p.given).forEach((p) => pills.push(pill(date < config.today ? 'late' : 'plan', `${label(p.dc)}: ${p.title}`, `${date < config.today ? 'Planejada, sem registro' : 'Planejada'}: ${classLabel(p.dc)} · ${p.title}`)));
+        const open = openSlots(date, items);
+        if (open) pills.push(pill('open', `${open} aula${open > 1 ? 's' : ''} sem plano`));
         return { pills, items };
+    }
+
+    // legenda com o total de cada cor no período mostrado
+    function renderLegend(counts) {
+        $('[data-cal-legend]').innerHTML = Object.keys(kinds).map((kind) => `
+            <span class="is-${kind}"><i class="fas ${kinds[kind][0]}" aria-hidden="true"></i>${kinds[kind][1]}<b>${counts[kind] || 0}</b></span>`).join('');
+    }
+
+    function countPills(date, counts) {
+        dayPills(date).pills.forEach((p) => {
+            const kind = p.match(/is-(\w+)/)[1];
+            const match = kind === 'open' ? parseInt(p.match(/<span>(\d+)/)[1], 10) : 1;
+            counts[kind] = (counts[kind] || 0) + match;
+        });
     }
 
     function dayNumber(date, cell) {
@@ -121,19 +155,19 @@
         const { start, end } = range();
         const month = state.anchor.getMonth();
         const cells = [];
+        const counts = {};
         for (let day = start; day <= end; day = addDays(day, 1)) {
             const date = iso(day);
-            const { pills, items } = dayPills(date);
-            const shown = pills.slice(0, 3).join('');
-            const more = pills.length > 3 ? `<span class="m-cal-more">+${pills.length - 3}</span>` : '';
-            const open = !pills.length && items.slots.length && date >= config.today ? `<span class="m-cal-open">${items.slots.length} aula${items.slots.length > 1 ? 's' : ''}</span>` : '';
+            const { pills } = dayPills(date);
+            if (day.getMonth() === month) countPills(date, counts);
             cells.push(`
                 <button type="button" class="m-cal-day${day.getMonth() !== month ? ' is-out' : ''}${date === state.selected ? ' is-selected' : ''}" data-cal-date="${date}" aria-label="${weekdays[weekday(day) - 1]}, ${short(date)}${pills.length ? `: ${pills.length} registro${pills.length > 1 ? 's' : ''}` : ''}">
                     ${dayNumber(date, day)}
-                    <span class="m-cal-pills">${shown}${more}${open}</span>
-                    <span class="m-cal-dots" aria-hidden="true">${pills.slice(0, 4).map((p) => `<i class="${p.match(/is-\w+/)[0]}"></i>`).join('')}</span>
+                    <span class="m-cal-pills">${pills.join('')}</span>
+                    <span class="m-cal-dots" aria-hidden="true">${pills.slice(0, 6).map((p) => `<i class="${p.match(/is-\w+/)[0]}"></i>`).join('')}</span>
                 </button>`);
         }
+        renderLegend(counts);
         return `
             <div class="m-cal-weekdays" aria-hidden="true">${weekdays.map((w) => `<span>${w.slice(0, 3)}</span>`).join('')}</div>
             <div class="m-cal-month">${cells.join('')}</div>`;
@@ -142,15 +176,19 @@
     function renderWeek() {
         const { start } = range();
         const columns = [];
+        const counts = {};
         for (let i = 0; i < 7; i++) {
             const day = addDays(start, i);
             const date = iso(day);
             const items = dayItems(date);
+            countPills(date, counts);
             const rows = items.slots.map((s) => {
                 const lesson = items.lessons.some((l) => l.dc === s.dc);
                 const plan = items.plans.find((p) => p.dc === s.dc && !p.given);
                 const state_ = lesson ? 'lesson' : plan ? (date < config.today ? 'late' : 'plan') : 'open';
-                return `<span class="m-cal-slot is-${state_}"><b>${s.start}</b> ${escapeHtml(classLabel(s.dc))}${plan ? `<small>${escapeHtml(plan.title)}</small>` : ''}</span>`;
+                const given = items.plans.find((p) => p.dc === s.dc && p.given);
+                const theme = plan || given;
+                return `<span class="m-cal-slot is-${state_}"><b>${s.start}</b> ${escapeHtml(classLabel(s.dc))}${theme ? `<small>${escapeHtml(theme.title)}</small>` : ''}</span>`;
             });
             // aula dada ou planejada fora do horário fixo (reposição, troca) também aparece
             items.lessons.filter((l) => !items.slots.some((s) => s.dc === l.dc)).forEach((l) => rows.push(`<span class="m-cal-slot is-lesson">${escapeHtml(classLabel(l.dc))}</span>`));
@@ -163,6 +201,7 @@
                     <span class="m-cal-pills">${extras}${rows.join('') || (extras ? '' : '<small class="m-cal-free">Sem aulas</small>')}</span>
                 </button>`);
         }
+        renderLegend(counts);
         return `<div class="m-cal-week">${columns.join('')}</div>`;
     }
 
@@ -179,96 +218,115 @@
         return text ? `<div class="m-plan-field"><span class="m-att-label">${label}</span><p>${escapeHtml(text).replace(/\n/g, '<br>')}</p></div>` : '';
     }
 
-    function lessonItem(l) {
-        const c = classOf(l.dc) || {};
+    function lessonDetails(l) {
         const exception = l.substitute || l.taught
             ? `<div class="m-lesson-item-exc"><i class="fas fa-exchange-alt mr-1"></i>${escapeHtml([l.substitute ? `Substituto: ${l.substitute}` : '', l.taught ? `Matéria dada: ${l.taught}` : ''].filter(Boolean).join(' · '))}${l.reason ? ` — ${escapeHtml(l.reason)}` : ''}</div>`
             : '';
         return `
-            <div class="m-lesson-item ${c.subject || ''}">
-                <div class="m-lesson-item-head">
-                    <strong><span class="m-att-class-badge m-badge-sm">${escapeHtml(c.label || '')}</span> ${escapeHtml(c.discipline || '')}</strong>
-                    <span class="m-pill m-pill-ok"><i class="fas fa-check mr-1"></i>Dada</span>
-                </div>
-                ${l.bnccCode || l.bnccSkill ? `<p><span class="m-lesson-code-tag">${escapeHtml(l.bnccCode || 'BNCC')}</span> ${escapeHtml(l.bnccSkill || '')}</p>` : ''}
-                ${l.activities.length ? `<div class="m-lesson-tags">${l.activities.map((a) => `<span>${escapeHtml(a)}</span>`).join('')}</div>` : ''}
-                ${l.notes ? `<p class="m-lesson-notes">${escapeHtml(l.notes)}</p>` : ''}
-                ${exception}
+            ${l.bnccCode || l.bnccSkill ? `<p><span class="m-lesson-code-tag">${escapeHtml(l.bnccCode || 'BNCC')}</span> ${escapeHtml(l.bnccSkill || '')}</p>` : ''}
+            ${l.activities.length ? `<div class="m-lesson-tags">${l.activities.map((a) => `<span>${escapeHtml(a)}</span>`).join('')}</div>` : ''}
+            ${l.notes ? `<p class="m-lesson-notes">${escapeHtml(l.notes)}</p>` : ''}
+            ${exception}`;
+    }
+
+    function planDetails(p) {
+        const activities = p.activities.map((a) => config.activities[a] || a);
+        return `
+            ${p.bnccCode || p.bnccSkill ? `<p><span class="m-lesson-code-tag">${escapeHtml(p.bnccCode || 'BNCC')}</span> ${escapeHtml(p.bnccSkill || '')}</p>` : ''}
+            ${detail('Objetivos', p.objectives)}
+            ${detail('Passo a passo', p.development)}
+            ${activities.length ? `<div class="m-lesson-tags">${activities.map((a) => `<span>${escapeHtml(a)}</span>`).join('')}</div>` : ''}
+            ${detail('Recursos', p.resources)}
+            ${detail('Como avaliar', p.assessment)}
+            ${detail('Tarefa de casa', p.homework)}
+            <div class="m-plan-actions">
+                <button type="button" class="btn btn-light" data-cal-action="plan-edit" data-id="${p.id}"><i class="fas fa-pen mr-2"></i>Editar</button>
+                <button type="button" class="btn btn-light" data-cal-action="plan-copy" data-id="${p.id}"><i class="fas fa-copy mr-2"></i>Copiar para outra turma ou data</button>
+                <button type="button" class="btn btn-light" data-cal-action="plan-delete" data-id="${p.id}"><i class="fas fa-trash mr-2"></i>Excluir</button>
             </div>`;
     }
 
-    function planItem(p) {
-        const c = classOf(p.dc) || {};
-        const past = p.date <= config.today;
-        const status = p.given
-            ? '<span class="m-pill m-pill-ok"><i class="fas fa-check mr-1"></i>Aula dada</span>'
-            : (p.date < config.today ? '<span class="m-pill m-pill-warn">Não registrada</span>' : '<span class="m-pill m-pill-info">Planejada</span>');
-        const activities = p.activities.map((a) => config.activities[a] || a);
+    // Uma linha por aula do dia: juntas a aula do horário, o plano e o registro
+    function dayEntries(date, items) {
+        const plans = items.plans.slice();
+        const lessons = items.lessons.slice();
+        const take = (list, dc) => {
+            const i = list.findIndex((x) => x.dc === dc);
+            return i < 0 ? null : list.splice(i, 1)[0];
+        };
+        const entries = items.slots.map((s) => ({ dc: s.dc, slot: s, plan: take(plans, s.dc), lesson: take(lessons, s.dc) }));
+        // reposição ou troca: aula ou plano fora do horário fixo
+        lessons.forEach((l) => entries.push({ dc: l.dc, slot: null, plan: take(plans, l.dc), lesson: l }));
+        plans.forEach((p) => entries.push({ dc: p.dc, slot: null, plan: p, lesson: null }));
+        return entries;
+    }
+
+    const statuses = {
+        lesson: ['Aula dada', 'fa-check'],
+        plan: ['Planejada', 'fa-pen'],
+        late: ['Planejada, falta registrar', 'fa-exclamation'],
+        missing: ['Sem registro', 'fa-minus'],
+        open: ['Sem plano', 'fa-plus']
+    };
+
+    function entryCard(entry, date) {
+        const c = classOf(entry.dc) || {};
+        const { plan, lesson, slot } = entry;
+        const past = date < config.today;
+        const canRegister = date <= config.today;
+        const status = lesson || (plan && plan.given) ? 'lesson' : plan ? (past ? 'late' : 'plan') : past ? 'missing' : 'open';
+
+        const actions = [];
+        if (!lesson && canRegister && !(plan && plan.given)) {
+            actions.push(`<button type="button" class="btn btn-primary" data-cal-action="${plan ? 'lesson-from-plan' : 'lesson-new'}" data-id="${plan ? plan.id : ''}" data-dc="${entry.dc}"><i class="fas fa-check mr-2"></i>Registrar aula</button>`);
+        }
+
+        const quick = status === 'open' ? `
+            <form class="m-cal-quick" data-cal-quick data-dc="${entry.dc}" data-lessons="${slot ? slot.count || 1 : 1}">
+                <input type="text" class="form-control" maxlength="160" required placeholder="Qual o tema desta aula?" aria-label="Tema da aula de ${escapeHtml(classLabel(entry.dc))}">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <button type="button" class="btn btn-light" data-cal-action="plan-new" data-dc="${entry.dc}">Mais detalhes</button>
+            </form>` : '';
+
+        if (status === 'missing') actions.push(`<button type="button" class="btn btn-light" data-cal-action="plan-new" data-dc="${entry.dc}">Planejar</button>`);
+
         return `
-            <details class="m-lesson-item m-plan-item ${c.subject || ''}">
-                <summary>
-                    <span class="m-lesson-item-head">
-                        <strong><span class="m-att-class-badge m-badge-sm">${escapeHtml(c.label || '')}</span> ${escapeHtml(p.title)}</strong>
-                        ${status}
-                    </span>
-                    <small>${escapeHtml(c.discipline || '')} · ${p.lessons} aula${p.lessons > 1 ? 's' : ''}${p.bnccCode ? ` · ${escapeHtml(p.bnccCode)}` : ''}</small>
-                </summary>
-                ${p.bnccCode || p.bnccSkill ? `<p><span class="m-lesson-code-tag">${escapeHtml(p.bnccCode || 'BNCC')}</span> ${escapeHtml(p.bnccSkill || '')}</p>` : ''}
-                ${detail('Objetivos', p.objectives)}
-                ${detail('Desenvolvimento', p.development)}
-                ${activities.length ? `<div class="m-lesson-tags">${activities.map((a) => `<span>${escapeHtml(a)}</span>`).join('')}</div>` : ''}
-                ${detail('Recursos', p.resources)}
-                ${detail('Como avaliar', p.assessment)}
-                ${detail('Tarefa de casa', p.homework)}
-                <div class="m-plan-actions">
-                    ${past && !p.given ? `<button type="button" class="btn btn-primary" data-cal-action="lesson-from-plan" data-id="${p.id}"><i class="fas fa-check mr-2"></i>Registrar aula</button>` : ''}
-                    <button type="button" class="btn btn-light" data-cal-action="plan-edit" data-id="${p.id}"><i class="fas fa-pen mr-2"></i>Editar</button>
-                    <button type="button" class="btn btn-light" data-cal-action="plan-copy" data-id="${p.id}"><i class="fas fa-copy mr-2"></i>Copiar para outra turma ou data</button>
-                    <button type="button" class="btn btn-light" data-cal-action="plan-delete" data-id="${p.id}"><i class="fas fa-trash mr-2"></i>Excluir</button>
+            <li class="m-cal-entry is-${status}">
+                <div class="m-cal-entry-time">${slot ? `<strong>${slot.start}</strong><span>${slot.finish}</span>` : '<span>Fora do horário</span>'}</div>
+                <div class="m-cal-entry-body">
+                    <div class="m-cal-entry-head">
+                        <span class="m-att-class-badge m-badge-sm">${escapeHtml(c.label || '')}</span>
+                        <strong>${escapeHtml(c.discipline || '')}</strong>
+                        ${slot && slot.count > 1 ? `<small>${slot.count} aulas seguidas</small>` : ''}
+                        <span class="m-cal-status"><i class="fas ${statuses[status][1]}" aria-hidden="true"></i>${statuses[status][0]}</span>
+                    </div>
+                    ${plan ? `<p class="m-cal-entry-theme">${escapeHtml(plan.title)}</p>` : ''}
+                    ${quick}
+                    ${actions.length ? `<div class="m-plan-actions">${actions.join('')}</div>` : ''}
+                    ${lesson ? `<details class="m-cal-more-info"><summary>Ver o que foi feito</summary>${lessonDetails(lesson)}</details>` : ''}
+                    ${plan ? `<details class="m-cal-more-info"><summary>Ver plano completo</summary>${planDetails(plan)}</details>` : ''}
                 </div>
-            </details>`;
+            </li>`;
     }
 
     function renderDay() {
         const date = state.selected;
         const day = parse(date);
         const items = dayItems(date);
-        const canRegister = date <= config.today;
         const dayName = date === config.today ? 'Hoje' : weekdays[weekday(day) - 1];
-
-        const slots = items.slots.map((s) => {
-            const c = classOf(s.dc) || {};
-            const lesson = items.lessons.some((l) => l.dc === s.dc);
-            const plan = items.plans.find((p) => p.dc === s.dc);
-            let actions = '';
-            if (!lesson && canRegister) actions += `<button type="button" class="btn btn-primary" data-cal-action="${plan && !plan.given ? 'lesson-from-plan' : 'lesson-new'}" data-id="${plan ? plan.id : ''}" data-dc="${s.dc}">Registrar aula</button>`;
-            if (!plan && !lesson) actions += `<button type="button" class="btn btn-light" data-cal-action="plan-new" data-dc="${s.dc}">Planejar</button>`;
-            return `
-                <li class="m-today-item ${c.subject || ''}">
-                    <div class="m-today-time"><strong>${s.start}</strong><span>${s.finish}</span></div>
-                    <span class="m-att-class-badge">${escapeHtml(c.label || '')}</span>
-                    <div class="m-today-body">
-                        <strong>${escapeHtml(c.discipline || '')}</strong>
-                        <small>${s.count > 1 ? `${s.count} aulas seguidas · ` : ''}${lesson ? 'Aula registrada' : plan ? 'Com plano' : 'Sem plano'}</small>
-                    </div>
-                    <div class="m-cal-slot-actions">${actions}</div>
-                </li>`;
-        }).join('');
+        const entries = dayEntries(date, items);
 
         const events = items.events.map((e) => `<li>${pill('event', eventTypes[e.type] || 'Evento')} ${escapeHtml(e.title)}</li>`).join('');
         const exams = items.exams.map((e) => `<li>${pill('exam', 'Avaliação')} ${escapeHtml(classLabel(e.dc))}: ${escapeHtml(e.description)}</li>`).join('');
-        const empty = !slots && !events && !exams && !items.lessons.length && !items.plans.length;
 
         $('[data-cal-day]').innerHTML = `
             <div class="m-panel-head">
-                <h6>${dayName} · ${short(date)}</h6>
-                <button type="button" class="btn btn-light" data-cal-action="plan-new"><i class="fas fa-plus mr-2"></i>Planejar aula</button>
+                <h6>${dayName} · ${short(date)} <small>${entries.length ? `${entries.length} aula${entries.length > 1 ? 's' : ''}` : ''}</small></h6>
+                <button type="button" class="btn btn-light" data-cal-action="plan-new"><i class="fas fa-plus mr-2"></i>Planejar outra aula</button>
             </div>
             ${events || exams ? `<ul class="m-cal-notes">${events}${exams}</ul>` : ''}
-            ${slots ? `<ul class="m-today">${slots}</ul>` : ''}
-            ${items.plans.length ? `<h6 class="m-data-sub">Planejamento</h6><div class="m-lesson-list">${items.plans.map(planItem).join('')}</div>` : ''}
-            ${items.lessons.length ? `<h6 class="m-data-sub">O que foi feito</h6><div class="m-lesson-list">${items.lessons.map(lessonItem).join('')}</div>` : ''}
-            ${empty ? '<div class="m-empty">Nada registrado nem planejado neste dia.</div>' : ''}`;
+            ${entries.length ? `<ul class="m-cal-entries">${entries.map((entry) => entryCard(entry, date)).join('')}</ul>` : ''}
+            ${!entries.length && !events && !exams ? '<div class="m-empty">Nenhuma aula neste dia.</div>' : ''}`;
     }
 
     function renderFilter() {
@@ -350,6 +408,34 @@
         }
     });
 
+    // Tema direto na lista do dia: o jeito mais rápido de planejar
+    $('[data-cal-day]').addEventListener('submit', async (event) => {
+        const form = event.target.closest('[data-cal-quick]');
+        if (!form) return;
+        event.preventDefault();
+
+        const input = form.querySelector('input');
+        const title = input.value.trim();
+        if (!title) return input.focus();
+
+        const button = form.querySelector('[type="submit"]');
+        button.disabled = true;
+        try {
+            const response = await fetch('/portal-docente/planejamento/salvar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                body: JSON.stringify({ disciplineClass: parseInt(form.dataset.dc, 10), date: state.selected, title, lessons: parseInt(form.dataset.lessons, 10) || 1, activities: [] })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || 'falha-ao-salvar');
+            toast('Tema salvo');
+            load();
+        } catch (e) {
+            button.disabled = false;
+            toast(errors[e.message] || errors['falha-ao-salvar'], 'error');
+        }
+    });
+
     async function removePlan(id) {
         if (!window.confirm('Excluir este plano de aula?')) return;
         try {
@@ -390,9 +476,10 @@
         ['objectives', 'development', 'resources', 'assessment', 'homework'].forEach((name) => { field(name).value = plan[name] || ''; });
         planBncc.reset(plan.bnccCode, plan.bnccSkill || '');
         planForm.querySelectorAll('[data-plan-activity]').forEach((b) => chip(b, planState.activities.has(b.dataset.planActivity)));
+        planForm.querySelector('[data-plan-more]').open = ['bnccCode', 'bnccSkill', 'objectives', 'development', 'resources', 'assessment', 'homework'].some((name) => plan[name]);
         $('[data-plan-title]').textContent = copying ? 'Copiar plano de aula' : plan.id ? 'Editar plano de aula' : 'Planejar aula';
         diary.show('plan');
-        if (copying) field('date').focus();
+        (copying ? field('date') : field('title')).focus();
     }
 
     $('[data-plan-activities]').addEventListener('click', (event) => {

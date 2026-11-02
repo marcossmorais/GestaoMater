@@ -792,3 +792,116 @@ html body .m-overview td.m-overview-count.has-low { font-weight: 800; color: var
   .m-overview td.m-overview-count:empty { display: none; }
 }
 html.nightMode body .m-overview td.is-low, html.nightMode body .m-overview td.m-overview-count.has-low { color: #FF9A9E !important; }
+
+/* Menu do docente: largura fixa (o legado usa 16.5vw) e sem animação ao recolher */
+@media (min-width: 768px) {
+  body#teacherPortal:not(.sidebar-responsive) .panel-side { flex: 0 0 208px !important; max-width: 208px !important; }
+  body#teacherPortal:not(.sidebar-responsive) #pagina { flex: 0 0 calc(100% - 208px) !important; max-width: calc(100% - 208px) !important; }
+  html body#teacherPortal:not(.sidebar-responsive) #left-panel #sidebar { width: 208px !important; }
+  body#teacherPortal:not(.sidebar-responsive) #navbar-top { width: calc(100% - 208px) !important; max-width: calc(100% - 208px) !important; flex: none !important; }
+  body#teacherPortal:not(.sidebar-responsive) .m-att-bar { left: 208px; }
+  body#teacherPortal #left-panel #sidebar .logo img.logo-light, body#teacherPortal #left-panel #sidebar .logo img.logo-dark { max-width: 150px; height: auto; }
+  body#teacherPortal #left-panel #sidebar .link-name { white-space: normal; line-height: 1.2; }
+}
+html body#teacherPortal .panel-side, html body#teacherPortal #left-panel, html body#teacherPortal #left-panel *,
+html body#teacherPortal #pagina, html body#teacherPortal #navbar-top, html body#teacherPortal .m-att-bar,
+html body#teacherPortal #pagina .card, html body#teacherPortal .m-chart-box, html body#teacherPortal .m-donut, html body#teacherPortal canvas { transition: none !important; animation: none !important; }
+
+/* Planejamento: passos, cores e cada aula do dia com uma ação clara */
+.m-cal { --cal-open: #7A869A; }
+.m-cal-steps { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 12px; padding: 0; list-style: none; font-size: 13px; font-weight: 700; color: var(--m-muted); }
+.m-cal-steps li { display: inline-flex; align-items: center; gap: 6px; }
+.m-cal-steps b { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; font-size: 11px; color: var(--m-primary-text); background: var(--m-primary-soft); border-radius: 50%; }
+.m-cal .m-cal-day { min-height: 92px; }
+.m-cal-pill { display: flex; align-items: flex-start; gap: 4px; padding: 3px 5px; overflow: visible; font-size: 11px; font-weight: 700; line-height: 1.25; white-space: normal; color: var(--m-text); text-align: left; background: color-mix(in srgb, var(--k) 14%, transparent); border: 0; border-left: 3px solid var(--k); border-radius: 4px; }
+.m-cal-pill > span { min-width: 0; overflow-wrap: anywhere; }
+.m-cal-pill > i { flex: none; margin-top: 2px; font-size: 9px; color: var(--k); }
+.m-cal-pill.is-open { --k: var(--cal-open); background: transparent; border: 1px dashed var(--cal-open); color: var(--m-muted); }
+.m-cal-slot.is-open { --k: var(--cal-open); border-style: dashed; }
+.m-cal-dots .is-open { background: var(--cal-open); }
+.m-cal-legend { gap: 6px; }
+.m-cal-legend > span { --k: var(--m-muted); padding: 4px 8px; font-size: 12px; color: var(--m-text); background: color-mix(in srgb, var(--k) 14%, transparent); border-left: 3px solid var(--k); border-radius: 4px; }
+.m-cal-legend > span > i { width: auto; height: auto; font-size: 10px; color: var(--k); background: none; border-radius: 0; }
+.m-cal-legend b { margin-left: 2px; font-weight: 900; }
+.m-cal-legend .is-lesson { --k: var(--cal-lesson); }
+.m-cal-legend .is-plan { --k: var(--cal-plan); }
+.m-cal-legend .is-late { --k: var(--cal-late); }
+.m-cal-legend .is-open { --k: var(--cal-open); }
+.m-cal-legend .is-exam { --k: var(--cal-exam); }
+.m-cal-legend .is-event { --k: var(--cal-event); }
+[data-cal-day] .m-panel-head h6 small { font-size: 13px; font-weight: 600; color: var(--m-muted); }
+[data-cal-day] { --cal-lesson: #22B07D; --cal-plan: #2F6FED; --cal-late: #F2643D; --cal-exam: #E8508C; --cal-event: #7B61FF; --cal-open: #7A869A; }
+.m-cal-entries { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.m-cal-entry { --k: var(--cal-open); display: flex; gap: 12px; padding: 10px 12px; background: var(--m-surface); border: 1px solid var(--m-border); border-left: 4px solid var(--k); border-radius: 10px; }
+.m-cal-entry.is-lesson { --k: var(--cal-lesson); }
+.m-cal-entry.is-plan { --k: var(--cal-plan); }
+.m-cal-entry.is-late { --k: var(--cal-late); }
+.m-cal-entry-time { flex: none; display: flex; flex-direction: column; width: 56px; font-size: 12px; color: var(--m-muted); }
+.m-cal-entry-time strong { font-size: 14px; color: var(--m-text); }
+.m-cal-entry-body { flex: 1; min-width: 0; }
+.m-cal-entry-head { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-size: 14px; }
+.m-cal-entry-head small { color: var(--m-muted); }
+.m-cal-status { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; padding: 2px 8px; font-size: 12px; font-weight: 700; color: var(--m-text); background: color-mix(in srgb, var(--k) 16%, transparent); border-radius: 10px; }
+.m-cal-status i { font-size: 10px; color: var(--k); }
+html body#teacherPortal #pagina .m-cal-entry-theme { margin: 6px 0 0; font-size: 15px; font-weight: 700; }
+.m-cal-quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.m-cal-quick input { flex: 1 1 220px; min-width: 0; }
+.m-cal-more-info { margin-top: 8px; font-size: 13px; }
+.m-cal-more-info > summary { font-weight: 700; color: var(--m-primary-text); cursor: pointer; }
+.m-cal-more-info[open] > summary { margin-bottom: 6px; }
+.m-cal-entry .m-plan-actions { margin-top: 8px; }
+.m-cal-other { margin-top: 14px; }
+.m-cal-other > summary { min-height: 44px; display: flex; align-items: center; font-size: 14px; font-weight: 700; color: var(--m-primary-text); cursor: pointer; }
+.m-page-head .m-class-tabs button { min-height: var(--m-control-h, 38px); }
+html.nightMode .m-cal-status, html.nightMode .m-cal-pill { color: var(--m-text); }
+@media (max-width: 767.98px) {
+  .m-cal-entry { flex-direction: column; gap: 4px; }
+  .m-cal-entry-time { flex-direction: row; gap: 6px; width: auto; }
+  .m-cal-status { margin-left: 0; }
+  .m-cal-quick .btn, .m-plan-actions .btn { flex: 1; }
+}
+
+/* Índice pedagógico do aluno */
+.m-index { --k: var(--m-muted); flex-direction: row; gap: 18px; margin-bottom: 12px; border-left: 4px solid var(--k) !important; }
+.m-index.is-high { --k: #22B07D; }
+.m-index.is-ok { --k: #2F6FED; }
+.m-index.is-mid { --k: #F59E0B; }
+.m-index.is-low { --k: #E5484D; }
+.m-index-score { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 104px; padding: 8px; text-align: center; background: color-mix(in srgb, var(--k) 12%, transparent); border-radius: 10px; }
+.m-index-score strong { font-size: 34px; font-weight: 900; line-height: 1; }
+.m-index-score span { margin-top: 4px; font-size: 12px; font-weight: 800; }
+.m-index-body { flex: 1; min-width: 0; }
+html body .m-index-body h6 { margin: 0 0 8px; font-size: 14px; font-weight: 800; }
+.m-index-bars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 16px; margin-bottom: 8px; }
+.m-index-bar > span { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 12px; font-weight: 700; }
+.m-index-bar b { margin-left: auto; font-weight: 800; }
+.m-index-track { display: block; height: 6px; overflow: hidden; background: var(--m-surface-2); border-radius: 3px; }
+.m-index-track > i { display: block; height: 100%; background: var(--k); }
+@media (max-width: 767.98px) {
+  .m-index { flex-direction: column; }
+  .m-index-score { flex-direction: row; gap: 10px; width: 100%; }
+  .m-index-score span { margin-top: 0; }
+  .m-index-bars { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Observações por mês e dia; solicitações de ocorrência */
+html body#teacherPortal .m-notes li.m-month-header { margin: 14px 0 2px; padding: 0; font-size: 14px; font-weight: 900; list-style: none; background: none !important; border: 0 !important; border-radius: 0; }
+html body#teacherPortal .m-notes li.m-month-header:first-child { margin-top: 0; }
+.m-requests { display: flex; flex-direction: column; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.m-requests:empty { display: none; }
+.m-requests li { padding: 10px 12px; border: 1px solid var(--m-border); border-radius: 10px; }
+.m-requests small { display: block; color: var(--m-muted); }
+html body .m-requests p { margin: 6px 0 0; font-size: 14px; }
+
+/* Roteiro de Provas e recebidos do admin */
+.m-guide-page { padding-bottom: 96px; }
+.m-guide-slots button:disabled { opacity: .45; cursor: not-allowed; }
+.m-inbox { display: flex; flex-direction: column; gap: 10px; }
+.m-inbox-item { display: flex; flex-direction: column; gap: 4px; }
+html body #pagina .card.m-inbox-item.is-new { border-left: 4px solid var(--m-primary); }
+.m-inbox-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+.m-inbox-item small { color: var(--m-muted); }
+.m-inbox-topics { margin: 6px 0; padding-left: 18px; font-size: 14px; }
+html body .m-inbox-item p { margin: 2px 0; font-size: 14px; }
+.m-inbox-topics li { list-style: disc; }
+@media (max-width: 767.98px) { html body#teacherPortal #pagina .m-page-head .m-class-tabs button, html body#teacherPortal #pagina .m-guide-page .m-seg button, html body#teacherPortal #pagina .m-lesson-form .m-seg button { min-height: 44px; } .m-page-head .m-class-tabs { display: flex; width: 100%; } .m-page-head .m-class-tabs button { flex: 1; } }

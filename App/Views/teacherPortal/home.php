@@ -51,7 +51,7 @@ $pendingTotal = count($pending['lessons']) + count($pending['exams']);
 
             <nav class="m-tiles" aria-label="Atalhos">
                 <a class="m-tile m-subj-green" href="/portal-docente/chamada"><span class="m-tile-ico"><i class="fas fa-clipboard-check"></i></span><strong>Chamada rápida</strong><small>Toque só em quem faltou</small></a>
-                <a class="m-tile m-subj-coral" href="/portal-docente/diario"><span class="m-tile-ico"><i class="fas fa-book-open"></i></span><strong>Diário</strong><small>Conteúdo e BNCC</small></a>
+                <a class="m-tile m-subj-coral" href="/portal-docente/diario"><span class="m-tile-ico"><i class="fas fa-book-open"></i></span><strong>Planejamento</strong><small>Calendário e horário</small></a>
                 <a class="m-tile m-subj-sky" href="/portal-docente/notas"><span class="m-tile-ico"><i class="fas fa-star"></i></span><strong>Notas</strong><small>1ª, 2ª e 3ª avaliação</small></a>
                 <a class="m-tile m-subj-purple" href="/portal-docente/mural"><span class="m-tile-ico"><i class="fas fa-thumbtack"></i></span><strong>Mural</strong><small>Avisos para a turma</small></a>
             </nav>
@@ -186,7 +186,7 @@ $pendingTotal = count($pending['lessons']) + count($pending['exams']);
                 <div class="card m-panel">
                     <div class="m-panel-head">
                         <h6><?= $isToday ? 'Aulas de hoje' : 'Próximas aulas · ' . $longDate($lessonsDate) ?></h6>
-                        <a href="/portal-docente/horario">Horário</a>
+                        <a href="/portal-docente/diario?aba=horario">Horário</a>
                     </div>
 
                     <?php if (!$lessons) { ?>

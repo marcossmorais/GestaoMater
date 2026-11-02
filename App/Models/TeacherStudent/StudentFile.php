@@ -14,6 +14,8 @@ class StudentFile extends Model
     // caixas marcáveis (uma ou mais); o texto livre continua disponível
     const QUICK_NOTES = [
         'Participou bem da aula',
+        'Ajudou os colegas',
+        'Evoluiu no conteúdo',
         'Não fez a tarefa',
         'Sem material',
         'Conversa / indisciplina',
@@ -171,12 +173,13 @@ class StudentFile extends Model
     /**
      * Observações sobre o aluno, mais recentes primeiro
      */
-    public function notes($enrollmentId, $limit = 30)
+    public function notes($enrollmentId, $limit = 500)
     {
 
         $stmt = $this->db->prepare(
             "SELECT observacao_aluno.id_observacao AS id, observacao_aluno.descricao AS text, observacao_aluno.fk_id_unidade AS unity,
                     TO_CHAR(observacao_aluno.data_postagem, 'DD/MM/YYYY') AS date,
+                    TO_CHAR(observacao_aluno.data_postagem, 'HH24:MI') AS time,
                     disciplina.nome_disciplina AS discipline,
                     COALESCE(autor.nome_professor, titular.nome_professor) AS teacher
              FROM observacao_aluno

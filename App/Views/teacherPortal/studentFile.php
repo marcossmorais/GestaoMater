@@ -18,6 +18,37 @@ $occ = $this->view->occurrences;
 $examTypes = $this->view->examTypes;
 // suas disciplinas primeiro; as demais só para consulta
 $ordered = array_merge($own, array_values(array_filter($performance, function ($p) use ($mine) { return !in_array((int) $p['id'], $mine, true); })));
+
+// índice pedagógico: mesmo cartão no resumo e nas observações
+$index = $this->view->index;
+$tones = $this->view->tones;
+$indexCard = function () use ($index, $tones) {
+    $parts = [['grades', 'Notas', 'fa-marker'], ['attendance', 'Frequência', 'fa-user-check'], ['behavior', 'Comportamento', 'fa-comment-dots']];
+    ob_start(); ?>
+    <div class="card m-panel m-index is-<?= $index['band'] ?>">
+        <div class="m-index-score">
+            <strong><?= $index['score'] ?? '–' ?></strong>
+            <span><?= htmlspecialchars($index['label']) ?></span>
+        </div>
+        <div class="m-index-body">
+            <h6>Índice pedagógico</h6>
+            <div class="m-index-bars">
+                <?php foreach ($parts as [$key, $label, $icon]) { $value = $index['parts'][$key]; ?>
+                    <div class="m-index-bar">
+                        <span><i class="fas <?= $icon ?>" aria-hidden="true"></i><?= $label ?><b><?= $value === null ? 'sem dados' : $value ?></b></span>
+                        <i class="m-index-track"><i style="width:<?= (int) $value ?>%"></i></i>
+                    </div>
+                <?php } ?>
+            </div>
+            <p class="m-muted-note mb-0">Nas observações: <?= (int) $tones['positive'] ?> positiva<?= $tones['positive'] === 1 ? '' : 's' ?> · <?= (int) $tones['negative'] ?> de atenção.</p>
+            <details class="m-cal-more-info">
+                <summary>Como é calculado</summary>
+                <p class="m-muted-note mb-0">De 0 a 100: notas (40%), frequência (30%) e comportamento (30%). O comportamento começa em 70, sobe ou desce com as caixas marcadas nas observações rápidas e com as ocorrências aceitas pela coordenação; texto livre não conta. O que ainda não tem dados sai da conta. É um apoio para conversar com o aluno e a família, não uma nota.</p>
+            </details>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+};
 ?>
 
 <section id="studentFile" class="m-att">
@@ -57,6 +88,8 @@ $ordered = array_merge($own, array_values(array_filter($performance, function ($
             </div>
 
             <div data-tab-panel="resumo">
+
+            <?= $indexCard() ?>
 
             <div class="m-file-grid">
                 <div class="card m-panel m-file-data">
@@ -198,6 +231,8 @@ $ordered = array_merge($own, array_values(array_filter($performance, function ($
 
             <div data-tab-panel="observacoes" hidden>
 
+            <?= $indexCard() ?>
+
             <?php if ($own) {
                 $quickNotes = $this->view->quickNotes;
                 $quickDisciplines = array_map(function ($p) { return ['id' => (int) $p['id'], 'name' => $p['discipline'], 'subject' => \App\Tools\Subject::css($p['discipline'])]; }, $own);
@@ -217,12 +252,82 @@ $ordered = array_merge($own, array_values(array_filter($performance, function ($
                     </div>
                 <?php } ?>
                 <ul class="m-notes" data-notes>
-                    <?php $lastDay = null; foreach ($this->view->notes as $n) { ?>
-                        <?php if ($n->date !== $lastDay) { $lastDay = $n->date; ?><li class="m-day-header" data-day><?= htmlspecialchars($n->date === date('d/m/Y') ? 'Hoje · ' . substr($n->date, 0, 5) : $n->date) ?></li><?php } ?>
-                        <li class="<?= \App\Tools\Subject::css($n->discipline) ?>" data-note-discipline="<?= htmlspecialchars($n->discipline) ?>"><p><?= nl2br(htmlspecialchars($n->text)) ?></p><small><i class="fas <?= \App\Tools\Subject::icon($n->discipline) ?> m-subj-ico"></i><?= htmlspecialchars($n->discipline) ?> · <?= htmlspecialchars($n->teacher) ?></small></li>
+                    <?php
+                    $monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                    $weekNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+                    $lastDay = null;
+                    $lastMonth = null;
+                    foreach ($this->view->notes as $n) {
+                        $day = DateTime::createFromFormat('d/m/Y', $n->date);
+                        $month = $monthNames[(int) $day->format('n') - 1] . ' de ' . $day->format('Y');
+                    ?>
+                        <?php if ($month !== $lastMonth) { $lastMonth = $month; ?><li class="m-month-header" data-month><?= $month ?></li><?php } ?>
+                        <?php if ($n->date !== $lastDay) { $lastDay = $n->date; ?><li class="m-day-header" data-day="<?= htmlspecialchars($n->date) ?>"><?= $n->date === date('d/m/Y') ? 'Hoje' : $weekNames[(int) $day->format('w')] ?> · <?= substr($n->date, 0, 5) ?></li><?php } ?>
+                        <li class="<?= \App\Tools\Subject::css($n->discipline) ?>" data-note-discipline="<?= htmlspecialchars($n->discipline) ?>"><p><?= nl2br(htmlspecialchars($n->text)) ?></p><small><?= htmlspecialchars($n->time) ?> · <?= htmlspecialchars($n->discipline) ?> · <?= htmlspecialchars($n->teacher) ?></small></li>
                     <?php } ?>
                 </ul>
                 <?php if (!$this->view->notes) { ?><p class="m-empty mb-0" data-notes-empty>Nenhuma observação ainda.</p><?php } ?>
+            </div>
+
+            <div class="card m-panel mb-3">
+                <div class="m-panel-head"><h6><i class="fas fa-flag mr-2"></i>Ocorrência</h6></div>
+                <p class="m-muted-note">Para algo mais sério, positivo ou negativo. A coordenação analisa e decide se vira ocorrência; a observação rápida continua para o dia a dia.</p>
+
+                <?php if ($own) { ?>
+                    <details class="m-lesson-exception" data-occ-box>
+                        <summary><i class="fas fa-paper-plane mr-2"></i>Solicitar ocorrência à coordenação</summary>
+                        <form class="m-lesson-form mb-0" data-occ-form novalidate>
+                            <div class="m-att-field">
+                                <span class="m-att-label">Tipo</span>
+                                <div class="m-seg" data-occ-category>
+                                    <button type="button" data-value="Elogio" class="is-active"><i class="fas fa-star mr-2"></i>Positiva</button>
+                                    <button type="button" data-value="Disciplinar">Disciplinar</button>
+                                    <button type="button" data-value="Pedagógica">Pedagógica</button>
+                                </div>
+                            </div>
+                            <div class="m-lesson-row">
+                                <label class="m-att-field">
+                                    <span class="m-att-label">Disciplina</span>
+                                    <select class="form-control" name="disciplineClass">
+                                        <?php foreach ($own as $p) { ?><option value="<?= (int) $p['id'] ?>"><?= htmlspecialchars($p['discipline']) ?></option><?php } ?>
+                                    </select>
+                                </label>
+                                <label class="m-att-field">
+                                    <span class="m-att-label">Data do fato</span>
+                                    <input type="date" class="form-control" name="date" value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>" required>
+                                </label>
+                                <label class="m-att-field" data-occ-severity hidden>
+                                    <span class="m-att-label">Gravidade</span>
+                                    <select class="form-control" name="severity">
+                                        <?php foreach (\App\Models\TeacherStudent\OccurrenceRequest::SEVERITIES as $s) { ?><option <?= $s === 'Média' ? 'selected' : '' ?>><?= $s ?></option><?php } ?>
+                                    </select>
+                                </label>
+                            </div>
+                            <label class="m-att-field">
+                                <span class="m-att-label">Título</span>
+                                <input type="text" class="form-control" name="title" maxlength="150" required placeholder="Ex.: Destaque na feira de ciências">
+                            </label>
+                            <label class="m-att-field">
+                                <span class="m-att-label">O que aconteceu</span>
+                                <textarea class="form-control" name="description" rows="3" maxlength="2000" required></textarea>
+                            </label>
+                            <div class="m-actions"><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane mr-2"></i>Enviar à coordenação</button></div>
+                        </form>
+                    </details>
+                <?php } ?>
+
+                <ul class="m-requests" data-occ-list>
+                    <?php foreach ($this->view->requests as $r) {
+                        $pill = ['pendente' => ['m-pill-warn', 'Aguardando coordenação'], 'aceita' => ['m-pill-ok', 'Aceita'], 'recusada' => ['m-pill-bad', 'Recusada']][$r->status];
+                    ?>
+                        <li>
+                            <div><strong><?= htmlspecialchars($r->title) ?></strong> <span class="m-pill <?= $pill[0] ?>"><?= $pill[1] ?></span></div>
+                            <small><?= htmlspecialchars($r->category) ?> · <?= htmlspecialchars($r->date) ?> · <?= htmlspecialchars($r->teacher) ?></small>
+                            <p><?= nl2br(htmlspecialchars($r->description)) ?></p>
+                            <?php if ($r->answer) { ?><p class="m-muted-note mb-0">Coordenação: <?= htmlspecialchars($r->answer) ?></p><?php } ?>
+                        </li>
+                    <?php } ?>
+                </ul>
             </div>
 
             </div>

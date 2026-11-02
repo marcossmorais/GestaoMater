@@ -18,10 +18,20 @@ require __DIR__ . '/components/classCards.php';
 
                 <div class="m-page-head">
                     <div>
-                        <h5>Diário de aula</h5>
-                        <p>Veja o que foi feito em cada dia, registre a aula e planeje as próximas.</p>
+                        <h5>Planejamento e Horário</h5>
+                        <p>Planeje as próximas aulas, registre o que foi dado e consulte seu horário.</p>
+                    </div>
+                    <div class="m-seg m-class-tabs" role="group" aria-label="Seções" data-page-tabs>
+                        <button type="button" data-page-tab="planejamento" class="<?= $this->view->pageTab === 'planejamento' ? 'is-active' : '' ?>"><i class="fas fa-calendar-check mr-2"></i>Planejamento</button>
+                        <button type="button" data-page-tab="horario" class="<?= $this->view->pageTab === 'horario' ? 'is-active' : '' ?>"><i class="fas fa-calendar-alt mr-2"></i>Horário</button>
                     </div>
                 </div>
+
+                <div data-page-panel="horario" <?= $this->view->pageTab === 'horario' ? '' : 'hidden' ?>>
+                    <?php require __DIR__ . '/components/scheduleBoard.php'; ?>
+                </div>
+
+                <div data-page-panel="planejamento" <?= $this->view->pageTab === 'planejamento' ? '' : 'hidden' ?>>
 
                 <?php if (count($disciplineClasses) === 0) { ?>
 
@@ -31,6 +41,12 @@ require __DIR__ . '/components/classCards.php';
                     </div>
 
                 <?php } else { ?>
+
+                    <ol class="m-cal-steps">
+                        <li><b>1</b>Clique em um dia do calendário</li>
+                        <li><b>2</b>Escreva o tema de cada aula</li>
+                        <li><b>3</b>Depois da aula, registre o que foi feito</li>
+                    </ol>
 
                     <div class="card m-panel m-cal" data-cal>
                         <div class="m-cal-head">
@@ -47,18 +63,13 @@ require __DIR__ . '/components/classCards.php';
                         </div>
                         <div class="m-filter-chips" data-cal-filter role="group" aria-label="Filtrar por turma" hidden></div>
                         <div data-cal-grid><div class="m-empty">Carregando o calendário…</div></div>
-                        <div class="m-cal-legend" aria-hidden="true">
-                            <span><i class="is-lesson"></i>Aula dada</span>
-                            <span><i class="is-plan"></i>Planejada</span>
-                            <span><i class="is-late"></i>Planejada, sem registro</span>
-                            <span><i class="is-exam"></i>Avaliação</span>
-                            <span><i class="is-event"></i>Evento da escola</span>
-                        </div>
+                        <div class="m-cal-legend" data-cal-legend></div>
                     </div>
 
                     <div class="card m-panel mt-3" data-cal-day></div>
 
-                    <h6 class="m-section-title">Registrar aula por turma</h6>
+                    <details class="m-cal-other">
+                    <summary><i class="fas fa-plus-circle mr-2"></i>Registrar aula fora do horário (reposição ou troca)</summary>
 
                     <div class="m-att-classes">
                         <?php foreach ($cards as $c) { ?>
@@ -72,8 +83,10 @@ require __DIR__ . '/components/classCards.php';
                             </button>
                         <?php } ?>
                     </div>
+                    </details>
 
                 <?php } ?>
+                </div>
             </div>
 
             <!-- Passo 2: registrar a aula -->
@@ -170,7 +183,7 @@ require __DIR__ . '/components/classCards.php';
                     <button type="button" class="m-icon-btn" data-plan-back aria-label="Voltar"><i class="fas fa-arrow-left"></i></button>
                     <div class="m-att-head-title">
                         <h5 data-plan-title>Planejar aula</h5>
-                        <p>Só o título é obrigatório. Preencha o resto quando puder.</p>
+                        <p>Só o tema é obrigatório. O resto é opcional.</p>
                     </div>
                 </div>
 
@@ -196,9 +209,21 @@ require __DIR__ . '/components/classCards.php';
                     </div>
 
                     <label class="m-att-field">
-                        <span class="m-att-label">Título ou tema da aula</span>
+                        <span class="m-att-label">Tema da aula</span>
                         <input type="text" class="form-control" name="title" maxlength="160" required placeholder="Ex.: Introdução à função seno">
                     </label>
+
+                    <div class="m-att-field">
+                        <span class="m-att-label">O que você vai fazer <small>(marque se quiser)</small></span>
+                        <div class="m-att-subjects-list" data-plan-activities>
+                            <?php foreach ($activities as $key => $label) { ?>
+                                <button type="button" class="m-att-subject" data-plan-activity="<?= $key ?>" aria-pressed="false"><i class="fas fa-square"></i><?= htmlspecialchars($label) ?></button>
+                            <?php } ?>
+                        </div>
+                    </div>
+
+                    <details class="m-lesson-exception" data-plan-more>
+                    <summary><i class="fas fa-list-ul mr-2"></i>Detalhar o plano: objetivos, BNCC, passo a passo, tarefa</summary>
 
                     <div class="m-att-field m-bncc">
                         <label class="m-att-label" for="planBnccSearch">Habilidade BNCC <small>(busque por palavra ou código)</small></label>
@@ -222,15 +247,6 @@ require __DIR__ . '/components/classCards.php';
                         <textarea class="form-control" name="development" rows="4" maxlength="4000" placeholder="Abertura: problema ou pergunta para começar&#10;Desenvolvimento: explicação e prática&#10;Fechamento: o que retomar no final"></textarea>
                     </label>
 
-                    <div class="m-att-field">
-                        <span class="m-att-label">Atividades previstas</span>
-                        <div class="m-att-subjects-list" data-plan-activities>
-                            <?php foreach ($activities as $key => $label) { ?>
-                                <button type="button" class="m-att-subject" data-plan-activity="<?= $key ?>" aria-pressed="false"><i class="fas fa-square"></i><?= htmlspecialchars($label) ?></button>
-                            <?php } ?>
-                        </div>
-                    </div>
-
                     <label class="m-att-field">
                         <span class="m-att-label">Recursos e materiais</span>
                         <input type="text" class="form-control" name="resources" maxlength="1000" placeholder="Livro p. 80, projetor, régua, vídeo…">
@@ -245,6 +261,7 @@ require __DIR__ . '/components/classCards.php';
                         <span class="m-att-label">Tarefa de casa</span>
                         <input type="text" class="form-control" name="homework" maxlength="1000" placeholder="Lista 3, questões 1 a 5">
                     </label>
+                    </details>
                 </div>
 
                 <div class="m-att-bar">
@@ -280,6 +297,15 @@ require __DIR__ . '/components/classCards.php';
         activities: <?= json_encode($activities, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
         today: <?= json_encode(date('Y-m-d')) ?>
     };
+</script>
+<script>
+    // Abas Planejamento e Horário: sem recarregar; ?aba=horario abre direto
+    document.querySelectorAll('[data-page-tab]').forEach((button) => button.addEventListener('click', () => {
+        const tab = button.dataset.pageTab;
+        document.querySelectorAll('[data-page-tab]').forEach((b) => b.classList.toggle('is-active', b === button));
+        document.querySelectorAll('[data-page-panel]').forEach((panel) => { panel.hidden = panel.dataset.pagePanel !== tab; });
+        window.history.replaceState(null, '', tab === 'horario' ? '?aba=horario' : window.location.pathname);
+    }));
 </script>
 <script src="<?= asset('/assets/js/lessons.js') ?>" defer></script>
 <script src="<?= asset('/assets/js/lessonCalendar.js') ?>" defer></script>
