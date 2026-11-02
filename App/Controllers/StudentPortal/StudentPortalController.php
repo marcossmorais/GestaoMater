@@ -70,7 +70,6 @@ class StudentPortalController extends Action
         $Lack = Container::getModel('TeacherStudent\\Lack');
         $DisciplineAverage = Container::getModel('TeacherStudent\\DisciplineAverage');
         $SchoolTerm = Container::getModel('GeneralManagement\\SchoolTerm');
-        $Exam = Container::getModel('TeacherStudent\\Exam');
         $ClassDiscipline = Container::getModel('GeneralManagement\\ClassDiscipline');
         $Classe = Container::getModel('GeneralManagement\\Classe');
         $ClasseWarning = Container::getModel('GeneralManagement\\ClasseWarning');
@@ -85,7 +84,6 @@ class StudentPortalController extends Action
         $StudentEnrollment->__set('studentEnrollmentId', $_SESSION['Student']['enrollmentId']);
         $Classe->__set('classId', $_SESSION['Student']['classId']);
         $ClassDiscipline->__set("fk_id_class", $_SESSION['Student']['classId']);
-        $Exam->__set("fk_id_class", $_SESSION['Student']['classId']);
         $Unity->__set('unityId', 0);
 
         $this->view->listWarning = $ClasseWarning->readByIdClasse($Classe);
@@ -102,22 +100,19 @@ class StudentPortalController extends Action
         $this->view->disciplineAverageList = $DisciplineAverage->readByIdStudent();
         $this->view->schoolTermActive = $SchoolTerm->active();
         $this->view->studentDataGeneral = $StudentEnrollment->dataGeneral('<> 0');
-        $this->view->listExam = $Exam->readExamByIdClass($Classe);
-        // aba Turma: o aluno não vê dados dos colegas nem contato dos professores, só a média da turma (sem nomes)
-        $this->view->listTeacher = array_map(function ($t) {
-            return (object) ['name' => $t->name, 'photo' => $t->profile_photo, 'discipline' => $t->discipline_name];
-        }, $ClassDiscipline->listTeachersClass());
+        // aba Turma: só os colegas, com nome e foto; a comparação com a média (sem nomes) fica em Desempenho
+        $this->view->classmates = Container::getModel('TeacherStudent\\StudentFile')->classmates($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
         $this->view->classAverages = Container::getModel('TeacherStudent\\StudentFile')->classAverages($_SESSION['Student']['classId'], Container::getModel('Student\\StudentPerformance')->rule(), 5);
         $this->view->linkedDisciplines = $ClassDiscipline->classLinkedSubjects();
         $this->view->unity = ( $this->view->schoolTermActive[0]->option_value == $this->view->studentDataGeneral[0]->school_term_id ? $Unity->readOpenUnits() : $Unity->searchSpecificUniy() );
 
         $ClassSchedule = Container::getModel('GeneralManagement\\ClassSchedule');
-        $this->view->generalBoard = Container::getModel('TeacherStudent\GeneralBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
         $this->view->classSchedule = $ClassSchedule->getScheduleByClass($_SESSION['Student']['classId']);
         $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
         $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
 
         $this->view->board = Container::getModel('TeacherStudent\ClassBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
+        $this->view->generalBoard = Container::getModel('TeacherStudent\GeneralBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
         $this->view->guides = Container::getModel('TeacherStudent\Gradebook')->guidesForClass($_SESSION['Student']['classId']);
 
         $Performance = Container::getModel('Student\StudentPerformance');
@@ -326,6 +321,11 @@ class StudentPortalController extends Action
     public function boardRead()
     {
         header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        $ok = Container::getModel('TeacherStudent\ClassBoard')->markRead(
+            (int) ($_POST['id'] ?? 0),
+            $_SESSION['Student']['enrollmentId'] ?? 0,
             $_SESSION['Student']['classId'] ?? 0
         );
 
@@ -347,11 +347,6 @@ class StudentPortalController extends Action
         if (!isset($_SESSION)) session_start();
 
         $ok = Container::getModel('TeacherStudent\GeneralBoard')->markRead(
-            (int) ($_POST['id'] ?? 0),
-            $_SESSION['Student']['enrollmentId'] ?? 0,
-        if (!isset($_SESSION)) session_start();
-
-        $ok = Container::getModel('TeacherStudent\ClassBoard')->markRead(
             (int) ($_POST['id'] ?? 0),
             $_SESSION['Student']['enrollmentId'] ?? 0,
             $_SESSION['Student']['classId'] ?? 0

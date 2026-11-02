@@ -929,3 +929,12 @@ html.nightMode .m-board-pin { background: color-mix(in srgb, var(--k) 70%, #000)
 #studentBoard .m-filter-chips .m-att-subject { flex: none; }
 @media (max-width: 767.98px) { #studentBoard .m-filter-chips .m-att-subject { min-height: 44px; } }
 
+/* Aba Turma do aluno: só os colegas */
+.m-classmates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.m-classmate { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 10px; text-align: center; background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 12px; }
+.m-classmate strong { font-size: 13px; font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+.m-classmate small { font-size: 11px; font-weight: 800; color: var(--m-primary-text); }
+.m-classmate.is-me { border-color: var(--m-primary); }
+@media (max-width: 575.98px) { .m-classmates-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+#studentPortal #mural .side-mural { height: auto !important; max-height: none !important; overflow: visible !important; }
+@media (min-width: 992px) { #studentPortalNavbar .navbar-collapse { min-width: 0; flex-wrap: wrap; } }

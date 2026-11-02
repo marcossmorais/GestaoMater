@@ -146,92 +146,7 @@ require __DIR__ . '../../../../config/variables.php';
 
                             <div class="row mt-4 d-flex justify-content-between ">
 
-                                <div class="col-sm-4 col-lg-3 side-exams">
-
-                                    <div class="row side-exams-content">
-
-                                        <?php
-
-                                        if (count($this->view->listExam) != 0) {
-
-                                            foreach ($this->view->listExam as $key => $part) {
-                                                $sort[$key] = strtotime($part->post_date);
-                                            }
-
-                                            array_multisort($sort, SORT_DESC, $this->view->listExam);
-                                        }
-
-                                        $photoDir =  "$app_url/assets/img/teacherProfilePhotos/";
-
-                                        ?>
-
-
-                                        <h5 class="p-2 col-11 p-sm-0">Atividades agendadas</h5>
-
-                                        <?php if (count($this->view->listExam) > 0) { ?>
-
-                                            <?php foreach ($this->view->listExam as $key => $value) { ?>
-
-                                                <div class="col-11 card mb-3">
-
-                                                    <div class="row d-flex justify-content-center align-items-center">
-
-                                                        <div class="col-2"><img class="miniature-photo" src='<?= $value->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $value->profile_photo ?>' alt="" onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>"'></div>
-
-                                                        <div class="col-10 name-teacher"><?= $value->teacher_name ?></div>
-
-                                                    </div>
-
-                                                    <div class="row">
-
-                                                        <?php
-
-                                                        $data = explode(' ', $value->realize_date);
-                                                        $data = explode('-', $data[0]);
-
-                                                        $pointsOrTenths = '';
-
-                                                        switch ($value->exam_value) {
-                                                            case $value->exam_value > 1:
-                                                                $pointsOrTenths = " pontos";
-                                                                break;
-                                                            case $value->exam_value < 1:
-                                                                $pointsOrTenths = " décimos";
-                                                                break;
-                                                            case $value->exam_value == 1:
-                                                                $pointsOrTenths = " ponto";
-                                                                break;
-                                                        }
-
-                                                        ?>
-
-                                                        <div class="col-lg-12 exam-description"><?= htmlspecialchars($value->discipline_name) ?> · <?= htmlspecialchars($value->exam_description) ?> · <?= (int) $value->unity ?>º bimestre</div>
-
-                                                    </div>
-
-                                                    <div class="row exam-description-footer">
-
-                                                        <div class="col-12"><i class="far fa-calendar mr-1"></i><?= $data[2] ?>/<?= $data[1] ?>/<?= $data[0] ?> · nota de 0 a 10</div>
-
-                                                    </div>
-
-                                                </div>
-
-                                            <?php }
-                                        } else { ?>
-
-
-                                            <div class="col-lg-11 card mb-3">
-                                                <p>Nenhum exame adicionado até o momento</p>
-                                            </div>
-
-                                        <?php } ?>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="col-sm-8 col-lg-9 side-mural">
+                                <div class="col-12 side-mural">
 
                                     <?php require __DIR__ . '/../components/board.php'; ?>
 
@@ -560,7 +475,7 @@ function currentDate($array)
 
                             <div class="col-lg-11 mx-auto">
 
-                                <?php require __DIR__ . '/../components/classCompare.php'; ?>
+                                <?php require __DIR__ . '/../components/classmates.php'; ?>
 
                             </div>
 
@@ -572,6 +487,12 @@ function currentDate($array)
                     <div class="collapse mt-3" id="averageNote" data-parent="#studentPortal-accordion">
 
                         <?php require __DIR__ . '/../components/performance.php'; ?>
+
+                        <div class="row mt-4">
+                            <div class="col-lg-11 mx-auto">
+                                <?php require __DIR__ . '/../components/classCompare.php'; ?>
+                            </div>
+                        </div>
 
                     </div>
 
