@@ -28,29 +28,34 @@ foreach ($rows as $d) foreach ($d['units'] as $u => $unit) if ($unit['grade'] !=
 
     <?php for ($u = 1; $u <= $rule['units']; $u++) { ?>
         <div class="card m-panel m-compare-panel" data-compare-panel="<?= $u ?>" <?= $u === $start ? '' : 'hidden' ?>>
-            <?php $any = false; foreach ($rows as $d) {
+            <?php
+            $bars = [];
+            foreach ($rows as $d) {
                 $mine = $d['units'][$u]['grade'];
                 $class = $averages[(int) $d['id']][$u] ?? null;
-                if ($mine === null && $class === null) continue;
-                $any = true;
-                $diff = ($mine !== null && $class !== null) ? $mine - $class : null;
+                if ($mine !== null || $class !== null) $bars[] = ['d' => $d, 'mine' => $mine, 'class' => $class];
+            }
+            $max = (float) $rule['maxPerUnit'];
+            $height = function ($n) use ($max) { return $n === null ? 0 : round(min(100, 100 * (float) $n / $max), 1); };
             ?>
-                <div class="m-compare-row <?= Subject::css($d['discipline']) ?>">
-                    <span class="m-perf-ico"><i class="fas <?= Subject::icon($d['discipline']) ?>" aria-hidden="true"></i></span>
-                    <div class="m-compare-body">
-                        <div class="m-compare-title">
-                            <strong><?= htmlspecialchars($d['discipline']) ?></strong>
-                            <?php if ($diff !== null) { ?>
-                                <span class="m-pill <?= $diff >= 0 ? 'm-pill-ok' : 'm-pill-warn' ?>"><?= $diff >= 0 ? '+' : '' ?><?= $fmt($diff) ?> da turma</span>
-                            <?php } ?>
-                        </div>
-                        <div class="m-bar-line"><span class="m-bar-label">Você</span><span class="m-bar"><i class="m-bar-fill is-me" style="width: <?= $mine === null ? 0 : min(100, $mine * 10) ?>%"></i><i class="m-bar-goal" style="left: <?= $rule['passing'] * 10 ?>%"></i></span><b><?= $fmt($mine) ?></b></div>
-                        <div class="m-bar-line"><span class="m-bar-label">Turma</span><span class="m-bar"><i class="m-bar-fill" style="width: <?= $class === null ? 0 : min(100, $class * 10) ?>%"></i><i class="m-bar-goal" style="left: <?= $rule['passing'] * 10 ?>%"></i></span><b><?= $fmt($class) ?></b></div>
+            <?php if (!$bars) { ?>
+                <p class="m-empty mb-0">Ainda não há notas neste bimestre.</p>
+            <?php } else { ?>
+                <div class="m-vchart-wrap">
+                    <div class="m-vchart" style="--passing:<?= $height($rule['passing']) ?>%; --cols:<?= count($bars) ?>">
+                        <?php foreach ($bars as $b) { ?>
+                            <div class="m-vchart-col <?= Subject::css($b['d']['discipline']) ?>" title="<?= htmlspecialchars($b['d']['discipline'] . ': você ' . $fmt($b['mine']) . ' · turma ' . $fmt($b['class'])) ?>">
+                                <div class="m-vchart-bars">
+                                    <span class="m-vchart-bar is-me" style="height:<?= $height($b['mine']) ?>%"><b><?= $fmt($b['mine']) ?></b></span>
+                                    <span class="m-vchart-bar" style="height:<?= $height($b['class']) ?>%"></span>
+                                </div>
+                                <small><?= htmlspecialchars($b['d']['discipline']) ?></small>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
+                <p class="m-muted-note mb-0 mt-2">Barra colorida: sua nota · cinza: média da turma · linha vermelha: média <?= $fmt($rule['passing']) ?></p>
             <?php } ?>
-            <?php if (!$any) { ?><p class="m-empty mb-0">Ainda não há notas neste bimestre.</p><?php } ?>
-            <p class="m-muted-note mb-0 mt-2"><i class="fas fa-flag mr-1"></i>O traço marca a média <?= $fmt($rule['passing']) ?>.</p>
         </div>
     <?php } ?>
 
