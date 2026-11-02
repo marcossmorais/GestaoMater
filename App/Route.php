@@ -58,6 +58,44 @@ class Route extends Bootstrap
 			'action' => 'classDetail'
 		);
 
+		// Importação por CSV/JSON e virada de ano
+
+		$routes['adminImport'] = array(
+			'route' => '/admin/importacao',
+			'controller' => 'Admin\\AdminImportController',
+			'action' => 'index'
+		);
+
+		$routes['adminImportTemplate'] = array(
+			'route' => '/admin/importacao/modelo',
+			'controller' => 'Admin\\AdminImportController',
+			'action' => 'template'
+		);
+
+		$routes['adminImportPreview'] = array(
+			'route' => '/admin/importacao/previa',
+			'controller' => 'Admin\\AdminImportController',
+			'action' => 'preview'
+		);
+
+		$routes['adminImportConfirm'] = array(
+			'route' => '/admin/importacao/confirmar',
+			'controller' => 'Admin\\AdminImportController',
+			'action' => 'confirm'
+		);
+
+		$routes['adminImportCodes'] = array(
+			'route' => '/admin/importacao/codigos',
+			'controller' => 'Admin\\AdminImportController',
+			'action' => 'codes'
+		);
+
+		$routes['adminRolloverConfirm'] = array(
+			'route' => '/admin/importacao/virada/confirmar',
+			'controller' => 'Admin\\AdminImportController',
+			'action' => 'rolloverConfirm'
+		);
+
 		// Rotas referente aos controles do aluno no portal do administrador
 
 		$routes['adminStudentRegistration'] = array(

@@ -1389,3 +1389,47 @@ html body .m-obs-kpis .m-kpi-value { font-size: 20px; }
   html body .m-obs-kpis .m-kpi-value { font-size: 17px; }
   html body #pagina .m-obs-filters select.form-control { flex: 1 1 40%; width: auto; height: 44px; font-size: 14px !important; padding: 0 26px 0 12px !important; }
 }
+
+/* ---------- Importação e virada de ano (admin) */
+.m-imp-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 16px; margin-bottom: 16px; }
+#import .card.m-panel { margin-bottom: 16px; }
+#import .m-imp-grid > .card.m-panel { margin-bottom: 0; }
+.m-imp-subhead { margin: 12px 0 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--m-muted); }
+.m-imp-grid > .card { margin: 0; }
+.m-imp-alert { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; margin-bottom: 16px; border-radius: 12px; font-size: 14px; background: var(--m-primary-soft); color: var(--m-text); }
+.m-imp-alert i { margin-top: 3px; color: var(--m-primary-text); }
+.m-imp-alert.is-error { background: rgba(220, 38, 38, .1); }
+.m-imp-alert.is-error i { color: var(--m-danger); }
+.m-imp-alert.is-ok { background: rgba(22, 163, 74, .12); }
+.m-imp-alert.is-ok i { color: var(--m-success); }
+.m-imp-types { display: flex; gap: 8px; flex-wrap: wrap; }
+.m-imp-types a { flex: 1 1 0; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border-radius: 10px; border: 1px solid var(--m-border); color: var(--m-muted); font-weight: 600; font-size: 14px; text-decoration: none; }
+.m-imp-types a:hover { color: var(--m-text); text-decoration: none; }
+.m-imp-types a.is-active { border-color: var(--m-primary); background: var(--m-primary-soft); color: var(--m-primary-text); }
+.m-imp-file { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 12px 16px; border: 2px dashed var(--m-border); border-radius: 12px; cursor: pointer; color: var(--m-muted); font-weight: 600; font-size: 14px; margin: 0 0 16px; word-break: break-all; }
+.m-imp-file:hover, .m-imp-file:focus-within { border-color: var(--m-primary); color: var(--m-primary-text); }
+.m-imp-file i { font-size: 22px; }
+.m-imp-file input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.m-imp-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.m-imp-actions .btn, .m-imp-confirm .btn, .m-imp-rollover .btn { min-height: 44px; display: inline-flex; align-items: center; }
+.m-imp-columns { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.m-imp-columns li { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--m-border); }
+.m-imp-columns code { min-width: 130px; color: var(--m-primary-text); font-size: 13px; }
+.m-imp-columns span:not(.m-pill) { flex: 1; color: var(--m-text); }
+.m-imp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.m-imp-chips code { font-size: 12px; color: inherit; }
+.m-imp-chips span { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--m-surface-2); color: var(--m-text); }
+.m-imp-confirm { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.m-imp-confirm p { margin: 0; flex: 1 1 320px; font-size: 14px; color: var(--m-text); }
+.m-imp-confirm form { display: flex; flex-wrap: wrap; gap: 8px; }
+.m-imp-msg { white-space: normal; min-width: 220px; font-size: 13px; }
+.m-imp-rollover { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.m-imp-rollover label { display: flex; flex-direction: column; gap: 4px; margin: 0; flex: 1 1 180px; }
+html body #pagina .m-imp-rollover label > span { font-size: 12px !important; font-weight: 600; color: var(--m-muted); }
+html body #pagina .m-imp-rollover select.form-control { height: 44px; font-size: 14px !important; }
+@media (max-width: 991px) { .m-imp-grid { grid-template-columns: 1fr; } }
+@media (max-width: 767.98px) {
+  .m-imp-columns code { min-width: 0; }
+  .m-imp-msg { min-width: 0; text-align: right; }
+  .m-imp-rollover .btn, .m-imp-confirm .btn { width: 100%; justify-content: center; }
+}
