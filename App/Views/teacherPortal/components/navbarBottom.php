@@ -15,7 +15,7 @@ require __DIR__ . '../../../../config/variables.php';
             </li>
 
             <li class="nav-item">
-                <a name="chamada" class="nav-link" href="/portal-docente/chamada"><i class="fas fa-clipboard-check"></i> <span>Chamada</span></a>
+                <a name="turmas" class="nav-link" href="/portal-docente/turmas"><i class="fas fa-users"></i> <span>Turmas</span></a>
             </li>
 
             <li class="nav-item">
@@ -40,10 +40,10 @@ require __DIR__ . '../../../../config/variables.php';
 
 <!-- Menu "Mais" (celular) -->
 <div class="m-more-menu" id="teacherMoreMenu" hidden>
-    <a href="/portal-docente/turmas"><i class="fas fa-users"></i>Turmas</a>
+
     <a href="/portal-docente/mural"><i class="fas fa-thumbtack"></i>Mural da turma</a>
     <a href="/portal-docente/horario"><i class="fas fa-calendar-alt"></i>Horários</a>
     <a href="#" data-install-app hidden><i class="fas fa-download"></i>Instalar app no celular</a>
-    <a href="#" id="settingsTeacherPortal"><img class="foto-perfil" src="<?= $app_url ?>/assets/img/teacherProfilePhotos/<?= $photo ?>" alt="">Meu perfil</a>
+    <a href="/portal-docente/perfil"><img class="foto-perfil" src="<?= $app_url ?>/assets/img/teacherProfilePhotos/<?= $photo ?>" alt="">Meu perfil</a>
     <a href="/portal-docente/sair" class="text-danger"><i class="fas fa-sign-out-alt"></i>Sair da conta</a>
 </div>

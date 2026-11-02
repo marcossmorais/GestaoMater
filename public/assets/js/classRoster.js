@@ -2,16 +2,33 @@
 (function () {
 
     const root = document.getElementById('classOverview');
-    const grid = root && root.querySelector('[data-roster]');
+    if (!root) return;
+
+    // Filtros de turma e disciplina: trocar já abre a escolha
+    root.querySelectorAll('[data-auto-submit] select').forEach((select) => {
+        select.addEventListener('change', () => select.form.submit());
+    });
+
+    // Esta tela é o item Turmas do menu
+    document.querySelectorAll('.sidebar-lists li[name="turmas"], a[name="turmas"]').forEach((item) => item.classList.add('link-active'));
+
+    const grid = root.querySelector('[data-roster]');
     if (!grid) return;
 
     const normalize = (text) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
     const search = root.querySelector('[data-roster-search]');
-    search.addEventListener('input', () => {
+    const lowOnly = root.querySelector('[data-roster-low]');
+
+    function filter() {
         const term = normalize(search.value.trim());
-        grid.querySelectorAll('[data-name]').forEach((card) => { card.hidden = !normalize(card.dataset.name).includes(term); });
-    });
+        grid.querySelectorAll('[data-name]').forEach((card) => {
+            card.hidden = !normalize(card.dataset.name).includes(term) || (lowOnly && lowOnly.checked && card.dataset.low === '0');
+        });
+    }
+
+    search.addEventListener('input', filter);
+    if (lowOnly) lowOnly.addEventListener('change', filter);
 
     const sheet = root.querySelector('[data-note-sheet]');
     if (!sheet) return;

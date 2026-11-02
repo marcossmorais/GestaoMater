@@ -105,28 +105,37 @@ class TeacherPortalController extends Action
     }
 
 
+    /**
+     * Turmas e chamada são a mesma tela: abre direto na última turma vista ou na aula de agora
+     */
     public function teacherClasses()
     {
 
-        $Teacher = Container::getModel('Teacher\\Teacher');
-        $Course = Container::getModel('GeneralManagement\\Course');
-        $ClassRoom = Container::getModel('GeneralManagement\\ClassRoom');
-        $SchoolTerm = Container::getModel('GeneralManagement\\SchoolTerm');
-        $Shift = Container::getModel('GeneralManagement\\Shift');
-        $Series = Container::getModel('GeneralManagement\\Series');
-        $Ballot = Container::getModel('GeneralManagement\\Ballot');
-
         if (!isset($_SESSION)) session_start();
 
-        $Teacher->__set('teacherId', $_SESSION['Teacher']['id']);
+        $teacherId = (int) $_SESSION['Teacher']['id'];
+        $classes = Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($teacherId);
 
-        $this->view->teacherClasses = $Teacher->teacherClasses();
-        $this->view->availableShift = $Shift->listForSelect();
-        $this->view->availableBallot = $Ballot->listForSelect();
-        $this->view->availableSeries = $Series->listForSelect();
-        $this->view->availableCourse = $Course->listForSelect();
-        $this->view->availableClassRoom = $ClassRoom->listForSelect();
-        $this->view->activeSchoolTerm = $SchoolTerm->active();
+        if ($classes) {
+            $classIds = array_map(function ($c) { return (int) $c->class_id; }, $classes);
+            $classId = (int) ($_SESSION['Teacher']['lastClass'] ?? 0);
+
+            if (!in_array($classId, $classIds, true)) {
+                $classId = $classIds[0];
+                foreach (Container::getModel('Teacher\\TeacherDashboard')->lessonsOn($teacherId, date('Y-m-d')) as $lesson) {
+                    if ($lesson->finish >= date('H:i') && in_array((int) $lesson->class_id, $classIds, true)) {
+                        $classId = (int) $lesson->class_id;
+                        break;
+                    }
+                }
+            }
+
+            // Turmas abre sempre na chamada
+            header('Location: /portal-docente/turma?id=' . $classId . '&ver=chamada');
+            return;
+        }
+
+        $this->view->teacherClasses = [];
 
         $this->render('management/pages/listClass', 'TeacherPortalLayout', 'teacherPortal');
     }
@@ -167,7 +176,7 @@ class TeacherPortalController extends Action
         $this->view->pcd = $Teacher->pcd();
         $this->view->bloodType = $Teacher->availablebloodType();
 
-        $this->render('settings', 'SimpleLayout', 'teacherPortal');
+        $this->render('settings', 'TeacherPortalLayout', 'teacherPortal');
     }
 
 
@@ -230,18 +239,19 @@ class TeacherPortalController extends Action
     /**
      * Chamada rápida: todos começam presentes e o professor marca só quem faltou
      */
+    /**
+     * A chamada agora é uma aba da turma; mantém os links antigos (?turma=ID da turma/disciplina)
+     */
     public function attendance()
     {
 
-        $Attendance = Container::getModel('TeacherStudent\\Attendance');
-        $Settings = Container::getModel('Admin\\Settings');
-
         if (!isset($_SESSION)) session_start();
 
-        $this->view->disciplineClasses = $Attendance->disciplineClassesByTeacher($_SESSION['Teacher']['id']);
-        $this->view->openUnits = $this->openUnits($Settings);
+        $disciplineClass = Container::getModel('TeacherStudent\\Attendance')->findForTeacher((int) ($_GET['turma'] ?? 0), $_SESSION['Teacher']['id']);
 
-        $this->render('attendance', 'TeacherPortalLayout', 'teacherPortal');
+        header('Location: ' . ($disciplineClass
+            ? '/portal-docente/turma?id=' . (int) $disciplineClass->class_id . '&ver=chamada&disciplina=' . (int) $disciplineClass->discipline_class_id
+            : '/portal-docente/turmas?ver=chamada'));
     }
 
 

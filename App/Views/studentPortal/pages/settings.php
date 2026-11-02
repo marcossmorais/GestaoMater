@@ -15,11 +15,12 @@ $enrollments = $this->view->studentEnrollment ?? [];
         <img class="m-profile-photo" src="<?= htmlspecialchars($photo) ?>" alt="" onerror="this.src='<?= $photoDir ?>foto-vazia.jpg'">
         <h5><?= htmlspecialchars($student->name) ?></h5>
         <span class="m-sticker"><i class="fas fa-star"></i><?= htmlspecialchars($_SESSION['Student']['class']) ?></span>
-        <nav class="m-profile-nav" aria-label="Seções do perfil">
-            <button type="button" class="is-active" data-profile-tab="dados"><i class="fas fa-user"></i>Meus dados</button>
-            <?php if (count($enrollments) > 1) { ?><button type="button" data-profile-tab="matricula"><i class="fas fa-school"></i>Matrículas</button><?php } ?>
-            <button type="button" data-profile-tab="aparencia"><i class="fas fa-palette"></i>Aparência</button>
-        </nav>
+        <?php if (count($enrollments) > 1) { ?>
+            <nav class="m-profile-nav" aria-label="Seções do perfil">
+                <button type="button" class="is-active" data-profile-tab="dados"><i class="fas fa-user"></i>Meus dados</button>
+                <button type="button" data-profile-tab="matricula"><i class="fas fa-school"></i>Matrículas</button>
+            </nav>
+        <?php } ?>
     </aside>
 
     <div class="m-profile-main">
@@ -71,15 +72,6 @@ $enrollments = $this->view->studentEnrollment ?? [];
                 </form>
             </section>
         <?php } ?>
-
-        <section class="m-profile-card" data-profile-panel="aparencia" hidden>
-            <header><h6><i class="fas fa-palette"></i>Aparência</h6></header>
-            <div class="custom-control custom-switch m-switch">
-                <input type="checkbox" class="custom-control-input" id="nightMode" portal="Student">
-                <label class="custom-control-label" for="nightMode">Modo escuro</label>
-            </div>
-            <p class="m-muted-note mt-2 mb-0">Fica salvo neste aparelho.</p>
-        </section>
 
     </div>
 </div>

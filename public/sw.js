@@ -1,6 +1,6 @@
 // Mater — service worker mínimo para o app instalável.
 // Guarda só arquivos estáticos (CSS, JS, fontes, imagens). Páginas e dados de alunos nunca vão para o cache (LGPD).
-const CACHE = 'mater-static-v1';
+const CACHE = 'mater-static-v2';
 const STATIC = /\/(assets|node_modules)\/.+\.(css|js|woff2?|png|jpe?g|svg|gif)(\?.*)?$/;
 
 self.addEventListener('install', () => self.skipWaiting());
@@ -16,11 +16,15 @@ self.addEventListener('fetch', (event) => {
     const url = new URL(request.url);
 
     if (url.origin === self.location.origin && STATIC.test(url.pathname) && !url.pathname.includes('ProfilePhotos')) {
-        // arquivo estático: responde do cache e atualiza em segundo plano
+        // arquivo estático: responde do cache e atualiza em segundo plano; com ?v= o conteúdo não muda, nem vai à rede
         event.respondWith(caches.open(CACHE).then(async (cache) => {
             const cached = await cache.match(request);
+            if (cached && url.searchParams.has('v')) return cached;
             const network = fetch(request).then((response) => {
-                if (response.ok) cache.put(request, response.clone());
+                if (response.ok) {
+                    const copy = response.clone();
+                    cache.delete(request, { ignoreSearch: true }).then(() => cache.put(request, copy));
+                }
                 return response;
             }).catch(() => cached);
             return cached || network;

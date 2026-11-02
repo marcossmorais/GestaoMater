@@ -474,10 +474,6 @@ $(document).on("click", "#sidebar #settings, #admin #settingsAdminPortal", funct
 })
 
 
-$(document).on("click", "#settingsTeacherPortal", function () {
-    application.showModal(0, "/portal-docente/configuracoes", "containerSettingsModal", "#settingsModal")
-})
-
 
 $("#studentPortalNavbar img, #settingsStudentPortal").on("click", function (e) {
     application.showModal(0, "/portal-aluno/configuracoes", "containerSettingsModal", "#settingsModal")

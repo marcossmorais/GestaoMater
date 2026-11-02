@@ -27,7 +27,7 @@ $ordered = array_merge($own, array_values(array_filter($performance, function ($
         <div class="col-lg-11 mx-auto">
 
             <div class="m-att-head">
-                <a href="/portal-docente/turma?id=<?= (int) $student->class_id ?>" class="m-icon-btn" aria-label="Voltar para a turma"><i class="fas fa-arrow-left"></i></a>
+                <a href="/portal-docente/turma?id=<?= (int) $student->class_id ?>&ver=alunos" class="m-icon-btn" aria-label="Voltar para a turma"><i class="fas fa-arrow-left"></i></a>
                 <span class="m-grade-avatar m-student-avatar"><?php if ($student->photo) { ?><img src="<?= $app_url ?>/assets/img/studentProfilePhotos/<?= htmlspecialchars($student->photo) ?>" alt=""><?php } else { echo htmlspecialchars($initials); } ?></span>
                 <div class="m-att-head-title">
                     <h5><?= htmlspecialchars($student->name) ?></h5>

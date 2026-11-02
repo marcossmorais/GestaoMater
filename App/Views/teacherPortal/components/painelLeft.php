@@ -24,7 +24,6 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li name="turmas"><a href="/portal-docente/turmas" title="Turmas"><i class="fas fa-boxes"></i><span class="link-name">Turmas</span></a></li>
 
-            <li name="chamada"><a href="/portal-docente/chamada" title="Chamada"><i class="fas fa-clipboard-check"></i><span class="link-name">Chamada</span></a></li>
 
             <li name="diario"><a href="/portal-docente/diario" title="Diário"><i class="fas fa-book-open"></i><span class="link-name">Diário</span></a></li>
 
@@ -34,7 +33,7 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li name="horario"><a href="/portal-docente/horario" title="Horários"><i class="fas fa-calendar-alt"></i><span class="link-name">Horários</span></a></li>
 
-            <li><a href="#" id="settingsTeacherPortal" title="Perfil"><i class="fas fa-cog"></i><span class="link-name">Perfil</span></a></li>
+            <li name="perfil"><a href="/portal-docente/perfil" title="Perfil"><i class="fas fa-cog"></i><span class="link-name">Perfil</span></a></li>
 
             <li data-install-app hidden><a href="#" title="Instalar app"><i class="fas fa-download"></i><span class="link-name">Instalar app</span></a></li>
 
