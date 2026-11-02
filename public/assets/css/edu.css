@@ -610,3 +610,14 @@ html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-bad { background:
   .m-cal-slot-actions .btn { flex: 1; }
 }
 
+/* ---------- Home: quem mais está faltando */
+.m-rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.m-rank a { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(40px, 1fr) auto; align-items: center; gap: 10px; min-height: 44px; padding: 4px 6px; border-radius: 10px; color: var(--m-text); }
+.m-rank a:hover { background: var(--m-surface-2); text-decoration: none; }
+.m-rank-name { display: flex; flex-direction: column; min-width: 0; }
+.m-rank-name strong { overflow: hidden; font-size: 13px; white-space: nowrap; text-overflow: ellipsis; }
+.m-rank-name small { color: var(--m-muted); }
+.m-rank-bar { height: 8px; overflow: hidden; border-radius: 4px; background: var(--m-surface-2); }
+.m-rank-bar i { display: block; height: 100%; border-radius: 4px; background: #0EA5E9; }
+.m-rank b { font-size: 13px; white-space: nowrap; }
+

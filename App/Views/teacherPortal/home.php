@@ -121,6 +121,23 @@ $pendingTotal = count($pending['lessons']) + count($pending['exams']);
                 <div class="card m-panel m-chart-card m-chart-wide">
                     <div class="m-panel-head"><h6>Faltas por turma</h6><small class="m-muted-note m-0">sem as abonadas</small></div>
                     <div class="m-chart-box"><canvas id="chartAbsences" aria-label="Faltas de cada turma no bimestre"></canvas></div>
+                    <h6 class="m-data-sub">Quem mais está faltando</h6>
+                    <?php $topAbsences = $this->view->topAbsences; ?>
+                    <?php if (!$topAbsences) { ?>
+                        <p class="m-muted-note mb-0">Nenhuma falta sem abono neste bimestre.</p>
+                    <?php } else { $maxAbsences = max(array_column($topAbsences, 'absences')); ?>
+                        <ol class="m-rank">
+                            <?php foreach ($topAbsences as $s) { ?>
+                                <li>
+                                    <a href="/portal-docente/aluno?id=<?= (int) $s->id ?>">
+                                        <span class="m-rank-name"><strong><?= htmlspecialchars($s->name) ?></strong><small><?= htmlspecialchars($s->label) ?></small></span>
+                                        <span class="m-rank-bar" aria-hidden="true"><i style="width:<?= round($s->absences / $maxAbsences * 100) ?>%"></i></span>
+                                        <b><?= (int) $s->absences ?> falta<?= $s->absences > 1 ? 's' : '' ?></b>
+                                    </a>
+                                </li>
+                            <?php } ?>
+                        </ol>
+                    <?php } ?>
                 </div>
 
                 <div class="card m-panel m-chart-card m-chart-wide">

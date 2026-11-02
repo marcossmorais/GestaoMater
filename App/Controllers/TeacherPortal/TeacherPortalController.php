@@ -96,6 +96,7 @@ class TeacherPortalController extends Action
         $this->view->lessons = $lessons;
         $this->view->pending = $Dashboard->pending(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses), $openUnits);
         $this->view->atRisk = $Dashboard->atRisk($disciplineClasses, max($openUnits), $rule);
+        $this->view->topAbsences = $Dashboard->topAbsences($disciplineClasses, max($openUnits));
         $this->view->charts = $Dashboard->charts($disciplineClasses, max($openUnits), $rule, $this->view->atRisk);
         $this->view->activity = $Dashboard->activity(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses));
         $this->view->rule = $rule;
