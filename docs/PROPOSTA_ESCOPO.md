@@ -64,7 +64,8 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 
 ## 5. Portal Admin (exigências da direção)
 - [x] **Observabilidade 360°** (#18): `/admin/observabilidade` por turma, disciplina e professor, com filtro de período, bimestre e turno; detalhe da turma com alunos em risco (nota abaixo da média ou frequência abaixo da mínima) abrindo o perfil do aluno; chamadas registradas × aulas previstas pela grade, notas pendentes, avaliações a criar e substituições por professor
-- [ ] **Importação CSV/JSON** com pré-visualização e virada de ano (#19)
+- [x] **Importação CSV/JSON** (#19): `/admin/importacao` para alunos (com matrícula na turma), professores e turmas; prévia linha a linha (erro, repetido no arquivo, CPF já cadastrado) antes de gravar; gravação tudo ou nada com resumo na auditoria; planilha-modelo e CSV dos códigos de acesso gerados. Importação SQL não incluída (risco de segurança)
+- [x] **Virada de ano** (#19): copia turmas com disciplinas e professores para o novo período e rematricula em lote (aprovado sobe, reprovado repete, última série conclui), com prévia e confirmação única
 - [ ] **Tela de auditoria** e registro de acessos (#20)
 - [ ] **Cronograma escolar** editável com Notificar no Mural (#21)
 - [ ] **Avisos segmentados** para professores, turmas e responsáveis (#22)
