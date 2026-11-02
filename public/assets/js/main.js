@@ -454,6 +454,17 @@ $(document).on("click", "#teacher-table tbody tr", function () {
 })
 
 
+// observabilidade: abre os mesmos perfis das listas
+$(document).on("click", "[data-student-profile]", function () {
+    application.showModal('aluno' + this.dataset.studentProfile, "/admin/aluno/lista/perfil-aluno", "containerStudentProfileModal", "#profileStudentModal", "profile")
+})
+
+
+$(document).on("click", "[data-teacher-profile]", function () {
+    application.showModal('teacher' + this.dataset.teacherProfile, "/admin/professor/lista/perfil-professor", "containerTeacherProfileModal", "#profileTeacherModal", "profile")
+})
+
+
 $(document).on("click", "#classe-table tbody tr", function () {
     application.showModal(this.id, "/admin/gestao/turma/perfil-turma", "containerClasseProfileModal", "#profileClassModal", "profile")
 })
