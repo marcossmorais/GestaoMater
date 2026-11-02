@@ -1044,6 +1044,30 @@ class Route extends Bootstrap
 			'action' => 'occurrenceRequest'
 		);
 
+		$routes['studentCertificateSend'] = array(
+			'route' => '/portal-aluno/frequencia/atestado',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'certificateSend'
+		);
+
+		$routes['studentCertificateFile'] = array(
+			'route' => '/portal-aluno/frequencia/anexo',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'certificateFile'
+		);
+
+		$routes['adminCertificateAnswer'] = array(
+			'route' => '/admin/pedagogico/atestado/responder',
+			'controller' => 'Admin\\AdminPedagogicalController',
+			'action' => 'certificateAnswer'
+		);
+
+		$routes['adminCertificateFile'] = array(
+			'route' => '/admin/pedagogico/atestado/anexo',
+			'controller' => 'Admin\\AdminPedagogicalController',
+			'action' => 'certificateFile'
+		);
+
 		$routes['adminBoard'] = array(
 			'route' => '/admin/mural',
 			'controller' => 'Admin\\AdminBoardController',

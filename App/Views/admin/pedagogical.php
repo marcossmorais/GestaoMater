@@ -6,9 +6,9 @@ $requests = $this->view->requests;
 $typeLabels = function ($types) { return \App\Models\TeacherStudent\Gradebook::typeLabels($types); };
 $newGuides = count(array_filter($guides, function ($g) { return !$g->seen; }));
 $pending = count(array_filter($requests, function ($r) { return $r->status === 'pendente'; }));
+$certificates = $this->view->certificates;
+$pendingCertificates = count(array_filter($certificates, function ($c) { return $c->status === 'Pendente'; }));
 ?>
-
-<link rel="stylesheet" href="<?= asset('/assets/css/edu.css') ?>">
 
 <section id="adminPedagogical" class="m-att">
 
@@ -19,7 +19,7 @@ $pending = count(array_filter($requests, function ($r) { return $r->status === '
             <div class="m-page-head">
                 <div>
                     <h5>Recebidos dos professores</h5>
-                    <p>Roteiros de prova enviados e pedidos de ocorrência para analisar.</p>
+                    <p>Roteiros de prova, pedidos de ocorrência e atestados para analisar.</p>
                 </div>
             </div>
 
@@ -29,6 +29,7 @@ $pending = count(array_filter($requests, function ($r) { return $r->status === '
                     <div class="m-seg m-class-tabs">
                         <a href="?ver=roteiros&unidade=<?= (int) $unity ?>" role="button" class="btn <?= $tab === 'roteiros' ? 'is-active' : '' ?>"><i class="fas fa-route mr-2"></i>Roteiros<?= $newGuides ? ' (' . $newGuides . ')' : '' ?></a>
                         <a href="?ver=ocorrencias" role="button" class="btn <?= $tab === 'ocorrencias' ? 'is-active' : '' ?>"><i class="fas fa-flag mr-2"></i>Ocorrências<?= $pending ? ' (' . $pending . ')' : '' ?></a>
+                        <a href="?ver=atestados" role="button" class="btn <?= $tab === 'atestados' ? 'is-active' : '' ?>"><i class="fas fa-notes-medical mr-2"></i>Atestados<?= $pendingCertificates ? ' (' . $pendingCertificates . ')' : '' ?></a>
                     </div>
                 </div>
                 <?php if ($tab === 'roteiros') { ?>
@@ -65,6 +66,39 @@ $pending = count(array_filter($requests, function ($r) { return $r->status === '
                             <?php if ($g->material) { ?><p><b>Material:</b> <?= htmlspecialchars($g->material) ?></p><?php } ?>
                             <?php if ($g->notes) { ?><p><b>Observações:</b> <?= nl2br(htmlspecialchars($g->notes)) ?></p><?php } ?>
                             <?php if (!$g->seen) { ?><div><button type="button" class="btn btn-light" data-guide-seen><i class="fas fa-check mr-2"></i>Marcar como visto</button></div><?php } ?>
+                        </article>
+                    <?php } ?>
+                </div>
+
+            <?php } elseif ($tab === 'atestados') { ?>
+
+                <?php if (!$certificates) { ?><div class="card m-panel m-empty">Nenhum atestado ou justificativa enviados pelos alunos.</div><?php } ?>
+
+                <div class="m-inbox">
+                    <?php foreach ($certificates as $c) {
+                        $pill = ['Pendente' => ['m-pill-warn', 'Pendente'], 'Aprovado' => ['m-pill-ok', 'Aceito'], 'Recusado' => ['m-pill-bad', 'Recusado']][$c->status] ?? ['m-pill-info', $c->status];
+                        $period = $c->start_date === $c->end_date ? $c->start_date : $c->start_date . ' a ' . $c->end_date;
+                    ?>
+                        <article class="card m-panel m-inbox-item <?= $c->status === 'Pendente' ? 'is-new' : '' ?>" data-certificate="<?= (int) $c->id ?>">
+                            <div class="m-inbox-head">
+                                <strong><?= htmlspecialchars($c->student) ?> · <?= htmlspecialchars($c->class_label) ?></strong>
+                                <span class="m-pill <?= $pill[0] ?>"><?= $pill[1] ?></span>
+                            </div>
+                            <small><?= htmlspecialchars(\App\Models\Student\StudentAttendance::TYPES[$c->type] ?? $c->type) ?> · falta em <?= htmlspecialchars($period) ?> · enviado em <?= htmlspecialchars($c->sent_at) ?></small>
+                            <p><?= htmlspecialchars($c->reason) ?></p>
+                            <?php if ($c->has_file) { ?><div><a class="btn btn-light" href="/admin/pedagogico/atestado/anexo?id=<?= (int) $c->id ?>" target="_blank" rel="noopener"><i class="fas fa-paperclip mr-2"></i>Ver arquivo</a></div><?php } ?>
+                            <?php if ($c->status === 'Aprovado') { ?><p class="m-muted-note mb-0"><?= (int) $c->excused ?> falta<?= (int) $c->excused === 1 ? '' : 's' ?> abonada<?= (int) $c->excused === 1 ? '' : 's' ?></p><?php } ?>
+                            <?php if ($c->answer) { ?><p class="m-muted-note mb-0">Resposta: <?= htmlspecialchars($c->answer) ?></p><?php } ?>
+                            <?php if ($c->status === 'Pendente') { ?>
+                                <label class="m-att-field">
+                                    <span class="m-att-label">Observação ou motivo da recusa</span>
+                                    <input type="text" class="form-control" maxlength="255" data-certificate-answer>
+                                </label>
+                                <div class="m-actions">
+                                    <button type="button" class="btn btn-primary" data-certificate-action="accept"><i class="fas fa-check mr-2"></i>Aceitar e abonar faltas</button>
+                                    <button type="button" class="btn btn-light" data-certificate-action="reject">Recusar</button>
+                                </div>
+                            <?php } ?>
                         </article>
                     <?php } ?>
                 </div>
@@ -123,12 +157,20 @@ $pending = count(array_filter($requests, function ($r) { return $r->status === '
         root.addEventListener('click', async (event) => {
             const seen = event.target.closest('[data-guide-seen]');
             const action = event.target.closest('[data-request-action]');
-            if (!seen && !action) return;
+            const certificate = event.target.closest('[data-certificate-action]');
+            if (!seen && !action && !certificate) return;
 
-            const button = seen || action;
+            const button = seen || action || certificate;
             button.disabled = true;
             try {
-                if (seen) {
+                if (certificate) {
+                    const card = button.closest('[data-certificate]');
+                    await post('/admin/pedagogico/atestado/responder', {
+                        id: parseInt(card.dataset.certificate, 10),
+                        accept: certificate.dataset.certificateAction === 'accept',
+                        answer: card.querySelector('[data-certificate-answer]').value.trim()
+                    });
+                } else if (seen) {
                     await post('/admin/pedagogico/roteiro/visto', { id: parseInt(button.closest('[data-guide]').dataset.guide, 10) });
                 } else {
                     const card = button.closest('[data-request]');

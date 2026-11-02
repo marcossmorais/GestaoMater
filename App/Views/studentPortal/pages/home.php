@@ -62,6 +62,10 @@ require __DIR__ . '../../../../config/variables.php';
                             </li>
 
                             <li class="nav-item">
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#frequency"><i class="fas fa-user-check m-nav-ico m-subj-green"></i> Frequência</a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#studentSchedule"><i class="fas fa-calendar-alt m-nav-ico m-subj-teal"></i>Agenda</a>
                             </li>
 
@@ -496,6 +500,12 @@ function currentDate($array)
 
                     </div>
 
+                    <div class="collapse mt-3" id="frequency" data-parent="#studentPortal-accordion">
+
+                        <?php require __DIR__ . '/../components/frequency.php'; ?>
+
+                    </div>
+
                 </div>
 
             </div>
@@ -704,6 +714,10 @@ function currentDate($array)
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#frequency"><i class="fas fa-user-check"></i> <span>Faltas</span></a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#bulletin"><i class="fas fa-book-open"></i> <span>Boletim</span></a>
                         </li>
 
@@ -755,6 +769,11 @@ function currentDate($array)
             if (target && target.classList.contains('show')) { event.preventDefault(); event.stopPropagation(); }
         }, true);
     });
+
+    // depois de enviar um atestado, volta para a aba Frequência
+    if (new URLSearchParams(window.location.search).get('aba') === 'frequencia') {
+        document.querySelector('#studentPortalNavbar [data-target="#frequency"]').click();
+    }
 </script>
 
 </html>

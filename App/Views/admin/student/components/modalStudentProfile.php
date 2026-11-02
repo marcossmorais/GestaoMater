@@ -1246,7 +1246,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                         <?php if (!empty($cert->anexo_documento)) { ?>
 
-                                                            <a href="/assets/uploads/atestados/<?= htmlspecialchars($cert->anexo_documento) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                            <a href="<?= !empty($cert->anexo_privado) ? '/admin/pedagogico/atestado/anexo?id=' . (int) $cert->id_atestado : '/assets/uploads/atestados/' . htmlspecialchars($cert->anexo_documento) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
 
                                                                 <i class="fas fa-paperclip mr-1"></i>Ver
 
@@ -2510,7 +2510,7 @@ require __DIR__ . '../../../../../config/variables.php';
                         </td>
                         <td><span class="badge badge-success">${c.status || 'Aprovado'}</span></td>
                         <td>
-                            ${c.anexo_documento ? `<a href="/assets/uploads/atestados/${c.anexo_documento}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-paperclip mr-1"></i>Ver</a>` : '<small class="text-muted">Sem anexo</small>'}
+                            ${c.anexo_documento ? `<a href="${c.anexo_privado ? `/admin/pedagogico/atestado/anexo?id=${c.id_atestado}` : `/assets/uploads/atestados/${c.anexo_documento}`}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-paperclip mr-1"></i>Ver</a>` : '<small class="text-muted">Sem anexo</small>'}
                         </td>
                         <td class="text-center">
                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMedicalCertificate(${c.id_atestado})" title="Excluir atestado">
