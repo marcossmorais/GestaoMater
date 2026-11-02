@@ -31,6 +31,7 @@ services:
       - ./database/18_roteiro_estruturado.sql:/docker-entrypoint-initdb.d/18_roteiro_estruturado.sql:ro
       - ./database/19_planejamento_tipos_avaliacao.sql:/docker-entrypoint-initdb.d/19_planejamento_tipos_avaliacao.sql:ro
       - ./database/20_roteiro_envio_solicitacao_ocorrencia.sql:/docker-entrypoint-initdb.d/20_roteiro_envio_solicitacao_ocorrencia.sql:ro
+      - ./database/21_mural_geral_tipos.sql:/docker-entrypoint-initdb.d/21_mural_geral_tipos.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro
@@ -43,6 +44,7 @@ services:
       - ./database/dev/99h_dev_leituras_mural.sql:/docker-entrypoint-initdb.d/99h_dev_leituras_mural.sql:ro
       - ./database/dev/99i_dev_planejamento.sql:/docker-entrypoint-initdb.d/99i_dev_planejamento.sql:ro
       - ./database/dev/99j_dev_planejamento_realista.sql:/docker-entrypoint-initdb.d/99j_dev_planejamento_realista.sql:ro
+      - ./database/dev/99k_dev_mural.sql:/docker-entrypoint-initdb.d/99k_dev_mural.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${DB_USER:-mater} -d ${DB_NAME:-mater}"]
       interval: 5s
