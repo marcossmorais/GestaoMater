@@ -19,7 +19,7 @@ require __DIR__ . '../../../../config/variables.php';
             </li>
 
             <li class="nav-item">
-                <a name="diario" class="nav-link" href="/portal-docente/diario"><i class="fas fa-book-open"></i> <span>Diário</span></a>
+                <a name="diario" class="nav-link" href="/portal-docente/diario"><i class="fas fa-book-open"></i> <span>Planejar</span></a>
             </li>
 
             <li class="nav-item">

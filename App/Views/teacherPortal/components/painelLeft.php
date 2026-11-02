@@ -25,13 +25,12 @@ require __DIR__ . '../../../../config/variables.php';
             <li name="turmas"><a href="/portal-docente/turmas" title="Turmas"><i class="fas fa-boxes"></i><span class="link-name">Turmas</span></a></li>
 
 
-            <li name="diario"><a href="/portal-docente/diario" title="Diário"><i class="fas fa-book-open"></i><span class="link-name">Diário</span></a></li>
+            <li name="diario"><a href="/portal-docente/diario" title="Planejamento e Horário"><i class="fas fa-book-open"></i><span class="link-name">Planejamento e Horário</span></a></li>
 
             <li name="notas"><a href="/portal-docente/notas" title="Notas"><i class="fas fa-marker"></i><span class="link-name">Notas</span></a></li>
 
             <li name="mural"><a href="/portal-docente/mural" title="Mural"><i class="fas fa-thumbtack"></i><span class="link-name">Mural</span></a></li>
 
-            <li name="horario"><a href="/portal-docente/horario" title="Horários"><i class="fas fa-calendar-alt"></i><span class="link-name">Horários</span></a></li>
 
             <li name="perfil"><a href="/portal-docente/perfil" title="Perfil"><i class="fas fa-cog"></i><span class="link-name">Perfil</span></a></li>
 

@@ -456,6 +456,17 @@ class TeacherPortalController extends Action
         $this->view->activities = \App\Models\TeacherStudent\Lesson::ACTIVITIES;
         $this->view->teachers = $Lesson->teachers();
         $this->view->classDisciplines = $Lesson->classDisciplines(array_unique(array_map(function ($c) { return $c->class_id; }, $classes)));
+        $this->view->pageTab = ($_GET['aba'] ?? '') === 'horario' ? 'horario' : 'planejamento';
+
+        // quadro de horários semanal do professor: agrupado por dia (2=Segunda ... 6=Sexta)
+        $schedule = Container::getModel('GeneralManagement\\ClassSchedule')->getScheduleByTeacher((int) $_SESSION['Teacher']['id']);
+        $scheduleByDay = array_fill(2, 5, []);
+        foreach ($schedule as $slot) $scheduleByDay[$slot->dia_semana][] = $slot;
+
+        $this->view->scheduleByDay = $scheduleByDay;
+        $this->view->totalClasses = count($schedule);
+        $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
+        $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
 
         $this->render('lessons', 'TeacherPortalLayout', 'teacherPortal');
     }
@@ -610,34 +621,11 @@ class TeacherPortalController extends Action
 
 
     /**
-     * Quadro de horários semanal do professor
+     * O horário agora é uma aba de Planejamento e Horário; links antigos seguem funcionando
      */
     public function schedule()
     {
-
-        $ClassSchedule = Container::getModel('GeneralManagement\\ClassSchedule');
-
-        if (!isset($_SESSION)) session_start();
-
-        $teacherId = (int) $_SESSION['Teacher']['id'];
-        $schedule = $ClassSchedule->getScheduleByTeacher($teacherId);
-
-        // Agrupa por dia da semana (2=Segunda ... 6=Sexta)
-        $scheduleByDay = [];
-        for ($d = 2; $d <= 6; $d++) {
-            $scheduleByDay[$d] = [];
-        }
-
-        foreach ($schedule as $slot) {
-            $scheduleByDay[$slot->dia_semana][] = $slot;
-        }
-
-        $this->view->scheduleByDay = $scheduleByDay;
-        $this->view->totalClasses = count($schedule);
-        $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
-        $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
-
-        $this->render('schedule', 'TeacherPortalLayout', 'teacherPortal');
+        header('Location: /portal-docente/diario?aba=horario');
     }
 
 
