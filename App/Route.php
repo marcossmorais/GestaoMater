@@ -1040,7 +1040,7 @@ class Route extends Bootstrap
 
 		$routes['StudentBulletin'] = array(
 			'route' => '/portal-aluno/boletim',
-			'controller' => 'Admin\AdminTeacherStudentController',
+			'controller' => 'StudentPortal\StudentPortalController',
 			'action' => 'bulletin'
 		);
 

@@ -11,17 +11,17 @@
 /* ---------- Cores por matéria: --s (forte), --s-soft (fundo), --s-ink (texto sobre o fundo) */
 .m-subj-blue    { --s: #2F80ED; --s-soft: #E4F0FF; --s-ink: #0F4C9C; }
 .m-subj-coral   { --s: #F2643D; --s-soft: #FFE9E2; --s-ink: #A33A1B; }
-.m-subj-amber   { --s: #F2A40C; --s-soft: #FFF2D6; --s-ink: #8A5A00; }
+.m-subj-amber   { --s: #0EA5E9; --s-soft: #E0F4FD; --s-ink: #075985; }
 .m-subj-green   { --s: #22B07D; --s-soft: #DFF7EC; --s-ink: #0D6B49; }
 .m-subj-purple  { --s: #7B61FF; --s-soft: #EEEAFF; --s-ink: #4A33C2; }
 .m-subj-teal    { --s: #12A9B4; --s-soft: #DDF6F7; --s-ink: #0A6870; }
-.m-subj-lime    { --s: #6DB33F; --s-soft: #ECF7E1; --s-ink: #3E6E1C; }
+.m-subj-lime    { --s: #2FA84F; --s-soft: #E3F6E8; --s-ink: #1B6B31; }
 .m-subj-pink    { --s: #E8508C; --s-soft: #FFE6F0; --s-ink: #9C2357; }
-.m-subj-orange  { --s: #FF8A1F; --s-soft: #FFEEDC; --s-ink: #9A4B00; }
+.m-subj-rose    { --s: #E5486D; --s-soft: #FFE8EE; --s-ink: #A21F45; }
 .m-subj-magenta { --s: #C04CD9; --s-soft: #F7E6FB; --s-ink: #7A2390; }
 .m-subj-indigo  { --s: #4F5BD5; --s-soft: #E7E9FB; --s-ink: #2E388F; }
-.m-subj-brown   { --s: #B0703B; --s-soft: #F6ECE2; --s-ink: #6E4220; }
-html.nightMode :is(.m-subj, [class*="m-subj-"]) { --s-soft: color-mix(in srgb, var(--s) 22%, #1C1A33); --s-ink: color-mix(in srgb, var(--s) 45%, #fff); }
+.m-subj-slate   { --s: #64748B; --s-soft: #EDF0F5; --s-ink: #3B4A5E; }
+html.nightMode :is(.m-subj, [class*="m-subj-"]) { --s-soft: color-mix(in srgb, var(--s) 16%, #121212); --s-ink: color-mix(in srgb, var(--s) 45%, #fff); }
 
 /* ---------- Tokens dos dois portais */
 body#teacherPortal, body#studentPortal {
@@ -30,27 +30,27 @@ body#teacherPortal, body#studentPortal {
   --m-primary-soft: #E4EDFF;
   --m-primary-text: #1F4FB8;
   --m-primary-edge: #1A47A8;
-  --m-accent: #FFB020;
+  --m-accent: #0EA5E9;
   --m-success: #1FA971;
   --m-danger: #E5484D;
 
-  --m-bg: #FFF8EC;
+  --m-bg: #F4F7FD;
   --m-surface: #FFFFFF;
-  --m-surface-2: #FFF3DF;
+  --m-surface-2: #EDF2FB;
   --m-text: #2A2754;
   --m-muted: #6D6A8C;
-  --m-border: #F0E3CC;
+  --m-border: #DCE5F5;
   --m-input-bg: #FFFFFF;
-  --m-input-border: #EADBC2;
-  --m-row-hover: #FFF3DF;
-  --m-nav-bg: rgba(255, 248, 236, .92);
+  --m-input-border: #CFDAEE;
+  --m-row-hover: #EDF2FB;
+  --m-nav-bg: rgba(244, 247, 253, .92);
 
   --m-radius: 22px;
   --m-radius-md: 14px;
   --m-radius-sm: 14px;
   --m-radius-xs: 10px;
-  --m-shadow: 0 4px 0 #F0E3CC;
-  --m-shadow-hover: 0 6px 0 #E6D3B2;
+  --m-shadow: 0 4px 0 #DCE5F5;
+  --m-shadow-hover: 0 6px 0 #C9D6EC;
   --m-shadow-lg: 0 18px 40px rgba(42, 39, 84, .14);
   --m-focus: 0 0 0 4px rgba(47, 111, 237, .25);
   --m-side-bg: #FFFFFF;
@@ -59,21 +59,21 @@ html.nightMode body#teacherPortal, html.nightMode body#studentPortal {
   --m-primary: #5B8CFF;
   --m-primary-hover: #4677F0;
   --m-primary-soft: rgba(91, 140, 255, .18);
-  --m-primary-text: #A9C2FF;
+  --m-primary-text: #C2D4FF;
   --m-primary-edge: #2E56C2;
-  --m-bg: #15142A;
-  --m-surface: #1F1D3A;
-  --m-surface-2: #282548;
-  --m-text: #F1EFFF;
-  --m-muted: #A9A6CC;
-  --m-border: #34315C;
-  --m-input-bg: #1A1832;
-  --m-input-border: #3B3866;
-  --m-row-hover: #282548;
-  --m-nav-bg: rgba(21, 20, 42, .92);
-  --m-shadow: 0 4px 0 #0E0D1E;
-  --m-shadow-hover: 0 6px 0 #0B0A18;
-  --m-side-bg: #1A1832;
+  --m-bg: #000000;
+  --m-surface: #121212;
+  --m-surface-2: #1E1E1E;
+  --m-text: #FFFFFF;
+  --m-muted: #BDBDBD;
+  --m-border: #2E2E2E;
+  --m-input-bg: #0A0A0A;
+  --m-input-border: #3D3D3D;
+  --m-row-hover: #1E1E1E;
+  --m-nav-bg: rgba(0, 0, 0, .92);
+  --m-shadow: 0 4px 0 #000000;
+  --m-shadow-hover: 0 6px 0 #000000;
+  --m-side-bg: #0A0A0A;
 }
 
 /* ---------- Tipografia: Nunito, títulos bem gordinhos */
@@ -117,10 +117,10 @@ html body#studentPortal :is(.form-control, .custom-select) { border-width: 2px !
 body#teacherPortal .m-pill, body#studentPortal .m-pill { font-weight: 800; font-size: 12px; padding: 5px 11px; }
 body#teacherPortal .m-pill-info, body#studentPortal .m-pill-info { background: var(--m-primary-soft); color: var(--m-primary-text); }
 body#teacherPortal .m-pill-ok, body#studentPortal .m-pill-ok { background: #DDF6EA; color: #0D6B49; }
-body#teacherPortal .m-pill-warn, body#studentPortal .m-pill-warn { background: #FFF0CC; color: #8A5A00; }
+body#teacherPortal .m-pill-warn, body#studentPortal .m-pill-warn { background: #FFE9E2; color: #075985; }
 body#teacherPortal .m-pill-bad, body#studentPortal .m-pill-bad { background: #FFE3E3; color: #B42328; }
 html.nightMode body :is(.m-pill-ok) { background: rgba(31, 169, 113, .2); color: #7BE3B6; }
-html.nightMode body :is(.m-pill-warn) { background: rgba(255, 176, 32, .2); color: #FFD27A; }
+html.nightMode body :is(.m-pill-warn) { background: rgba(242, 100, 61, .2); color: #FFB49E; }
 html.nightMode body :is(.m-pill-bad) { background: rgba(229, 72, 77, .2); color: #FF9EA1; }
 
 /* ---------- Matéria: selo da turma, ícone e faixa */
@@ -149,7 +149,7 @@ body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="home"] a > i:fir
 body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="turmas"] a > i:first-child { background: #EEEAFF; color: #7B61FF !important; }
 body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="chamada"] a > i:first-child { background: #DFF7EC; color: #22B07D !important; }
 body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="diario"] a > i:first-child { background: #FFE9E2; color: #F2643D !important; }
-body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="notas"] a > i:first-child { background: #FFF2D6; color: #E09400 !important; }
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="notas"] a > i:first-child { background: #E0F4FD; color: #0EA5E9 !important; }
 body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="mural"] a > i:first-child { background: #FFE6F0; color: #E8508C !important; }
 body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="horario"] a > i:first-child { background: #DDF6F7; color: #12A9B4 !important; }
 html.nightMode body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child { background: var(--m-surface-2) !important; }
@@ -173,7 +173,7 @@ html body .navbar.fixed-bottom .nav-link.link-active i { color: var(--m-primary)
   display: flex; align-items: center; gap: 20px; padding: 22px 26px; margin-bottom: 18px;
   background: #E4F0FF; border: 2px solid #C9DEFF; border-radius: 26px; box-shadow: 0 4px 0 #C9DEFF; overflow: hidden;
 }
-html.nightMode .m-hero { background: #222A55; border-color: #313C77; box-shadow: 0 4px 0 #0E0D1E; }
+html.nightMode .m-hero { background: #121212; border-color: #2E2E2E; box-shadow: 0 4px 0 #000000; }
 .m-hero-text { flex: 1; min-width: 0; }
 .m-hero-kicker { display: inline-block; font-size: 13px; font-weight: 800; color: var(--m-primary-text); background: rgba(255, 255, 255, .7); padding: 3px 12px; border-radius: 999px; margin-bottom: 8px; }
 html.nightMode .m-hero-kicker { background: rgba(255, 255, 255, .08); }
@@ -202,7 +202,7 @@ body#teacherPortal .m-empty { font-weight: 700; }
 body#teacherPortal .m-todo a { border: 2px solid transparent; }
 body#teacherPortal .m-todo a:hover { border-color: var(--m-border); }
 body#teacherPortal .m-todo a > i { width: 34px; height: 34px; margin-top: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--m-primary-soft); flex: none; }
-body#teacherPortal .m-todo .fa-marker { background: #FFF2D6; color: #E09400; }
+body#teacherPortal .m-todo .fa-marker { background: #E0F4FD; color: #0EA5E9; }
 body#teacherPortal .m-todo .fa-book-open { background: #FFE9E2; color: #F2643D; }
 body#teacherPortal .m-todo .fa-user { background: #FFE6F0; color: #E8508C; }
 body#teacherPortal .m-overview th { background: var(--m-surface-2); font-weight: 900; }
@@ -238,9 +238,9 @@ html body#studentPortal .m-tag { border-radius: 999px; font-weight: 800; }
 html body#studentPortal .m-day-tab { border-radius: 16px !important; border-width: 2px !important; font-weight: 800; }
 html body#studentPortal .m-day-tab.is-active { background: var(--m-primary) !important; color: #fff !important; box-shadow: 0 4px 0 var(--m-primary-edge); }
 html body#studentPortal .m-perf-card, html body#studentPortal .m-perf-row { border-radius: 20px; }
-html body#studentPortal .m-hero { background: #FFF2D6; border-color: #FFDF9E; box-shadow: 0 5px 0 #FFDF9E; transform: rotate(-.4deg); }
-html.nightMode body#studentPortal .m-hero { background: #3A2F1A; border-color: #5A4622; box-shadow: 0 5px 0 #0E0D1E; }
-html body#studentPortal .m-hero .m-hero-kicker { color: #8A5A00; }
+html body#studentPortal .m-hero { background: #E0F4FD; border-color: #B5E2F8; box-shadow: 0 5px 0 #B5E2F8; transform: rotate(-.4deg); }
+html.nightMode body#studentPortal .m-hero { background: #121212; border-color: #2E2E2E; box-shadow: 0 5px 0 #000000; }
+html body#studentPortal .m-hero .m-hero-kicker { color: #075985; }
 body#studentPortal .m-sticker { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-weight: 900; font-size: 13px; transform: rotate(-3deg); background: #FFE6F0; color: #9C2357; border: 2px solid #FFC2DA; }
 body#studentPortal .m-nav-ico {
   width: 30px; height: 30px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;
@@ -254,3 +254,262 @@ html body#studentPortal .card.m-perf-card.m-subj { border-color: color-mix(in sr
 body#studentPortal .m-perf-card header { display: flex; align-items: center; gap: 10px; }
 body#studentPortal .m-perf-card header > div { flex: 1; min-width: 0; }
 body#studentPortal .m-perf-ico { width: 40px; height: 40px; flex: none; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; background: var(--s-soft); color: var(--s); font-size: 18px; transform: rotate(-4deg); }
+
+/* ---------- Ficha do aluno: dados + gráfico */
+.m-file-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 16px; margin-bottom: 16px; }
+.m-data-list { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.m-data-list dt { font-size: 12px; color: var(--m-muted); font-weight: 800; }
+.m-data-list dd { margin: 0; font-weight: 800; }
+.m-data-sub { margin: 18px 0 8px; font-size: 14px; }
+.m-guardians { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.m-guardians li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 2px solid var(--m-border); border-radius: 14px; }
+.m-guardians li > span { display: flex; flex-direction: column; min-width: 0; }
+.m-guardians small { color: var(--m-muted); }
+.m-chart-box { position: relative; height: 280px; margin-bottom: 8px; }
+@media (max-width: 991.98px) { .m-file-grid { grid-template-columns: 1fr; } }
+.m-grade-link { color: var(--m-primary-text) !important; margin-left: 4px; font-size: 13px; }
+
+/* ---------- Listas por dia (diário e observações) com filtro */
+.m-filter-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.m-filter-chips .m-att-subject { min-height: 38px; font-size: 13px; }
+.m-filter-chips .m-att-subject.is-active { background: var(--m-primary); border-color: var(--m-primary); color: #fff; }
+.m-day-header { list-style: none; margin: 16px 0 6px !important; padding: 0 !important; border: 0 !important; font-size: 13px !important; font-weight: 900 !important; color: var(--m-primary-text) !important; text-transform: uppercase; letter-spacing: .04em; }
+.m-day-header:first-child { margin-top: 0 !important; }
+body#teacherPortal .m-notes li:not(.m-day-header) { border-left: 0; padding: 10px 14px; border-radius: 14px; background: var(--s-soft, var(--m-surface-2)); }
+body#teacherPortal .m-notes li:not(.m-day-header) small { color: var(--s-ink, var(--m-muted)); }
+body#teacherPortal .m-lesson-item.m-subj { border: 2px solid color-mix(in srgb, var(--s) 25%, var(--m-border)); background: var(--m-surface); }
+.m-badge-sm { width: auto !important; height: auto !important; display: inline-flex !important; padding: 2px 8px; border-radius: 8px !important; font-size: 12px !important; margin-right: 6px; }
+body#teacherPortal .m-file-data .m-muted-note { font-size: 13px !important; }
+
+/* ---------- Meu horário: semana em colunas e dia em cartões */
+.m-week { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.m-week-col { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 20px; background: var(--m-surface); border: 2px solid var(--m-border); box-shadow: var(--m-shadow); min-height: 160px; }
+.m-week-col.is-today { border-color: var(--m-primary); box-shadow: 0 4px 0 color-mix(in srgb, var(--m-primary) 45%, transparent); }
+.m-week-head { display: flex; align-items: baseline; gap: 6px; padding: 2px 4px 6px; border-bottom: 2px dashed var(--m-border); }
+.m-week-head strong { font-size: 15px; font-weight: 900; }
+.m-week-head span { color: var(--m-muted); font-size: 13px; }
+.m-week-head em { margin-left: auto; font-style: normal; font-size: 11px; font-weight: 900; color: #fff; background: var(--m-primary); padding: 2px 8px; border-radius: 999px; }
+.m-week-free { color: var(--m-muted); font-size: 13px; text-align: center; padding: 18px 0; display: flex; flex-direction: column; gap: 6px; }
+.m-slot { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; background: var(--s-soft); border: 2px solid color-mix(in srgb, var(--s) 25%, transparent); }
+.m-slot.is-past { opacity: .55; }
+.m-slot.is-now { box-shadow: 0 0 0 3px color-mix(in srgb, var(--s) 50%, transparent); }
+.m-slot-ico { width: 38px; height: 38px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--s); color: #fff; font-size: 16px; }
+.m-slot-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.m-slot-time { font-size: 13px; font-weight: 900; color: var(--s-ink); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+html body .m-slot-body strong { font-size: 15px; font-weight: 900; color: var(--m-text) !important; }
+.m-slot-body small { color: var(--m-muted); font-size: 12px; }
+.m-week .m-slot { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px; }
+.m-week .m-slot-ico { width: 30px; height: 30px; border-radius: 10px; font-size: 13px; }
+.m-slot-actions { display: flex; gap: 8px; flex: none; }
+.m-day-chips { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.m-day-chip { display: flex; flex-direction: column; align-items: center; padding: 10px 4px; border-radius: 16px; border: 2px solid var(--m-border); background: var(--m-surface); color: var(--m-text); font-family: inherit; cursor: pointer; box-shadow: 0 3px 0 var(--m-border); }
+.m-day-chip strong { font-weight: 900; }
+.m-day-chip span { font-size: 12px; color: var(--m-muted); }
+.m-day-chip small { font-size: 11px; font-weight: 800; color: var(--m-primary-text); }
+.m-day-chip.is-active { background: var(--m-primary); border-color: var(--m-primary); box-shadow: 0 3px 0 var(--m-primary-edge); }
+.m-day-chip.is-active :is(strong, span, small) { color: #fff; }
+.m-day-list { display: flex; flex-direction: column; gap: 10px; }
+.m-day-list .m-slot { padding: 14px 16px; }
+@media (max-width: 991.98px) { .m-week { grid-template-columns: repeat(5, minmax(150px, 1fr)); overflow-x: auto; padding-bottom: 6px; } }
+@media (max-width: 575.98px) {
+  .m-day-list .m-slot { flex-wrap: wrap; }
+  .m-slot-actions { width: 100%; }
+  .m-slot-actions .btn { flex: 1; }
+}
+
+/* ==========================================================================
+   Ajustes pedidos (31/10): sem faixa lateral nos cards, sem amarelo de destaque, logo maior e nítida
+   ========================================================================== */
+.m-subj-sky { --s: #0EA5E9; --s-soft: #E0F4FD; --s-ink: #075985; }
+
+/* aulas do dia: borda inteira na cor da matéria (sem faixa grossa à esquerda) */
+body#teacherPortal .m-today-item.m-subj { border: 2px solid color-mix(in srgb, var(--s) 30%, var(--m-border)) !important; border-radius: 18px; background: var(--m-surface); }
+body#teacherPortal .m-today-item.is-now { box-shadow: 0 0 0 3px color-mix(in srgb, var(--s, var(--m-primary)) 35%, transparent) !important; }
+body#teacherPortal .m-today-item .m-att-class-badge { background: var(--s-soft); color: var(--s-ink); }
+
+/* notas no menu e destaques: azul-céu no lugar do amarelo */
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name="notas"] a > i:first-child { background: #E0F4FD; color: #0EA5E9 !important; }
+body#teacherPortal .m-todo .fa-marker { background: #E0F4FD; color: #0EA5E9; }
+html body#studentPortal .m-hero { background: #E0F4FD; border-color: #B5E2F8; box-shadow: 0 5px 0 #B5E2F8; }
+html.nightMode body#studentPortal .m-hero { background: #121212; border-color: #2E2E2E; }
+html body#studentPortal .m-hero .m-hero-kicker { color: #075985; }
+
+/* logo maior, a partir da versão de 480px (a original de 1.721px serrilhava ao reduzir) */
+body#teacherPortal #left-panel #sidebar .logo img { width: 100% !important; max-width: 170px !important; padding: 10px 4px !important; }
+body#teacherPortal #logo-mater { width: 140px !important; height: auto !important; }
+body#studentPortal #logo-mater-main { width: 170px !important; height: auto !important; max-height: none !important; }
+/* menu lateral estreito (tablet / janela pequena): ícone e texto menores para o nome caber */
+@media (max-width: 1199.98px) {
+  html body#teacherPortal #left-panel #sidebar .sidebar-lists li a, html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-name { font-size: 12.5px !important; }
+  body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child { width: 28px !important; height: 28px; font-size: 13px; }
+  body#teacherPortal #left-panel #sidebar .sidebar-lists > li { margin: 2px 4px !important; }
+}
+
+/* ---------- Aba Turma do aluno: você x turma */
+.m-compare-panel { display: flex; flex-direction: column; gap: 14px; }
+.m-compare-row { display: flex; gap: 12px; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px dashed var(--m-border); }
+.m-compare-row:last-of-type { border-bottom: 0; }
+.m-compare-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.m-compare-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.m-compare-title strong { font-weight: 900; }
+.m-bar-line { display: grid; grid-template-columns: 52px 1fr 36px; align-items: center; gap: 8px; font-size: 13px; }
+.m-bar-label { color: var(--m-muted); font-weight: 800; }
+.m-bar-line b { text-align: right; font-weight: 900; }
+.m-bar { position: relative; height: 14px; border-radius: 999px; background: var(--m-surface-2); overflow: visible; }
+.m-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--m-border); }
+.m-bar-fill.is-me { background: var(--s); }
+.m-bar-goal { position: absolute; top: -3px; bottom: -3px; width: 3px; border-radius: 2px; background: #E5484D; }
+.m-teachers { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 40px; }
+.m-teacher { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 18px; background: var(--m-surface); border: 2px solid var(--m-border); box-shadow: var(--m-shadow); }
+.m-teacher img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex: none; border: 3px solid var(--s-soft); }
+.m-teacher div { display: flex; flex-direction: column; min-width: 0; }
+.m-teacher strong { font-weight: 900; }
+.m-teacher small { color: var(--m-muted); }
+
+/* ---------- Roteiro de estudo (professor: formulário; aluno: cartão) */
+.m-guide-fields { border: 2px dashed var(--m-border); border-radius: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; margin: 0; }
+.m-guide-fields legend { width: auto; font-size: 14px; font-weight: 900; padding: 0 6px; margin: 0; }
+.m-guide-fields legend small { color: var(--m-muted); font-weight: 700; }
+.m-guide-discipline { margin: 0; padding: 8px 12px; border-radius: 12px; background: var(--m-surface-2); font-size: 13px; }
+html body .card.m-board-guide { padding: 0 !important; overflow: hidden; }
+.m-board-guide summary { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; list-style: none; }
+.m-board-guide summary::-webkit-details-marker { display: none; }
+.m-guide-date { width: 50px; height: 50px; flex: none; border-radius: 14px; background: var(--s); color: #fff; display: flex; align-items: baseline; justify-content: center; padding-top: 10px; }
+.m-guide-date strong { font-size: 20px; font-weight: 900; }
+.m-guide-date small { font-size: 12px; font-weight: 800; opacity: .9; }
+.m-guide-title { display: flex; flex-direction: column; min-width: 0; }
+.m-guide-title small { color: var(--m-muted); }
+.m-guide-body { padding: 0 16px 14px 76px; }
+.m-guide-body h6 { font-size: 13px; margin: 0 0 6px; color: var(--s-ink); text-transform: uppercase; letter-spacing: .04em; }
+.m-guide-topics { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.m-guide-topics i { color: var(--s); margin-right: 8px; }
+.m-guide-material, .m-guide-notes { margin: 0 0 6px; padding: 8px 12px; border-radius: 12px; background: var(--s-soft); color: var(--s-ink); font-size: 14px; }
+@media (max-width: 575.98px) { .m-guide-body { padding-left: 16px; } }
+
+/* ---------- Perfil (professor e aluno) */
+.m-profile { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px; padding: 8px; font-family: "Nunito", system-ui, sans-serif; }
+.m-profile-side { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 24px 18px; border-radius: 24px; background: var(--m-surface); border: 2px solid var(--m-border); box-shadow: var(--m-shadow); text-align: center; align-self: start; }
+.m-profile-photo { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 5px solid var(--m-primary-soft); }
+html body .m-profile-side h5 { font-size: 18px !important; margin: 4px 0 0; }
+.m-profile-nav { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 12px; }
+.m-profile-nav button { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 14px; border-radius: 14px; border: 2px solid transparent; background: transparent; color: var(--m-text); font-family: inherit; font-weight: 800; cursor: pointer; text-align: left; }
+.m-profile-nav button i { width: 30px; height: 30px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--m-surface-2); color: var(--m-primary); }
+.m-profile-nav button.is-active { background: var(--m-primary-soft); color: var(--m-primary-text); }
+.m-profile-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.m-profile-main > div[data-profile-panel] { display: flex; flex-direction: column; gap: 16px; }
+.m-profile-main > form { display: flex; flex-direction: column; gap: 16px; }
+.m-profile-card { padding: 20px 22px; border-radius: 22px; background: var(--m-surface); border: 2px solid var(--m-border); box-shadow: var(--m-shadow); }
+.m-profile-card header { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.m-profile-card header h6 { margin: 0; font-size: 16px; font-weight: 900; display: flex; align-items: center; gap: 10px; }
+.m-profile-card header h6 i { width: 32px; height: 32px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--m-primary-soft); color: var(--m-primary); font-size: 14px; }
+.m-profile-card header small { color: var(--m-muted); }
+.m-data-list-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.m-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.m-span-2 { grid-column: span 2; }
+html body .m-profile .form-control:disabled, html body .m-profile .form-control[readonly] { background: var(--m-surface-2) !important; opacity: 1; color: var(--m-text) !important; }
+.m-code-input { display: flex; align-items: center; gap: 8px; max-width: 320px; }
+.m-code-field { max-width: 360px; }
+.m-profile-bar { display: flex; gap: 10px; flex-wrap: wrap; position: sticky; bottom: 0; padding: 12px 0; background: linear-gradient(transparent, var(--m-surface) 30%); }
+.m-switch { font-weight: 800; }
+.m-enrollments { display: flex; flex-direction: column; gap: 8px; }
+.m-enrollment { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; border: 2px solid var(--m-border); cursor: pointer; margin: 0; }
+.m-enrollment.is-current { border-color: var(--m-primary); background: var(--m-primary-soft); }
+.m-enrollment span { display: flex; flex-direction: column; }
+.m-enrollment small { color: var(--m-muted); }
+#settingsModal .modal-content { background: var(--m-bg) !important; border-radius: 28px !important; }
+@media (max-width: 991.98px) {
+  .m-profile { grid-template-columns: 1fr; }
+  .m-profile-nav { flex-direction: row; overflow-x: auto; }
+  .m-profile-nav button { flex: 1 0 auto; justify-content: center; }
+  .m-data-list-3, .m-form-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 575.98px) { .m-data-list-3, .m-form-grid { grid-template-columns: 1fr; } .m-span-2 { grid-column: auto; } }
+
+/* ---------- Botões: sem o "degrau" grosso; sombra discreta e cantos iguais aos campos */
+html body#teacherPortal .btn-primary, html body#studentPortal .btn-primary { box-shadow: 0 2px 0 var(--m-primary-edge) !important; }
+html body#teacherPortal .btn-primary:active, html body#studentPortal .btn-primary:active { transform: translateY(1px); box-shadow: none !important; }
+html body#teacherPortal .btn-light, html body#studentPortal .btn-light { box-shadow: none !important; }
+html body#teacherPortal .btn-sm, html body#studentPortal .btn-sm { box-shadow: none !important; border-radius: 10px !important; min-height: 36px; padding: 0 12px; font-size: 13px; display: inline-flex; align-items: center; }
+html body#teacherPortal .m-att-save { box-shadow: 0 2px 0 var(--m-primary-edge) !important; }
+
+/* ---------- Menu "Declarações" do aluno por cima dos cartões */
+html body#studentPortal #studentPortalNavbar { position: relative; z-index: 1030; }
+html body#studentPortal #studentPortalNavbar .dropdown-menu { z-index: 1040; border-radius: 16px; border: 2px solid var(--m-border); padding: 6px; }
+html body#studentPortal #studentPortalNavbar .dropdown-item { border-radius: 10px; padding: 10px 12px; font-weight: 700; }
+
+/* ==========================================================================
+   Home do professor com gráficos · paleta sem amarelo · navegação limpa
+   ========================================================================== */
+.m-section-title { display: flex; align-items: center; gap: 10px; margin: 6px 0 12px; font-size: 20px !important; }
+.m-charts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.m-chart-card { grid-column: span 3; min-width: 0; }
+.m-chart-card.m-chart-wide { grid-column: span 3; }
+.m-donut { position: relative; height: 190px; margin-bottom: 12px; }
+.m-donut-sm { height: 130px; width: 130px; flex: none; margin: 0; }
+.m-donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; line-height: 1.1; }
+.m-donut-center strong { font-size: 28px; font-weight: 900; }
+.m-donut-sm .m-donut-center strong { font-size: 22px; }
+.m-donut-center small { color: var(--m-muted); }
+.m-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.m-legend li { display: flex; align-items: center; gap: 8px; }
+.m-legend i { width: 12px; height: 12px; border-radius: 4px; flex: none; }
+.m-legend span { flex: 1; color: var(--m-muted); }
+.m-legend b { font-weight: 900; }
+.m-attention-list { margin-top: 8px; }
+.m-attention-list summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 800; color: var(--m-primary-text); }
+.m-attention-list .m-todo { max-height: 340px; overflow: auto; }
+.m-attention-list li[hidden] { display: none; }
+.m-activity { display: flex; gap: 18px; align-items: center; }
+.m-read-list { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.m-read-list li { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.m-read-text { font-size: 13px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-read-list small { color: var(--m-muted); font-size: 12px; }
+.m-read-list .m-bar { display: block; height: 8px; }
+.m-bar-fill.is-read { background: var(--m-primary); }
+.m-feed { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+.m-feed li { display: flex; gap: 8px; }
+.m-feed > li > i { color: var(--m-success); margin-top: 3px; }
+.m-feed small { display: block; color: var(--m-muted); }
+@media (max-width: 991.98px) { .m-chart-card, .m-chart-card.m-chart-wide { grid-column: span 6; } }
+@media (max-width: 575.98px) { .m-activity { flex-direction: column; align-items: stretch; } .m-donut-sm { margin: 0 auto; } }
+
+/* Tons antigos de amarelo/âmbar que vinham do tema anterior */
+body#teacherPortal, body#studentPortal { --m-gold: #0EA5E9; }
+html body .m-overview td.is-rec, html.nightMode body .m-overview td.is-rec { color: #6D4AE0 !important; }
+html.nightMode body .m-overview td.is-rec { color: #B5A6FF !important; }
+body :is(#teacherPortal, #studentPortal) .m-att-warning, body#teacherPortal .m-att-warning, body#studentPortal .m-att-warning { background: var(--m-primary-soft) !important; color: var(--m-primary-text) !important; }
+body#teacherPortal .alert-warning, body#studentPortal .alert-warning { background: var(--m-primary-soft) !important; border-color: transparent !important; color: var(--m-primary-text) !important; }
+body#studentPortal .m-perf-tag.is-rec, body#teacherPortal .m-perf-tag.is-rec { background: #EEEAFF; color: #4A33C2; }
+body#teacherPortal :is(.text-warning, .badge-warning), body#studentPortal :is(.text-warning, .badge-warning) { color: var(--m-primary-text) !important; }
+
+/* Navegação limpa: sem quadradinhos coloridos, sem cartão, sem borda. Ativo = azul e negrito */
+html body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child,
+body#teacherPortal #left-panel #sidebar .sidebar-lists li[name] a > i:first-child,
+html.nightMode body#teacherPortal #left-panel #sidebar .sidebar-lists li a > i:first-child { background: transparent !important; color: var(--m-muted) !important; width: 24px !important; height: 24px; font-size: 16px; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists > li:hover { background: var(--m-surface-2) !important; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active { background: transparent !important; box-shadow: none !important; border: 0 !important; }
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active a > i:first-child,
+html body#teacherPortal #left-panel #sidebar .sidebar-lists .link-active .link-name { color: var(--m-primary) !important; font-weight: 900 !important; }
+html body#teacherPortal #left-panel #sidebar { border-right: 1px solid var(--m-border) !important; }
+
+body#studentPortal .m-nav-ico { background: transparent !important; color: inherit !important; width: auto; height: auto; font-size: 15px; margin-right: 6px; }
+html body#studentPortal #studentPortalNavbar .nav-link,
+html body#studentPortal #studentPortalNavbar .nav-link[aria-expanded="true"],
+html body#studentPortal #studentPortalNavbar .nav-item.active .nav-link { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+html body#studentPortal #studentPortalNavbar .nav-link[aria-expanded="true"] { color: var(--m-primary) !important; font-weight: 900 !important; }
+html body .navbar.fixed-bottom .nav-link, html body .navbar.fixed-bottom .nav-link.link-active, html body .navbar.fixed-bottom .nav-link[aria-expanded="true"] { border: 0 !important; box-shadow: none !important; }
+.m-data-list dd { overflow-wrap: anywhere; }
+
+/* Donut: o miolo mostra a fatia sob o cursor (a dica flutuante cobria o número) */
+.m-donut-center { padding: 0 22%; text-align: center; }
+.m-donut-center small { font-size: 12px; line-height: 1.15; }
+
+/* Modo escuro preto: atalhos neutros (só o ícone colorido) e faixa dos avisos sem azul-marinho */
+html.nightMode body#teacherPortal, html.nightMode body#studentPortal { --m-side-from: #121212; --m-side-to: #0A0A0A; }
+html.nightMode .m-tile { background: var(--m-surface); border-color: var(--m-border); box-shadow: none; }
+html.nightMode body .m-tile strong { color: var(--m-text) !important; }
+html.nightMode body .m-tile small { color: var(--m-muted) !important; opacity: 1; }
+html.nightMode body #toastContainer .toast-header { background: #1E1E1E !important; }
+html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-ok { background: rgba(31, 169, 113, .2); color: #7BE3B6; }
+html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-warn { background: rgba(242, 100, 61, .2); color: #FFB49E; }
+html.nightMode body:is(#teacherPortal, #studentPortal) .m-pill-bad { background: rgba(229, 72, 77, .2); color: #FF9EA1; }

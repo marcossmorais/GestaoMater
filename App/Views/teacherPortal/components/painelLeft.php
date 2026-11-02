@@ -9,8 +9,8 @@ require __DIR__ . '../../../../config/variables.php';
     <nav id="sidebar">
 
         <div class="col-lg-12 logo d-flex justify-content-center">
-            <img class="logo-light" src="<?= $app_url ?>/assets/img/logo-components/logo-completa.png" alt="Mater">
-            <img class="logo-dark" src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca.png" alt="Mater">
+            <img class="logo-light" src="<?= $app_url ?>/assets/img/logo-components/logo-completa-480.png" alt="Mater">
+            <img class="logo-dark" src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca-480.png" alt="Mater">
         </div>
 
         <ul class="sidebar-lists">

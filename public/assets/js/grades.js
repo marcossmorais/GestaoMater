@@ -102,7 +102,7 @@
                     <span class="m-att-class-badge">${badge}</span>
                     <span class="m-exam-body">
                         <strong>${title}</strong>
-                        <small>${exam.date.split('-').reverse().join('/')} · ${exam.graded} nota${exam.graded === 1 ? '' : 's'}${exam.guide ? ' · com roteiro' : ''}${custom}</small>
+                        <small>${exam.date.split('-').reverse().join('/')} · ${exam.graded} nota${exam.graded === 1 ? '' : 's'}${(exam.guideTopics || exam.guideMaterial || exam.guide) ? ' · com roteiro' : ''}${custom}</small>
                     </span>
                     <i class="fas fa-chevron-right m-att-class-go"></i>
                 </button>`;
@@ -188,6 +188,7 @@
         if (!empty) return;
         state.newExam = { unity: parseInt(empty.dataset.newUnity, 10), recovery: empty.dataset.newRecovery === '1' };
         $('[data-gr-new-title]').textContent = `${empty.dataset.newTitle} · ${state.newExam.unity}º bimestre`;
+        newBox.querySelector('[data-gr-guide-discipline]').innerHTML = guideHeader(`${empty.dataset.newTitle} · ${state.newExam.unity}º bimestre`);
         newBox.hidden = false;
         newBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         newForm.querySelector('[name="date"]').focus();
@@ -206,6 +207,8 @@
                 unity: state.newExam.unity,
                 recovery: state.newExam.recovery,
                 date: data.get('date'),
+                guideTopics: (data.get('guideTopics') || '').trim(),
+                guideMaterial: (data.get('guideMaterial') || '').trim(),
                 guide: (data.get('guide') || '').trim()
             });
             closeNew();
@@ -226,6 +229,11 @@
         $('[data-gr-exam-title]').textContent = meta ? meta.description : 'Avaliação';
         $('[data-gr-exam-subtitle]').textContent = `${state.cls.label} · ${state.cls.discipline}`;
         $('[data-gr-guide]').value = meta && meta.guide ? meta.guide : '';
+        $('[data-gr-guide-topics]').value = meta && meta.guideTopics ? meta.guideTopics : '';
+        $('[data-gr-guide-material]').value = meta && meta.guideMaterial ? meta.guideMaterial : '';
+        $('[data-gr-guide-box] [data-gr-guide-discipline]').innerHTML = guideHeader(`${meta ? meta.description : ''} · ${meta ? meta.unity : ''}º bimestre`);
+        const topicsCount = meta && meta.guideTopics ? meta.guideTopics.split('\n').length : 0;
+        $('[data-gr-guide-count]').textContent = topicsCount ? `${topicsCount} assunto${topicsCount > 1 ? 's' : ''}` : 'vazio';
         $('[data-gr-guide-box]').open = false;
         show('grades');
 
@@ -243,6 +251,11 @@
         } catch (e) {
             list.innerHTML = `<div class="m-empty">${escapeHtml(errors[e.message] || 'Não foi possível carregar.')}</div>`;
         }
+    }
+
+    // cabeçalho do roteiro: disciplina e turma vêm sozinhos (o professor só preenche assuntos e material)
+    function guideHeader(exam) {
+        return `<i class="fas ${state.cls.icon || 'fa-book'} m-subj-ico"></i><strong>${escapeHtml(state.cls.discipline)}</strong> · ${escapeHtml(state.cls.label)} · ${escapeHtml(exam)}`;
     }
 
     function initials(name) {
@@ -281,7 +294,7 @@
         list.innerHTML = state.students.map((s, i) => `
             <label class="m-grade-row${s.eligible ? '' : ' is-muted'}" data-student="${s.id}">
                 <span class="m-grade-avatar">${s.photo ? `<img src="/assets/img/studentProfilePhotos/${escapeHtml(s.photo)}" alt="" loading="lazy">` : escapeHtml(initials(s.name))}</span>
-                <span>${i + 1}. ${escapeHtml(s.name)}<small data-gr-hint>${hint(s, s.grade)}</small></span>
+                <span>${i + 1}. ${escapeHtml(s.name)} <a class="m-grade-link" href="/portal-docente/aluno?id=${s.id}" title="Ver ficha do aluno" aria-label="Ver ficha de ${escapeHtml(s.name)}"><i class="fas fa-id-card"></i></a><small data-gr-hint>${hint(s, s.grade)}</small></span>
                 <input type="text" inputmode="decimal" class="form-control" value="${s.grade === null ? '' : String(s.grade).replace('.', ',')}"
                     ${state.editable && s.eligible ? '' : 'disabled'} aria-label="Nota de ${escapeHtml(s.name)}" autocomplete="off">
             </label>`).join('') || '<div class="m-empty">Nenhum aluno na turma.</div>';
@@ -403,7 +416,12 @@
 
     $('[data-gr-guide-save]').addEventListener('click', async () => {
         try {
-            await api('/portal-docente/notas/avaliacao/salvar', { exam: state.exam.id, guide: $('[data-gr-guide]').value.trim() });
+            await api('/portal-docente/notas/avaliacao/salvar', {
+                exam: state.exam.id,
+                guideTopics: $('[data-gr-guide-topics]').value.trim(),
+                guideMaterial: $('[data-gr-guide-material]').value.trim(),
+                guide: $('[data-gr-guide]').value.trim()
+            });
             toast('Roteiro salvo');
             await loadExams();
         } catch (e) {

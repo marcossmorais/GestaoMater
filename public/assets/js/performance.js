@@ -30,7 +30,52 @@
         return { status: needed > rule.maxPerUnit ? 'impossivel' : 'possivel', needed, average, total, target, missing };
     }
 
-    // ---------- Simulador por disciplina
+    // ---------- Simulador do bimestre: notas lançadas + as que o aluno digitar nas avaliações que faltam
+    function simulateBimester(box) {
+        const base = JSON.parse(box.dataset.bim);
+        const per = rule.perBimester;
+        const result = box.querySelector('[data-bim-result]');
+        const grades = base.grades.slice();
+        let invalid = false;
+
+        box.querySelectorAll('[data-bim-slot]').forEach((field) => {
+            const raw = field.value.trim().replace(',', '.');
+            if (raw === '') return field.classList.remove('is-invalid');
+            const value = Number(raw);
+            const bad = !/^\d+(\.\d+)?$/.test(raw) || value > 10;
+            field.classList.toggle('is-invalid', bad);
+            if (bad) invalid = true;
+            else grades.push(value);
+        });
+
+        if (invalid) {
+            result.textContent = 'Use notas de 0 a 10.';
+            return;
+        }
+
+        const sum = grades.reduce((a, b) => a + b, 0);
+        const missing = per - grades.length;
+
+        if (missing > 0) {
+            const need = Math.ceil(((rule.passing * per - sum) / missing) * 10) / 10;
+            if (need <= 0) result.innerHTML = `<i class="fas fa-check-circle mr-1"></i>Você já fecha o ${base.unit}º bimestre com média ${fmt(rule.passing)}, qualquer que seja a nota.`;
+            else if (need > 10) result.innerHTML = `<i class="fas fa-redo mr-1"></i>Mesmo com 10 não fecha ${fmt(rule.passing)}: vai para a recuperação, onde precisa tirar ${fmt(rule.passing)}.`;
+            else result.innerHTML = `<i class="fas fa-bullseye mr-1"></i>Precisa de <strong>${fmt(need)}</strong> ${missing > 1 ? `em cada uma das ${missing} avaliações que faltam` : 'na avaliação que falta'} para fechar ${fmt(rule.passing)}.`;
+            return;
+        }
+
+        const average = Math.round((sum / per) * 100) / 100;
+        result.innerHTML = average >= rule.passing
+            ? `<i class="fas fa-check-circle mr-1"></i>Média do ${base.unit}º bimestre: <strong>${fmt(average)}</strong>. Fechou!`
+            : `<i class="fas fa-redo mr-1"></i>Média do ${base.unit}º bimestre: <strong>${fmt(average)}</strong>. Vai para a recuperação, onde precisa tirar ${fmt(rule.passing)}.`;
+    }
+
+    document.querySelectorAll('[data-bim-sim]').forEach((box) => {
+        simulateBimester(box);
+        box.addEventListener('input', () => simulateBimester(box));
+    });
+
+    // ---------- Simulador da média do ano, por disciplina
     const performance = document.getElementById('studentPerformance');
     if (performance) {
         performance.addEventListener('input', (event) => {

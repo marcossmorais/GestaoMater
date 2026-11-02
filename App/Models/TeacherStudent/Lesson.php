@@ -88,6 +88,7 @@ class Lesson extends Model
                 aula.id_aula AS id,
                 aula.fk_id_turma_disciplina AS discipline_class_id,
                 TO_CHAR(aula.data_aula, 'DD/MM') AS date,
+                TO_CHAR(aula.data_aula, 'YYYY-MM-DD') AS iso_date,
                 aula.habilidade_bncc_codigo AS bncc_code,
                 aula.habilidade_bncc AS bncc_skill,
                 aula.observacao AS notes,

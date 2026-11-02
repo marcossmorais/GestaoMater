@@ -96,6 +96,8 @@ class TeacherPortalController extends Action
         $this->view->lessons = $lessons;
         $this->view->pending = $Dashboard->pending(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses), $openUnits);
         $this->view->atRisk = $Dashboard->atRisk($disciplineClasses, max($openUnits), $rule);
+        $this->view->charts = $Dashboard->charts($disciplineClasses, max($openUnits), $rule, $this->view->atRisk);
+        $this->view->activity = $Dashboard->activity(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses));
         $this->view->rule = $rule;
 
         $this->render('home', 'TeacherPortalLayout', 'teacherPortal');
@@ -178,6 +180,16 @@ class TeacherPortalController extends Action
         $Tool = new Tools();
 
         if (!isset($_SESSION)) session_start();
+
+        // endereço e telefone são sempre os do próprio professor (antes vinham do navegador)
+        $Teacher->__set('teacherId', $_SESSION['Teacher']['id']);
+        $own = $Teacher->dataGeneral()[0] ?? null;
+        if (!$own) {
+            http_response_code(404);
+            return;
+        }
+        $_POST['addressId'] = $own->address_id;
+        $_POST['telephoneId'] = $own->telephone_id;
 
         $Address->__set('addressId', $_POST['addressId']);
         $Address->__set('district', $_POST['district']);

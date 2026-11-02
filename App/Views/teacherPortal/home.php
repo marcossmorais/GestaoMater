@@ -52,9 +52,117 @@ $pendingTotal = count($pending['lessons']) + count($pending['exams']);
             <nav class="m-tiles" aria-label="Atalhos">
                 <a class="m-tile m-subj-green" href="/portal-docente/chamada"><span class="m-tile-ico"><i class="fas fa-clipboard-check"></i></span><strong>Chamada rápida</strong><small>Toque só em quem faltou</small></a>
                 <a class="m-tile m-subj-coral" href="/portal-docente/diario"><span class="m-tile-ico"><i class="fas fa-book-open"></i></span><strong>Diário</strong><small>Conteúdo e BNCC</small></a>
-                <a class="m-tile m-subj-amber" href="/portal-docente/notas"><span class="m-tile-ico"><i class="fas fa-star"></i></span><strong>Notas</strong><small>1ª, 2ª e 3ª avaliação</small></a>
+                <a class="m-tile m-subj-sky" href="/portal-docente/notas"><span class="m-tile-ico"><i class="fas fa-star"></i></span><strong>Notas</strong><small>1ª, 2ª e 3ª avaliação</small></a>
                 <a class="m-tile m-subj-purple" href="/portal-docente/mural"><span class="m-tile-ico"><i class="fas fa-thumbtack"></i></span><strong>Mural</strong><small>Avisos para a turma</small></a>
             </nav>
+
+            <?php
+            $charts = $this->view->charts;
+            $activity = $this->view->activity;
+            $status = $charts['status'];
+            $studentsTotal = array_sum($status);
+            $unity = max($openUnits);
+            $statusLegend = [
+                ['Na média ou acima', $status['ok'], '#22B07D'],
+                ['Abaixo, ainda parcial', $status['partial'], '#0EA5E9'],
+                ['Aguarda recuperação', $status['recovery'], '#F2643D'],
+                ['Sem nota ainda', $status['none'], '#B8C5DC'],
+            ];
+            $bandColors = ['#F2643D', '#0EA5E9', '#2F6FED', '#22B07D'];
+            $readPct = $activity['expected'] ? (int) round(100 * $activity['read'] / $activity['expected']) : 0;
+            ?>
+
+            <h5 class="m-section-title">Como vão os seus alunos <span class="m-pill m-pill-info"><?= $unity ?>º bimestre</span></h5>
+
+            <div class="m-charts">
+
+                <div class="card m-panel m-chart-card">
+                    <div class="m-panel-head"><h6>Situação dos alunos</h6></div>
+                    <div class="m-donut"><canvas id="chartStatus" aria-label="Situação dos alunos no bimestre"></canvas><div class="m-donut-center"><strong><?= (int) $studentsTotal ?></strong><small>alunos</small></div></div>
+                    <ul class="m-legend">
+                        <?php foreach ($statusLegend as [$label, $count, $color]) { ?>
+                            <li><i style="background: <?= $color ?>"></i><span><?= $label ?></span><b><?= (int) $count ?></b></li>
+                        <?php } ?>
+                    </ul>
+                </div>
+
+                <div class="card m-panel m-chart-card">
+                    <div class="m-panel-head"><h6>Faixas de nota</h6></div>
+                    <div class="m-donut"><canvas id="chartBands" aria-label="Quantidade de notas por faixa"></canvas></div>
+                    <ul class="m-legend">
+                        <?php $i = 0; foreach ($charts['bands'] as $label => $count) { ?>
+                            <li><i style="background: <?= $bandColors[$i++] ?>"></i><span><?= $label ?></span><b><?= (int) $count ?></b></li>
+                        <?php } ?>
+                    </ul>
+                </div>
+
+                <div class="card m-panel m-chart-card m-chart-wide">
+                    <div class="m-panel-head"><h6>Média por turma</h6><small class="m-muted-note m-0">linha vermelha: média <?= str_replace('.', ',', (string) $this->view->rule['passing']) ?></small></div>
+                    <div class="m-chart-box"><canvas id="chartClassAverage" aria-label="Média de cada turma"></canvas></div>
+                </div>
+
+                <div class="card m-panel m-chart-card m-chart-wide">
+                    <div class="m-panel-head"><h6>Alunos em atenção por turma</h6><span class="m-pill m-pill-bad"><?= count($atRisk) ?></span></div>
+                    <div class="m-chart-box"><canvas id="chartAttention" aria-label="Alunos em atenção por turma"></canvas></div>
+                    <?php if ($atRisk) { ?>
+                        <details class="m-attention-list" data-attention>
+                            <summary><i class="fas fa-list mr-2"></i><span data-attention-title>Ver os <?= count($atRisk) ?> alunos</span></summary>
+                            <ul class="m-todo">
+                                <?php foreach ($atRisk as $s) { ?>
+                                    <li data-turma="<?= htmlspecialchars($s['label']) ?>"><a href="/portal-docente/aluno?id=<?= $s['enrollmentId'] ?>">
+                                        <span><strong><?= htmlspecialchars($s['name']) ?></strong><small><?= htmlspecialchars($s['label'] . ' · ' . $s['discipline']) ?> · <?= htmlspecialchars(implode(' · ', $s['reasons'])) ?></small></span>
+                                    </a></li>
+                                <?php } ?>
+                            </ul>
+                        </details>
+                    <?php } ?>
+                </div>
+
+                <div class="card m-panel m-chart-card m-chart-wide">
+                    <div class="m-panel-head"><h6>Faltas por turma</h6><small class="m-muted-note m-0">sem as abonadas</small></div>
+                    <div class="m-chart-box"><canvas id="chartAbsences" aria-label="Faltas de cada turma no bimestre"></canvas></div>
+                </div>
+
+                <div class="card m-panel m-chart-card m-chart-wide">
+                    <div class="m-panel-head"><h6>O que os alunos estão fazendo</h6><a href="/portal-docente/mural">Mural</a></div>
+                    <?php if (!$activity['notices']) { ?>
+                        <div class="m-empty">Publique um aviso no mural para acompanhar quem leu.</div>
+                    <?php } else { ?>
+                        <div class="m-activity">
+                            <div class="m-donut m-donut-sm"><canvas id="chartReads" aria-label="Leitura dos avisos"></canvas><div class="m-donut-center"><strong><?= $readPct ?>%</strong><small>leram</small></div></div>
+                            <ul class="m-read-list">
+                                <?php foreach ($activity['notices'] as $n) { $pct = $n->students ? min(100, round(100 * $n->read_total / $n->students)) : 0; ?>
+                                    <li>
+                                        <span class="m-read-text"><?= htmlspecialchars($n->text) ?></span>
+                                        <small><?= htmlspecialchars($n->label) ?> · <?= htmlspecialchars($n->date) ?> · <?= (int) $n->read_total ?> de <?= (int) $n->students ?></small>
+                                        <span class="m-bar"><i class="m-bar-fill is-read" style="width: <?= $pct ?>%"></i></span>
+                                    </li>
+                                <?php } ?>
+                            </ul>
+                        </div>
+                        <?php if ($activity['feed']) { ?>
+                            <h6 class="m-data-sub">Últimas leituras</h6>
+                            <ul class="m-feed">
+                                <?php foreach ($activity['feed'] as $f) { ?>
+                                    <li><i class="fas fa-check-circle"></i><span><a href="/portal-docente/aluno?id=<?= (int) $f->enrollment_id ?>"><strong><?= htmlspecialchars($f->name) ?></strong></a> leu “<?= htmlspecialchars($f->text) ?>”<small><?= htmlspecialchars($f->label) ?> · <?= htmlspecialchars($f->at) ?></small></span></li>
+                                <?php } ?>
+                            </ul>
+                        <?php } ?>
+                    <?php } ?>
+                </div>
+
+            </div>
+
+            <script>
+                window.MATER_HOME = <?= json_encode([
+                    'status' => array_map(function ($l) { return ['label' => $l[0], 'value' => (int) $l[1], 'color' => $l[2]]; }, $statusLegend),
+                    'bands' => array_map(null, array_keys($charts['bands']), array_values($charts['bands']), $bandColors),
+                    'classes' => $charts['classes'],
+                    'passing' => (float) $this->view->rule['passing'],
+                    'reads' => ['read' => (int) $activity['read'], 'expected' => (int) $activity['expected']],
+                ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
+            </script>
+            <script src="<?= asset('/assets/js/teacherHome.js') ?>" defer></script>
 
             <div class="m-grid">
 
@@ -122,26 +230,6 @@ $pendingTotal = count($pending['lessons']) + count($pending['exams']);
                                     </a></li>
                                 <?php } ?>
                             </ul>
-                        <?php } ?>
-                    </div>
-
-                    <div class="card m-panel">
-                        <div class="m-panel-head">
-                            <h6>Alunos em atenção</h6>
-                            <span class="m-pill m-pill-info"><?= max($openUnits) ?>º bim.</span>
-                        </div>
-                        <?php if (!$atRisk) { ?>
-                            <div class="m-empty">Nenhum aluno abaixo de <?= str_replace('.', ',', (string) $this->view->rule['passing']) ?> ou com muitas faltas.</div>
-                        <?php } else { ?>
-                            <ul class="m-todo">
-                                <?php foreach (array_slice($atRisk, 0, 8) as $s) { ?>
-                                    <li><a href="/portal-docente/aluno?id=<?= $s['enrollmentId'] ?>">
-                                        <i class="fas fa-user"></i>
-                                        <span><strong><?= htmlspecialchars($s['name']) ?></strong><small><?= htmlspecialchars($s['label'] . ' · ' . $s['discipline']) ?> · <?= htmlspecialchars(implode(' · ', $s['reasons'])) ?></small></span>
-                                    </a></li>
-                                <?php } ?>
-                            </ul>
-                            <?php if (count($atRisk) > 8) { ?><p class="m-muted-note mb-0">e mais <?= count($atRisk) - 8 ?> — veja em Turmas.</p><?php } ?>
                         <?php } ?>
                     </div>
 
