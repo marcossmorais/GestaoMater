@@ -30,6 +30,7 @@ services:
       - ./database/17_observacao_rapida.sql:/docker-entrypoint-initdb.d/17_observacao_rapida.sql:ro
       - ./database/18_roteiro_estruturado.sql:/docker-entrypoint-initdb.d/18_roteiro_estruturado.sql:ro
       - ./database/19_planejamento_tipos_avaliacao.sql:/docker-entrypoint-initdb.d/19_planejamento_tipos_avaliacao.sql:ro
+      - ./database/20_roteiro_envio_solicitacao_ocorrencia.sql:/docker-entrypoint-initdb.d/20_roteiro_envio_solicitacao_ocorrencia.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro
