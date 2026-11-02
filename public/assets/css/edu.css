@@ -689,3 +689,36 @@ body:is(#teacherPortal, #studentPortal) #pagina #settingsModal { overflow-y: aut
 .m-profile-bar { z-index: 5; padding: 12px 16px; background: var(--m-surface); border: 2px solid var(--m-border); border-radius: 18px; box-shadow: var(--m-shadow); }
 .m-profile-bar .btn { min-height: 44px; }
 
+/* Perfil do professor: página própria, compacta */
+.m-profile-page { padding-bottom: 96px; }
+.m-profile-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.m-profile-head img { flex: none; width: 56px; height: 56px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px var(--m-primary-soft); }
+.m-profile-head > div { flex: 1; min-width: 0; }
+html body .m-profile-head h5 { margin: 0; font-size: 18px !important; font-weight: 800; }
+.m-profile-head p { margin: 0; font-size: 13px; color: var(--m-muted); }
+.m-profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.m-profile-wide { grid-column: 1 / -1; }
+.m-profile-stack { display: flex; flex-direction: column; gap: 12px; }
+.m-profile-box { padding: 14px 16px; border: 1px solid var(--m-border); border-radius: 12px; background: var(--m-surface); }
+html body .m-profile-box h6 { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 12px; font-size: 14px; font-weight: 800; }
+.m-profile-box h6 small { font-size: 12px; font-weight: 600; color: var(--m-muted); }
+.m-profile-box .m-form-grid { gap: 10px 12px; }
+.m-form-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.m-profile-box .m-att-label { font-size: 11px; }
+.m-profile-box dl { margin: 0; }
+.m-profile-box dd { margin: 0; font-size: 14px; font-weight: 600; }
+.m-profile-box dt { font-size: 11px; font-weight: 700; color: var(--m-muted); }
+html body#teacherPortal .m-profile-box .form-control { height: 36px !important; min-height: 36px !important; padding: 0 10px; font-size: 14px; font-weight: 600; border-width: 1px !important; border-radius: 8px !important; }
+html body#teacherPortal .m-profile-box .form-control:disabled { opacity: 1; color: var(--m-text) !important; background-color: var(--m-surface-2) !important; border-color: transparent !important; }
+html body#teacherPortal .m-profile-box .custom-select:disabled { background-image: none !important; }
+.m-profile-page .m-code-input { max-width: 240px; }
+.m-profile-actions { display: flex; gap: 8px; }
+html body#teacherPortal .m-profile-page .btn { min-height: 36px !important; padding: 0 14px; font-size: 13px; font-weight: 700 !important; border-radius: 8px !important; box-shadow: none !important; }
+html body#teacherPortal .m-profile-page .btn-light { border-width: 1px !important; }
+@media (max-width: 767.98px) {
+  .m-profile-grid, .m-form-grid-2 { grid-template-columns: minmax(0, 1fr); }
+  .m-profile-box .m-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html body#teacherPortal .m-profile-box .form-control { height: 44px !important; min-height: 44px !important; }
+  html body#teacherPortal .m-profile-page .btn { min-height: 44px !important; height: 44px; }
+}
+

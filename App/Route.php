@@ -857,7 +857,7 @@ class Route extends Bootstrap
 		);
 
 		$routes['teacherPortalSettings'] = array(
-			'route' => '/portal-docente/configuracoes',
+			'route' => '/portal-docente/perfil',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
 			'action' => 'settings'
 		);

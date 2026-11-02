@@ -167,7 +167,7 @@ class TeacherPortalController extends Action
         $this->view->pcd = $Teacher->pcd();
         $this->view->bloodType = $Teacher->availablebloodType();
 
-        $this->render('settings', 'SimpleLayout', 'teacherPortal');
+        $this->render('settings', 'TeacherPortalLayout', 'teacherPortal');
     }
 
 

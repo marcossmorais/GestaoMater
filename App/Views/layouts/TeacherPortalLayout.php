@@ -56,21 +56,6 @@ require __DIR__ . '/../../config/variables.php';
 				<?= $this->content() ?>
 
 
-				<div class="modal fade modal-profile" id="settingsModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
-
-					<div class="modal-dialog modal-full">
-						<div class="modal-content">
-							<div class="row">
-								<div class="col-lg-12"> <button type="button" class="close text-rig" data-dismiss="modal" aria-label="Close" data-toggle="modal" data-target="#settingsModal">
-										<span aria-hidden="true"><i class="fas fa-times-circle text-info mr-3 mt-2"></i></span>
-									</button></div>
-							</div>
-
-							<div containerSettingsModal class="modal-body"></div>
-						</div>
-					</div>
-				</div>
-
 				<?php require '../App/Views/teacherPortal/components/navbarBottom.php' ?>
 
 			</div>

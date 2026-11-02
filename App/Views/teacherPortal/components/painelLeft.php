@@ -34,7 +34,7 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li name="horario"><a href="/portal-docente/horario" title="Horários"><i class="fas fa-calendar-alt"></i><span class="link-name">Horários</span></a></li>
 
-            <li><a href="#" id="settingsTeacherPortal" title="Perfil"><i class="fas fa-cog"></i><span class="link-name">Perfil</span></a></li>
+            <li name="perfil"><a href="/portal-docente/perfil" title="Perfil"><i class="fas fa-cog"></i><span class="link-name">Perfil</span></a></li>
 
             <li data-install-app hidden><a href="#" title="Instalar app"><i class="fas fa-download"></i><span class="link-name">Instalar app</span></a></li>
 
