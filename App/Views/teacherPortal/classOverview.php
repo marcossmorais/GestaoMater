@@ -70,7 +70,7 @@ $showDisciplines = $tab === 'chamada' && count($ownDisciplines) > 1 && $ownDisci
                     </div>
                 </div>
                 <?php } ?>
-                <?php if ($tab === 'alunos') { ?>
+                <?php if ($tab !== 'chamada') { ?>
                     <div class="m-att-field m-att-field-grow">
                         <span class="m-att-label">Buscar aluno</span>
                         <div class="m-att-search">
@@ -78,7 +78,9 @@ $showDisciplines = $tab === 'chamada' && count($ownDisciplines) > 1 && $ownDisci
                             <input type="search" data-roster-search placeholder="Digite um nome" autocomplete="off">
                         </div>
                     </div>
-                <?php } elseif ($tab === 'notas') { ?>
+                <?php } ?>
+                <?php if ($tab === 'notas') { ?>
+                    <label class="m-overview-low"><input type="checkbox" data-roster-low> Só abaixo da média</label>
                     <a class="btn btn-light" href="/portal-docente/notas"><i class="fas fa-pen mr-2"></i>Lançar notas</a>
                 <?php } ?>
             </div>
@@ -113,9 +115,12 @@ $showDisciplines = $tab === 'chamada' && count($ownDisciplines) > 1 && $ownDisci
             <?php } elseif ($tab === 'chamada') {
                 $openUnits = $this->view->openUnits;
                 require __DIR__ . '/components/attendanceMark.php';
-            } else { ?>
+            } else {
+                $grade = function ($n) { return number_format((float) $n, 1, ',', ''); };
+                $totals = [];
+            ?>
 
-            <p class="m-muted-note">Nota do bimestre (média das <?= (int) $rule['perBimester'] ?> avaliações; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior entre o bimestre e a recuperação). Você edita só as disciplinas com <i class="fas fa-pen fa-xs"></i>.</p>
+            <p class="m-muted-note">Nota do bimestre: média das <?= (int) $rule['perBimester'] ?> avaliações; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior entre o bimestre e a recuperação. Você edita as colunas com <i class="fas fa-pen fa-xs"></i>.</p>
 
             <div class="card m-panel m-overview-wrap">
                 <?php if (!$overview['students']) { ?>
@@ -130,27 +135,53 @@ $showDisciplines = $tab === 'chamada' && count($ownDisciplines) > 1 && $ownDisci
                                         <?= htmlspecialchars($d->acronym ?: $d->name) ?><?= $mine ? ' <i class="fas fa-pen fa-xs"></i>' : '' ?>
                                     </th>
                                 <?php } ?>
+                                <th title="Disciplinas abaixo da média">Abaixo</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php foreach ($overview['students'] as $s) { ?>
-                                <tr>
+                        <tbody data-roster>
+                            <?php foreach ($overview['students'] as $s) {
+                                $low = 0;
+                                ob_start();
+                                foreach ($overview['disciplines'] as $d) {
+                                    $mine = in_array((int) $d->id, $editable, true) ? 'is-mine' : '';
+                                    $acronym = htmlspecialchars($d->acronym ?: $d->name);
+                                    $g = $s['grades'][(int) $d->id] ?? null;
+                                    if (!$g || $g['grade'] === null) { echo '<td class="' . $mine . '" data-label="' . $acronym . '">–</td>'; continue; }
+                                    $below = $g['grade'] < $rule['passing'];
+                                    $low += $below ? 1 : 0;
+                                    $totals[(int) $d->id][] = (float) $g['grade'];
+                                    $class = $g['recovered'] ? 'is-rec' : ($below ? 'is-low' : '');
+                                    $title = $g['recovered'] ? 'Recuperação (média era ' . $fmt($g['average']) . ')' : ($g['needsRecovery'] ? 'Abaixo da média: aguarda recuperação' : ($g['closed'] ? 'Bimestre fechado' : 'Parcial'));
+                                    ?>
+                                    <td class="<?= $mine ?> <?= $class ?>" data-label="<?= $acronym ?>" title="<?= htmlspecialchars($title) ?>"><span><?= $grade($g['grade']) ?><?= $g['recovered'] ? '<sup>R</sup>' : (!$g['closed'] ? '<sup>*</sup>' : '') ?></span></td>
+                                <?php }
+                                $cells = ob_get_clean();
+                                ?>
+                                <tr data-name="<?= htmlspecialchars($s['name']) ?>" data-low="<?= $low ?>">
                                     <td><a href="/portal-docente/aluno?id=<?= (int) $s['id'] ?>"><?= htmlspecialchars($s['name']) ?></a></td>
-                                    <?php foreach ($overview['disciplines'] as $d) {
-                                        $g = $s['grades'][(int) $d->id] ?? null;
-                                        if (!$g || $g['grade'] === null) { echo '<td>–</td>'; continue; }
-                                        $class = $g['recovered'] ? 'is-rec' : ($g['grade'] < $rule['passing'] ? 'is-low' : '');
-                                        $title = $g['recovered'] ? 'Recuperação (média era ' . $fmt($g['average']) . ')' : ($g['needsRecovery'] ? 'Abaixo da média: aguarda recuperação' : ($g['closed'] ? 'Bimestre fechado' : 'Parcial'));
-                                        ?>
-                                        <td class="<?= $class ?>" title="<?= htmlspecialchars($title) ?>"><?= $fmt($g['grade']) ?><?= $g['recovered'] ? '<sup>R</sup>' : (!$g['closed'] ? '<sup>*</sup>' : '') ?></td>
-                                    <?php } ?>
+                                    <?= $cells ?>
+                                    <td class="m-overview-count <?= $low ? 'has-low' : '' ?>" data-label="Abaixo"><?= $low ?></td>
                                 </tr>
                             <?php } ?>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Média da turma</td>
+                                <?php foreach ($overview['disciplines'] as $d) {
+                                    $values = $totals[(int) $d->id] ?? [];
+                                    $average = $values ? array_sum($values) / count($values) : null;
+                                    ?>
+                                    <td class="<?= in_array((int) $d->id, $editable, true) ? 'is-mine' : '' ?>" data-label="<?= htmlspecialchars($d->acronym ?: $d->name) ?>"><?= $average === null ? '–' : $grade($average) ?></td>
+                                <?php } ?>
+                                <td class="m-overview-count"></td>
+                            </tr>
+                        </tfoot>
                     </table>
-                    <p class="m-empty text-left mb-0 mt-2"><sup>R</sup> nota da recuperação · <sup>*</sup> parcial (faltam avaliações) · em vermelho: abaixo de <?= $fmt($rule['passing']) ?></p>
                 <?php } ?>
             </div>
+            <?php if ($overview['students']) { ?>
+                <p class="m-muted-note mt-2 mb-0"><sup>R</sup> nota da recuperação · <sup>*</sup> parcial (faltam avaliações) · em vermelho: abaixo de <?= $fmt($rule['passing']) ?></p>
+            <?php } ?>
 
             <?php } ?>
 

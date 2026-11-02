@@ -18,10 +18,17 @@
     const normalize = (text) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
     const search = root.querySelector('[data-roster-search]');
-    search.addEventListener('input', () => {
+    const lowOnly = root.querySelector('[data-roster-low]');
+
+    function filter() {
         const term = normalize(search.value.trim());
-        grid.querySelectorAll('[data-name]').forEach((card) => { card.hidden = !normalize(card.dataset.name).includes(term); });
-    });
+        grid.querySelectorAll('[data-name]').forEach((card) => {
+            card.hidden = !normalize(card.dataset.name).includes(term) || (lowOnly && lowOnly.checked && card.dataset.low === '0');
+        });
+    }
+
+    search.addEventListener('input', filter);
+    if (lowOnly) lowOnly.addEventListener('change', filter);
 
     const sheet = root.querySelector('[data-note-sheet]');
     if (!sheet) return;
