@@ -53,6 +53,19 @@ Ordenadas por impacto ÷ esforço. P = pequeno (até 1 dia), M = médio, G = gra
 - Pontos e gamificação (ClassDojo): combina pouco com o Ensino Médio e gera atrito com as famílias.
 - IA corrigindo prova ou escrevendo parecer: fora do escopo e sensível (LGPD, dados de menores).
 
+## Planejamento de aula (nov/2026)
+
+Os modelos consultados repetem os mesmos campos: objetivos ligados à BNCC, metodologia passo a passo, recursos e avaliação; um exemplo de matemática usa abertura, desenvolvimento e fechamento. Nos apps de planejamento, os professores mais elogiam reaproveitar planos. O Mater adotou esses campos com só o título obrigatório, além da cópia para outra turma ou data. Acompanhar as habilidades já trabalhadas por turma fica para depois.
+
+Fontes (sobretudo modelos, materiais de cursos e reviews; confirmar os campos com a coordenação):
+
+- Plano de aula de matemática (USP) — https://edisciplinas.usp.br/mod/resource/view.php?id=4461974
+- Toda Matéria — https://www.todamateria.com.br/plano-de-aula/
+- We Are Teachers — https://www.weareteachers.com/online-planners/
+- G2, Planbook — https://www.g2.com/products/planbookedu
+- Common Sense, Planbook — https://www.commonsense.org/education/reviews/planbookedu
+- Planboard — https://apps.apple.com/au/app/planboard/id704514651
+
 ## Fontes
 
 - Profez — https://profez.com.br/diario-de-classe
