@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Controllers\Admin;
+
+use MF\Controller\Action;
+use MF\Model\Container;
+use App\Models\TeacherStudent\ClassBoard;
+
+/**
+ * Admin: área geral do mural, para toda a escola ou para uma turma. Aparece acima dos avisos por matéria.
+ */
+class AdminBoardController extends Action
+{
+
+    private function json($data, $code = 200)
+    {
+        header('Content-Type: application/json');
+        http_response_code($code);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    }
+
+
+    private function input()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['error' => 'metodo-invalido'], 405);
+            return null;
+        }
+
+        return json_decode(file_get_contents('php://input'), true) ?: [];
+    }
+
+
+    public function index()
+    {
+        $Board = Container::getModel('TeacherStudent\\GeneralBoard');
+
+        $this->view->posts = $Board->all();
+        $this->view->classes = $Board->classes();
+
+        $this->render('board', 'AdminLayout');
+    }
+
+
+    public function post()
+    {
+        if (($input = $this->input()) === null) return;
+
+        $text = trim((string) ($input['text'] ?? ''));
+        $type = (string) ($input['type'] ?? 'aviso');
+        $classId = (int) ($input['class'] ?? 0);
+
+        if ($text === '' || mb_strlen($text) > 2000) return $this->json(['error' => 'texto-invalido'], 422);
+        if (!isset(ClassBoard::TYPES[$type])) return $this->json(['error' => 'tipo-invalido'], 422);
+
+        $Board = Container::getModel('TeacherStudent\\GeneralBoard');
+
+        if ($classId && !in_array($classId, array_map(function ($c) { return (int) $c->id; }, $Board->classes()), true)) {
+            return $this->json(['error' => 'turma-invalida'], 422);
+        }
+
+        if (!isset($_SESSION)) session_start();
+
+        $id = $Board->post($_SESSION['Admin']['id'], $text, $type, !empty($input['pinned']), $classId ?: null);
+
+        $this->json(['id' => $id]);
+    }
+
+
+    public function pin()
+    {
+        if (($input = $this->input()) === null) return;
+
+        Container::getModel('TeacherStudent\\GeneralBoard')->setPinned((int) ($input['id'] ?? 0), !empty($input['pinned']));
+
+        $this->json(['status' => 'success']);
+    }
+
+
+    public function delete()
+    {
+        if (($input = $this->input()) === null) return;
+
+        Container::getModel('TeacherStudent\\GeneralBoard')->delete((int) ($input['id'] ?? 0));
+
+        $this->json(['status' => 'success']);
+    }
+}

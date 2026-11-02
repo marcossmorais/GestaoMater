@@ -905,3 +905,27 @@ html body #pagina .card.m-inbox-item.is-new { border-left: 4px solid var(--m-pri
 html body .m-inbox-item p { margin: 2px 0; font-size: 14px; }
 .m-inbox-topics li { list-style: disc; }
 @media (max-width: 767.98px) { html body#teacherPortal #pagina .m-page-head .m-class-tabs button, html body#teacherPortal #pagina .m-guide-page .m-seg button, html body#teacherPortal #pagina .m-lesson-form .m-seg button { min-height: 44px; } .m-page-head .m-class-tabs { display: flex; width: 100%; } .m-page-head .m-class-tabs button { flex: 1; } }
+
+/* Mural: cor e ícone por tipo; fixado ganha fundo da cor do tipo */
+.is-type-aviso { --k: #2F6FED; }
+.is-type-prova { --k: #E8508C; }
+.is-type-tarefa { --k: #D97706; }
+.is-type-material { --k: #12A9B4; }
+.is-type-evento { --k: #7B61FF; }
+.is-type-urgente { --k: #E5484D; }
+html body #pagina .card.m-board-post[class*="is-type-"] { border-left: 4px solid var(--k) !important; }
+html body #pagina .card.m-board-post[class*="is-type-"].is-pinned { border-style: solid !important; background: color-mix(in srgb, var(--k) 12%, var(--m-surface)) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--k) 45%, transparent) !important; }
+.m-board-tag { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; font-size: 12px; font-weight: 800; color: var(--m-text); background: color-mix(in srgb, var(--k) 18%, transparent); border-radius: 10px; }
+.m-board-tag i { font-size: 11px; color: var(--k); }
+.m-board-pin { display: inline-flex; align-items: center; padding: 2px 8px; font-size: 12px; font-weight: 800; color: #fff; background: var(--k); border-radius: 10px; }
+html.nightMode .m-board-pin { background: color-mix(in srgb, var(--k) 70%, #000); }
+.m-board-count { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; margin-left: 4px; padding: 0 5px; font-size: 11px; color: #fff; background: var(--m-danger); border-radius: 9px; }
+.m-board-types { display: flex; flex-wrap: wrap; gap: 6px; }
+.m-board-type { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 12px; font: inherit; font-size: 13px; font-weight: 700; color: var(--m-text); cursor: pointer; background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 8px; }
+.m-board-type i { color: var(--k); }
+.m-board-type.is-active { background: color-mix(in srgb, var(--k) 18%, var(--m-surface)); border-color: var(--k); box-shadow: inset 0 0 0 1px var(--k); }
+@media (max-width: 767.98px) { .m-board-type { min-height: 44px; flex: 1 1 calc(50% - 6px); justify-content: center; } }
+#studentBoard .m-filter-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+#studentBoard .m-filter-chips .m-att-subject { flex: none; }
+@media (max-width: 767.98px) { #studentBoard .m-filter-chips .m-att-subject { min-height: 44px; } }
+

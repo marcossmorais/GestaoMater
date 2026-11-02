@@ -11,7 +11,7 @@
     const postsBox = $('[data-bd-posts]');
     const MAX_PINNED = 3;
 
-    const state = { classId: null, posts: [], busy: false };
+    const state = { classId: null, posts: [], general: [], type: 'aviso', busy: false };
 
     const errors = {
         'sem-permissao': 'Você não tem permissão para isso nesta turma.',
@@ -66,7 +66,7 @@
         select.innerHTML = disciplines.map((c) => `<option value="${c.id}"${c.own ? ' selected' : ''}>${escapeHtml(c.discipline)}</option>`).join('');
         $('[data-bd-discipline-field]').hidden = disciplines.length < 2;
 
-        form.reset();
+        resetForm();
         postsBox.innerHTML = '<div class="m-empty">Carregando…</div>';
         show('list');
         await load();
@@ -76,25 +76,63 @@
         try {
             const data = await api(`/portal-docente/mural/avisos?turma=${state.classId}`);
             state.posts = data.posts;
+            state.general = data.general || [];
             render();
         } catch (e) {
             postsBox.innerHTML = `<div class="m-empty">${escapeHtml(errors[e.message] || 'Não foi possível carregar os avisos.')}</div>`;
         }
     }
 
+    function selectType(type) {
+        state.type = type;
+        root.querySelectorAll('[data-board-types] [data-type]').forEach((b) => {
+            b.classList.toggle('is-active', b.dataset.type === type);
+            b.setAttribute('aria-pressed', b.dataset.type === type);
+        });
+    }
+
+    function resetForm() {
+        form.reset();
+        selectType('aviso');
+    }
+
+    $('[data-board-types]').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-type]');
+        if (button) selectType(button.dataset.type);
+    });
+
+    function typeTags(p) {
+        const type = (config.types || {})[p.type] || { label: 'Aviso', icon: 'fa-bullhorn' };
+        return `<span class="m-board-tag"><i class="fas ${type.icon}" aria-hidden="true"></i>${escapeHtml(type.label)}</span>${p.pinned ? '<span class="m-board-pin"><i class="fas fa-thumbtack mr-1"></i>Fixado</span>' : ''}`;
+    }
+
     function render() {
         const pinned = state.posts.filter((p) => p.pinned).length;
         $('[data-bd-pinned-count]').textContent = `(${pinned}/${MAX_PINNED})`;
 
+        // área geral: da coordenação, só leitura para o professor
+        const general = state.general.length ? `
+            <h6 class="m-section-title"><i class="fas fa-school mr-2"></i>Geral da escola</h6>
+            ${state.general.map((p) => `
+                <article class="card m-board-post is-type-${escapeHtml(p.type)}${p.pinned ? ' is-pinned' : ''}">
+                    <header>
+                        ${typeTags(p)}
+                        <strong>Coordenação</strong>
+                        <small>${escapeHtml(p.postedAt)}</small>
+                    </header>
+                    <p>${escapeHtml(p.text).replace(/\n/g, '<br>')}</p>
+                </article>`).join('')}
+            <h6 class="m-section-title"><i class="fas fa-thumbtack mr-2"></i>Por matéria</h6>` : '';
+
         if (!state.posts.length) {
-            postsBox.innerHTML = '<div class="card m-panel m-empty">Nenhum aviso publicado nesta turma.</div>';
+            postsBox.innerHTML = `${general}<div class="card m-panel m-empty">Nenhum aviso publicado nesta turma.</div>`;
             return;
         }
 
-        postsBox.innerHTML = state.posts.map((p) => `
-            <article class="card m-board-post${p.pinned ? ' is-pinned' : ''}" data-post="${p.id}">
+        postsBox.innerHTML = general + state.posts.map((p) => `
+            <article class="card m-board-post is-type-${escapeHtml(p.type)}${p.pinned ? ' is-pinned' : ''}" data-post="${p.id}">
                 <header>
-                    ${p.pinned ? '<span class="m-pill m-pill-warn"><i class="fas fa-thumbtack mr-1"></i>Fixado</span>' : ''}
+                    ${typeTags(p)}
                     <strong>${escapeHtml(p.discipline)}</strong>
                     <small>${escapeHtml(p.teacher)} · ${escapeHtml(p.postedAt)} · ${p.readTotal} leitura${p.readTotal === 1 ? '' : 's'}</small>
                 </header>
@@ -145,9 +183,10 @@
             await api('/portal-docente/mural/publicar', {
                 disciplineClass: parseInt(data.get('disciplineClass'), 10),
                 text,
+                type: state.type,
                 pinned: data.get('pinned') === 'on'
             });
-            form.reset();
+            resetForm();
             toast('Aviso publicado');
             await load();
         } catch (e) {

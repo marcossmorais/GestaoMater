@@ -13,6 +13,16 @@ class ClassBoard extends Model
 
     const MAX_PINNED = 3;
 
+    // tipos de aviso: cor (CSS is-type-*) e ícone nos murais
+    const TYPES = [
+        'aviso' => ['label' => 'Aviso', 'icon' => 'fa-bullhorn'],
+        'prova' => ['label' => 'Prova', 'icon' => 'fa-file-alt'],
+        'tarefa' => ['label' => 'Tarefa', 'icon' => 'fa-tasks'],
+        'material' => ['label' => 'Material', 'icon' => 'fa-book'],
+        'evento' => ['label' => 'Evento', 'icon' => 'fa-calendar-day'],
+        'urgente' => ['label' => 'Urgente', 'icon' => 'fa-exclamation-circle'],
+    ];
+
 
     /**
      * Avisos da turma, fixados primeiro. Com $enrollmentId, indica se o aluno já leu.
@@ -25,6 +35,7 @@ class ClassBoard extends Model
                 aviso_turma.id_aviso_turma AS id,
                 aviso_turma.aviso AS text,
                 aviso_turma.fixado AS pinned,
+                aviso_turma.tipo AS type,
                 aviso_turma.fk_id_turma_disciplina AS discipline_class_id,
                 TO_CHAR(aviso_turma.data_postagem, 'DD/MM/YYYY HH24:MI') AS posted_at,
                 disciplina.nome_disciplina AS discipline,
@@ -77,12 +88,12 @@ class ClassBoard extends Model
     /**
      * @return int id do aviso
      */
-    public function post($disciplineClassId, $teacherId, $text, $pinned)
+    public function post($disciplineClassId, $teacherId, $text, $pinned, $type = 'aviso')
     {
 
         $stmt = $this->db->prepare(
-            "INSERT INTO aviso_turma (aviso, fk_id_turma_disciplina, fk_id_professor, fixado)
-             VALUES (:text, :disciplineClass, :teacher, :pinned)
+            "INSERT INTO aviso_turma (aviso, fk_id_turma_disciplina, fk_id_professor, fixado, tipo)
+             VALUES (:text, :disciplineClass, :teacher, :pinned, :type)
              RETURNING id_aviso_turma"
         );
 
@@ -90,6 +101,7 @@ class ClassBoard extends Model
         $stmt->bindValue(':disciplineClass', (int) $disciplineClassId, \PDO::PARAM_INT);
         $stmt->bindValue(':teacher', (int) $teacherId, \PDO::PARAM_INT);
         $stmt->bindValue(':pinned', (bool) $pinned, \PDO::PARAM_BOOL);
+        $stmt->bindValue(':type', $type);
         $stmt->execute();
 
         return (int) $stmt->fetchColumn();

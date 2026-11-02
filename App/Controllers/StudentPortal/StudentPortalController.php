@@ -112,6 +112,7 @@ class StudentPortalController extends Action
         $this->view->unity = ( $this->view->schoolTermActive[0]->option_value == $this->view->studentDataGeneral[0]->school_term_id ? $Unity->readOpenUnits() : $Unity->searchSpecificUniy() );
 
         $ClassSchedule = Container::getModel('GeneralManagement\\ClassSchedule');
+        $this->view->generalBoard = Container::getModel('TeacherStudent\GeneralBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
         $this->view->classSchedule = $ClassSchedule->getScheduleByClass($_SESSION['Student']['classId']);
         $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
         $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
@@ -325,6 +326,29 @@ class StudentPortalController extends Action
     public function boardRead()
     {
         header('Content-Type: application/json');
+            $_SESSION['Student']['classId'] ?? 0
+        );
+
+        if (!$ok) {
+            http_response_code(404);
+            echo json_encode(['error' => 'aviso-nao-encontrado']);
+            return;
+        }
+
+        echo json_encode(['status' => 'success']);
+    }
+
+    /**
+     * Confirma a leitura de um aviso geral (da escola ou da turma do aluno)
+     */
+    public function generalBoardRead()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION)) session_start();
+
+        $ok = Container::getModel('TeacherStudent\GeneralBoard')->markRead(
+            (int) ($_POST['id'] ?? 0),
+            $_SESSION['Student']['enrollmentId'] ?? 0,
         if (!isset($_SESSION)) session_start();
 
         $ok = Container::getModel('TeacherStudent\ClassBoard')->markRead(

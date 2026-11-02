@@ -8,6 +8,8 @@ $newGuides = count(array_filter($guides, function ($g) { return !$g->seen; }));
 $pending = count(array_filter($requests, function ($r) { return $r->status === 'pendente'; }));
 ?>
 
+<link rel="stylesheet" href="<?= asset('/assets/css/edu.css') ?>">
+
 <section id="adminPedagogical" class="m-att">
 
     <div class="row main-container">

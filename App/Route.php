@@ -1044,6 +1044,36 @@ class Route extends Bootstrap
 			'action' => 'occurrenceRequest'
 		);
 
+		$routes['adminBoard'] = array(
+			'route' => '/admin/mural',
+			'controller' => 'Admin\\AdminBoardController',
+			'action' => 'index'
+		);
+
+		$routes['adminBoardPost'] = array(
+			'route' => '/admin/mural/publicar',
+			'controller' => 'Admin\\AdminBoardController',
+			'action' => 'post'
+		);
+
+		$routes['adminBoardPin'] = array(
+			'route' => '/admin/mural/fixar',
+			'controller' => 'Admin\\AdminBoardController',
+			'action' => 'pin'
+		);
+
+		$routes['adminBoardDelete'] = array(
+			'route' => '/admin/mural/excluir',
+			'controller' => 'Admin\\AdminBoardController',
+			'action' => 'delete'
+		);
+
+		$routes['studentGeneralBoardRead'] = array(
+			'route' => '/portal-aluno/mural/geral/lido',
+			'controller' => 'StudentPortal\\StudentPortalController',
+			'action' => 'generalBoardRead'
+		);
+
 		$routes['adminPedagogical'] = array(
 			'route' => '/admin/pedagogico',
 			'controller' => 'Admin\\AdminPedagogicalController',

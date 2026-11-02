@@ -79,6 +79,7 @@ class TeacherClassController extends Action
     public function board()
     {
         $this->loadClasses();
+        $this->view->boardTypes = \App\Models\TeacherStudent\ClassBoard::TYPES;
         $this->render('board', 'TeacherPortalLayout', 'teacherPortal');
     }
 
@@ -95,10 +96,15 @@ class TeacherClassController extends Action
         $access = Container::getModel('Teacher\\TeacherAccess');
         $teacherId = $this->teacherId();
 
-        $this->json(['posts' => array_map(function ($p) use ($access, $teacherId) {
+        $general = Container::getModel('TeacherStudent\\GeneralBoard')->forClass($classId);
+
+        $this->json(['general' => array_map(function ($p) {
+            return ['id' => (int) $p->id, 'text' => $p->text, 'type' => $p->type, 'pinned' => (bool) $p->pinned, 'postedAt' => $p->posted_at];
+        }, $general), 'posts' => array_map(function ($p) use ($access, $teacherId) {
             return [
                 'id' => (int) $p->id,
                 'text' => $p->text,
+                'type' => $p->type,
                 'pinned' => (bool) $p->pinned,
                 'discipline' => $p->discipline,
                 'teacher' => $p->teacher,
@@ -117,12 +123,14 @@ class TeacherClassController extends Action
         $disciplineClassId = (int) ($input['disciplineClass'] ?? 0);
         $text = trim((string) ($input['text'] ?? ''));
         $pinned = !empty($input['pinned']);
+        $type = (string) ($input['type'] ?? 'aviso');
 
         if (!$this->canEdit($disciplineClassId)) return $this->deny('aviso_turma', $disciplineClassId);
         if ($text === '' || mb_strlen($text) > 2000) return $this->json(['error' => 'texto-invalido'], 422);
+        if (!isset(\App\Models\TeacherStudent\ClassBoard::TYPES[$type])) return $this->json(['error' => 'tipo-invalido'], 422);
 
         try {
-            $id = Container::getModel('TeacherStudent\\ClassBoard')->post($disciplineClassId, $this->teacherId(), $text, $pinned);
+            $id = Container::getModel('TeacherStudent\\ClassBoard')->post($disciplineClassId, $this->teacherId(), $text, $pinned, $type);
         } catch (\PDOException $e) {
             if (strpos($e->getMessage(), 'limite-fixados') !== false) return $this->json(['error' => 'limite-fixados'], 422);
             throw $e;
