@@ -31,6 +31,8 @@ require __DIR__ . '/../../config/variables.php';
 
 <body id="teacherPortal">
 
+	<script> try { if (localStorage.getItem('mater-menu-recolhido')) { document.body.classList.add('sidebar-responsive') } } catch (e) {} </script>
+
 	<div class="container-fluid">
 
 		<div class="row">
