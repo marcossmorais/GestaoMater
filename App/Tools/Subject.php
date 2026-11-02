@@ -13,7 +13,7 @@ class Subject
         'matematica' => ['blue', 'fa-square-root-alt'],
         'lingua portuguesa' => ['coral', 'fa-book-open'],
         'portugues' => ['coral', 'fa-book-open'],
-        'historia' => ['amber', 'fa-landmark'],
+        'historia' => ['sky', 'fa-landmark'],
         'geografia' => ['green', 'fa-globe-americas'],
         'fisica' => ['purple', 'fa-atom'],
         'quimica' => ['teal', 'fa-flask'],
@@ -21,15 +21,15 @@ class Subject
         'ciencias' => ['teal', 'fa-microscope'],
         'lingua inglesa' => ['pink', 'fa-language'],
         'ingles' => ['pink', 'fa-language'],
-        'educacao fisica' => ['orange', 'fa-running'],
+        'educacao fisica' => ['rose', 'fa-running'],
         'artes' => ['magenta', 'fa-palette'],
         'arte' => ['magenta', 'fa-palette'],
         'filosofia' => ['indigo', 'fa-lightbulb'],
-        'sociologia' => ['brown', 'fa-users'],
+        'sociologia' => ['slate', 'fa-users'],
         'ensino religioso' => ['indigo', 'fa-dove'],
     ];
 
-    const COLORS = ['blue', 'coral', 'amber', 'green', 'purple', 'teal', 'lime', 'pink', 'orange', 'magenta', 'indigo', 'brown'];
+    const COLORS = ['blue', 'coral', 'sky', 'green', 'purple', 'teal', 'lime', 'pink', 'rose', 'magenta', 'indigo', 'slate'];
 
 
     private static function normalize($name)

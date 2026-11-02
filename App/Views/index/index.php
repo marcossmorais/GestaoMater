@@ -17,7 +17,7 @@
 <body class="lp">
 
     <header class="lp-top">
-        <a href="/" class="lp-logo"><img src="<?= $app_url ?>/assets/img/logo-components/logo-completa.png" alt="Mater — O seu futuro está aqui" width="170" height="55"></a>
+        <a href="/" class="lp-logo"><img src="<?= $app_url ?>/assets/img/logo-components/logo-completa-480.png" alt="Mater — O seu futuro está aqui" width="170" height="55"></a>
         <nav class="lp-nav" aria-label="Seções">
             <a href="#professor">Para professores</a>
             <a href="#aluno">Para alunos</a>

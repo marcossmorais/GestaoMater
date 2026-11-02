@@ -51,7 +51,7 @@ $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) 
     <div class="auth">
 
         <aside class="auth-side auth-<?= $loginPortal ?>">
-            <a class="logo" href="/"><img src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca.png" alt="Mater" width="200" height="65"></a>
+            <a class="logo" href="/"><img src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca-480.png" alt="Mater" width="200" height="65"></a>
 
             <div>
                 <h1><?= $portal['headline'] ?></h1>
