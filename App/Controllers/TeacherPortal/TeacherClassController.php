@@ -388,16 +388,38 @@ class TeacherClassController extends Action
         $this->view->classId = $classId;
         $this->view->unity = $unity;
         $this->view->rule = Container::getModel('Student\\StudentPerformance')->rule();
-        $this->view->overview = $Gradebook->classOverview($classId, $unity, $this->view->rule);
         $this->view->classLabel = $Gradebook->classLabel($classId);
 
         // disciplinas do professor nesta turma: as editáveis, as faltas do carômetro e a observação rápida
-        $own = array_values(array_filter(Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($this->teacherId()), function ($c) use ($classId) { return (int) $c->class_id === $classId; }));
+        $all = Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($this->teacherId());
+        $own = array_values(array_filter($all, function ($c) use ($classId) { return (int) $c->class_id === $classId; }));
         $ownIds = array_map(function ($c) { return (int) $c->discipline_class_id; }, $own);
 
+        // filtro de turma da barra superior
+        $classFilter = [];
+        foreach ($all as $c) $classFilter[(int) $c->class_id] = $c->series_acronym . 'ª ' . $c->ballot . ' · ' . $c->course . ' · ' . $c->shift;
+
+        $tab = in_array($_GET['ver'] ?? '', ['alunos', 'notas'], true) ? $_GET['ver'] : 'chamada';
+        if ($tab === 'chamada' && !$own) $tab = 'alunos';
+        $_SESSION['Teacher']['lastClass'] = $classId;
+
+        // chamada: disciplina pedida na URL, se for do professor nesta turma; senão, a primeira
+        $discipline = (int) ($_GET['disciplina'] ?? 0);
+        if (!in_array($discipline, $ownIds, true)) {
+            $mine = array_values(array_filter($own, function ($c) { return $c->own; }));
+            $discipline = (int) (($mine[0] ?? $own[0] ?? null)->discipline_class_id ?? 0);
+        }
+
         $this->view->editable = $ownIds;
-        $this->view->tab = ($_GET['ver'] ?? '') === 'notas' ? 'notas' : 'alunos';
-        $this->view->roster = Container::getModel('TeacherStudent\\StudentFile')->classRoster($classId, $ownIds, $unity);
+        $this->view->tab = $tab;
+        $this->view->classFilter = $classFilter;
+        $this->view->disciplineClasses = $all;
+        $this->view->ownDisciplines = $own;
+        $this->view->discipline = $discipline;
+        $this->view->openUnits = $this->openUnits();
+        // só o que a aba mostra
+        $this->view->overview = $tab === 'notas' ? $Gradebook->classOverview($classId, $unity, $this->view->rule) : null;
+        $this->view->roster = $tab === 'notas' ? [] : Container::getModel('TeacherStudent\\StudentFile')->classRoster($classId, $ownIds, $unity);
         $this->view->quickNotes = \App\Models\TeacherStudent\StudentFile::QUICK_NOTES;
         $this->view->quickDisciplines = array_map(function ($c) {
             return ['id' => (int) $c->discipline_class_id, 'name' => $c->discipline_name, 'subject' => \App\Tools\Subject::css($c->discipline_name)];

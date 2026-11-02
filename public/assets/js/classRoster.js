@@ -2,7 +2,17 @@
 (function () {
 
     const root = document.getElementById('classOverview');
-    const grid = root && root.querySelector('[data-roster]');
+    if (!root) return;
+
+    // Filtros de turma e disciplina: trocar já abre a escolha
+    root.querySelectorAll('[data-auto-submit] select').forEach((select) => {
+        select.addEventListener('change', () => select.form.submit());
+    });
+
+    // Esta tela é o item Turmas do menu
+    document.querySelectorAll('.sidebar-lists li[name="turmas"], a[name="turmas"]').forEach((item) => item.classList.add('link-active'));
+
+    const grid = root.querySelector('[data-roster]');
     if (!grid) return;
 
     const normalize = (text) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();

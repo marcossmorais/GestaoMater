@@ -1,20 +1,20 @@
-// Mater — Chamada rápida (portal do docente)
+// Mater — Chamada rápida (aba Chamada da tela da turma)
 // Todos começam presentes; um toque no card marca/desmarca a falta. Sem recarregar a página.
 (function () {
 
-    const config = window.MATER_ATTENDANCE || { classes: [], photoBase: '' };
+    const config = window.MATER_ATTENDANCE || { classes: [], current: 0, photoBase: '' };
     const root = document.getElementById('attendance');
     if (!root) return;
 
     const $ = (sel) => root.querySelector(sel);
     const $$ = (sel) => Array.from(root.querySelectorAll(sel));
 
-    const steps = { pick: $('[data-att-step="pick"]'), mark: $('[data-att-step="mark"]'), done: $('[data-att-step="done"]') };
+    const steps = { mark: $('[data-att-step="mark"]'), done: $('[data-att-step="done"]') };
     const grid = $('[data-att-grid]');
     const saveButton = $('[data-att-save]');
     const searchInput = $('[data-att-search]');
 
-    const state = { cls: null, unity: null, date: null, lessons: 1, students: [], absent: new Set(), subjects: new Set(), saving: false };
+    const state = { cls: null, unity: null, date: null, lessons: 1, students: [], absent: new Set(), subjects: new Set(), saving: false, finished: false };
 
     const errors = {
         'turma-nao-encontrada': 'Turma não encontrada para o seu usuário.',
@@ -59,12 +59,7 @@
         }
     }
 
-    // ---------- Passo 1: escolher turma
-    root.addEventListener('click', (event) => {
-        const card = event.target.closest('[data-att-class]');
-        if (card) openClass(parseInt(card.dataset.attClass, 10));
-    });
-
+    // ---------- Abrir a turma/disciplina
     async function openClass(id, keepUnity) {
         const cls = config.classes.find((c) => c.id === id);
         if (!cls) return;
@@ -76,10 +71,7 @@
         state.date = dateInput ? dateInput.value : new Date().toISOString().slice(0, 10);
         if (!keepUnity) state.unity = parseInt(($('[data-att-unity] .is-active') || {}).dataset?.value || '1', 10);
 
-        const polyvalent = cls.stage === 'iniciais';
         if (!keepUnity) state.subjects = new Set([cls.id]);
-        $('[data-att-title]').textContent = `${cls.label} · ${polyvalent ? 'Anos Iniciais' : cls.discipline}`;
-        $('[data-att-subtitle]').textContent = `${cls.course} · ${cls.shift} · ${cls.students} alunos`;
         renderSubjects();
         $('[data-att-lessons-value]').textContent = '1';
         searchInput.value = '';
@@ -142,7 +134,7 @@
         return Array.from({ length: n }, () => '<div class="m-att-student is-loading"><span class="m-att-avatar"></span><span class="m-att-skel"></span><span class="m-att-skel m-att-skel-sm"></span></div>').join('');
     }
 
-    // ---------- Passo 2: carômetro
+    // ---------- Carômetro
     function render() {
         if (state.students.length === 0) {
             grid.innerHTML = '<div class="m-empty">Nenhum aluno matriculado nesta turma.</div>';
@@ -266,10 +258,11 @@
     // Todos presentes
     $('[data-att-reset]').addEventListener('click', () => { state.absent.clear(); render(); });
 
-    // Voltar
-    $('[data-att-back]').addEventListener('click', () => {
-        if (state.absent.size > 0 && !window.confirm('Descartar as faltas marcadas?')) return;
-        show('pick');
+    // Trocar de turma ou de aba com faltas marcadas: o navegador pede confirmação
+    window.addEventListener('beforeunload', (event) => {
+        if (state.absent.size === 0 || state.finished) return;
+        event.preventDefault();
+        event.returnValue = '';
     });
 
     // ---------- Salvar
@@ -307,13 +300,7 @@
 
     function finish(data) {
         const cls = state.cls;
-        cls.doneTodayAt = data.savedAt;
-
-        const pill = root.querySelector(`[data-att-class="${cls.id}"] [data-att-done]`);
-        if (pill) {
-            pill.className = 'm-pill m-pill-ok';
-            pill.innerHTML = `<i class="fas fa-check mr-1"></i>${escapeHtml(data.savedAt)}`;
-        }
+        state.finished = true;
 
         const lessonsText = data.lessons > 1 ? ` (${data.lessons} aulas)` : '';
         const dateStr = data.formattedDate || (state.date ? state.date.split('-').reverse().join('/') : '');
@@ -346,10 +333,11 @@
         toast('Chamada salva');
     }
 
-    $('[data-att-again]').addEventListener('click', () => show('pick'));
+    $('[data-att-again]').addEventListener('click', () => {
+        state.finished = false;
+        openClass(state.cls.id);
+    });
 
-    // Atalho: /portal-docente/chamada?turma=ID abre direto a turma
-    const preselect = parseInt(new URLSearchParams(window.location.search).get('turma') || '', 10);
-    if (preselect) openClass(preselect);
+    openClass(config.current);
 
 })();

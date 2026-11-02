@@ -753,3 +753,7 @@ html body:is(#teacherPortal, #studentPortal) #pagina .m-guide-fields .form-contr
   html body:is(#teacherPortal, #studentPortal) #pagina form input.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form select.form-control, html body:is(#teacherPortal, #studentPortal) #pagina form textarea.form-control, html body:is(#teacherPortal, #studentPortal) #pagina .m-quick input.form-control, html body:is(#teacherPortal, #studentPortal) #pagina .m-guide-fields .form-control { font-size: 16px; }
 }
 
+/* Tela da turma: filtro e abas na mesma barra */
+.m-class-filter { min-width: 200px; margin: 0; }
+@media (max-width: 767.98px) { .m-class-filter { width: 100%; } .m-class-tabs { display: flex; width: 100%; } html body#teacherPortal #pagina .m-class-tabs a.btn { flex: 1; min-height: 44px; padding: 0 6px; font-size: 12px !important; } .m-class-tabs a.btn i { display: none; } }
+

@@ -24,7 +24,6 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li name="turmas"><a href="/portal-docente/turmas" title="Turmas"><i class="fas fa-boxes"></i><span class="link-name">Turmas</span></a></li>
 
-            <li name="chamada"><a href="/portal-docente/chamada" title="Chamada"><i class="fas fa-clipboard-check"></i><span class="link-name">Chamada</span></a></li>
 
             <li name="diario"><a href="/portal-docente/diario" title="Diário"><i class="fas fa-book-open"></i><span class="link-name">Diário</span></a></li>
 

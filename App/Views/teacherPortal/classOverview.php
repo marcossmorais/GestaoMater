@@ -11,6 +11,9 @@ $roster = $this->view->roster;
 $quickNotes = $this->view->quickNotes;
 $quickDisciplines = $this->view->quickDisciplines;
 $link = function ($u, $t) { return '?id=' . (int) $this->view->classId . '&unidade=' . (int) $u . '&ver=' . $t; };
+$tabs = ['chamada' => ['fa-clipboard-check', 'Chamada'], 'alunos' => ['fa-users', 'Alunos'], 'notas' => ['fa-table', 'Notas da turma']];
+$ownDisciplines = $this->view->ownDisciplines;
+$showDisciplines = $tab === 'chamada' && count($ownDisciplines) > 1 && $ownDisciplines[0]->stage !== 'iniciais';
 ?>
 
 <section id="classOverview" class="m-att">
@@ -20,21 +23,44 @@ $link = function ($u, $t) { return '?id=' . (int) $this->view->classId . '&unida
         <div class="col-lg-11 mx-auto">
 
             <div class="m-att-head">
-                <a href="/portal-docente/turmas" class="m-icon-btn" aria-label="Voltar"><i class="fas fa-arrow-left"></i></a>
                 <div class="m-att-head-title">
                     <h5><?= htmlspecialchars($this->view->classLabel) ?></h5>
-                    <p><?= count($roster) ?> alunos · toque no aluno para abrir o perfil</p>
+                    <p><?= $tab === 'notas' ? count($overview['students']) : count($roster) ?> alunos<?= $tab === 'alunos' ? ' · toque no aluno para abrir o perfil' : ($tab === 'chamada' ? ' · todos começam presentes, toque em quem faltou' : '') ?></p>
                 </div>
             </div>
 
             <div class="card m-att-toolbar">
+                <form class="m-att-field m-class-filter" action="/portal-docente/turma" method="get" data-auto-submit>
+                    <label class="m-att-label" for="classFilter">Turma</label>
+                    <select class="form-control" id="classFilter" name="id">
+                        <?php foreach ($this->view->classFilter as $id => $label) { ?>
+                            <option value="<?= (int) $id ?>" <?= $id === (int) $this->view->classId ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+                        <?php } ?>
+                    </select>
+                    <input type="hidden" name="ver" value="<?= htmlspecialchars($tab) ?>">
+                    <input type="hidden" name="unidade" value="<?= (int) $unity ?>">
+                </form>
                 <div class="m-att-field">
                     <span class="m-att-label">Ver</span>
-                    <div class="m-seg">
-                        <a href="<?= $link($unity, 'alunos') ?>" role="button" class="btn <?= $tab === 'alunos' ? 'is-active' : '' ?>"><i class="fas fa-users mr-2"></i>Alunos</a>
-                        <a href="<?= $link($unity, 'notas') ?>" role="button" class="btn <?= $tab === 'notas' ? 'is-active' : '' ?>"><i class="fas fa-table mr-2"></i>Notas da turma</a>
+                    <div class="m-seg m-class-tabs">
+                        <?php foreach ($tabs as $key => $t) { ?>
+                            <a href="<?= $link($unity, $key) ?>" role="button" class="btn <?= $tab === $key ? 'is-active' : '' ?>" <?= $tab === $key ? 'aria-current="page"' : '' ?>><i class="fas <?= $t[0] ?> mr-2"></i><?= $t[1] ?></a>
+                        <?php } ?>
                     </div>
                 </div>
+                <?php if ($showDisciplines) { ?>
+                    <form class="m-att-field m-class-filter" action="/portal-docente/turma" method="get" data-auto-submit>
+                        <label class="m-att-label" for="disciplineFilter">Disciplina</label>
+                        <select class="form-control" id="disciplineFilter" name="disciplina">
+                            <?php foreach ($ownDisciplines as $d) { ?>
+                                <option value="<?= (int) $d->discipline_class_id ?>" <?= (int) $d->discipline_class_id === (int) $this->view->discipline ? 'selected' : '' ?>><?= htmlspecialchars($d->discipline_name) ?></option>
+                            <?php } ?>
+                        </select>
+                        <input type="hidden" name="id" value="<?= (int) $this->view->classId ?>">
+                        <input type="hidden" name="ver" value="chamada">
+                    </form>
+                <?php } ?>
+                <?php if ($tab !== 'chamada') { ?>
                 <div class="m-att-field">
                     <span class="m-att-label">Bimestre</span>
                     <div class="m-seg">
@@ -43,6 +69,7 @@ $link = function ($u, $t) { return '?id=' . (int) $this->view->classId . '&unida
                         <?php } ?>
                     </div>
                 </div>
+                <?php } ?>
                 <?php if ($tab === 'alunos') { ?>
                     <div class="m-att-field m-att-field-grow">
                         <span class="m-att-label">Buscar aluno</span>
@@ -51,7 +78,7 @@ $link = function ($u, $t) { return '?id=' . (int) $this->view->classId . '&unida
                             <input type="search" data-roster-search placeholder="Digite um nome" autocomplete="off">
                         </div>
                     </div>
-                <?php } else { ?>
+                <?php } elseif ($tab === 'notas') { ?>
                     <a class="btn btn-light" href="/portal-docente/notas"><i class="fas fa-pen mr-2"></i>Lançar notas</a>
                 <?php } ?>
             </div>
@@ -83,7 +110,10 @@ $link = function ($u, $t) { return '?id=' . (int) $this->view->classId . '&unida
                     </div>
                 <?php } ?>
 
-            <?php } else { ?>
+            <?php } elseif ($tab === 'chamada') {
+                $openUnits = $this->view->openUnits;
+                require __DIR__ . '/components/attendanceMark.php';
+            } else { ?>
 
             <p class="m-muted-note">Nota do bimestre (média das <?= (int) $rule['perBimester'] ?> avaliações; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior entre o bimestre e a recuperação). Você edita só as disciplinas com <i class="fas fa-pen fa-xs"></i>.</p>
 
@@ -143,3 +173,16 @@ $link = function ($u, $t) { return '?id=' . (int) $this->view->classId . '&unida
 
 <script src="<?= asset('/assets/js/quickNote.js') ?>" defer></script>
 <script src="<?= asset('/assets/js/classRoster.js') ?>" defer></script>
+<?php if ($tab === 'chamada') {
+    $disciplineClasses = $this->view->disciplineClasses;
+    require __DIR__ . '/components/classCards.php';
+?>
+    <script>
+        window.MATER_ATTENDANCE = {
+            classes: <?= json_encode($classesJson, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
+            current: <?= (int) $this->view->discipline ?>,
+            photoBase: <?= json_encode($app_url . '/assets/img/studentProfilePhotos/') ?>
+        };
+    </script>
+    <script src="<?= asset('/assets/js/attendance.js') ?>" defer></script>
+<?php } ?>
