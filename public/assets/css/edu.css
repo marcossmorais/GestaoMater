@@ -233,10 +233,7 @@ html body#studentPortal #studentPortalNavbar {
 }
 html body#studentPortal #studentPortalNavbar .nav-link { font-weight: 800 !important; border-radius: 14px; }
 html body#studentPortal #studentPortalNavbar .nav-link:hover { background: var(--m-surface-2); }
-html body#studentPortal .m-timeline-title { font-weight: 900 !important; }
 html body#studentPortal .m-tag { border-radius: 999px; font-weight: 800; }
-html body#studentPortal .m-day-tab { border-radius: 16px !important; border-width: 2px !important; font-weight: 800; }
-html body#studentPortal .m-day-tab.is-active { background: var(--m-primary) !important; color: #fff !important; box-shadow: 0 4px 0 var(--m-primary-edge); }
 html body#studentPortal .m-perf-card, html body#studentPortal .m-perf-row { border-radius: 20px; }
 html body#studentPortal .m-hero { background: #E0F4FD; border-color: #B5E2F8; box-shadow: 0 5px 0 #B5E2F8; transform: rotate(-.4deg); }
 html.nightMode body#studentPortal .m-hero { background: #121212; border-color: #2E2E2E; box-shadow: 0 5px 0 #000000; }
@@ -371,9 +368,6 @@ body#studentPortal #logo-mater-main { width: 170px !important; height: auto !imp
 .m-guide-fields legend { width: auto; font-size: 14px; font-weight: 900; padding: 0 6px; margin: 0; }
 .m-guide-fields legend small { color: var(--m-muted); font-weight: 700; }
 .m-guide-discipline { margin: 0; padding: 8px 12px; border-radius: 12px; background: var(--m-surface-2); font-size: 13px; }
-html body .card.m-board-guide { padding: 0 !important; overflow: hidden; }
-.m-board-guide summary { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; list-style: none; }
-.m-board-guide summary::-webkit-details-marker { display: none; }
 .m-guide-date { width: 50px; height: 50px; flex: none; border-radius: 14px; background: var(--s); color: #fff; display: flex; align-items: baseline; justify-content: center; padding-top: 10px; }
 .m-guide-date strong { font-size: 20px; font-weight: 900; }
 .m-guide-date small { font-size: 12px; font-weight: 800; opacity: .9; }
@@ -1005,6 +999,31 @@ html body .card.m-perf-card .m-perf-sim { flex: 1; min-height: 58px; }
 .m-class-teachers .m-classmate { min-height: 176px; }
 .m-freq-grid { align-items: stretch; }
 
+/* Mural: avisos à esquerda e card lateral de atualizações */
+.m-mural-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.m-mural-main { min-width: 0; }
+#studentPortal .side-mural .m-board { margin: 0; padding: 0; }
+.m-mural-aside { position: sticky; top: 84px; min-width: 0; }
+html body#studentPortal #pagina .card.m-updates { padding: 14px !important; margin: 0; }
+html body .m-updates h6 { margin: 0 0 10px; font-size: 14px; font-weight: 800; }
+.m-updates-list { display: flex; flex-direction: column; gap: 8px; max-height: 560px; margin: 0; padding: 0 2px 0 0; overflow-y: auto; list-style: none; }
+.m-updates-list li { --k: #2F6FED; display: flex; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--m-border); }
+.m-updates-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+.m-updates-list li > i { flex: none; width: 16px; margin-top: 3px; font-size: 12px; text-align: center; color: var(--k); }
+.m-updates-list li > div { min-width: 0; display: flex; flex-direction: column; font-size: 12px; line-height: 1.3; }
+.m-updates-list strong { font-size: 12px; font-weight: 800; }
+.m-updates-list span { overflow-wrap: anywhere; color: var(--m-text); }
+.m-updates-list small { font-size: 11px; color: var(--m-muted); }
+.m-updates-list .is-average { --k: #22B07D; }
+.m-updates-list .is-lack { --k: #E5484D; }
+.m-updates-list .is-note-text { --k: #7B61FF; }
+@media (max-width: 991.98px) {
+  .m-mural-layout { grid-template-columns: minmax(0, 1fr); }
+  .m-mural-aside { position: static; }
+  .m-updates-list { max-height: 320px; }
+}
+#classSchedule .main-content, #classSchedule .row > [class*="col"] { min-width: 0; max-width: 100%; }
+
 /* Boletim: legível nos dois temas, linhas que expandem */
 #bulletin .m-bulletin, #bulletin .m-bulletin th, #bulletin .m-bulletin td:not(.is-low):not(.is-rec) { color: var(--m-text) !important; }
 #bulletin .m-bulletin th { font-size: 12px; font-weight: 800; background: var(--m-surface-2) !important; }
@@ -1056,7 +1075,91 @@ html.nightMode body#studentPortal #pagina #bulletin .m-bulletin th { color: #fff
   #bulletin .m-bul-exams th, #bulletin .m-bul-exams td { display: table-cell; min-width: 0; height: auto; }
 }
 
+/* Menu do aluno: sete abas sem estourar a tela */
+@media (min-width: 992px) {
+  #studentPortalNavbar .navbar-nav { flex-wrap: wrap; }
+  html body#studentPortal #studentPortalNavbar .nav-link { padding: 6px 10px; }
+  #studentPortalNavbar .navbar-collapse > .navbar-nav:first-child { flex: 1 1 auto; min-width: 0; }
+}
+
 /* Cards de desempenho: nome e professor em uma linha, para todos ficarem iguais */
 body#studentPortal .m-perf-card header strong, body#studentPortal .m-perf-card header small { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 html body#studentPortal #pagina .card.m-updates + .card.m-updates { margin-top: 12px; }
 .m-mural-layout > .m-mural-aside .card { margin-top: 0; }
+
+/* Portal do aluno: folha de horários e de roteiro, igual na tela e no papel */
+.m-doc-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; margin: 0 0 12px; }
+.m-doc-tools .m-seg { flex-wrap: wrap; }
+.m-doc-tools [data-print] { margin-left: auto; }
+.m-doc { margin: 0 0 24px; padding: 28px; color: var(--m-text); background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 12px; }
+.m-doc-head { margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid var(--m-text); }
+.m-doc-head small { display: block; font-size: 12px; font-weight: 700; color: var(--m-muted); }
+html body .m-doc-head h5 { margin: 0; font-size: 20px; font-weight: 800; color: var(--m-text); }
+.m-doc-head p { margin: 2px 0 0; font-size: 13px; color: var(--m-muted); }
+.m-doc-none { margin: 0; padding: 24px; font-size: 14px; text-align: center; color: var(--m-muted); border: 1px dashed var(--m-border); border-radius: 8px; }
+.m-doc-muted { color: var(--m-muted); }
+.m-doc-table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.3; color: var(--m-text); }
+.m-doc-table th, .m-doc-table td { padding: 6px 8px; text-align: left; vertical-align: top; color: var(--m-text); border: 1px solid var(--m-border); }
+.m-doc-table thead th { font-size: 12px; font-weight: 800; background: var(--m-surface-2); }
+.m-doc-table strong { display: block; font-weight: 800; }
+.m-doc-table small { display: block; font-size: 11px; color: var(--m-muted); }
+.m-doc-table tr { break-inside: avoid; }
+html body#studentPortal .m-doc-table th, html body#studentPortal .m-doc-table td { line-height: 1.3 !important; }
+
+.m-sched-table { table-layout: fixed; }
+.m-sched-table .m-sched-time { width: 72px; text-align: center; }
+.m-sched-table th.is-today { color: var(--m-primary-text); background: var(--m-primary-soft); }
+html.nightMode .m-sched-table th.is-today { color: #fff; background: var(--m-primary); }
+.m-sched-gap, .m-sched-table .m-sched-gap td { font-size: 12px; font-weight: 700; text-align: center; color: var(--m-muted); background: var(--m-surface-2); }
+.m-sched-days { display: none; }
+
+.m-guide-table .m-guide-when { width: 76px; white-space: nowrap; }
+.m-guide-table .m-guide-when strong, .m-guide-table .m-guide-when small { display: inline; }
+.m-guide-table .m-guide-subject { width: 25%; }
+.m-guide-table .m-guide-study { width: 28%; }
+.m-guide-table ul { margin: 0; padding-left: 16px; }
+.m-guide-table .m-guide-group th { font-size: 12px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--m-primary-text); background: var(--m-primary-soft); break-after: avoid; }
+html.nightMode .m-guide-table .m-guide-group th { color: #fff; background: rgba(47, 111, 237, .35); }
+
+/* só na tela: a largura da folha A4 impressa também fica abaixo desse limite */
+@media screen and (max-width: 767.98px) {
+  .m-doc { padding: 16px; }
+  .m-sched-table { display: none; }
+  .m-sched-days { display: flex; flex-direction: column; gap: 16px; }
+  html body .m-sched-days h6 { margin: 0 0 6px; font-size: 14px; font-weight: 800; }
+  .m-sched-days .is-today h6 { color: var(--m-primary-text); }
+  .m-sched-days .m-sched-gap { margin: 0; padding: 4px; border-radius: 6px; }
+  .m-sched-lesson { display: flex; gap: 10px; min-height: 44px; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--m-border); }
+  .m-sched-lesson > span { flex: none; width: 82px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .m-sched-lesson strong, .m-sched-lesson small { display: block; }
+  .m-sched-lesson small { color: var(--m-muted); }
+  .m-guide-table, .m-guide-table tbody, .m-guide-table tr, .m-guide-table td, .m-guide-table .m-guide-group th { display: block; width: auto !important; }
+  .m-guide-table thead, .m-guide-table[hidden], .m-guide-table tbody[hidden] { display: none; }
+  .m-guide-table tr { padding: 8px 0; border-bottom: 1px solid var(--m-border); }
+  .m-guide-table tr.m-guide-group { padding: 0; border: 0; }
+  .m-guide-table td { padding: 2px 0; border: 0; }
+  .m-guide-table td:empty { display: none; }
+  .m-guide-table td[data-label="Assuntos"]::before, .m-guide-table td[data-label="Material e observações"]::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 800; color: var(--m-muted); }
+}
+
+@media print {
+  @page { size: A4 portrait; margin: 10mm; }
+  html body#studentPortal, html.nightMode body#studentPortal { --m-surface: #fff !important; --m-surface-2: #fff !important; --m-text: #000 !important; --m-muted: #333 !important; --m-border: #777 !important; --m-primary-soft: #fff !important; --m-primary-text: #000 !important; background: #fff !important; color: #000 !important; padding: 0 !important; }
+  #studentPortalNavbar, #navbarBottomStudentPortal, .m-hero, .m-no-print, #studentPortal .toast, #studentPortal .modal { display: none !important; }
+  #studentPortal .collapse.show, #studentPortal .row, #studentPortal [class*="col-lg"], #studentPortal .container-fluid, #studentPortal #pagina { display: block; width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
+  .m-doc { margin: 0; padding: 0; border: 0; border-radius: 0; }
+  html body#studentPortal .m-doc-table th, html body#studentPortal .m-doc-table td { padding: 2px 4px; font-size: 10px !important; line-height: 1.2 !important; }
+  html body#studentPortal .m-doc-table thead th, html body#studentPortal .m-guide-group th { font-size: 9px !important; }
+  .m-doc-table small { font-size: 8.5px; }
+  .m-doc-head { margin-bottom: 8px; padding-bottom: 6px; }
+  /* uma linha por prova, para o bimestre caber na folha */
+  .m-guide-table .m-guide-subject strong, .m-guide-table .m-guide-subject small { display: inline; }
+  .m-guide-table .m-guide-subject small::before { content: " · "; }
+  .m-guide-table .m-guide-when { width: 56px; }
+  .m-guide-table .m-guide-subject { width: 30%; }
+  .m-guide-table .m-guide-study { width: 38%; }
+  .m-guide-table ul { padding: 0; list-style: none; }
+  .m-guide-table li { display: inline; }
+  .m-guide-table li:not(:last-child)::after { content: "; "; }
+  html.nightMode .m-sched-table th.is-today, html.nightMode .m-guide-table .m-guide-group th, .m-sched-table th.is-today, .m-guide-table .m-guide-group th { color: #000 !important; background: #fff !important; }
+}
