@@ -1175,6 +1175,17 @@ html.nightMode .m-rt-pending { color: #FFD98A; background: rgba(232, 163, 23, .2
   .m-rt-table tr { padding: 8px 10px; border: 1px solid var(--m-border); border-top: 0; }
   html body#studentPortal .m-rt-table td { padding: 2px 0; border: 0; background: transparent; }
   .m-rt-table .is-next { background: #FFF7D6; }
+/* Atestado: campo de arquivo no padrão dos outros */
+.m-file-pick { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 4px; cursor: pointer; }
+.m-file-pick input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
+.m-file-pick .btn { min-height: 44px; display: inline-flex; align-items: center; }
+.m-file-pick input:focus-visible + .btn { outline: 2px solid var(--m-primary); outline-offset: 2px; }
+.m-file-name { min-width: 0; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; color: var(--m-muted); }
+
+/* Topo do aluno: a turma não fica sobre a foto */
+#studentPortal nav#studentPortalNavbar .class { margin-left: 0; }
+#studentPortal nav#studentPortalNavbar .class a { padding: 5px 10px; white-space: nowrap; }
+#studentPortal nav#studentPortalNavbar .nav-fixed a { padding: 5px 6px; }
   html.nightMode .m-rt-table .is-next { background: rgba(232, 163, 23, .16); }
   .m-rt-table td:empty { display: none; }
   .m-rt-table td[data-label="Conteúdo"]::before, .m-rt-table td[data-label="Onde estudar"]::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 800; color: var(--m-muted); }

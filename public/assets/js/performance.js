@@ -176,6 +176,14 @@
         guideSubject.addEventListener('change', filterGuide);
     }
 
+    // ---------- Atestado: mostra o nome do arquivo escolhido
+    document.addEventListener('change', (event) => {
+        if (!event.target.matches('[data-freq-file]')) return;
+        const name = event.target.closest('.m-file-pick').querySelector('[data-freq-file-name]');
+        name.textContent = event.target.files.length ? event.target.files[0].name : 'Nenhum arquivo escolhido';
+    });
+
+    // ---------- Roteiro: o documento impresso sai com o bimestre e os filtros da tela
     document.addEventListener('click', (event) => {
         const link = event.target.closest('[data-guide-print]');
         if (!link) return;
