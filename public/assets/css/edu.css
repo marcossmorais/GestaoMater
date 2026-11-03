@@ -1113,13 +1113,38 @@ html.nightMode .m-sched-table th.is-today { color: #fff; background: var(--m-pri
 .m-sched-gap, .m-sched-table .m-sched-gap td { font-size: 12px; font-weight: 700; text-align: center; color: var(--m-muted); background: var(--m-surface-2); }
 .m-sched-days { display: none; }
 
-.m-guide-table .m-guide-when { width: 76px; white-space: nowrap; }
-.m-guide-table .m-guide-when strong, .m-guide-table .m-guide-when small { display: inline; }
-.m-guide-table .m-guide-subject { width: 25%; }
-.m-guide-table .m-guide-study { width: 28%; }
-.m-guide-table ul { margin: 0; padding-left: 16px; }
-.m-guide-table .m-guide-group th { font-size: 12px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--m-primary-text); background: var(--m-primary-soft); break-after: avoid; }
-html.nightMode .m-guide-table .m-guide-group th { color: #fff; background: rgba(47, 111, 237, .35); }
+/* Roteiro de provas: cabeçalho, destaques e um bloco por matéria */
+.m-rt-select { width: auto; max-width: 220px; min-height: 44px; }
+.m-rt-head { display: flex; flex-wrap: wrap; align-items: stretch; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 2px solid var(--m-text); }
+.m-rt-head-title small { display: block; font-size: 12px; font-weight: 700; color: var(--m-muted); }
+html body .m-rt-head h5 { margin: 0; font-size: 22px; font-weight: 800; color: var(--m-text); }
+.m-rt-head dl { display: flex; gap: 8px; margin: 0; }
+.m-rt-head dl > div { min-width: 110px; padding: 6px 10px; border: 1px solid var(--m-border); border-radius: 8px; }
+.m-rt-head dt { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--m-muted); }
+.m-rt-head dd { margin: 0; font-size: 14px; font-weight: 800; color: var(--m-text); }
+.m-rt-highlights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+.m-rt-highlights > div { display: flex; flex-direction: column; padding: 10px 12px; font-size: 12px; color: var(--m-muted); background: var(--m-surface-2); border-left: 4px solid var(--m-border); border-radius: 8px; }
+.m-rt-highlights small { font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.m-rt-highlights strong { font-size: 16px; font-weight: 800; color: var(--m-text); }
+.m-rt-highlights .is-next { border-left-color: var(--m-primary); }
+.m-rt-highlights .is-pending { border-left-color: #E8A317; }
+.m-rt-subject { margin-bottom: 16px; break-inside: avoid; }
+html body .m-rt-subject h6 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 12px; margin: 0; padding: 7px 10px; font-size: 14px; font-weight: 800; color: var(--s-ink); background: var(--s-soft); border-left: 5px solid var(--s); border-radius: 6px 6px 0 0; }
+.m-rt-subject h6 small { font-size: 12px; font-weight: 700; color: var(--m-text); }
+.m-rt-table .m-rt-exam { width: 22%; }
+.m-rt-table .m-rt-date { width: 92px; }
+.m-rt-table .m-rt-where { width: 28%; }
+.m-rt-table .m-rt-date strong { font-size: 16px; }
+.m-rt-table ul { margin: 0; padding-left: 16px; }
+.m-rt-table .is-past td { color: var(--m-muted); }
+.m-rt-table .is-next td { background: #FFF7D6; }
+html.nightMode .m-rt-table .is-next td { background: rgba(232, 163, 23, .16); }
+.m-rt-table .is-recovery .m-rt-exam strong { color: var(--m-danger); }
+.m-rt-tag { display: inline-block; margin-top: 2px; padding: 1px 7px; font-size: 11px; font-weight: 800; color: #fff; background: var(--m-primary); border-radius: 999px; }
+.m-rt-pending { display: inline-block; padding: 1px 8px; font-size: 12px; font-weight: 800; color: #8A5A00; background: #FFF1CC; border-radius: 999px; }
+html.nightMode .m-rt-pending { color: #FFD98A; background: rgba(232, 163, 23, .2); }
+.m-rt-note { margin: 6px 0 0; padding: 4px 8px; font-size: 12px; font-weight: 700; color: var(--m-text); background: var(--m-surface-2); border-left: 3px solid #E8A317; border-radius: 4px; }
+
 
 /* só na tela: a largura da folha A4 impressa também fica abaixo desse limite */
 @media screen and (max-width: 767.98px) {
@@ -1133,13 +1158,6 @@ html.nightMode .m-guide-table .m-guide-group th { color: #fff; background: rgba(
   .m-sched-lesson > span { flex: none; width: 82px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .m-sched-lesson strong, .m-sched-lesson small { display: block; }
   .m-sched-lesson small { color: var(--m-muted); }
-  .m-guide-table, .m-guide-table tbody, .m-guide-table tr, .m-guide-table td, .m-guide-table .m-guide-group th { display: block; width: auto !important; }
-  .m-guide-table thead, .m-guide-table[hidden], .m-guide-table tbody[hidden] { display: none; }
-  .m-guide-table tr { padding: 8px 0; border-bottom: 1px solid var(--m-border); }
-  .m-guide-table tr.m-guide-group { padding: 0; border: 0; }
-  .m-guide-table td { padding: 2px 0; border: 0; }
-  .m-guide-table td:empty { display: none; }
-  .m-guide-table td[data-label="Assuntos"]::before, .m-guide-table td[data-label="Material e observações"]::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 800; color: var(--m-muted); }
 }
 
 @media print {
@@ -1163,3 +1181,17 @@ html.nightMode .m-guide-table .m-guide-group th { color: #fff; background: rgba(
   .m-guide-table li:not(:last-child)::after { content: "; "; }
   html.nightMode .m-sched-table th.is-today, html.nightMode .m-guide-table .m-guide-group th, .m-sched-table th.is-today, .m-guide-table .m-guide-group th { color: #000 !important; background: #fff !important; }
 }
+  .m-rt-highlights { grid-template-columns: minmax(0, 1fr); }
+  .m-rt-select { width: 100%; max-width: none; }
+  .m-rt-head dl { width: 100%; }
+  .m-rt-head dl > div { flex: 1; min-width: 0; }
+  .m-rt-table, .m-rt-table tbody, .m-rt-table tr, .m-rt-table td { display: block; width: auto !important; }
+  .m-rt-table thead, .m-rt-table tr[hidden] { display: none; }
+  .m-rt-table tr { padding: 8px 10px; border: 1px solid var(--m-border); border-top: 0; }
+  html body#studentPortal .m-rt-table td { padding: 2px 0; border: 0; background: transparent; }
+  .m-rt-table .is-next { background: #FFF7D6; }
+  html.nightMode .m-rt-table .is-next { background: rgba(232, 163, 23, .16); }
+  .m-rt-table td:empty { display: none; }
+  .m-rt-table td[data-label="Conteúdo"]::before, .m-rt-table td[data-label="Onde estudar"]::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 800; color: var(--m-muted); }
+  .m-rt-table .m-rt-date strong, .m-rt-table .m-rt-date small { display: inline; }
+  .m-rt-table .m-rt-date .m-rt-tag { margin-left: 6px; }

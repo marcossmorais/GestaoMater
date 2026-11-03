@@ -137,7 +137,7 @@
         });
     }
 
-    // ---------- Roteiro de provas: uma folha por bimestre, filtrada por avaliação
+    // ---------- Roteiro de provas: uma folha por bimestre, filtrada por avaliação e matéria
     const guideUnits = document.querySelector('[data-guide-unit]');
     if (guideUnits) {
         guideUnits.addEventListener('click', (event) => {
@@ -149,23 +149,31 @@
     }
 
     const guideFilter = document.querySelector('[data-guide-filter]');
+    const guideSubject = document.querySelector('[data-guide-subject]');
+    function filterGuide() {
+        const group = guideFilter.querySelector('.is-active').dataset.group;
+        document.querySelectorAll('[data-guide-sheet]').forEach((sheet) => {
+            let shown = 0;
+            sheet.querySelectorAll('[data-subject]').forEach((block) => {
+                let rows = 0;
+                block.querySelectorAll('tr[data-group]').forEach((row) => {
+                    row.hidden = group !== '' && row.dataset.group !== group;
+                    if (!row.hidden) rows++;
+                });
+                block.hidden = rows === 0 || (guideSubject.value !== '' && block.dataset.subject !== guideSubject.value);
+                if (!block.hidden) shown++;
+            });
+            sheet.querySelector('[data-guide-none]').hidden = shown > 0;
+        });
+    }
     if (guideFilter) {
         guideFilter.addEventListener('click', (event) => {
             const button = event.target.closest('[data-group]');
             if (!button) return;
             guideFilter.querySelectorAll('[data-group]').forEach((b) => b.classList.toggle('is-active', b === button));
-            document.querySelectorAll('[data-guide-sheet]').forEach((sheet) => {
-                const groups = sheet.querySelectorAll('[data-guide-group]');
-                let shown = 0;
-                groups.forEach((group) => {
-                    group.hidden = button.dataset.group !== '' && group.dataset.guideGroup !== button.dataset.group;
-                    if (!group.hidden) shown++;
-                });
-                const table = sheet.querySelector('[data-guide-table]');
-                if (table) table.hidden = shown === 0;
-                sheet.querySelector('[data-guide-none]').hidden = shown > 0;
-            });
+            filterGuide();
         });
+        guideSubject.addEventListener('change', filterGuide);
     }
 
     document.addEventListener('click', (event) => {

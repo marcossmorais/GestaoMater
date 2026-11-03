@@ -238,6 +238,29 @@ class Gradebook extends Model
     /**
      * Nomes dos tipos a partir da lista gravada ("prova,trabalho" => "Prova, Trabalho escrito")
      */
+    /** Assuntos do roteiro, um por linha */
+    public static function guideTopics($text)
+    {
+        return array_values(array_filter(array_map('trim', explode("\n", (string) $text)), 'strlen'));
+    }
+
+    /** Destaques de uma folha de provas: próxima data, período e quantas têm assuntos */
+    public static function examSummary(array $exams, $today)
+    {
+        $dates = array_column($exams, 'date');
+        $upcoming = array_filter($dates, function ($d) use ($today) { return $d >= $today; });
+        $next = $upcoming ? min($upcoming) : null;
+
+        return [
+            'next' => $next,
+            'nextNames' => array_values(array_unique(array_column(array_filter($exams, function ($e) use ($next) { return $e->date === $next; }), 'discipline'))),
+            'first' => $dates ? min($dates) : null,
+            'last' => $dates ? max($dates) : null,
+            'total' => count($exams),
+            'withGuide' => count(array_filter($exams, function ($e) { return (bool) self::guideTopics($e->guide_topics); })),
+        ];
+    }
+
     public static function typeLabels($types)
     {
         return implode(', ', array_map(function ($type) { return self::EXAM_TYPES[$type] ?? $type; }, array_filter(explode(',', (string) $types))));
@@ -466,7 +489,7 @@ class Gradebook extends Model
 
 
     /**
-     * Todas as avaliações da turma com data e roteiro, para a folha do portal do aluno: por bimestre e avaliação
+     * Todas as avaliações da turma com data e roteiro, para a folha do portal do aluno: por bimestre e matéria
      */
     public function examSheetForClass($classId)
     {
@@ -475,13 +498,14 @@ class Gradebook extends Model
             "SELECT avaliacoes.descricao_avaliacao AS description, avaliacoes.fk_id_unidade_avaliacao AS unity,
                     TO_CHAR(avaliacoes.data_realizada, 'YYYY-MM-DD') AS date, avaliacoes.recuperacao AS recovery,
                     avaliacoes.roteiro AS guide, avaliacoes.roteiro_assuntos AS guide_topics, avaliacoes.roteiro_material AS guide_material,
-                    disciplina.nome_disciplina AS discipline,
+                    disciplina.nome_disciplina AS discipline, professor.nome_professor AS teacher,
                     COALESCE((SELECT string_agg(tipo, ',' ORDER BY tipo) FROM avaliacao_tipo WHERE fk_id_avaliacao = avaliacoes.id_avaliacao), '') AS types
              FROM avaliacoes
              INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
              INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)
+             INNER JOIN professor ON (turma_disciplina.fk_id_professor = professor.id_professor)
              WHERE turma_disciplina.fk_id_turma = :classId
-             ORDER BY avaliacoes.fk_id_unidade_avaliacao, avaliacoes.recuperacao, avaliacoes.descricao_avaliacao, avaliacoes.data_realizada, disciplina.nome_disciplina"
+             ORDER BY avaliacoes.fk_id_unidade_avaliacao, disciplina.nome_disciplina, avaliacoes.recuperacao, avaliacoes.descricao_avaliacao, avaliacoes.data_realizada"
         );
 
         $stmt->execute([':classId' => (int) $classId]);
