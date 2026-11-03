@@ -1149,38 +1149,6 @@ html.nightMode .m-rt-pending { color: #FFD98A; background: rgba(232, 163, 23, .2
 /* só na tela: a largura da folha A4 impressa também fica abaixo desse limite */
 @media screen and (max-width: 767.98px) {
   .m-doc { padding: 16px; }
-  .m-sched-table { display: none; }
-  .m-sched-days { display: flex; flex-direction: column; gap: 16px; }
-  html body .m-sched-days h6 { margin: 0 0 6px; font-size: 14px; font-weight: 800; }
-  .m-sched-days .is-today h6 { color: var(--m-primary-text); }
-  .m-sched-days .m-sched-gap { margin: 0; padding: 4px; border-radius: 6px; }
-  .m-sched-lesson { display: flex; gap: 10px; min-height: 44px; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--m-border); }
-  .m-sched-lesson > span { flex: none; width: 82px; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .m-sched-lesson strong, .m-sched-lesson small { display: block; }
-  .m-sched-lesson small { color: var(--m-muted); }
-}
-
-@media print {
-  @page { size: A4 portrait; margin: 10mm; }
-  html body#studentPortal, html.nightMode body#studentPortal { --m-surface: #fff !important; --m-surface-2: #fff !important; --m-text: #000 !important; --m-muted: #333 !important; --m-border: #777 !important; --m-primary-soft: #fff !important; --m-primary-text: #000 !important; background: #fff !important; color: #000 !important; padding: 0 !important; }
-  #studentPortalNavbar, #navbarBottomStudentPortal, .m-hero, .m-no-print, #studentPortal .toast, #studentPortal .modal { display: none !important; }
-  #studentPortal .collapse.show, #studentPortal .row, #studentPortal [class*="col-lg"], #studentPortal .container-fluid, #studentPortal #pagina { display: block; width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
-  .m-doc { margin: 0; padding: 0; border: 0; border-radius: 0; }
-  html body#studentPortal .m-doc-table th, html body#studentPortal .m-doc-table td { padding: 2px 4px; font-size: 10px !important; line-height: 1.2 !important; }
-  html body#studentPortal .m-doc-table thead th, html body#studentPortal .m-guide-group th { font-size: 9px !important; }
-  .m-doc-table small { font-size: 8.5px; }
-  .m-doc-head { margin-bottom: 8px; padding-bottom: 6px; }
-  /* uma linha por prova, para o bimestre caber na folha */
-  .m-guide-table .m-guide-subject strong, .m-guide-table .m-guide-subject small { display: inline; }
-  .m-guide-table .m-guide-subject small::before { content: " · "; }
-  .m-guide-table .m-guide-when { width: 56px; }
-  .m-guide-table .m-guide-subject { width: 30%; }
-  .m-guide-table .m-guide-study { width: 38%; }
-  .m-guide-table ul { padding: 0; list-style: none; }
-  .m-guide-table li { display: inline; }
-  .m-guide-table li:not(:last-child)::after { content: "; "; }
-  html.nightMode .m-sched-table th.is-today, html.nightMode .m-guide-table .m-guide-group th, .m-sched-table th.is-today, .m-guide-table .m-guide-group th { color: #000 !important; background: #fff !important; }
-}
   .m-rt-highlights { grid-template-columns: minmax(0, 1fr); }
   .m-rt-select { width: 100%; max-width: none; }
   .m-rt-head dl { width: 100%; }
@@ -1195,3 +1163,18 @@ html.nightMode .m-rt-pending { color: #FFD98A; background: rgba(232, 163, 23, .2
   .m-rt-table td[data-label="Conteúdo"]::before, .m-rt-table td[data-label="Onde estudar"]::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 800; color: var(--m-muted); }
   .m-rt-table .m-rt-date strong, .m-rt-table .m-rt-date small { display: inline; }
   .m-rt-table .m-rt-date .m-rt-tag { margin-left: 6px; }
+  .m-sched-table { display: none; }
+  .m-sched-days { display: flex; flex-direction: column; gap: 16px; }
+  html body .m-sched-days h6 { margin: 0 0 6px; font-size: 14px; font-weight: 800; }
+  .m-sched-days .is-today h6 { color: var(--m-primary-text); }
+  .m-sched-days .m-sched-gap { margin: 0; padding: 4px; border-radius: 6px; }
+  .m-sched-lesson { display: flex; gap: 10px; min-height: 44px; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--m-border); }
+  .m-sched-lesson > span { flex: none; width: 82px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .m-sched-lesson strong, .m-sched-lesson small { display: block; }
+  .m-sched-lesson small { color: var(--m-muted); }
+}
+
+/* Impressão direta da página: só tira a navegação. As folhas têm documento próprio (print-sheet.css) */
+@media print {
+  #studentPortalNavbar, #navbarBottomStudentPortal, .m-hero, #studentPortal .toast, #studentPortal .modal { display: none !important; }
+}

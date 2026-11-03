@@ -428,6 +428,36 @@ class StudentPortalController extends Action
     }
 
     /**
+     * Roteiro de provas em folha A4, de um bimestre, só da turma do aluno
+     */
+    public function examSheetDocument()
+    {
+        if (!isset($_SESSION)) session_start();
+
+        $rule = Container::getModel('Student\StudentPerformance')->rule();
+
+        $this->view->unit = max(1, min((int) $rule['units'], (int) ($_GET['bimestre'] ?? 1)));
+        $this->view->examFilter = (string) ($_GET['avaliacao'] ?? '');
+        $this->view->subjectFilter = (string) ($_GET['materia'] ?? '');
+        $this->view->examSheet = Container::getModel('TeacherStudent\Gradebook')->examSheetForClass($_SESSION['Student']['classId']);
+
+        require __DIR__ . '/../../Views/studentPortal/examSheetDocument.php';
+    }
+
+    /**
+     * Quadro de horários em folha A4, só da turma do aluno
+     */
+    public function scheduleDocument()
+    {
+        if (!isset($_SESSION)) session_start();
+
+        $this->view->classSchedule = Container::getModel('GeneralManagement\ClassSchedule')->getScheduleByClass($_SESSION['Student']['classId']);
+        $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
+
+        require __DIR__ . '/../../Views/studentPortal/scheduleDocument.php';
+    }
+
+    /**
      * Confirma a leitura de um aviso do mural (só da turma do aluno)
      */
     public function boardRead()

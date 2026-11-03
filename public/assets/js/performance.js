@@ -177,7 +177,15 @@
     }
 
     document.addEventListener('click', (event) => {
-        if (event.target.closest('[data-print]')) window.print();
+        const link = event.target.closest('[data-guide-print]');
+        if (!link) return;
+        const params = new URLSearchParams({
+            bimestre: guideUnits.querySelector('.is-active').dataset.unit,
+            avaliacao: guideFilter.querySelector('.is-active').dataset.group,
+            materia: guideSubject.value,
+            imprimir: 1,
+        });
+        link.href = link.pathname + '?' + params;
     });
 
 })();
