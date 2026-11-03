@@ -1050,8 +1050,25 @@ html.nightMode #bulletin .m-bulletin td.is-low { color: #FF9A9E !important; }
 .m-vchart-bars { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 3px; width: 100%; height: 240px; border-bottom: 1px solid var(--m-border); background: linear-gradient(to top, transparent calc(var(--passing) - 1px), #E5484D calc(var(--passing) - 1px), #E5484D var(--passing), transparent var(--passing)); }
 .m-vchart-bar { position: relative; width: 38%; max-width: 22px; min-height: 2px; background: var(--m-border); border-radius: 4px 4px 0 0; }
 .m-vchart-bar.is-me { background: var(--s, var(--m-primary)); }
-.m-vchart-bar b { position: absolute; bottom: 100%; left: 50%; font-size: 11px; font-weight: 800; white-space: nowrap; transform: translateX(-50%); }
 .m-vchart-col small { display: block; width: 100%; min-height: 28px; overflow: hidden; font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; overflow-wrap: anywhere; color: var(--m-muted); }
+.m-vchart-bar b { position: absolute; bottom: 100%; left: 50%; font-size: 11px; font-weight: 800; white-space: nowrap; transform: translateX(-50%); }
+.m-vchart-col { position: relative; padding: 0 2px 4px; border-radius: 8px; outline: 0; transition: background-color .15s, opacity .15s; }
+.m-vchart-col:hover, .m-vchart-col:focus-visible { z-index: 2; background: var(--m-surface-2); }
+.m-vchart-col:focus-visible { box-shadow: inset 0 0 0 2px var(--m-primary); }
+.m-vchart-col:hover small, .m-vchart-col:focus-visible small { color: var(--m-text); }
+.m-vchart-bar { transition: filter .15s, background-color .15s; }
+.m-vchart-col:hover .m-vchart-bar.is-me, .m-vchart-col:focus-visible .m-vchart-bar.is-me { filter: brightness(1.15); }
+.m-vchart-col:hover .m-vchart-bar:not(.is-me), .m-vchart-col:focus-visible .m-vchart-bar:not(.is-me) { background: var(--m-muted); }
+@media (hover: hover) { .m-vchart:hover .m-vchart-col:not(:hover) { opacity: .45; } }
+.m-vchart-tip { position: absolute; top: 0; left: 50%; z-index: 3; width: 156px; padding: 8px 10px; font-size: 12px; line-height: 1.35; text-align: left; color: var(--m-text); pointer-events: none; visibility: hidden; opacity: 0; background: var(--m-surface); border: 1px solid var(--m-border); border-radius: 8px; box-shadow: 0 6px 18px rgba(0, 0, 0, .28); transform: translate(-50%, 4px); transition: opacity .15s, transform .15s; }
+.m-vchart-col:nth-child(-n+2) .m-vchart-tip { left: 0; transform: translate(0, 4px); }
+.m-vchart-col:nth-last-child(-n+2):not(:nth-child(-n+2)) .m-vchart-tip { right: 0; left: auto; transform: translate(0, 4px); }
+.m-vchart-col:hover .m-vchart-tip, .m-vchart-col:focus-visible .m-vchart-tip { visibility: visible; opacity: 1; transform: translate(-50%, 0); }
+.m-vchart-col:nth-child(-n+2):hover .m-vchart-tip, .m-vchart-col:nth-child(-n+2):focus-visible .m-vchart-tip, .m-vchart-col:nth-last-child(-n+2):hover .m-vchart-tip, .m-vchart-col:nth-last-child(-n+2):focus-visible .m-vchart-tip { transform: translate(0, 0); }
+.m-vchart-tip strong { display: block; margin-bottom: 2px; font-weight: 800; }
+.m-vchart-tip span { display: flex; justify-content: space-between; gap: 8px; color: var(--m-muted); }
+.m-vchart-tip span b { font-weight: 800; color: var(--m-text); }
+.m-vchart-tip span b.is-low { color: var(--m-danger); }
 
 /* Boletim no celular: cartão por matéria; a tabela de avaliações continua tabela */
 html body#studentPortal #pagina #bulletin .m-bulletin th { color: var(--m-text) !important; }

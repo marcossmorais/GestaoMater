@@ -44,7 +44,14 @@ foreach ($rows as $d) foreach ($d['units'] as $u => $unit) if ($unit['grade'] !=
                 <div class="m-vchart-wrap">
                     <div class="m-vchart" style="--passing:<?= $height($rule['passing']) ?>%; --cols:<?= count($bars) ?>">
                         <?php foreach ($bars as $b) { ?>
-                            <div class="m-vchart-col <?= Subject::css($b['d']['discipline']) ?>" title="<?= htmlspecialchars($b['d']['discipline'] . ': você ' . $fmt($b['mine']) . ' · turma ' . $fmt($b['class'])) ?>">
+                            <div class="m-vchart-col <?= Subject::css($b['d']['discipline']) ?>" tabindex="0" aria-label="<?= htmlspecialchars($b['d']['discipline'] . ': você ' . $fmt($b['mine']) . ', turma ' . $fmt($b['class'])) ?>">
+                                <?php $diff = $b['mine'] !== null && $b['class'] !== null ? round((float) $b['mine'] - (float) $b['class'], 1) : null; ?>
+                                <div class="m-vchart-tip" aria-hidden="true">
+                                    <strong><?= htmlspecialchars($b['d']['discipline']) ?></strong>
+                                    <span>Você <b class="<?= $b['mine'] !== null && $b['mine'] < $rule['passing'] ? 'is-low' : '' ?>"><?= $fmt($b['mine']) ?></b></span>
+                                    <span>Turma <b><?= $fmt($b['class']) ?></b></span>
+                                    <?php if ($diff !== null) { ?><span>Diferença <b class="<?= $diff < 0 ? 'is-low' : '' ?>"><?= ($diff > 0 ? '+' : '') . $fmt($diff) ?></b></span><?php } ?>
+                                </div>
                                 <div class="m-vchart-bars">
                                     <span class="m-vchart-bar is-me" style="height:<?= $height($b['mine']) ?>%"><b><?= $fmt($b['mine']) ?></b></span>
                                     <span class="m-vchart-bar" style="height:<?= $height($b['class']) ?>%"></span>
