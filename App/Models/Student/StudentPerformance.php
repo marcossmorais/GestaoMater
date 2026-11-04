@@ -122,45 +122,4 @@ class StudentPerformance extends Model
 
         return $result;
     }
-
-
-    /**
-     * Cronograma do ano: eventos da escola e da turma + avaliações da turma
-     */
-    public function agenda($classId)
-    {
-
-        $stmt = $this->db->prepare(
-            "SELECT * FROM (
-                SELECT titulo AS title, descricao AS description, tipo AS type,
-                       TO_CHAR(data_inicio, 'YYYY-MM-DD') AS start, TO_CHAR(COALESCE(data_fim, data_inicio), 'YYYY-MM-DD') AS end,
-                       '' AS types
-                FROM evento_escolar
-                WHERE (fk_id_turma IS NULL OR fk_id_turma = :classId)
-                AND EXTRACT(YEAR FROM data_inicio) = EXTRACT(YEAR FROM CURRENT_DATE)
-
-                UNION ALL
-
-                SELECT disciplina.nome_disciplina || ' · ' || avaliacoes.descricao_avaliacao, avaliacoes.roteiro, 'avaliacao',
-                       TO_CHAR(avaliacoes.data_realizada, 'YYYY-MM-DD'), TO_CHAR(avaliacoes.data_realizada, 'YYYY-MM-DD'),
-                       COALESCE((SELECT string_agg(tipo, ',' ORDER BY tipo) FROM avaliacao_tipo WHERE fk_id_avaliacao = avaliacoes.id_avaliacao), '')
-                FROM avaliacoes
-                INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
-                INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)
-                WHERE turma_disciplina.fk_id_turma = :classId
-                AND EXTRACT(YEAR FROM avaliacoes.data_realizada) = EXTRACT(YEAR FROM CURRENT_DATE)
-            ) agenda
-            ORDER BY start, title"
-        );
-
-        $stmt->execute([':classId' => (int) $classId]);
-
-        // na avaliação, o título já diz o que vale nota
-        return array_map(function ($row) {
-            $types = \App\Models\TeacherStudent\Gradebook::typeLabels($row['types']);
-            if ($types !== '') $row['title'] .= ' · ' . $types;
-            unset($row['types']);
-            return $row;
-        }, $stmt->fetchAll(\PDO::FETCH_ASSOC));
-    }
 }

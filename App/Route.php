@@ -1210,6 +1210,18 @@ class Route extends Bootstrap
 			'action' => 'bulletinDocument'
 		);
 
+		$routes['StudentExamSheetDocument'] = array(
+			'route' => '/portal-aluno/roteiro/documento',
+			'controller' => 'StudentPortal\StudentPortalController',
+			'action' => 'examSheetDocument'
+		);
+
+		$routes['StudentScheduleDocument'] = array(
+			'route' => '/portal-aluno/horarios/documento',
+			'controller' => 'StudentPortal\StudentPortalController',
+			'action' => 'scheduleDocument'
+		);
+
 		$routes['validateDocument'] = array(
 			'route' => '/validar',
 			'controller' => 'Index\DocumentController',

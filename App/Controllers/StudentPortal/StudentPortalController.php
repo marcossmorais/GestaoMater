@@ -119,20 +119,16 @@ class StudentPortalController extends Action
 
         $this->view->board = Container::getModel('TeacherStudent\ClassBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
         $this->view->generalBoard = Container::getModel('TeacherStudent\GeneralBoard')->forClass($_SESSION['Student']['classId'], $_SESSION['Student']['enrollmentId']);
-        $this->view->guides = Container::getModel('TeacherStudent\Gradebook')->guidesForClass($_SESSION['Student']['classId']);
+        $this->view->examSheet = Container::getModel('TeacherStudent\Gradebook')->examSheetForClass($_SESSION['Student']['classId']);
 
         $Performance = Container::getModel('Student\StudentPerformance');
         $this->view->performanceRule = $Performance->rule();
         $this->view->performance = $Performance->byDiscipline($_SESSION['Student']['enrollmentId'], $_SESSION['Student']['classId']);
 
-        $this->view->studentExams = $this->studentExams($this->view->performance);
-
         // aba Frequência
         $StudentAttendance = Container::getModel('Student\\StudentAttendance');
         $this->view->missedDays = $StudentAttendance->missedDays($_SESSION['Student']['enrollmentId']);
         $this->view->submissions = $StudentAttendance->submissions($_SESSION['Student']['enrollmentId']);
-
-        $this->view->agenda = $Performance->agenda($_SESSION['Student']['classId']);
 
         $this->render("pages/home", "SimpleLayout", "studentPortal");
     }
@@ -429,6 +425,36 @@ class StudentPortalController extends Action
         $this->view->qrSvg = \App\Tools\DocumentSigner::qrSvg($url);
 
         require __DIR__ . '/../../Views/studentPortal/bulletinDocument.php';
+    }
+
+    /**
+     * Roteiro de provas em folha A4, de um bimestre, só da turma do aluno
+     */
+    public function examSheetDocument()
+    {
+        if (!isset($_SESSION)) session_start();
+
+        $rule = Container::getModel('Student\StudentPerformance')->rule();
+
+        $this->view->unit = max(1, min((int) $rule['units'], (int) ($_GET['bimestre'] ?? 1)));
+        $this->view->examFilter = (string) ($_GET['avaliacao'] ?? '');
+        $this->view->subjectFilter = (string) ($_GET['materia'] ?? '');
+        $this->view->examSheet = Container::getModel('TeacherStudent\Gradebook')->examSheetForClass($_SESSION['Student']['classId']);
+
+        require __DIR__ . '/../../Views/studentPortal/examSheetDocument.php';
+    }
+
+    /**
+     * Quadro de horários em folha A4, só da turma do aluno
+     */
+    public function scheduleDocument()
+    {
+        if (!isset($_SESSION)) session_start();
+
+        $this->view->classSchedule = Container::getModel('GeneralManagement\ClassSchedule')->getScheduleByClass($_SESSION['Student']['classId']);
+        $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
+
+        require __DIR__ . '/../../Views/studentPortal/scheduleDocument.php';
     }
 
     /**

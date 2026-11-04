@@ -16,7 +16,7 @@ $status = [
     <div class="m-page-head">
         <div>
             <h5>Boletim</h5>
-            <p>Nota de cada bimestre de 0 a 10 (média das <?= (int) $rule['perBimester'] ?> avaliações; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior nota entre o bimestre e a recuperação). Média do ano = soma dos <?= (int) $rule['units'] ?> bimestres ÷ <?= (int) $rule['units'] ?>.</p>
+            <p>Nota de cada bimestre de 0 a 10 (média das <?= (int) $rule['perBimester'] ?> avaliações; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior nota entre o bimestre e a recuperação). Toque na matéria para ver AV1, AV2, AV3, recuperação e o simulador. Média do ano = soma dos <?= (int) $rule['units'] ?> bimestres ÷ <?= (int) $rule['units'] ?>.</p>
         </div>
         <a class="btn btn-primary" href="/portal-aluno/boletim/documento" target="_blank" rel="noopener"><i class="fas fa-file-download mr-2"></i>Baixar boletim</a>
     </div>
@@ -24,6 +24,7 @@ $status = [
     <?php if (!$rows) { ?>
         <div class="m-empty">Nenhuma disciplina vinculada à sua turma.</div>
     <?php } else { ?>
+        <div class="m-bul-tools"><button type="button" class="btn btn-light" data-bul-all aria-expanded="false"><i class="fas fa-expand-alt mr-2" aria-hidden="true"></i><span>Expandir todas</span></button></div>
         <div class="m-overview-wrap">
             <table class="m-overview m-bulletin-table">
                 <thead>
@@ -42,7 +43,7 @@ $status = [
                         [$label, $pill] = $d['pendingRecovery'] ? ['Recuperação', 'm-pill-warn'] : $status[$sim['status']];
                     ?>
                         <tr class="<?= \App\Tools\Subject::css($d['discipline']) ?>">
-                            <td data-label="Matéria"><i class="fas <?= \App\Tools\Subject::icon($d['discipline']) ?> m-subj-ico" aria-hidden="true"></i><?= htmlspecialchars($d['discipline']) ?></td>
+                            <td data-label="Matéria"><button type="button" class="m-bul-toggle" data-bul-toggle aria-expanded="false"><i class="fas fa-chevron-right" aria-hidden="true"></i><i class="fas <?= \App\Tools\Subject::icon($d['discipline']) ?> m-subj-ico" aria-hidden="true"></i><?= htmlspecialchars($d['discipline']) ?></button></td>
                             <?php foreach ($d['units'] as $u => $unit) {
                                 $class = $unit['grade'] === null ? '' : ($unit['recovered'] ? 'is-rec' : ($unit['grade'] < $rule['passing'] ? 'is-low' : ''));
                             ?>
@@ -52,51 +53,47 @@ $status = [
                             <td data-label="Faltas"><?= (int) $d['absences'] ?><?= $d['excused'] ? ' <small>(' . (int) $d['excused'] . ' abon.)</small>' : '' ?></td>
                             <td data-label="Situação"><span class="m-pill <?= $pill ?>"><?= $label ?></span></td>
                         </tr>
+                        <tr class="m-bul-detail <?= \App\Tools\Subject::css($d['discipline']) ?>" hidden>
+                            <td colspan="<?= (int) $rule['units'] + 4 ?>">
+                                <div data-perf='<?= htmlspecialchars(json_encode(['units' => array_map(function ($unit) use ($counts) { return $counts($unit) ? $unit['grade'] : null; }, $d['units'])]), ENT_QUOTES) ?>'>
+                                    <table class="m-bul-exams">
+                                        <thead>
+                                            <tr>
+                                                <th>Bim.</th>
+                                                <?php for ($i = 1; $i <= (int) $rule['perBimester']; $i++) { ?><th>AV<?= $i ?></th><?php } ?>
+                                                <th>Rec.</th>
+                                                <th>Nota</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($d['units'] as $u => $unit) {
+                                                $list = $this->view->exams[(int) $d['id']][$u] ?? [];
+                                                $regular = array_values(array_filter($list, function ($e) { return !$e->recovery; }));
+                                                $recovery = array_values(array_filter($list, function ($e) { return $e->recovery; }))[0] ?? null;
+                                                $cell = function ($e) use ($fmt, $rule) {
+                                                    $types = $e ? \App\Models\TeacherStudent\Gradebook::typeLabels($e->types ?? '') : '';
+                                                    $low = $e && $e->grade !== null && $e->grade < $rule['passing'];
+                                                    return '<td class="' . ($low ? 'is-low' : '') . '" title="' . htmlspecialchars($e ? trim($types . ' · ' . $e->date, ' ·') : 'Ainda não aplicada') . '">' . ($e ? $fmt($e->grade) : '–') . '</td>';
+                                                };
+                                            ?>
+                                                <tr>
+                                                    <th>B<?= (int) $u ?></th>
+                                                    <?php for ($i = 0; $i < (int) $rule['perBimester']; $i++) echo $cell($regular[$i] ?? null); ?>
+                                                    <?= $cell($recovery) ?>
+                                                    <td class="m-bul-final <?= $unit['grade'] !== null && $unit['grade'] < $rule['passing'] ? 'is-low' : '' ?>"><?= $fmt($unit['grade']) ?></td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                    <?php $studentExams = $this->view->studentExams; require __DIR__ . '/gradeSimulators.php'; ?>
+                                </div>
+                            </td>
+                        </tr>
                     <?php } ?>
                 </tbody>
             </table>
         </div>
         <p class="m-muted-note mt-2 mb-0"><sup>R</sup> nota da recuperação · <sup>*</sup> parcial (faltam avaliações) · em vermelho: abaixo de <?= $fmt($rule['passing']) ?></p>
-
-        <h6 class="m-bul-title">Notas por avaliação e simulador</h6>
-        <p class="m-muted-note">Abra a matéria para ver a nota de cada avaliação e simular as que faltam.</p>
-
-        <div class="m-bul-subjects">
-            <?php
-            $studentExams = $this->view->studentExams;
-            foreach ($rows as $d) {
-                $doneUnits = array_filter($d['units'], function ($unit) { return $unit['grade'] !== null; });
-            ?>
-                <details class="m-bul-subject <?= \App\Tools\Subject::css($d['discipline']) ?>" data-perf='<?= htmlspecialchars(json_encode(['units' => array_map(function ($u) use ($counts) { return $counts($u) ? $u['grade'] : null; }, $d['units'])]), ENT_QUOTES) ?>'>
-                    <summary>
-                        <i class="fas <?= \App\Tools\Subject::icon($d['discipline']) ?> m-subj-ico" aria-hidden="true"></i>
-                        <strong><?= htmlspecialchars($d['discipline']) ?></strong>
-                        <small><?= count($doneUnits) ?> de <?= (int) $rule['units'] ?> bimestres com nota</small>
-                    </summary>
-                    <?php foreach ($d['units'] as $u => $unit) {
-                        $list = $this->view->exams[(int) $d['id']][$u] ?? [];
-                        if (!$list && $unit['grade'] === null) continue;
-                    ?>
-                        <div class="m-bul-unit">
-                            <div class="m-bul-unit-head">
-                                <strong><?= (int) $u ?>º bimestre</strong>
-                                <span class="<?= $unit['grade'] !== null && $unit['grade'] < $rule['passing'] ? 'is-low' : '' ?>">Nota do bimestre: <b><?= $fmt($unit['grade']) ?></b></span>
-                            </div>
-                            <ul class="m-gradeline-exams">
-                                <?php foreach ($list as $e) { $types = \App\Models\TeacherStudent\Gradebook::typeLabels($e->types ?? ''); ?>
-                                    <li class="<?= $e->grade !== null && $e->grade < $rule['passing'] ? 'is-low' : '' ?>">
-                                        <span><?= htmlspecialchars($e->recovery ? 'Recuperação' : $e->description) ?></span>
-                                        <b><?= $fmt($e->grade) ?></b>
-                                        <small><?= htmlspecialchars($types ?: $e->date) ?></small>
-                                    </li>
-                                <?php } ?>
-                            </ul>
-                        </div>
-                    <?php } ?>
-                    <?php require __DIR__ . '/gradeSimulators.php'; ?>
-                </details>
-            <?php } ?>
-        </div>
     <?php } ?>
 
 </div>

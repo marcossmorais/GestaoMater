@@ -1,14 +1,10 @@
-// Mater — Desempenho, simulador de notas e cronograma (portal do aluno)
+// Mater — Simulador de notas, folha do roteiro e impressão (portal do aluno)
 (function () {
 
     const rule = window.MATER_PERFORMANCE || { units: 4, maxPerUnit: 10, passing: 7, perBimester: 3 };
 
     function fmt(n) {
         return Number(n).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
-    }
-
-    function escapeHtml(text) {
-        return String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
 
     // Mesma conta de App/Tools/GradeSimulator.php
@@ -80,6 +76,24 @@
         if (box) simulateBimester(box);
     });
 
+    // ---------- Boletim: expande a matéria (o conteúdo chega por AJAX)
+    function setRow(button, open) {
+        button.setAttribute('aria-expanded', open);
+        button.closest('tr').nextElementSibling.hidden = !open;
+    }
+
+    document.addEventListener('click', (event) => {
+        const toggle = event.target.closest('[data-bul-toggle]');
+        if (toggle) return setRow(toggle, toggle.getAttribute('aria-expanded') !== 'true');
+
+        const all = event.target.closest('[data-bul-all]');
+        if (!all) return;
+        const open = all.getAttribute('aria-expanded') !== 'true';
+        all.setAttribute('aria-expanded', open);
+        all.querySelector('span').textContent = open ? 'Recolher todas' : 'Expandir todas';
+        document.querySelectorAll('[data-bul-toggle]').forEach((button) => setRow(button, open));
+    });
+
     // ---------- Simulador da média do ano, por disciplina
     {
         document.addEventListener('input', (event) => {
@@ -123,72 +137,63 @@
         });
     }
 
-    // ---------- Cronograma
-    const agenda = document.getElementById('studentAgenda');
-    if (agenda) {
-        const events = window.MATER_AGENDA || [];
-        const list = agenda.querySelector('[data-agenda-list]');
-        const types = {
-            evento: ['Evento', 'fa-star'], feriado: ['Feriado', 'fa-umbrella-beach'], prova: ['Prova', 'fa-file-alt'],
-            reuniao: ['Reunião', 'fa-users'], recesso: ['Recesso', 'fa-pause-circle'], outro: ['Aviso', 'fa-info-circle'],
-            avaliacao: ['Avaliação', 'fa-pen']
-        };
-        const weekdays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
-
-        const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        const parse = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
-
-        function range(kind) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            if (kind === 'day') return [today, today];
-            if (kind === 'week') {
-                const start = new Date(today);
-                start.setDate(today.getDate() - today.getDay());
-                const end = new Date(start);
-                end.setDate(start.getDate() + 6);
-                return [start, end];
-            }
-            if (kind === 'month') return [new Date(today.getFullYear(), today.getMonth(), 1), new Date(today.getFullYear(), today.getMonth() + 1, 0)];
-            return [new Date(today.getFullYear(), 0, 1), new Date(today.getFullYear(), 11, 31)];
-        }
-
-        function render(kind) {
-            const [from, to] = range(kind);
-            const a = iso(from);
-            const b = iso(to);
-            const todayIso = iso(new Date());
-            const items = events.filter((e) => e.end >= a && e.start <= b);
-
-            if (!items.length) {
-                list.innerHTML = '<div class="card m-board-empty">Nada no cronograma neste período.</div>';
-                return;
-            }
-
-            list.innerHTML = items.map((e) => {
-                const [label, icon] = types[e.type] || types.outro;
-                const start = parse(e.start);
-                const period = e.end !== e.start ? ` até ${parse(e.end).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}` : '';
-                return `
-                    <article class="card m-agenda-item${e.start <= todayIso && e.end >= todayIso ? ' is-today' : ''}${e.end < todayIso ? ' is-past' : ''}">
-                        <div class="m-agenda-date"><strong>${String(start.getDate()).padStart(2, '0')}</strong><small>${start.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')} · ${weekdays[start.getDay()]}</small></div>
-                        <div class="m-agenda-body">
-                            <span class="m-agenda-type m-agenda-${escapeHtml(e.type)}"><i class="fas ${icon} mr-1"></i>${label}${period}</span>
-                            <strong>${escapeHtml(e.title)}</strong>
-                            ${e.description ? `<p>${escapeHtml(e.description)}</p>` : ''}
-                        </div>
-                    </article>`;
-            }).join('');
-        }
-
-        agenda.querySelector('[data-agenda-range]').addEventListener('click', (event) => {
-            const button = event.target.closest('[data-range]');
+    // ---------- Roteiro de provas: uma folha por bimestre, filtrada por avaliação e matéria
+    const guideUnits = document.querySelector('[data-guide-unit]');
+    if (guideUnits) {
+        guideUnits.addEventListener('click', (event) => {
+            const button = event.target.closest('[data-unit]');
             if (!button) return;
-            agenda.querySelectorAll('[data-range]').forEach((b) => b.classList.toggle('is-active', b === button));
-            render(button.dataset.range);
+            guideUnits.querySelectorAll('[data-unit]').forEach((b) => b.classList.toggle('is-active', b === button));
+            document.querySelectorAll('[data-guide-sheet]').forEach((sheet) => { sheet.hidden = sheet.dataset.guideSheet !== button.dataset.unit; });
         });
-
-        render('week');
     }
+
+    const guideFilter = document.querySelector('[data-guide-filter]');
+    const guideSubject = document.querySelector('[data-guide-subject]');
+    function filterGuide() {
+        const group = guideFilter.querySelector('.is-active').dataset.group;
+        document.querySelectorAll('[data-guide-sheet]').forEach((sheet) => {
+            let shown = 0;
+            sheet.querySelectorAll('[data-subject]').forEach((block) => {
+                let rows = 0;
+                block.querySelectorAll('tr[data-group]').forEach((row) => {
+                    row.hidden = group !== '' && row.dataset.group !== group;
+                    if (!row.hidden) rows++;
+                });
+                block.hidden = rows === 0 || (guideSubject.value !== '' && block.dataset.subject !== guideSubject.value);
+                if (!block.hidden) shown++;
+            });
+            sheet.querySelector('[data-guide-none]').hidden = shown > 0;
+        });
+    }
+    if (guideFilter) {
+        guideFilter.addEventListener('click', (event) => {
+            const button = event.target.closest('[data-group]');
+            if (!button) return;
+            guideFilter.querySelectorAll('[data-group]').forEach((b) => b.classList.toggle('is-active', b === button));
+            filterGuide();
+        });
+        guideSubject.addEventListener('change', filterGuide);
+    }
+
+    // ---------- Atestado: mostra o nome do arquivo escolhido
+    document.addEventListener('change', (event) => {
+        if (!event.target.matches('[data-freq-file]')) return;
+        const name = event.target.closest('.m-file-pick').querySelector('[data-freq-file-name]');
+        name.textContent = event.target.files.length ? event.target.files[0].name : 'Nenhum arquivo escolhido';
+    });
+
+    // ---------- Roteiro: o documento impresso sai com o bimestre e os filtros da tela
+    document.addEventListener('click', (event) => {
+        const link = event.target.closest('[data-guide-print]');
+        if (!link) return;
+        const params = new URLSearchParams({
+            bimestre: guideUnits.querySelector('.is-active').dataset.unit,
+            avaliacao: guideFilter.querySelector('.is-active').dataset.group,
+            materia: guideSubject.value,
+            imprimir: 1,
+        });
+        link.href = link.pathname + '?' + params;
+    });
 
 })();

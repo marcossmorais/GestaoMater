@@ -77,7 +77,11 @@ $submissionStatus = [
                     </label>
                     <label class="m-att-field">
                         <span class="m-att-label"><span data-freq-file-label>Arquivo do atestado</span> <small>(PDF, JPG ou PNG, até 5 MB)</small></span>
-                        <input type="file" class="form-control" name="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+                        <span class="m-file-pick">
+                            <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" data-freq-file>
+                            <span class="btn btn-light"><i class="fas fa-paperclip mr-2" aria-hidden="true"></i>Escolher arquivo</span>
+                            <span class="m-file-name" data-freq-file-name>Nenhum arquivo escolhido</span>
+                        </span>
                     </label>
                     <div class="m-actions"><button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane mr-2"></i>Enviar à coordenação</button></div>
                 </form>

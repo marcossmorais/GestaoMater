@@ -1,8 +1,7 @@
 <?php
-// Mural: área geral da coordenação no topo, avisos separados por matéria e roteiro de provas — portal do aluno
+// Mural: área geral da coordenação no topo e avisos separados por matéria — portal do aluno
 $board = $this->view->board ?? [];
 $general = $this->view->generalBoard ?? [];
-$guides = $this->view->guides ?? [];
 $types = \App\Models\TeacherStudent\ClassBoard::TYPES;
 $disciplines = [];
 foreach ($board as $p) $disciplines[$p->discipline] = ($disciplines[$p->discipline] ?? 0) + ($p->read_by_me ? 0 : 1);
@@ -53,32 +52,6 @@ $postCard = function ($post, $title, $meta, $readAttr) use ($types) {
             <?php } ?>
         </div>
         <?php foreach ($board as $post) echo $postCard($post, $post->discipline, $post->teacher . ' · ' . $post->posted_at, 'data-board-post'); ?>
-    <?php } ?>
-
-    <?php if ($guides) { ?>
-        <h5 class="title-mural mt-4"><i class="fas fa-route mr-2"></i>Roteiro de provas</h5>
-        <?php foreach ($guides as $g) { ?>
-            <details class="card m-board-guide <?= \App\Tools\Subject::css($g->discipline) ?>">
-                <summary>
-                    <span class="m-guide-date"><strong><?= htmlspecialchars(substr($g->date, 0, 2)) ?></strong><small>/<?= htmlspecialchars(substr($g->date, 3, 2)) ?></small></span>
-                    <span class="m-guide-title">
-                        <strong><i class="fas <?= \App\Tools\Subject::icon($g->discipline) ?> m-subj-ico"></i><?= htmlspecialchars($g->discipline) ?></strong>
-                        <small><?= $g->recovery ? 'Recuperação' : htmlspecialchars($g->description) ?> · <?= (int) $g->unity ?>º bimestre · <?= htmlspecialchars($g->teacher) ?></small>
-                        <?php if ($types = \App\Models\TeacherStudent\Gradebook::typeLabels($g->types)) { ?><small class="m-guide-types"><i class="fas fa-tasks mr-1"></i><?= htmlspecialchars($types) ?></small><?php } ?>
-                    </span>
-                </summary>
-                <div class="m-guide-body">
-                    <?php if ($g->guide_topics) { ?>
-                        <h6>O que estudar</h6>
-                        <ul class="m-guide-topics">
-                            <?php foreach (explode("\n", $g->guide_topics) as $topic) { ?><li><i class="fas fa-check-circle"></i><?= htmlspecialchars($topic) ?></li><?php } ?>
-                        </ul>
-                    <?php } ?>
-                    <?php if ($g->guide_material) { ?><p class="m-guide-material"><i class="fas fa-book mr-2"></i><?= htmlspecialchars($g->guide_material) ?></p><?php } ?>
-                    <?php if ($g->guide) { ?><p class="m-guide-notes"><i class="fas fa-info-circle mr-2"></i><?= nl2br(htmlspecialchars($g->guide)) ?></p><?php } ?>
-                </div>
-            </details>
-        <?php } ?>
     <?php } ?>
 </section>
 
