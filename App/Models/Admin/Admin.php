@@ -171,14 +171,20 @@ class Admin extends People
     public function updateProfilePicture()
     {
 
-        $query = "UPDATE administrador SET foto_perfil_administrador = :profilePhoto WHERE id_administrador = :id";
+        // devolve a foto anterior (para apagar do disco): o nome vem do banco, não do formulário
+        $query = "UPDATE administrador SET foto_perfil_administrador = :profilePhoto
+                  FROM (SELECT foto_perfil_administrador AS old FROM administrador WHERE id_administrador = :id) previous
+                  WHERE id_administrador = :id
+                  RETURNING previous.old";
 
         $stmt = $this->db->prepare($query);
 
         $stmt->bindValue(':profilePhoto', $this->__get('profilePhoto'));
-        $stmt->bindValue(':id', $this->__get('id'));
+        $stmt->bindValue(':id', (int) $this->__get('id'), \PDO::PARAM_INT);
 
         $stmt->execute();
+
+        return $stmt->fetchColumn() ?: null;
     }
 
 

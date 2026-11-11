@@ -199,16 +199,20 @@ class AdminController extends Action
 
         $Admin = Container::getModel('Admin\\Admin');
         $Tool = new Tools();
+        $dir = '../public/assets/img/adminProfilePhotos/';
 
-        empty($_GET['oldPhoto']) ? '' : unlink('../public/assets/img/adminProfilePhotos/' . $_POST['oldPhoto']);
+        if ($Tool->image($Admin, $dir) !== true) {
+            http_response_code(422);
+            echo 'Foto inválida: envie JPG, PNG ou WebP de até 5 MB.';
+            return;
+        }
 
-        $Tool->image($Admin, '../public/assets/img/adminProfilePhotos/');
-        
         $Admin->__set('id', $_POST['id']);
 
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        $Admin->updateProfilePicture();
+        // a foto antiga sai do disco só depois de a nova estar gravada e salva no banco
+        $Tool->removeImage($dir, $Admin->updateProfilePicture());
         $profilePhoto = $Admin->dataGeneral();
         
         $_SESSION['Admin']['profilePhoto'] = $profilePhoto[0]->profile_photo;

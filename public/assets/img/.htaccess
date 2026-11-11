@@ -1,0 +1,5 @@
+# Imagens e fotos de perfil enviadas pelo admin: aqui só se servem imagens, nunca script.
+# Segunda camada: o upload já grava com nome aleatório e extensão do tipo real (App/Tools/Tools.php).
+<FilesMatch "\.(?i:php[0-9]?|phtml|phar|pht|phps|cgi|pl|py|sh|htaccess)$">
+    Require all denied
+</FilesMatch>
