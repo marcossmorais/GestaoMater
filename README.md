@@ -26,6 +26,20 @@ Para recriar o banco do zero:
 docker compose down -v && docker compose up -d
 ```
 
+## Rodando no macOS sem Docker
+
+Mais leve que o Docker no Mac: PHP 8.4 e Postgres do Homebrew, com o servidor embutido do PHP.
+
+```bash
+brew install php@8.4 postgresql@16 && brew services start postgresql@16
+psql -d postgres -c "CREATE ROLE mater LOGIN PASSWORD 'mater'" -c "CREATE DATABASE mater OWNER mater"
+for f in database/0*.sql database/dev/99_dev_seed.sql; do PGPASSWORD=mater psql -h 127.0.0.1 -U mater -d mater -q -f $f; done
+sed 's/^DB_HOST=db/DB_HOST=127.0.0.1/' .env.example > .env
+./dev/start.sh
+```
+
+App em http://localhost:8000. Outra porta: `PORT=8080 ./dev/start.sh`.
+
 ### Login sem Clerk (apenas desenvolvimento)
 
 Com `CLERK_*` vazios no `.env`, vale o login antigo por nome completo + código de acesso (ex.: admin `Usuário Padrão` / `867532`). Nomes e códigos de professores e alunos em [docs/USUARIOS_TESTE.md](docs/USUARIOS_TESTE.md).
