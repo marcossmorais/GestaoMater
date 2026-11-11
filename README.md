@@ -26,6 +26,17 @@ Para recriar o banco do zero:
 docker compose down -v && docker compose up -d
 ```
 
+### Migrações em banco existente
+
+O Postgres do Docker só roda `database/` na criação do volume. Para aplicar migrações novas num banco que já existe (o de produção, ou o seu de dev depois de um `git pull`), use o executor. Ele registra o que já rodou em `schema_migrations`, aplica só as pendentes (cada uma numa transação) e nunca roda `database/dev/`:
+
+```bash
+MSYS_NO_PATHCONV=1 docker exec mater-app php /var/www/html/database/migrate.php --status   # o que falta
+MSYS_NO_PATHCONV=1 docker exec mater-app php /var/www/html/database/migrate.php            # aplica
+```
+
+Banco criado pelo Docker ainda não tem registro: na primeira vez, informe até qual número ele já está (normalmente o último arquivo montado no `docker-compose.yml`), ex.: `--baseline=22`. Sem isso o executor se recusa a rodar, para não recriar tabelas. Banco vazio (produção) não precisa de baseline: recebe de `01` em diante.
+
 ## Rodando no macOS sem Docker
 
 Mais leve que o Docker no Mac: PHP 8.4 e Postgres do Homebrew, com o servidor embutido do PHP.
@@ -65,8 +76,8 @@ Como funciona:
 ## Banco no Supabase
 
 1. Crie um projeto em https://supabase.com.
-2. No **SQL Editor**, rode em ordem: `database/01_schema.sql`, `database/02_seed.sql`, `database/03_auth.sql`, `database/04_indexes.sql`.
-   Não rode `database/dev/99_dev_seed.sql` (dados fictícios).
+2. Com os dados de conexão do passo 3 no `.env`, rode `php database/migrate.php`: aplica todas as migrações em ordem (de `01` em diante).
+   Não rode `database/dev/` (dados fictícios).
 3. Em **Project Settings → Database → Connection string**, pegue os dados do *Session pooler* e configure:
    ```
    DB_HOST=aws-0-<regiao>.pooler.supabase.com
