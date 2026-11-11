@@ -385,14 +385,20 @@ class Teacher extends People
     public function updateProfilePicture()
     {
 
-        $query = "UPDATE professor SET foto_perfil_professor = :profilePhoto WHERE professor.id_professor = :teacherId";
+        // devolve a foto anterior (para apagar do disco): o nome vem do banco, não do formulário
+        $query = "UPDATE professor SET foto_perfil_professor = :profilePhoto
+                  FROM (SELECT foto_perfil_professor AS old FROM professor WHERE id_professor = :teacherId) previous
+                  WHERE professor.id_professor = :teacherId
+                  RETURNING previous.old";
 
         $stmt = $this->db->prepare($query);
 
         $stmt->bindValue(':profilePhoto', $this->__get('profilePhoto'));
-        $stmt->bindValue(':teacherId', $this->__get('teacherId'));
+        $stmt->bindValue(':teacherId', (int) $this->__get('teacherId'), \PDO::PARAM_INT);
 
         $stmt->execute();
+
+        return $stmt->fetchColumn() ?: null;
     }
 
 
