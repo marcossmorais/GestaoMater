@@ -1335,6 +1335,207 @@ html body .navbar.fixed-bottom .nav-link:not(.link-active):not([aria-expanded="t
 /* cards de turma: sempre em linha (selo · texto · seta), mais compactos no celular */
 html body#teacherPortal .card.m-att-class { flex-direction: row !important; align-items: center !important; text-align: left !important; }
 html body#teacherPortal .card.m-att-class .m-att-class-body { align-items: flex-start; }
+/* ---------- Perfil de aluno e docente (modal de perfil)
+   Prefixo m-prof. As regras antigas do stylesheet.css usam ids e tamanhos em vw, por isso o !important. */
+html body #pagina .modal-profile .modal-content { padding: 0 !important; overflow: hidden; }
+html body #pagina .modal-profile .modal-content > .row:first-child { position: absolute; top: 20px; right: 12px; z-index: 5; margin: 0; }
+html body #pagina .modal-profile .modal-content > .row:first-child .close { opacity: 1; }
+html body #pagina .modal-profile .modal-content > .row:first-child .close i { color: var(--m-muted) !important; font-size: 22px; margin: 0 !important; }
+html body #pagina .modal-profile .modal-content > .row:first-child .close:hover i { color: var(--m-text) !important; }
+html body #pagina .modal-profile .modal-body { padding: 20px 52px 20px 20px !important; }
+
+/* Coluna lateral */
+html body #pagina .modal-profile .m-prof-side.modal-sidebar {
+  background: var(--m-surface) !important; border: 1px solid var(--m-border) !important; border-radius: 16px !important;
+  box-shadow: var(--m-shadow) !important; padding: 0 !important; overflow: hidden auto; height: calc(100vh - 80px) !important;
+}
+html body #pagina .modal-profile .m-prof-side > .row { margin: 0; padding: 0 !important; }
+html body #pagina .modal-profile .m-prof-side > .row > .col-lg-12 { padding: 0; }
+.m-prof-hero {
+  position: relative; text-align: center; padding: 28px 18px 22px; color: #fff;
+  background: radial-gradient(120% 90% at 100% 0, rgba(255, 255, 255, .14) 0, transparent 55%), linear-gradient(160deg, var(--m-primary) 0%, var(--m-side-from) 60%, var(--m-side-to) 100%);
+}
+.m-prof-avatar { position: relative; width: 104px; height: 104px; margin: 0 auto 14px; }
+html body #pagina .modal-profile .modal-sidebar .m-prof-avatar img {
+  width: 104px !important; height: 104px !important; margin: 0 !important; border-radius: 50%; object-fit: cover; object-position: top;
+  border: 4px solid rgba(255, 255, 255, .9) !important; box-shadow: 0 6px 20px rgba(4, 20, 70, .35); background: #fff; transform: none !important; cursor: pointer;
+}
+.m-prof-avatar-edit {
+  position: absolute; right: 2px; bottom: 2px; width: 32px; height: 32px; border-radius: 50%; border: 3px solid var(--m-side-from);
+  background: var(--m-gold); color: #14213D; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; pointer-events: none;
+}
+html body #pagina .modal-profile .m-prof-hero .m-prof-name { display: block; font-size: 18px !important; font-weight: 700; line-height: 1.25; color: #fff !important; font-family: "Inter", sans-serif !important; text-align: center; }
+html body #pagina .modal-profile .m-prof-hero .m-prof-sub { display: block; margin-top: 4px; font-size: 13px !important; color: rgba(255, 255, 255, .78) !important; text-align: center; font-family: "Inter", sans-serif !important; }
+.m-prof-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 12px; }
+html body #pagina .modal-profile .m-prof-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px !important; font-weight: 600;
+  background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .22); color: #fff !important; font-family: "Inter", sans-serif !important; text-align: left;
+}
+html body #pagina .modal-profile .m-prof-chip i { font-size: 11px !important; color: inherit !important; }
+html body #pagina .modal-profile .m-prof-chip.is-ok::before,
+html body #pagina .modal-profile .m-prof-chip.is-off::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #4ADE80; }
+html body #pagina .modal-profile .m-prof-chip.is-off::before { background: var(--m-gold); }
+
+/* Menu de seções */
+html body #pagina .modal-profile .m-prof-side .container-list-group { padding: 14px 12px 6px !important; border: 0 !important; margin: 0 !important; height: auto !important; overflow: visible !important; flex: 0 0 100%; max-width: 100%; }
+html body #pagina .modal-profile .m-prof-side .container-list-group { padding-left: 12px !important; padding-right: 12px !important; }
+html body #pagina .modal-profile .m-prof-side .container-list-group nav { padding: 0 !important; width: 100% !important; }
+html body #pagina .modal-profile .m-prof-side .container-list-group nav ul { padding: 0; margin: 0; }
+.m-prof-nav-label { display: block; padding: 0 10px 8px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--m-muted); }
+html body #pagina .modal-profile .m-prof-side .container-list-group nav ul a {
+  display: flex !important; align-items: center; gap: 12px; padding: 7px 10px !important; margin: 0 0 2px !important; border: 0 !important; border-radius: 10px !important;
+  font-family: "Inter", sans-serif !important; font-size: 14px !important; font-weight: 500; color: var(--m-muted) !important; background: transparent !important; text-decoration: none;
+}
+html body #pagina .modal-profile .m-prof-side .container-list-group nav ul a .box-icon {
+  width: 32px !important; height: 32px !important; flex: none; border-radius: 9px; display: inline-flex !important; align-items: center; justify-content: center; margin: 0 !important; padding: 0 !important;
+  background: var(--m-surface-2) !important; color: var(--m-muted) !important; transition: background .15s, color .15s;
+}
+html body #pagina .modal-profile .m-prof-side .container-list-group nav ul a .box-icon i { margin: 0 !important; font-size: 13px !important; color: inherit !important; background: transparent !important; }
+html body #pagina .modal-profile .m-prof-side .container-list-group nav ul a:hover { background: var(--m-row-hover) !important; color: var(--m-text) !important; }
+html body #pagina .modal-profile .m-prof-side .container-list-group nav ul a[aria-expanded=true] { background: var(--m-primary-soft) !important; color: var(--m-primary-text) !important; font-weight: 600; }
+html body #pagina .modal-profile .m-prof-side .container-list-group nav ul a[aria-expanded=true] .box-icon { background: var(--m-primary) !important; color: #fff !important; }
+html body #pagina .modal-profile .m-prof-side .container-list-group nav ul a[aria-expanded=true] .box-icon i { color: #fff !important; background: transparent !important; }
+html body #pagina .modal-profile .m-prof-side .m-prof-declare { padding: 10px 0 8px !important; }
+html body #pagina .modal-profile .m-prof-side .m-prof-declare .btn { padding: 9px 12px; font-size: 13px; }
+
+/* Coluna principal */
+html body #pagina .modal-profile .m-prof-main.main-content {
+  height: calc(100vh - 80px) !important; padding: 28px 30px !important; border: 1px solid var(--m-border) !important; border-radius: 16px !important;
+  background: var(--m-surface) !important; box-shadow: var(--m-shadow) !important; margin: 0 !important; overflow-y: auto;
+}
+html body #pagina .modal-profile .m-prof-main > .row { margin-top: 0 !important; }
+html body #pagina .modal-profile .main-content [data-parent="#main-accordion-student"],
+html body #pagina .modal-profile .main-content [data-parent="#main-accordion"] { margin-top: 0 !important; }
+.m-prof-pane { padding: 0 !important; }
+.m-prof-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+html body #pagina .modal-profile .m-prof-head h4 { margin: 0; font-size: 22px !important; font-weight: 700; color: var(--m-text) !important; font-family: "Inter", sans-serif !important; }
+html body #pagina .modal-profile .m-prof-head p { margin: 4px 0 0; font-size: 14px !important; color: var(--m-muted) !important; }
+.m-prof-actions { display: flex; gap: 8px; }
+html body #pagina .modal-profile .m-prof-btn {
+  display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: var(--m-radius-sm); cursor: pointer; user-select: none;
+  font-size: 14px !important; font-weight: 600; border: 1px solid var(--m-border); background: var(--m-surface-2); color: var(--m-text) !important; margin: 0 !important;
+}
+html body #pagina .modal-profile .m-prof-btn i { font-size: 13px !important; color: inherit !important; margin: 0 !important; }
+html body #pagina .modal-profile .m-prof-btn:hover { border-color: var(--m-primary); color: var(--m-primary-text) !important; }
+html body #pagina .modal-profile .m-prof-btn.is-primary { background: var(--m-primary); border-color: var(--m-primary); color: #fff !important; opacity: .45; }
+html body #pagina .modal-profile .m-prof-form:has(.form-control:enabled) .m-prof-btn.is-primary { opacity: 1; box-shadow: 0 4px 14px rgba(24, 104, 232, .35); }
+html body #pagina .modal-profile .m-prof-form:has(.form-control:enabled) .m-prof-btn.edit-data-icon { display: none; }
+.m-prof-editing {
+  display: none; align-items: center; gap: 10px; margin-bottom: 16px; padding: 10px 14px; border-radius: var(--m-radius-sm);
+  background: var(--m-primary-soft); color: var(--m-primary-text); font-size: 13px; font-weight: 500;
+}
+.m-prof-form:has(.form-control:enabled) .m-prof-editing { display: flex; }
+
+/* Resumo */
+.m-prof-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+html body #pagina .modal-profile .m-prof-kpi {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--m-border); border-radius: var(--m-radius);
+  background: var(--m-surface); color: var(--m-text) !important; text-decoration: none !important; transition: border-color .15s, box-shadow .15s;
+}
+html body #pagina .modal-profile a.m-prof-kpi:hover { border-color: var(--m-primary); box-shadow: var(--m-shadow-hover); }
+html body #pagina .modal-profile .m-prof-kpi-icon {
+  width: 40px; height: 40px; flex: none; border-radius: 11px; display: flex; align-items: center; justify-content: center;
+  background: var(--m-primary-soft); color: var(--m-primary-text) !important;
+}
+html body #pagina .modal-profile .m-prof-kpi-icon i { font-size: 16px !important; color: inherit !important; margin: 0 !important; }
+.m-prof-kpi-icon.is-green { background: rgba(22, 163, 74, .12) !important; color: var(--m-success) !important; }
+.m-prof-kpi-icon.is-gold { background: rgba(248, 168, 8, .16) !important; color: #B77900 !important; }
+.m-prof-kpi-icon.is-red { background: rgba(220, 38, 38, .1) !important; color: var(--m-danger) !important; }
+html.nightMode .m-prof-kpi-icon.is-green { color: #4ADE80 !important; }
+html.nightMode .m-prof-kpi-icon.is-gold { color: #FBBF24 !important; }
+html.nightMode .m-prof-kpi-icon.is-red { color: #F87171 !important; }
+html body #pagina .modal-profile .m-prof-kpi-label { display: block; font-size: 11px !important; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--m-muted) !important; line-height: 1.3; font-family: "Inter", sans-serif !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body #pagina .modal-profile .m-prof-kpi-value { display: block; font-size: 20px !important; font-weight: 700; line-height: 1.2; color: var(--m-text) !important; font-family: "Inter", sans-serif !important; }
+.m-prof-kpi > span:last-child { min-width: 0; }
+.m-prof-kpi-value small { font-size: 12px; font-weight: 500; color: var(--m-muted); margin-left: 2px; }
+
+/* Seções de campos */
+.m-prof-section { border: 1px solid var(--m-border); border-radius: var(--m-radius); padding: 18px 20px 20px; margin-bottom: 16px; background: var(--m-surface); }
+.m-prof-section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.m-prof-section-head .m-prof-section-icon {
+  width: 30px; height: 30px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--m-primary-soft); color: var(--m-primary-text);
+}
+html body #pagina .modal-profile .m-prof-section-icon i { font-size: 13px !important; color: inherit !important; margin: 0 !important; }
+html body #pagina .modal-profile .m-prof-section-head h6 { margin: 0; font-size: 15px !important; font-weight: 700; color: var(--m-text) !important; font-family: "Inter", sans-serif !important; }
+.m-prof-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px 16px; }
+.m-prof-field { min-width: 0; }
+.m-prof-field.m-span-2 { grid-column: span 2; }
+html body #pagina .modal-profile .m-prof-field label {
+  display: block; margin: 0 0 6px; font-size: 11px !important; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--m-muted) !important;
+}
+html body #pagina .modal-profile .m-prof-field .form-control {
+  width: 100%; height: 40px; padding: 0 12px !important; font-size: 14px !important; font-weight: 500 !important; font-family: "Inter", sans-serif !important;
+  color: var(--m-text) !important; background-color: var(--m-input-bg) !important; border: 1px solid var(--m-input-border) !important; border-radius: var(--m-radius-sm) !important;
+}
+html body #pagina .modal-profile .m-prof-field .form-control:focus { border-color: var(--m-primary) !important; box-shadow: var(--m-focus) !important; }
+html body #pagina .modal-profile .m-prof-field .form-control:disabled {
+  background-color: var(--m-surface-2) !important; border-color: transparent !important; opacity: 1; cursor: default; -webkit-text-fill-color: var(--m-text);
+}
+html body #pagina .modal-profile .m-prof-field select.form-control:disabled { background-image: none !important; -webkit-appearance: none; appearance: none; }
+html body #pagina .modal-profile .m-prof-field input[type=date]:disabled::-webkit-calendar-picker-indicator { display: none; }
+.m-prof-secret { position: relative; }
+html body #pagina .modal-profile .m-prof-secret .form-control { padding-right: 44px !important; letter-spacing: .08em; }
+html body #pagina .modal-profile .m-prof-secret .input-group-accessCode {
+  position: absolute; top: 4px; right: 4px; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; background: transparent !important; border: 0 !important; color: var(--m-muted) !important;
+}
+html body #pagina .modal-profile .m-prof-secret .input-group-accessCode:hover { background: var(--m-primary-soft) !important; color: var(--m-primary-text) !important; }
+html body #pagina .modal-profile .m-prof-secret .input-group-accessCode i { font-size: 14px !important; color: inherit !important; margin: 0 !important; }
+
+/* Campos que o próprio usuário não pode alterar (portais do aluno e do docente) */
+html body #pagina .modal-profile .m-prof-field.is-locked label::after { content: "\f023"; font-family: "Font Awesome 5 Free"; font-weight: 900; margin-left: 6px; font-size: 9px; opacity: .7; }
+html body #pagina .modal-profile .m-prof-field.is-locked .form-control,
+html body #pagina .modal-profile .m-prof-field.is-locked .form-control:enabled {
+  background-color: var(--m-surface-2) !important; border-color: transparent !important; box-shadow: none !important; cursor: not-allowed;
+  -webkit-text-fill-color: var(--m-text); background-image: none !important; -webkit-appearance: none; appearance: none;
+}
+.m-prof-form:has(.form-control:enabled) .m-prof-field.is-locked { opacity: .6; }
+html body #pagina .modal-profile .m-prof-field.is-locked input[type=date]::-webkit-calendar-picker-indicator { display: none; }
+html body #pagina .modal-profile .m-prof-head p i { font-size: 11px !important; color: inherit !important; }
+
+/* Linha de opção (ex.: modo noturno) */
+.m-prof-option { display: flex; align-items: center; gap: 14px; }
+.m-prof-option .m-prof-section-icon { width: 38px; height: 38px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; background: var(--m-primary-soft); color: var(--m-primary-text); flex: none; }
+.m-prof-option-text { flex: 1; display: flex; flex-direction: column; }
+html body #pagina .modal-profile .m-prof-option-text strong { font-size: 15px !important; color: var(--m-text) !important; }
+html body #pagina .modal-profile .m-prof-option-text span { font-size: 13px !important; color: var(--m-muted) !important; }
+.m-prof-option .custom-switch { transform: scale(1.25); transform-origin: right center; }
+.m-prof-option .custom-switch .custom-control-label { display: block; min-height: 1.5rem; cursor: pointer; }
+
+/* Turmas do docente */
+.m-prof-classes { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.m-prof-class { border: 1px solid var(--m-border); border-radius: var(--m-radius); padding: 16px; background: var(--m-surface); }
+.m-prof-class-title { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; color: var(--m-text); }
+.m-prof-class-title .m-prof-kpi-icon { width: 34px !important; height: 34px !important; border-radius: 10px; }
+.m-prof-class-meta { font-size: 12px; color: var(--m-muted); font-weight: 500; }
+.m-prof-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+html body #pagina .modal-profile .m-prof-tag { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px !important; font-weight: 600; background: var(--m-primary-soft) !important; color: var(--m-primary-text) !important; }
+
+/* Foto do perfil */
+html body #pagina .modal-profile #profilePhotoModal img { width: 260px !important; height: 260px !important; border-radius: 50%; object-fit: cover; object-position: top; border: 4px solid var(--m-primary-soft) !important; cursor: pointer; }
+html body #pagina .modal-profile #profilePhotoModal .modal-content { border: 1px solid var(--m-border) !important; background: var(--m-surface) !important; padding: 8px !important; }
+html body #pagina .modal-profile #profilePhotoModal .modal-content > .row:first-child { position: static; }
+.m-prof-photo-hint { text-align: center; margin-top: 12px; font-size: 13px; color: var(--m-muted); }
+
+@media (max-width: 767px) {
+  html body #pagina .modal-profile .modal-body { padding: 12px !important; }
+  html body #pagina .modal-profile .modal-content > .row:first-child { top: 22px; right: 22px; }
+  html body #pagina .modal-profile .modal-content > .row:first-child .close i { color: rgba(255, 255, 255, .85) !important; }
+  .m-prof-kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
+  html body #pagina .modal-profile .m-prof-kpi { padding: 10px 12px; gap: 10px; }
+  html body #pagina .modal-profile .m-prof-kpi-icon { width: 34px; height: 34px; }
+  html body #pagina .modal-profile .m-prof-side.modal-sidebar, html body #pagina .modal-profile .m-prof-main.main-content { height: auto !important; }
+  html body #pagina .modal-profile .m-prof-main.main-content { padding: 18px 16px !important; margin-top: 12px !important; }
+  html body #pagina .modal-profile .m-prof-side .container-list-group { margin: 0 !important; }
+  html body #pagina .modal-profile .m-prof-side .container-list-group nav { overflow-x: auto !important; }
+  html body #pagina .modal-profile .m-prof-side .container-list-group nav ul { display: flex !important; gap: 4px; width: max-content !important; }
+  html body #pagina .modal-profile .m-prof-side .container-list-group nav ul a { white-space: nowrap; margin: 0 !important; }
+  html body #pagina .modal-profile .m-prof-side .m-prof-nav-label { display: none; }
+  html body #pagina .modal-profile .m-prof-side .m-prof-declare { min-width: 200px; padding: 0 !important; }
+  .m-prof-field.m-span-2 { grid-column: auto; }
+  .m-prof-grid { grid-template-columns: 1fr; }
+}
 
 /* ---------- Observabilidade 360° (admin) */
 .m-obs-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; }

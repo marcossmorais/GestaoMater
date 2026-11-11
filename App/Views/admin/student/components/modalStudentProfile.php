@@ -12,38 +12,39 @@ require __DIR__ . '../../../../../config/variables.php';
 
         <div class="col-lg-3 col-12 col-sm-4">
 
-            <div class="col-lg-12 modal-sidebar">
+            <div class="col-lg-12 modal-sidebar m-prof-side">
 
                 <div class="row p-3">
 
                     <div class="col-lg-12">
 
-                        <div class="row">
+                        <?php $enr = $this->view->studentDataEnrollment[0]; ?>
 
-                            <img class="mx-auto" data-toggle="modal" data-target="#profilePhotoModal" src='<?= $student->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $student->profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>" '>
+                        <div class="m-prof-hero">
 
-                            <div class="col-lg-10 col-11  main-sheet mx-auto d-block d-sm-none">
-                                <div class="row p-3"><span class="col-lg-12"><?= $student->name ?> - <?= $this->view->studentDataEnrollment[0]->acronym_series ?> <?= $this->view->studentDataEnrollment[0]->ballot ?> - <?= $this->view->studentDataEnrollment[0]->course ?> - <?= $this->view->studentDataEnrollment[0]->shift ?></span></div>
+                            <div class="m-prof-avatar" data-toggle="tooltip" data-placement="bottom" title="Alterar foto">
+                                <img data-toggle="modal" data-target="#profilePhotoModal" src='<?= $student->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $student->profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>" ' alt="Foto de <?= $student->name ?>">
+                                <span class="m-prof-avatar-edit"><i class="fas fa-camera"></i></span>
                             </div>
 
-                            <div class="col-lg-10 mx-auto main-sheet d-none d-sm-block">
-                                <div class="row pb-3">
-                                    <span class="col-lg-12 mt-2"><?= $student->name ?> </span>
+                            <span class="m-prof-name"><?= $student->name ?></span>
 
-                                    <?php if ($this->view->schoolTermActive[0]->option_value ==  $this->view->studentDataEnrollment[0]->school_term_id) { ?>
+                            <?php if ($this->view->schoolTermActive[0]->option_value == $enr->school_term_id) { ?>
 
-                                        <span class="col-lg-12 class-data"><?= $this->view->studentDataEnrollment[0]->acronym_series ?> <?= $this->view->studentDataEnrollment[0]->ballot ?> - <?= $this->view->studentDataEnrollment[0]->course ?> - <?= $this->view->studentDataEnrollment[0]->shift ?></span>
+                                <span class="m-prof-sub class-data"><?= $enr->acronym_series ?> <?= $enr->ballot ?> - <?= $enr->course ?> - <?= $enr->shift ?></span>
 
-                                    <?php } else { ?>
+                            <?php } else { ?>
 
-                                        <span class="col-lg-12 d-none d-md-block"><?= $student->situation ?></span>
+                                <span class="m-prof-sub"><?= $student->situation ?></span>
 
-                                    <?php } ?>
+                            <?php } ?>
 
-                                </div>
-                            </div>                   
+                            <div class="m-prof-chips">
+                                <span class="m-prof-chip <?= $enr->situation_id == 1 ? 'is-ok' : 'is-off' ?>"><?= $enr->situation ?></span>
+                                <span class="m-prof-chip"><i class="fas fa-hashtag"></i> Matrícula <?= $enr->enrollment_id ?></span>
+                            </div>
 
-                    </div>
+                        </div>
 
 
                     <div class="row">
@@ -51,6 +52,8 @@ require __DIR__ . '../../../../../config/variables.php';
                         <div class="col-lg-12 container-list-group p-0">
 
                             <nav>
+
+                                <span class="m-prof-nav-label">Perfil do aluno</span>
 
                                 <ul>
 
@@ -113,7 +116,7 @@ require __DIR__ . '../../../../../config/variables.php';
                                     } ?>
 
 
-                                    <div class="p-3">
+                                    <div class="p-3 m-prof-declare">
                                         <div class="dropdown">
                                             <button class="btn btn-outline-primary btn-sm btn-block dropdown-toggle font-weight-bold" type="button" id="dropdownDeclaracoes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i class="fas fa-print mr-1"></i> Emitir Declaração
@@ -158,6 +161,8 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                 </div>
 
+                                <p class="m-prof-photo-hint">Clique na foto para escolher uma nova imagem</p>
+
                                 <form id="formUpdateProfilePhoto" method="POST" enctype="multipart/form-data">
 
                                     <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" id="">
@@ -193,292 +198,286 @@ require __DIR__ . '../../../../../config/variables.php';
 
 <div class="col-lg-9 col-sm-8 col-12 mx-auto">
 
-    <div class="col-lg-12 card main-content">
+    <div class="col-lg-12 card main-content m-prof-main">
 
         <div class="row">
 
-            <div class="col-lg-11 mx-auto collapse show" id="accordion-data-student" data-parent="#main-accordion-student">
+            <div class="col-12 m-prof-pane collapse show" id="accordion-data-student" data-parent="#main-accordion-student">
 
-                <form id="studentModal<?= $student->id ?>" class="" action="">
+                <?php
+                if (!isset($_SESSION)) session_start();
+
+                // Só a secretaria (hierarquia <= 2) vê os dados pessoais completos; edição só no período letivo ativo
+                $isManager = isset($_SESSION['Admin']) && $_SESSION['Admin']['hierarchyFunction'] <= 2;
+                $canEdit = $isManager && $this->view->schoolTermActive[0]->option_value == $enr->school_term_id && $enr->situation_id != 4;
+                $showSummary = $enr->situation_id != 4 && (isset($_SESSION['Admin']) || isset($_SESSION['Teacher']));
+                ?>
+
+                <form id="studentModal<?= $student->id ?>" class="m-prof-form" action="">
 
                     <input type="hidden" value="<?= $student->id ?>" name="studentId">
                     <input type="hidden" value="<?= $student->telephone_id ?>" name="telephoneId">
                     <input type="hidden" value="<?= $app_url ?>" name="appUrl">
                     <input type="hidden" value="<?= $student->address_id ?>" name="addressId">
-                    <input type="hidden" value="<?= $this->view->studentDataEnrollment[0]->number_classroom ?>" id="classroom_number">
-                    <input value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" type="hidden" name="enrollmentId">
-                    <input value="<?= $this->view->studentDataEnrollment[0]->school_year ?>" type="hidden" id="schoolYear">
-                    <input id="courseModality" value="<?= $this->view->studentDataEnrollment[0]->course_modality ?>" type="hidden" name="courseModality">
-                    <?php $modality = $this->view->studentDataEnrollment[0]->course_modality_id == 1 ? '' : 'Técnico' ?>
-                    <input type="hidden" id="series" value="<?=  $this->view->studentDataEnrollment[0]->acronym_series ?>ª - <?= $modality ?> em <?= $this->view->studentDataEnrollment[0]->course_name ?> ">
+                    <input type="hidden" value="<?= $enr->number_classroom ?>" id="classroom_number">
+                    <input value="<?= $enr->enrollment_id ?>" type="hidden" name="enrollmentId">
+                    <input value="<?= $enr->school_year ?>" type="hidden" id="schoolYear">
+                    <input id="courseModality" value="<?= $enr->course_modality ?>" type="hidden" name="courseModality">
+                    <?php $modality = $enr->course_modality_id == 1 ? '' : 'Técnico' ?>
+                    <input type="hidden" id="series" value="<?= $enr->acronym_series ?>ª - <?= $modality ?> em <?= $enr->course_name ?> ">
 
-                    <div class="row mb-3 mt-2 ml-2 d-flex align-items-center">
+                    <div class="m-prof-head">
 
-                        <div class="col-lg-12 p-0">
-
-                            <div class="row d-flex align-items-center">
-
-                                <h5 class="col-8">Dados do aluno</h5>
-
-                                <?php if (!isset($_SESSION)) session_start();
-
-                                if (isset($_SESSION['Admin']) && $_SESSION['Admin']['hierarchyFunction'] <= 2) {
-
-                                ?>
-
-                                    <?php if ($this->view->schoolTermActive[0]->option_value == $this->view->studentDataEnrollment[0]->school_term_id) {
-
-                                        if ($this->view->studentDataEnrollment[0]->situation_id != 4) {
-
-                                    ?>
-
-                                            <div class="col-4 d-flex justify-content-end">
-
-                                                <span idElement="#studentModal<?= $student->id ?>" formGroup="containerListStudent" class="mr-2 edit-data-icon" data-toggle="tooltip" data-placement="left" title="Editar"><i class="fas fa-edit"></i></span>
-
-                                                <span idElement="#studentModal<?= $student->id ?>" routeUpdate="/admin/aluno/lista/perfil-aluno/atualizar" toastData="Dados atualizados" routeData="#studentModal<?= $student->id ?>" container="containerStudentProfileModal" routeList="/admin/aluno/lista/perfil-aluno" class="mr-2 update-data-icon" data-toggle="tooltip" data-placement="bottom" title="Atualizar"><i class="fas fa-check"></i></span>
-
-                                            </div>
-
-                                <?php }
-                                    }
-                                } ?>
-
-                            </div>
-
+                        <div>
+                            <h4>Dados do aluno</h4>
+                            <p>Informações pessoais, contato e situação escolar</p>
                         </div>
 
+                        <?php if ($canEdit) { ?>
 
-                    </div>
+                            <div class="m-prof-actions">
 
-                    <div class="row">
+                                <span idElement="#studentModal<?= $student->id ?>" formGroup="containerListStudent" class="m-prof-btn edit-data-icon"><i class="fas fa-pen"></i> Editar</span>
 
-                        <div class="input-group d-flex col-12 col-lg-11 mt-2 flex-nowrap">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="addon-wrapping">Nome:</span>
-                            </div>
-                            <input type="text" id="name" name="name" disabled class="form-control" value="<?= $student->name ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                        </div>
+                                <span idElement="#studentModal<?= $student->id ?>" routeUpdate="/admin/aluno/lista/perfil-aluno/atualizar" toastData="Dados atualizados" routeData="#studentModal<?= $student->id ?>" container="containerStudentProfileModal" routeList="/admin/aluno/lista/perfil-aluno" class="m-prof-btn is-primary update-data-icon"><i class="fas fa-check"></i> Salvar</span>
 
-                        <?php if (isset($_SESSION['Admin']) && $_SESSION['Admin']['hierarchyFunction'] <= 2) { ?>
-
-                            <div class="input-group d-flex justify-content-start col-12 col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Nome da mãe:</span>
-                                </div>
-                                <input type="text" id="motherName" name="motherName" disabled class="form-control" value="<?= $student->mother ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Nome do pai:</span>
-                                </div>
-                                <input type="text" id="fatherName" name="fatherName" disabled class="form-control" value="<?= $student->father ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">CPF:</span>
-                                </div>
-                                <input type="text" onload="this.value = this.value.mask('000.000.000-00')" id="cpf" name="cpf" disabled class="form-control" value="<?= $student->cpf ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Sexo:</span>
-                                </div>
-
-                                <select id="sex" name="sex" disabled class="form-control custom-select">
-                                    <option value="<?= $student->sex_id ?>"><?= $student->sex ?></option>
-                                    <?php foreach ($this->view->availableSex as $key => $sex) { ?>
-                                        <?php if ($sex->option_value != $student->sex_id) { ?>
-                                            <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
-                                    <?php }
-                                    } ?>
-                                </select>
-
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Nacionalidade:</span>
-                                </div>
-                                <input type="text" id="nationality" name="nationality" disabled class="form-control" value="<?= $student->nacionality ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Naturalidade:</span>
-                                </div>
-                                <input type="text" id="naturalness" name="naturalness" disabled class="form-control" value="<?= $student->naturalness ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Data de Nascimento:</span>
-                                </div>
-                                <input type="date" id="birthDate" name="birthDate" disabled class="form-control" value="<?= $student->birth_date ?>" max="2006-01-31" min="1940-01-31" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">PcD:</span>
-                                </div>
-
-                                <select id="pcd" name="pcd" disabled class="form-control custom-select">
-                                    <option value="<?= $student->pcd_id ?>"><?= $student->pcd ?></option>
-                                    <?php foreach ($this->view->pcd as $key => $pcd) { ?>
-                                        <?php if ($pcd->option_value != $student->pcd_id) { ?>
-                                            <option value="<?= $pcd->option_value ?>"><?= $pcd->option_text ?></option>
-                                    <?php }
-                                    } ?>
-                                </select>
-
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-9 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Código de acesso ao portal:</span>
-                                </div>
-                                <input id="accessCode" name="accessCode" type="password" disabled class="form-control" value="<?= $student->access_code ?>" maxlength="30" aria-label="Username" aria-describedby="addon-wrapping">
-                                <div class="input-group-append">
-                                <div class="input-group-text input-group-accessCode"><i class="fas fa-eye-slash"></i></div>
-                                </div>
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-9 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Data de matricula no cólegio:</span>
-                                </div>
-                                <input id="" name="" type="text" disabled class="form-control" value="<?= date("d/m/Y - H:i:s", strtotime($student->initial_enrollment_date)) ?>" aria-label="Username" aria-describedby="addon-wrapping" style="pointer-events:none">
                             </div>
 
                         <?php } ?>
 
-                        <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="addon-wrapping">Tipo sanguíneo:</span>
-                            </div>
-
-                            <select id="bloodType" name="bloodType" disabled class="form-control custom-select">
-                                <option value="<?= $student->blood_type_id ?>"><?= $student->blood_type ?></option>
-                                <?php foreach ($this->view->bloodType as $key => $bloodType) { ?>
-                                    <?php if ($bloodType->option_value != $student->blood_type_id) { ?>
-                                        <option value="<?= $bloodType->option_value ?>"><?= $bloodType->option_text ?></option>
-                                <?php }
-                                } ?>
-                            </select>
-
-                        </div>
-
-
-
-
-                        <h5 class="mt-5 mb-3 ml-4">Endereço e contato:</h5>
-
-                        <?php if (isset($_SESSION['Admin']) && $_SESSION['Admin']['hierarchyFunction'] <= 2) { ?>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">CEP:</span>
-                                </div>
-                                <input type="text" id="zipCode" name="zipCode" disabled class="form-control" value="<?= $student->zip_code ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">UF:</span>
-                                </div>
-                                <input type="text" id="uf" name="uf" disabled class="form-control" value="<?= $student->uf ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Município:</span>
-                                </div>
-                                <input type="text" id="county" name="county" disabled class="form-control" value="<?= $student->county ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Bairro:</span>
-                                </div>
-                                <input type="text" id="district" name="district" disabled class="form-control" value="<?= $student->district ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                            <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="addon-wrapping">Endereço:</span>
-                                </div>
-                                <input type="text" id="address" name="address" disabled class="form-control" value="<?= $student->address ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                            </div>
-
-                        <?php } ?>
-
-                        <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="addon-wrapping">Telefone: </span>
-                            </div>
-                            <input id="telephoneNumber" name="telephoneNumber" type="text" disabled class="form-control" value="<?= $student->telephone_number ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                        </div>
-
-                        <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="addon-wrapping">Email: </span>
-                            </div>
-                            <input id="email" name="email" type="text" disabled class="form-control" value="<?= $student->email ?>" aria-label="Username" aria-describedby="addon-wrapping">
-                        </div>
-
-
-                        <h5 class="mt-5 mb-3 ml-4">Status do aluno:</h5>
-
-                        <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="addon-wrapping">Situação atual na escola:</span>
-                            </div>
-
-                            <select id="situationStudentGeneral" name="situationStudentGeneral" disabled class="form-control custom-select">
-                                <option value="<?= $student->general_situation_id ?>"> <?= $student->general_situation ?> </option>
-                                <?php foreach ($this->view->generalSituationStudent as $key => $value) { ?>
-                                    <?php if ($value->option_value != $student->general_situation_id) { ?>
-                                        <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
-                                <?php }
-                                } ?>
-                            </select>
-
-
-                        </div>
-
-                        <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
-
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="addon-wrapping">Situação atual no período letivo:</span>
-                            </div>
-
-                            <select id="situationStudent" name="situationStudent" disabled class="form-control custom-select">
-                                <option value="<?= $this->view->studentDataEnrollment[0]->situation_id ?>"><?= $this->view->studentDataEnrollment[0]->situation ?></option>
-                                <?php foreach ($this->view->studentSituation as $key => $value) { ?>
-                                    <?php if ($value->option_value != $this->view->studentDataEnrollment[0]->situation_id) { ?>
-                                        <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
-                                <?php }
-                                } ?>
-                            </select>
-
-
-                        </div>
-
                     </div>
 
+                    <div class="m-prof-editing"><i class="fas fa-pen"></i> Modo de edição: altere os campos e clique em Salvar.</div>
 
+                    <?php if ($showSummary) {
+                        $absence = $this->view->absenceSummary ?? (object) ['total_faltas' => 0, 'faltas_abonadas' => 0];
+                        $occurrence = $this->view->occurrenceSummary ?? (object) ['total' => 0];
+                        $guardianCount = count($this->view->guardians ?? []);
+                    ?>
+
+                        <div class="m-prof-kpis">
+
+                            <a class="m-prof-kpi" href="#" data-toggle="collapse" data-target="#class-profile-lack">
+                                <span class="m-prof-kpi-icon is-red"><i class="fas fa-user-times"></i></span>
+                                <span><span class="m-prof-kpi-label">Faltas</span><span class="m-prof-kpi-value"><?= (int) $absence->total_faltas ?></span></span>
+                            </a>
+
+                            <a class="m-prof-kpi" href="#" data-toggle="collapse" data-target="#class-profile-medical-certificate">
+                                <span class="m-prof-kpi-icon is-green"><i class="fas fa-file-medical"></i></span>
+                                <span><span class="m-prof-kpi-label">Abonadas</span><span class="m-prof-kpi-value"><?= (int) $absence->faltas_abonadas ?></span></span>
+                            </a>
+
+                            <a class="m-prof-kpi" href="#" data-toggle="collapse" data-target="#class-profile-occurrence">
+                                <span class="m-prof-kpi-icon is-gold"><i class="fas fa-exclamation-triangle"></i></span>
+                                <span><span class="m-prof-kpi-label">Ocorrências</span><span class="m-prof-kpi-value"><?= (int) $occurrence->total ?></span></span>
+                            </a>
+
+                            <a class="m-prof-kpi" href="#" data-toggle="collapse" data-target="#class-profile-guardians">
+                                <span class="m-prof-kpi-icon"><i class="fas fa-id-card-alt"></i></span>
+                                <span><span class="m-prof-kpi-label">Responsáveis</span><span class="m-prof-kpi-value"><?= $guardianCount ?></span></span>
+                            </a>
+
+                        </div>
+
+                    <?php } ?>
+
+                    <section class="m-prof-section">
+
+                        <div class="m-prof-section-head">
+                            <span class="m-prof-section-icon"><i class="fas fa-id-card"></i></span>
+                            <h6>Informações pessoais</h6>
+                        </div>
+
+                        <div class="m-prof-grid">
+
+                            <div class="m-prof-field m-span-2">
+                                <label for="name">Nome completo</label>
+                                <input type="text" id="name" name="name" disabled class="form-control" value="<?= $student->name ?>">
+                            </div>
+
+                            <?php if ($isManager) { ?>
+
+                                <div class="m-prof-field">
+                                    <label for="cpf">CPF</label>
+                                    <input type="text" id="cpf" name="cpf" disabled class="form-control" value="<?= $student->cpf ?>">
+                                </div>
+
+                                <div class="m-prof-field">
+                                    <label for="birthDate">Data de nascimento</label>
+                                    <input type="date" id="birthDate" name="birthDate" disabled class="form-control" value="<?= $student->birth_date ?>" max="2006-01-31" min="1940-01-31">
+                                </div>
+
+                                <div class="m-prof-field m-span-2">
+                                    <label for="motherName">Nome da mãe</label>
+                                    <input type="text" id="motherName" name="motherName" disabled class="form-control" value="<?= $student->mother ?>">
+                                </div>
+
+                                <div class="m-prof-field m-span-2">
+                                    <label for="fatherName">Nome do pai</label>
+                                    <input type="text" id="fatherName" name="fatherName" disabled class="form-control" value="<?= $student->father ?>">
+                                </div>
+
+                                <div class="m-prof-field">
+                                    <label for="sex">Sexo</label>
+                                    <select id="sex" name="sex" disabled class="form-control custom-select">
+                                        <option value="<?= $student->sex_id ?>"><?= $student->sex ?></option>
+                                        <?php foreach ($this->view->availableSex as $key => $sex) { ?>
+                                            <?php if ($sex->option_value != $student->sex_id) { ?>
+                                                <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
+                                        <?php }
+                                        } ?>
+                                    </select>
+                                </div>
+
+                                <div class="m-prof-field">
+                                    <label for="nationality">Nacionalidade</label>
+                                    <input type="text" id="nationality" name="nationality" disabled class="form-control" value="<?= $student->nacionality ?>">
+                                </div>
+
+                                <div class="m-prof-field">
+                                    <label for="naturalness">Naturalidade</label>
+                                    <input type="text" id="naturalness" name="naturalness" disabled class="form-control" value="<?= $student->naturalness ?>">
+                                </div>
+
+                                <div class="m-prof-field">
+                                    <label for="pcd">PcD</label>
+                                    <select id="pcd" name="pcd" disabled class="form-control custom-select">
+                                        <option value="<?= $student->pcd_id ?>"><?= $student->pcd ?></option>
+                                        <?php foreach ($this->view->pcd as $key => $pcd) { ?>
+                                            <?php if ($pcd->option_value != $student->pcd_id) { ?>
+                                                <option value="<?= $pcd->option_value ?>"><?= $pcd->option_text ?></option>
+                                        <?php }
+                                        } ?>
+                                    </select>
+                                </div>
+
+                            <?php } ?>
+
+                            <div class="m-prof-field">
+                                <label for="bloodType">Tipo sanguíneo</label>
+                                <select id="bloodType" name="bloodType" disabled class="form-control custom-select">
+                                    <option value="<?= $student->blood_type_id ?>"><?= $student->blood_type ?></option>
+                                    <?php foreach ($this->view->bloodType as $key => $bloodType) { ?>
+                                        <?php if ($bloodType->option_value != $student->blood_type_id) { ?>
+                                            <option value="<?= $bloodType->option_value ?>"><?= $bloodType->option_text ?></option>
+                                    <?php }
+                                    } ?>
+                                </select>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="m-prof-section">
+
+                        <div class="m-prof-section-head">
+                            <span class="m-prof-section-icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <h6>Endereço e contato</h6>
+                        </div>
+
+                        <div class="m-prof-grid">
+
+                            <div class="m-prof-field">
+                                <label for="telephoneNumber">Telefone</label>
+                                <input id="telephoneNumber" name="telephoneNumber" type="text" disabled class="form-control" value="<?= $student->telephone_number ?>">
+                            </div>
+
+                            <div class="m-prof-field m-span-2">
+                                <label for="email">E-mail</label>
+                                <input id="email" name="email" type="text" disabled class="form-control" value="<?= $student->email ?>">
+                            </div>
+
+                            <?php if ($isManager) { ?>
+
+                                <div class="m-prof-field">
+                                    <label for="zipCode">CEP</label>
+                                    <input type="text" id="zipCode" name="zipCode" disabled class="form-control" value="<?= $student->zip_code ?>">
+                                </div>
+
+                                <div class="m-prof-field">
+                                    <label for="uf">UF</label>
+                                    <input type="text" id="uf" name="uf" disabled class="form-control" value="<?= $student->uf ?>">
+                                </div>
+
+                                <div class="m-prof-field">
+                                    <label for="county">Município</label>
+                                    <input type="text" id="county" name="county" disabled class="form-control" value="<?= $student->county ?>">
+                                </div>
+
+                                <div class="m-prof-field">
+                                    <label for="district">Bairro</label>
+                                    <input type="text" id="district" name="district" disabled class="form-control" value="<?= $student->district ?>">
+                                </div>
+
+                                <div class="m-prof-field m-span-2">
+                                    <label for="address">Endereço</label>
+                                    <input type="text" id="address" name="address" disabled class="form-control" value="<?= $student->address ?>">
+                                </div>
+
+                            <?php } ?>
+
+                        </div>
+
+                    </section>
+
+                    <section class="m-prof-section">
+
+                        <div class="m-prof-section-head">
+                            <span class="m-prof-section-icon"><i class="fas fa-user-graduate"></i></span>
+                            <h6>Situação e acesso</h6>
+                        </div>
+
+                        <div class="m-prof-grid">
+
+                            <div class="m-prof-field">
+                                <label for="situationStudentGeneral">Situação na escola</label>
+                                <select id="situationStudentGeneral" name="situationStudentGeneral" disabled class="form-control custom-select">
+                                    <option value="<?= $student->general_situation_id ?>"><?= $student->general_situation ?></option>
+                                    <?php foreach ($this->view->generalSituationStudent as $key => $value) { ?>
+                                        <?php if ($value->option_value != $student->general_situation_id) { ?>
+                                            <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
+                                    <?php }
+                                    } ?>
+                                </select>
+                            </div>
+
+                            <div class="m-prof-field">
+                                <label for="situationStudent">Situação no período letivo</label>
+                                <select id="situationStudent" name="situationStudent" disabled class="form-control custom-select">
+                                    <option value="<?= $enr->situation_id ?>"><?= $enr->situation ?></option>
+                                    <?php foreach ($this->view->studentSituation as $key => $value) { ?>
+                                        <?php if ($value->option_value != $enr->situation_id) { ?>
+                                            <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
+                                    <?php }
+                                    } ?>
+                                </select>
+                            </div>
+
+                            <?php if ($isManager) { ?>
+
+                                <div class="m-prof-field">
+                                    <label for="accessCode">Código de acesso ao portal</label>
+                                    <div class="m-prof-secret">
+                                        <input id="accessCode" name="accessCode" type="password" disabled class="form-control" value="<?= $student->access_code ?>" maxlength="30">
+                                        <div class="input-group-accessCode" title="Mostrar/ocultar"><i class="fas fa-eye-slash"></i></div>
+                                    </div>
+                                </div>
+
+                                <div class="m-prof-field">
+                                    <label>Matriculado no colégio em</label>
+                                    <input type="text" disabled class="form-control" value="<?= date("d/m/Y - H:i", strtotime($student->initial_enrollment_date)) ?>" style="pointer-events:none">
+                                </div>
+
+                            <?php } ?>
+
+                        </div>
+
+                    </section>
 
                 <?php } ?>
 
                 </form>
-
 
             </div>
 
