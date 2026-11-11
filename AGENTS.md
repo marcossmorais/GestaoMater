@@ -28,6 +28,7 @@ vendor/MF             # micro-framework do projeto (versionado)
 ```bash
 cp .env.example .env && docker compose up -d --build   # app em :8000, db em :5433
 docker compose down -v && docker compose up -d          # recria banco
+MSYS_NO_PATHCONV=1 docker exec mater-app php /var/www/html/database/migrate.php   # aplica migrações pendentes em banco existente (--status, --baseline=NN)
 MSYS_NO_PATHCONV=1 docker exec mater-app sh /var/www/html/docker/smoke-test.sh           # leitura
 MSYS_NO_PATHCONV=1 docker exec mater-app sh /var/www/html/docker/smoke-test.sh --writes  # escrita (só dev)
 MSYS_NO_PATHCONV=1 docker exec mater-app php /var/www/html/tests/GradeSimulatorTest.php  # testes unitários (tests/*Test.php)
@@ -45,7 +46,8 @@ Smoke test precisa do login por código: suba com `CLERK_*` vazios. Antes de abr
 - Não commitar/pushar sem o usuário pedir.
 
 ## Banco
-- Mudança de schema = **novo arquivo** `database/NN_nome.sql` (próximo número) + montar em `docker-compose.yml`. Nunca editar migração já aplicada.
+- Mudança de schema = **novo arquivo** `database/NN_nome.sql` (próximo número) + montar em `docker-compose.yml`. Nunca editar migração já aplicada (o `database/migrate.php` avisa pelo checksum).
+- Banco existente (produção) recebe migrações só pelo `database/migrate.php` (`schema_migrations`); o initdb do Docker só roda na criação do volume.
 - Idempotente (`IF NOT EXISTS`). Compatível com Supabase.
 - Toda tabela sensível nova (nota, falta, documento) deve gravar trilha de auditoria (ver proposta §05).
 
