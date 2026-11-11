@@ -141,9 +141,9 @@ class AdminStudentController extends Action
 
         $this->view->occurrences = $Occurrence->getByEnrollment($enrollmentId);
 
-        $this->view->occurrenceSummary = $Occurrence->getSummaryByEnrollment($enrollmentId);
-
-        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $this->view->occurrenceSummary = $Occurrence->getSummaryByEnrollment($enrollmentId);
+
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
         $this->view->guardians = $Guardian->getByStudent($this->view->studentDataEnrollment[0]->id);
 
         $this->render('student/components/modalStudentProfile', 'SimpleLayout');
