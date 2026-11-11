@@ -1,5 +1,7 @@
 <IfModule mod_rewrite.c>
 	RewriteEngine on
+	# atestados antigos gravados em public/: nunca servir direto (dado de saúde; hoje ficam em storage/)
+	RewriteRule ^assets/uploads/atestados/ - [F,L]
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule ^(.*)$ index.php/$1 [L]
