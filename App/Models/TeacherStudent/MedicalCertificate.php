@@ -152,6 +152,7 @@ class MedicalCertificate extends Model
                     faltas_abonadas,
                     observacao,
                     anexo_documento,
+                    anexo_privado,
                     registrado_por
                 ) VALUES (
                     :fk_id_matricula,
@@ -168,6 +169,7 @@ class MedicalCertificate extends Model
                     :faltas_abonadas,
                     :observacao,
                     :anexo_documento,
+                    :anexo_privado,
                     :registrado_por
                 ) RETURNING id_atestado"
             );
@@ -186,6 +188,8 @@ class MedicalCertificate extends Model
             $stmt->bindValue(':faltas_abonadas', (int) ($data['faltas_abonadas'] ?? 0), \PDO::PARAM_INT);
             $stmt->bindValue(':observacao', !empty($data['observacao']) ? $data['observacao'] : null);
             $stmt->bindValue(':anexo_documento', !empty($data['anexo_documento']) ? $data['anexo_documento'] : null);
+            // anexo enviado pelo admin também fica fora de public/ (rota /admin/pedagogico/atestado/anexo)
+            $stmt->bindValue(':anexo_privado', !empty($data['anexo_documento']), \PDO::PARAM_BOOL);
             $stmt->bindValue(':registrado_por', $data['registrado_por'] ?? 'Secretaria Escolar');
 
             $stmt->execute();
@@ -239,10 +243,17 @@ class MedicalCertificate extends Model
      * @param int $id
      * @return bool
      */
+    /**
+     * Exclui o atestado e devolve o nome do anexo privado (para apagar do disco), ou null
+     */
     public function delete($id)
     {
-        $stmt = $this->db->prepare("DELETE FROM atestado_medico WHERE id_atestado = :id");
+        $stmt = $this->db->prepare(
+            "DELETE FROM atestado_medico WHERE id_atestado = :id
+             RETURNING CASE WHEN anexo_privado THEN anexo_documento END"
+        );
         $stmt->bindValue(':id', (int) $id, \PDO::PARAM_INT);
-        return $stmt->execute();
+        $stmt->execute();
+        return $stmt->fetchColumn() ?: null;
     }
 }

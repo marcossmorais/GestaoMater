@@ -141,9 +141,9 @@ class AdminStudentController extends Action
 
         $this->view->occurrences = $Occurrence->getByEnrollment($enrollmentId);
 
-        $this->view->occurrenceSummary = $Occurrence->getSummaryByEnrollment($enrollmentId);
-
-        $Guardian = Container::getModel('TeacherStudent\\Guardian');
+        $this->view->occurrenceSummary = $Occurrence->getSummaryByEnrollment($enrollmentId);
+
+        $Guardian = Container::getModel('TeacherStudent\\Guardian');
         $this->view->guardians = $Guardian->getByStudent($this->view->studentDataEnrollment[0]->id);
 
         $this->render('student/components/modalStudentProfile', 'SimpleLayout');
@@ -378,16 +378,34 @@ class AdminStudentController extends Action
             return;
         }
 
+        // anexo com dado de saúde: fora de public/, como no envio pelo aluno (StudentAttendance)
+        $Attendance = '\\App\\Models\\Student\\StudentAttendance';
+        $upload = $_FILES['attachment'] ?? null;
         $fileName = null;
-        if (!empty($_FILES['attachment']['name'])) {
-            $uploadDir = dirname(__DIR__, 2) . '/public/assets/uploads/atestados/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
+
+        if ($upload && ($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+            if (in_array($upload['error'], [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true) || $upload['size'] > $Attendance::MAX_BYTES) {
+                http_response_code(422);
+                echo json_encode(['error' => 'O anexo passa de 5 MB.']);
+                return;
             }
-            $ext = strtolower(pathinfo($_FILES['attachment']['name'], PATHINFO_EXTENSION));
-            if (in_array($ext, ['pdf', 'jpg', 'jpeg', 'png', 'webp'])) {
-                $fileName = 'atestado_' . $enrollmentId . '_' . time() . '.' . $ext;
-                move_uploaded_file($_FILES['attachment']['tmp_name'], $uploadDir . $fileName);
+
+            // o tipo vem do conteúdo, não do nome; o nome no disco é aleatório
+            $mime = $upload['error'] === UPLOAD_ERR_OK ? (new \finfo(FILEINFO_MIME_TYPE))->file($upload['tmp_name']) : null;
+            if (!isset($Attendance::MIME_TYPES[$mime])) {
+                http_response_code(422);
+                echo json_encode(['error' => 'Anexo inválido: envie PDF, JPG ou PNG.']);
+                return;
+            }
+
+            $dir = $Attendance::storageDir();
+            $fileName = bin2hex(random_bytes(16)) . '.' . $Attendance::MIME_TYPES[$mime];
+
+            if ((!is_dir($dir) && !mkdir($dir, 0750, true) && !is_dir($dir)) || !move_uploaded_file($upload['tmp_name'], $dir . $fileName)) {
+                error_log('atestado (admin): não foi possível gravar o anexo');
+                http_response_code(500);
+                echo json_encode(['error' => 'Não foi possível salvar o anexo.']);
+                return;
             }
         }
 
@@ -443,7 +461,14 @@ class AdminStudentController extends Action
             return;
         }
         $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
-        $MedicalCertificate->delete($id);
+        $file = $MedicalCertificate->delete($id);
+
+        // atestado excluído não deixa documento de saúde para trás no disco
+        if ($file) {
+            $path = \App\Models\Student\StudentAttendance::storageDir() . basename($file);
+            if (is_file($path) && !unlink($path)) error_log('atestado (admin): anexo não removido do disco');
+        }
+
         echo json_encode(['status' => 'success']);
     }
 

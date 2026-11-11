@@ -1243,9 +1243,9 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                     <td>
 
-                                                        <?php if (!empty($cert->anexo_documento)) { ?>
+                                                        <?php if (!empty($cert->anexo_documento) && !empty($cert->anexo_privado)) { ?>
 
-                                                            <a href="<?= !empty($cert->anexo_privado) ? '/admin/pedagogico/atestado/anexo?id=' . (int) $cert->id_atestado : '/assets/uploads/atestados/' . htmlspecialchars($cert->anexo_documento) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                            <a href="/admin/pedagogico/atestado/anexo?id=<?= (int) $cert->id_atestado ?>" target="_blank" class="btn btn-sm btn-outline-primary">
 
                                                                 <i class="fas fa-paperclip mr-1"></i>Ver
 
@@ -1407,7 +1407,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                         <div class="custom-file">
 
-                                            <input type="file" class="custom-file-input" name="attachment" id="certAttachment" accept=".pdf,image/*">
+                                            <input type="file" class="custom-file-input" name="attachment" id="certAttachment" accept=".pdf,.jpg,.jpeg,.png">
 
                                             <label class="custom-file-label" for="certAttachment" data-browse="Escolher">Selecionar arquivo...</label>
 
@@ -1959,186 +1959,186 @@ require __DIR__ . '../../../../../config/variables.php';
 
 
 
-            <!-- SEÇÃO DE RESPONSÁVEIS E AUTORIZADOS PARA PORTARIA -->
-            <div class="col-lg-11 mx-auto collapse" id="class-profile-guardians" data-parent="#main-accordion-student">
-
-                <div class="accordion" id="accordion-guardians">
-
-                    <div class="col-lg-12 mb-3">
-                        <div class="row d-flex align-items-center p-0">
-                            <div class="col-lg-7 p-0">
-                                <h5 class="mt-2"><i class="fas fa-shield-alt text-success mr-2"></i>Responsáveis & Liberação na Portaria</h5>
-                            </div>
-                            <div class="col-lg-5 col-12 p-0">
-                                <div class="row collapse-options-container">
-                                    <a class="font-weight-bold" aria-expanded="true" data-toggle="collapse" data-target="#guardians-list">
-                                        <span><i class="fas fa-users mr-2"></i>Autorizados</span>
-                                    </a>
-                                    <a class="collapsed font-weight-bold text-success" aria-expanded="false" data-toggle="collapse" data-target="#guardians-add">
-                                        <span><i class="fas fa-user-plus mr-2"></i>Novo Autorizado</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-12 p-0">
-
-                        <!-- LISTA DE RESPONSÁVEIS / AUTORIZADOS -->
-                        <div class="collapse show" id="guardians-list" data-parent="#accordion-guardians">
-                            <div class="row" id="containerGuardiansList">
-                                <?php if (!empty($this->view->guardians)) { 
-                                    foreach ($this->view->guardians as $g) { 
-                                        $cleanPhone = preg_replace('/\D/', '', $g->telefone);
-                                    ?>
-                                        <div class="col-md-6 mb-3" data-guardian-card="<?= $g->id_responsavel ?>">
-                                            <div class="card p-3 h-100 shadow-sm border" style="border-radius: 12px; border-left: 4px solid <?= $g->autorizado_buscar ? '#16a34a' : '#dc2626' ?> !important;">
-                                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                                    <div>
-                                                        <h6 class="mb-0 font-weight-bold text-dark"><?= htmlspecialchars($g->nome) ?></h6>
-                                                        <span class="badge badge-light border mt-1"><?= htmlspecialchars($g->parentesco) ?></span>
-                                                        <?php if ($g->responsavel_pedagogico) { ?><span class="badge badge-primary">Pedagógico</span><?php } ?>
-                                                        <?php if ($g->responsavel_financeiro) { ?><span class="badge badge-info">Financeiro</span><?php } ?>
-                                                    </div>
-                                                    <div>
-                                                        <?php if ($g->autorizado_buscar) { ?>
-                                                            <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Autorizado a Buscar</span>
-                                                        <?php } else { ?>
-                                                            <span class="badge badge-danger"><i class="fas fa-ban mr-1"></i> Não Autorizado</span>
-                                                        <?php } ?>
-                                                    </div>
-                                                </div>
-
-                                                <div class="my-2 small text-muted">
-                                                    <div><i class="fas fa-phone-alt mr-2 text-primary"></i><strong>Telefone:</strong> <?= htmlspecialchars($g->telefone) ?>
-                                                        <?php if ($cleanPhone) { ?>
-                                                            <a href="https://api.whatsapp.com/send?phone=55<?= $cleanPhone ?>" target="_blank" class="ml-2 text-success font-weight-bold"><i class="fab fa-whatsapp mr-1"></i>WhatsApp</a>
-                                                        <?php } ?>
-                                                    </div>
-                                                    <?php if (!empty($g->cpf)) { ?>
-                                                        <div><i class="fas fa-id-card mr-2 text-secondary"></i><strong>CPF:</strong> <?= htmlspecialchars($g->cpf) ?> <?php if (!empty($g->rg)) { ?> · <strong>RG:</strong> <?= htmlspecialchars($g->rg) ?><?php } ?></div>
-                                                    <?php } ?>
-                                                    <?php if (!empty($g->email)) { ?>
-                                                        <div><i class="fas fa-envelope mr-2 text-secondary"></i><strong>E-mail:</strong> <?= htmlspecialchars($g->email) ?></div>
-                                                    <?php } ?>
-                                                </div>
-
-                                                <?php if (!empty($g->observacao_restricao)) { ?>
-                                                    <div class="p-2 my-2 rounded bg-light border small text-dark">
-                                                        <i class="fas fa-info-circle text-info mr-1"></i><?= htmlspecialchars($g->observacao_restricao) ?>
-                                                    </div>
-                                                <?php } ?>
-
-                                                <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleGuardianStatus(<?= $g->id_responsavel ?>)">
-                                                        <i class="fas fa-sync-alt mr-1"></i><?= $g->autorizado_buscar ? 'Bloquear Retirada' : 'Autorizar Retirada' ?>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteGuardian(<?= $g->id_responsavel ?>)" title="Excluir cadastro">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } 
-                                } else { ?>
-                                    <div class="col-12 py-5 text-center text-muted" id="emptyGuardiansBox">
-                                        <i class="fas fa-user-shield fa-3x mb-2 text-secondary"></i>
-                                        <h6>Nenhum responsável ou autorização de portaria cadastrada.</h6>
-                                        <p class="small">Cadastre os pais, parentes ou transporte escolar autorizados a retirar o aluno.</p>
-                                    </div>
-                                <?php } ?>
-                            </div>
-                        </div>
-
-                        <!-- FORMULÁRIO DE CADASTRO DE RESPONSÁVEL / PORTARIA -->
-                        <div class="collapse card p-4 shadow-sm" id="guardians-add" data-parent="#accordion-guardians" style="border-radius: 12px;">
-                            <h6 class="font-weight-bold text-success mb-3"><i class="fas fa-user-plus mr-2"></i>Cadastrar Responsável ou Pessoa Autorizada</h6>
-                            <form id="formGuardian">
-                                <input type="hidden" name="studentId" value="<?= $this->view->studentDataEnrollment[0]->id ?>">
-
-                                <div class="form-row">
-                                    <div class="form-group col-md-8">
-                                        <label class="font-weight-bold">Nome Completo *</label>
-                                        <input type="text" class="form-control" name="name" placeholder="Ex: Ana Lúcia Alves Souza ou Jorge Pereira (Van)" required>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="font-weight-bold">Parentesco / Vínculo *</label>
-                                        <select class="form-control custom-select" name="relationship" required>
-                                            <option value="Mãe">Mãe</option>
-                                            <option value="Pai">Pai</option>
-                                            <option value="Avô / Avó">Avô / Avó</option>
-                                            <option value="Tio(a)">Tio(a)</option>
-                                            <option value="Irmão(ã) Maior">Irmão(ã) Maior</option>
-                                            <option value="Padrasto / Madrasta">Padrasto / Madrasta</option>
-                                            <option value="Motorista de Van Escolar">Motorista de Van Escolar</option>
-                                            <option value="Outro Autorizado">Outro Autorizado</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-md-4">
-                                        <label class="font-weight-bold">Telefone / WhatsApp *</label>
-                                        <input type="text" class="form-control" name="phone" placeholder="(11) 98765-4321" required>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label>CPF</label>
-                                        <input type="text" class="form-control" name="cpf" placeholder="000.000.000-00">
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label>RG</label>
-                                        <input type="text" class="form-control" name="rg" placeholder="00.000.000-0">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>E-mail (Opcional)</label>
-                                    <input type="email" class="form-control" name="email" placeholder="responsavel@email.com">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Observações / Dados do Veículo / Restrições de Portaria</label>
-                                    <textarea class="form-control" name="observations" rows="2" placeholder="Ex: Autorizado a buscar apenas às sextas-feiras. Van Mercedes Sprinter Branca placa BRA-2E19."></textarea>
-                                </div>
-
-                                <div class="form-row mb-3">
-                                    <div class="col-md-4">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="guardAuthorized" name="authorizedPickup" value="1" checked>
-                                            <label class="custom-control-label font-weight-bold text-success" for="guardAuthorized">
-                                                <i class="fas fa-check-circle mr-1"></i> Autorizado a Retirar no Portão
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="guardPedagogical" name="pedagogicalResp" value="1">
-                                            <label class="custom-control-label font-weight-bold" for="guardPedagogical">Responsável Pedagógico</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="guardFinancial" name="financialResp" value="1">
-                                            <label class="custom-control-label font-weight-bold" for="guardFinancial">Responsável Financeiro</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex justify-content-end align-items-center mt-3">
-                                    <button type="button" class="btn btn-light mr-2" data-toggle="collapse" data-target="#guardians-list">Cancelar</button>
-                                    <button type="submit" class="btn btn-success font-weight-bold" id="btnSaveGuardian">
-                                        <i class="fas fa-save mr-1"></i> Salvar Autorização
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+            <!-- SEÇÃO DE RESPONSÁVEIS E AUTORIZADOS PARA PORTARIA -->
+            <div class="col-lg-11 mx-auto collapse" id="class-profile-guardians" data-parent="#main-accordion-student">
+
+                <div class="accordion" id="accordion-guardians">
+
+                    <div class="col-lg-12 mb-3">
+                        <div class="row d-flex align-items-center p-0">
+                            <div class="col-lg-7 p-0">
+                                <h5 class="mt-2"><i class="fas fa-shield-alt text-success mr-2"></i>Responsáveis & Liberação na Portaria</h5>
+                            </div>
+                            <div class="col-lg-5 col-12 p-0">
+                                <div class="row collapse-options-container">
+                                    <a class="font-weight-bold" aria-expanded="true" data-toggle="collapse" data-target="#guardians-list">
+                                        <span><i class="fas fa-users mr-2"></i>Autorizados</span>
+                                    </a>
+                                    <a class="collapsed font-weight-bold text-success" aria-expanded="false" data-toggle="collapse" data-target="#guardians-add">
+                                        <span><i class="fas fa-user-plus mr-2"></i>Novo Autorizado</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 p-0">
+
+                        <!-- LISTA DE RESPONSÁVEIS / AUTORIZADOS -->
+                        <div class="collapse show" id="guardians-list" data-parent="#accordion-guardians">
+                            <div class="row" id="containerGuardiansList">
+                                <?php if (!empty($this->view->guardians)) { 
+                                    foreach ($this->view->guardians as $g) { 
+                                        $cleanPhone = preg_replace('/\D/', '', $g->telefone);
+                                    ?>
+                                        <div class="col-md-6 mb-3" data-guardian-card="<?= $g->id_responsavel ?>">
+                                            <div class="card p-3 h-100 shadow-sm border" style="border-radius: 12px; border-left: 4px solid <?= $g->autorizado_buscar ? '#16a34a' : '#dc2626' ?> !important;">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <h6 class="mb-0 font-weight-bold text-dark"><?= htmlspecialchars($g->nome) ?></h6>
+                                                        <span class="badge badge-light border mt-1"><?= htmlspecialchars($g->parentesco) ?></span>
+                                                        <?php if ($g->responsavel_pedagogico) { ?><span class="badge badge-primary">Pedagógico</span><?php } ?>
+                                                        <?php if ($g->responsavel_financeiro) { ?><span class="badge badge-info">Financeiro</span><?php } ?>
+                                                    </div>
+                                                    <div>
+                                                        <?php if ($g->autorizado_buscar) { ?>
+                                                            <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Autorizado a Buscar</span>
+                                                        <?php } else { ?>
+                                                            <span class="badge badge-danger"><i class="fas fa-ban mr-1"></i> Não Autorizado</span>
+                                                        <?php } ?>
+                                                    </div>
+                                                </div>
+
+                                                <div class="my-2 small text-muted">
+                                                    <div><i class="fas fa-phone-alt mr-2 text-primary"></i><strong>Telefone:</strong> <?= htmlspecialchars($g->telefone) ?>
+                                                        <?php if ($cleanPhone) { ?>
+                                                            <a href="https://api.whatsapp.com/send?phone=55<?= $cleanPhone ?>" target="_blank" class="ml-2 text-success font-weight-bold"><i class="fab fa-whatsapp mr-1"></i>WhatsApp</a>
+                                                        <?php } ?>
+                                                    </div>
+                                                    <?php if (!empty($g->cpf)) { ?>
+                                                        <div><i class="fas fa-id-card mr-2 text-secondary"></i><strong>CPF:</strong> <?= htmlspecialchars($g->cpf) ?> <?php if (!empty($g->rg)) { ?> · <strong>RG:</strong> <?= htmlspecialchars($g->rg) ?><?php } ?></div>
+                                                    <?php } ?>
+                                                    <?php if (!empty($g->email)) { ?>
+                                                        <div><i class="fas fa-envelope mr-2 text-secondary"></i><strong>E-mail:</strong> <?= htmlspecialchars($g->email) ?></div>
+                                                    <?php } ?>
+                                                </div>
+
+                                                <?php if (!empty($g->observacao_restricao)) { ?>
+                                                    <div class="p-2 my-2 rounded bg-light border small text-dark">
+                                                        <i class="fas fa-info-circle text-info mr-1"></i><?= htmlspecialchars($g->observacao_restricao) ?>
+                                                    </div>
+                                                <?php } ?>
+
+                                                <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleGuardianStatus(<?= $g->id_responsavel ?>)">
+                                                        <i class="fas fa-sync-alt mr-1"></i><?= $g->autorizado_buscar ? 'Bloquear Retirada' : 'Autorizar Retirada' ?>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteGuardian(<?= $g->id_responsavel ?>)" title="Excluir cadastro">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } 
+                                } else { ?>
+                                    <div class="col-12 py-5 text-center text-muted" id="emptyGuardiansBox">
+                                        <i class="fas fa-user-shield fa-3x mb-2 text-secondary"></i>
+                                        <h6>Nenhum responsável ou autorização de portaria cadastrada.</h6>
+                                        <p class="small">Cadastre os pais, parentes ou transporte escolar autorizados a retirar o aluno.</p>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+
+                        <!-- FORMULÁRIO DE CADASTRO DE RESPONSÁVEL / PORTARIA -->
+                        <div class="collapse card p-4 shadow-sm" id="guardians-add" data-parent="#accordion-guardians" style="border-radius: 12px;">
+                            <h6 class="font-weight-bold text-success mb-3"><i class="fas fa-user-plus mr-2"></i>Cadastrar Responsável ou Pessoa Autorizada</h6>
+                            <form id="formGuardian">
+                                <input type="hidden" name="studentId" value="<?= $this->view->studentDataEnrollment[0]->id ?>">
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-8">
+                                        <label class="font-weight-bold">Nome Completo *</label>
+                                        <input type="text" class="form-control" name="name" placeholder="Ex: Ana Lúcia Alves Souza ou Jorge Pereira (Van)" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label class="font-weight-bold">Parentesco / Vínculo *</label>
+                                        <select class="form-control custom-select" name="relationship" required>
+                                            <option value="Mãe">Mãe</option>
+                                            <option value="Pai">Pai</option>
+                                            <option value="Avô / Avó">Avô / Avó</option>
+                                            <option value="Tio(a)">Tio(a)</option>
+                                            <option value="Irmão(ã) Maior">Irmão(ã) Maior</option>
+                                            <option value="Padrasto / Madrasta">Padrasto / Madrasta</option>
+                                            <option value="Motorista de Van Escolar">Motorista de Van Escolar</option>
+                                            <option value="Outro Autorizado">Outro Autorizado</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label class="font-weight-bold">Telefone / WhatsApp *</label>
+                                        <input type="text" class="form-control" name="phone" placeholder="(11) 98765-4321" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>CPF</label>
+                                        <input type="text" class="form-control" name="cpf" placeholder="000.000.000-00">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>RG</label>
+                                        <input type="text" class="form-control" name="rg" placeholder="00.000.000-0">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>E-mail (Opcional)</label>
+                                    <input type="email" class="form-control" name="email" placeholder="responsavel@email.com">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Observações / Dados do Veículo / Restrições de Portaria</label>
+                                    <textarea class="form-control" name="observations" rows="2" placeholder="Ex: Autorizado a buscar apenas às sextas-feiras. Van Mercedes Sprinter Branca placa BRA-2E19."></textarea>
+                                </div>
+
+                                <div class="form-row mb-3">
+                                    <div class="col-md-4">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="guardAuthorized" name="authorizedPickup" value="1" checked>
+                                            <label class="custom-control-label font-weight-bold text-success" for="guardAuthorized">
+                                                <i class="fas fa-check-circle mr-1"></i> Autorizado a Retirar no Portão
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="guardPedagogical" name="pedagogicalResp" value="1">
+                                            <label class="custom-control-label font-weight-bold" for="guardPedagogical">Responsável Pedagógico</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="guardFinancial" name="financialResp" value="1">
+                                            <label class="custom-control-label font-weight-bold" for="guardFinancial">Responsável Financeiro</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end align-items-center mt-3">
+                                    <button type="button" class="btn btn-light mr-2" data-toggle="collapse" data-target="#guardians-list">Cancelar</button>
+                                    <button type="submit" class="btn btn-success font-weight-bold" id="btnSaveGuardian">
+                                        <i class="fas fa-save mr-1"></i> Salvar Autorização
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
             <div class="col-lg-11 mx-auto collapse" id="class-student-profile-average" data-parent="#main-accordion-student">
 
                 <div class="col-lg-12 mb-3">
@@ -2509,7 +2509,7 @@ require __DIR__ . '../../../../../config/variables.php';
                         </td>
                         <td><span class="badge badge-success">${c.status || 'Aprovado'}</span></td>
                         <td>
-                            ${c.anexo_documento ? `<a href="${c.anexo_privado ? `/admin/pedagogico/atestado/anexo?id=${c.id_atestado}` : `/assets/uploads/atestados/${c.anexo_documento}`}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-paperclip mr-1"></i>Ver</a>` : '<small class="text-muted">Sem anexo</small>'}
+                            ${c.anexo_documento && c.anexo_privado ? `<a href="/admin/pedagogico/atestado/anexo?id=${parseInt(c.id_atestado, 10)}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-paperclip mr-1"></i>Ver</a>` : '<small class="text-muted">Sem anexo</small>'}
                         </td>
                         <td class="text-center">
                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMedicalCertificate(${c.id_atestado})" title="Excluir atestado">
