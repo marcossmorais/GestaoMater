@@ -33,28 +33,28 @@ class AdminController extends Action
 
         if (count($auth) != 1) {
 
+            \App\Auth\PortalAccount::logAdminFailure('dados-incorretos');
             header('Location: /admin?error=dados-incorretos');
 
         } else {
 
             if ($account_status[0]->account_status == 1) {
 
-                if (session_status() === PHP_SESSION_NONE) session_start();
-
                 $adminName = explode(" ", $auth[0]->name);
 
-                $_SESSION['Admin'] = [
+                \App\Auth\PortalAccount::open('admin', [
                     'id' => $auth[0]->id,
                     'name' => implode(' ', array_slice($adminName, 0, 3)),
                     'profilePhoto' => $auth[0]->profile_photo,
                     'hierarchyFunction' => $auth[0]->hierarchy_function
-                ];
+                ]);
 
                 header('Location: /admin/home');
 
             } else {
 
-                header("Location: /admin?error=Conta desativada");
+                \App\Auth\PortalAccount::logAdminFailure('conta-desativada');
+                header("Location: /admin?error=conta-desativada");
             }
         }
     }

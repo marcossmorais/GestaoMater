@@ -1,14 +1,14 @@
 <?php
-// Tela de login compartilhada pelos 3 portais. Espera $loginPortal = 'admin' | 'docente' | 'aluno'
+// Tela de login dos portais. Espera $loginPortal = 'admin' | 'docente' | 'aluno'
+// O admin tem tela própria (sem abas, sem cadastro); docente e aluno alternam entre si.
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-$homes = ['Admin' => '/admin/home', 'Teacher' => '/portal-docente/home', 'Student' => '/portal-aluno/home'];
-foreach ($homes as $sessionKey => $home) {
-    if (isset($_SESSION[$sessionKey])) {
-        header("Location: $home");
-        exit;
-    }
+// só pula o login se já houver sessão deste mesmo portal
+$sessionKey = \App\Auth\PortalAccount::SESSION_KEYS[$loginPortal];
+if (isset($_SESSION[$sessionKey])) {
+    header('Location: ' . \App\Auth\PortalAccount::config($loginPortal)['home']);
+    exit;
 }
 
 require __DIR__ . '/../../config/variables.php';
@@ -17,7 +17,7 @@ $portals = [
     'admin' => [
         'tab' => 'Admin', 'url' => '/admin', 'action' => '/admin/login', 'title' => 'Portal da administração',
         'art' => 'admin.svg', 'headline' => 'Gestão da escola em um só lugar',
-        'text' => 'Turmas, matrículas, professores, períodos letivos e rematrícula.',
+        'text' => 'Turmas, matrículas, professores e períodos letivos.',
     ],
     'docente' => [
         'tab' => 'Docente', 'url' => '/portal-docente', 'action' => '/portal-docente/login', 'title' => 'Portal do docente',
@@ -31,6 +31,8 @@ $portals = [
     ],
 ];
 $portal = $portals[$loginPortal];
+$isAdmin = $loginPortal === 'admin';
+$tabs = $isAdmin ? [] : array_diff_key($portals, ['admin' => true]);
 $clerkEnabled = \App\Auth\Clerk::enabled();
 $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) : null;
 ?>
@@ -68,11 +70,13 @@ $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) 
 
                 <a class="back" href="/">&larr; Voltar ao início</a>
 
-                <nav class="tabs" aria-label="Portais">
-                    <?php foreach ($portals as $key => $p) { ?>
-                        <a href="<?= $p['url'] ?>" class="<?= $key === $loginPortal ? 'active' : '' ?>"><?= $p['tab'] ?></a>
-                    <?php } ?>
-                </nav>
+                <?php if ($tabs) { ?>
+                    <nav class="tabs" aria-label="Portais">
+                        <?php foreach ($tabs as $key => $p) { ?>
+                            <a href="<?= $p['url'] ?>" class="<?= $key === $loginPortal ? 'active' : '' ?>"><?= $p['tab'] ?></a>
+                        <?php } ?>
+                    </nav>
+                <?php } ?>
 
                 <h2>Entrar</h2>
                 <p class="sub"><?= $portal['title'] ?></p>
@@ -83,7 +87,13 @@ $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) 
 
                 <?php if ($clerkEnabled) { ?>
 
-                    <?php $clerkPortal = $loginPortal; require __DIR__ . '/clerkSignIn.php'; ?>
+                    <?php
+                    $clerkPortal = $loginPortal;
+                    // admin: sem criar conta e sem reaproveitar a sessão do Clerk aberta em outro portal
+                    $clerkAllowSignUp = !$isAdmin;
+                    $clerkRequireFreshLogin = $isAdmin;
+                    require __DIR__ . '/clerkSignIn.php';
+                    ?>
 
                 <?php } else { ?>
 

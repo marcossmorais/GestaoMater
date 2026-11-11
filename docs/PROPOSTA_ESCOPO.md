@@ -12,6 +12,7 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **Trilha de auditoria** imutável (`database/10_auditoria.sql`, `App/Tools/Audit.php`): triggers em notas, faltas, chamadas, atestados e ocorrências; download de declarações pelo aluno
 - [x] **RBAC docente** no servidor (`curso.etapa`, `App/Models/Teacher/TeacherAccess.php`): Anos Iniciais edita todas as disciplinas da turma; Finais/EM só a própria. Negado = 403 + linha `NEGADO` na auditoria
 - [x] Auth Clerk · [x] Responsivo mobile · [ ] Modo noturno
+- [x] **Login do admin separado**: tela própria em `/admin` (sem abas e sem cadastro), fora da página inicial; docente e aluno alternam só entre si. Sessão de um portal por vez (`PortalAccount::open`), o admin não reaproveita a sessão do Clerk de outro portal, e entradas e recusas no admin vão para a auditoria (`LOGIN` / `LOGIN_NEGADO`)
 
 ## 2. Portal Docente
 - [x] Chamada rápida por carômetro

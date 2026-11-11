@@ -3,6 +3,7 @@
 namespace App\Auth;
 
 use App\Connection;
+use App\Tools\Audit;
 
 /**
  * Liga um usuário autenticado (Clerk) ao cadastro local de cada portal e
@@ -34,9 +35,42 @@ class PortalAccount
         ],
     ];
 
+    /** Chave de $_SESSION de cada portal */
+    const SESSION_KEYS = ['admin' => 'Admin', 'docente' => 'Teacher', 'aluno' => 'Student'];
+
     public static function config($portal)
     {
         return self::PORTALS[$portal] ?? null;
+    }
+
+    /**
+     * Abre a sessão de um único portal: troca o id da sessão e descarta o login
+     * de qualquer outro portal, para que admin, docente e aluno nunca convivam
+     * no mesmo navegador. Entrada no admin vai para a auditoria.
+     */
+    public static function open($portal, array $data)
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        session_regenerate_id(true);
+
+        foreach (self::SESSION_KEYS as $key) {
+            unset($_SESSION[$key]);
+        }
+
+        $_SESSION[self::SESSION_KEYS[$portal]] = $data;
+
+        if ($portal === 'admin') {
+            Audit::log(Connection::getDb(), 'LOGIN', 'administrador', $data['id']);
+        }
+    }
+
+    /**
+     * Tentativa de entrada no admin recusada (sem nome nem e-mail: só IP e motivo)
+     */
+    public static function logAdminFailure($reason)
+    {
+        Audit::log(Connection::getDb(), 'LOGIN_NEGADO', 'administrador', null, ['motivo' => $reason]);
     }
 
     /**
@@ -82,10 +116,6 @@ class PortalAccount
      */
     public static function startSession($portal, $id)
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-
-        session_regenerate_id(true);
-
         $db = Connection::getDb();
 
         switch ($portal) {
@@ -102,12 +132,12 @@ class PortalAccount
                 if (!$a) return 'sem-cadastro';
                 if ($a->account_status != 1) return 'conta-desativada';
 
-                $_SESSION['Admin'] = [
+                self::open('admin', [
                     'id' => $a->id,
                     'name' => implode(' ', array_slice(explode(' ', $a->name), 0, 3)),
                     'profilePhoto' => $a->profile_photo,
                     'hierarchyFunction' => $a->hierarchy_function,
-                ];
+                ]);
                 return null;
 
             case 'docente':
@@ -122,12 +152,12 @@ class PortalAccount
                 if (!$t) return 'sem-cadastro';
                 if ($t->account_status != 1) return 'conta-desativada';
 
-                $_SESSION['Teacher'] = [
+                self::open('docente', [
                     'id' => $t->id,
                     'name' => $t->name,
                     'profilePhoto' => $t->profile_photo,
                     'hierarchyFunction' => $t->hierarchy_function,
-                ];
+                ]);
                 return null;
 
             case 'aluno':
@@ -152,7 +182,7 @@ class PortalAccount
 
                 if (!$s) return 'sem-matricula';
 
-                $_SESSION['Student'] = [
+                self::open('aluno', [
                     'id' => $s->id,
                     'name' => $s->name,
                     'profilePhoto' => $s->profile_photo,
@@ -160,7 +190,7 @@ class PortalAccount
                     'enrollmentId' => $s->enrollment_id,
                     'class' => $s->acronym_series . 'ª ' . $s->ballot . ' - ' . $s->course . ' - ' . $s->shift,
                     'classId' => $s->class_id,
-                ];
+                ]);
                 return null;
         }
 

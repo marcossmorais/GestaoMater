@@ -1,5 +1,8 @@
 <?php
 // Login via Clerk. Espera $clerkPortal = 'admin' | 'docente' | 'aluno'
+// Opcionais: $clerkAllowSignUp (padrão true) e $clerkRequireFreshLogin (padrão false)
+$clerkAllowSignUp = $clerkAllowSignUp ?? true;
+$clerkRequireFreshLogin = $clerkRequireFreshLogin ?? false;
 $clerkFrontendApi = \App\Auth\Clerk::frontendApi();
 $clerkJsVersion = getenv('CLERK_JS_VERSION') ?: '5';
 $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
@@ -18,6 +21,8 @@ $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
 <script>
     (function () {
         const portal = <?= json_encode($clerkPortal) ?>;
+        const allowSignUp = <?= json_encode((bool) $clerkAllowSignUp) ?>;
+        const requireFreshLogin = <?= json_encode((bool) $clerkRequireFreshLogin) ?>;
         const statusBox = document.getElementById('clerk-status');
         const messages = {
             'sem-cadastro': 'Seu e-mail não está vinculado a nenhum cadastro deste portal. Procure a secretaria da escola.',
@@ -47,7 +52,8 @@ $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
                 formButtonPrimary: { fontSize: '14px', fontWeight: 600, textTransform: 'none', padding: '11px 18px' },
                 formFieldInput: { padding: '11px 14px' },
                 footer: { background: 'transparent', marginTop: '8px' },
-                footerAction: { padding: '12px 0 0' }
+                // sem cadastro: some o "Não tem conta? Cadastre-se"
+                footerAction: allowSignUp ? { padding: '12px 0 0' } : { display: 'none' }
             }
         };
 
@@ -100,7 +106,8 @@ $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
             await clerk.load({ localization, appearance });
 
             const params = new URLSearchParams(window.location.search);
-            if (params.has('logout')) {
+            // admin exige login explícito: descarta a sessão do Clerk vinda de outro portal
+            if (params.has('logout') || (requireFreshLogin && clerk.user)) {
                 await clerk.signOut();
                 history.replaceState(null, '', window.location.pathname);
             }
@@ -115,7 +122,7 @@ $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
             }
 
             clerk.mountSignIn(target, {
-                withSignUp: true,
+                withSignUp: allowSignUp,
                 forceRedirectUrl: window.location.pathname,
                 signUpForceRedirectUrl: window.location.pathname
             });

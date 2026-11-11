@@ -42,16 +42,12 @@ class TeacherPortalController extends Action
 
             if ($account_status[0]->account_status == 1) {
 
-                if (!isset($_SESSION)) session_start();
-
-                $_SESSION['Teacher'] = [
-
+                \App\Auth\PortalAccount::open('docente', [
                     'id' => $auth[0]->teacher_id,
                     'name' => $auth[0]->teacher_name,
                     'profilePhoto' => $auth[0]->teacher_photo,
                     'hierarchyFunction' => $auth[0]->hierarchy_function
-
-                ];
+                ]);
 
                 session_cache_expire(60);
 

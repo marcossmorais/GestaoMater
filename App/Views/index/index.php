@@ -85,7 +85,6 @@
         <span>© <?= date('Y') ?> Mater — Colégio e Curso</span>
         <nav aria-label="Outros acessos">
             <a href="/validar"><i class="fas fa-shield-alt"></i> Validar documento</a>
-            <a href="/admin"><i class="fas fa-lock"></i> Acesso da secretaria</a>
         </nav>
     </footer>
 
