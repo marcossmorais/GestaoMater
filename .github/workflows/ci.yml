@@ -43,5 +43,17 @@ jobs:
         run: |
           docker exec mater-app sh /var/www/html/docker/smoke-test.sh | tee out.txt
           grep -q 'com erro: 0' out.txt
+      - name: Migrações do zero (database/migrate.php)
+        # banco vazio recebe todas as migrações; a segunda rodada não aplica nada;
+        # o schema tem de ser igual ao criado pelo initdb do docker-compose
+        run: |
+          docker exec mater-db psql -U mater -d mater -qc "CREATE DATABASE mater_migtest"
+          docker exec -e DB_NAME=mater_migtest mater-app php /var/www/html/database/migrate.php
+          docker exec -e DB_NAME=mater_migtest mater-app php /var/www/html/database/migrate.php | grep -q 'Nada pendente'
+          for d in mater mater_migtest; do
+            docker exec mater-db pg_dump -U mater -d $d --schema-only --no-owner --no-privileges -T schema_migrations \
+              | grep -vE '^--|^$|^SET |^SELECT pg_catalog|^[\\](un)?restrict ' > schema_$d.sql
+          done
+          diff schema_mater.sql schema_mater_migtest.sql
       - if: failure()
         run: docker compose logs --tail=100
