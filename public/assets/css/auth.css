@@ -135,7 +135,7 @@ body.lp { background-color: var(--paper); background-image: radial-gradient(#CFD
 .auth-box h2 { font-size: 30px; font-weight: 1000; margin: 0 0 4px; }
 .auth-box .sub { color: var(--muted); margin: 0 0 22px; }
 
-.tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--paper); border: 2px solid var(--border); padding: 4px; border-radius: 16px; margin-bottom: 24px; }
+.tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; background: var(--paper); border: 2px solid var(--border); padding: 4px; border-radius: 16px; margin-bottom: 24px; }
 .tabs a { text-align: center; padding: 9px 6px; border-radius: 12px; font-size: 14px; font-weight: 900; color: var(--muted); }
 .tabs a:hover { color: var(--blue); }
 .tabs a.active { background: #fff; color: var(--blue); box-shadow: 0 3px 0 var(--border); }

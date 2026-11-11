@@ -41,10 +41,7 @@ class StudentPortalController extends Action
 
         } else {
 
-            if (!isset($_SESSION)) session_start();
-
-            $_SESSION['Student'] = [
-
+            \App\Auth\PortalAccount::open('aluno', [
                 'id' => $auth[0]->student_id,
                 'name' => $auth[0]->student_name,
                 'profilePhoto' => $auth[0]->student_photo,
@@ -52,7 +49,7 @@ class StudentPortalController extends Action
                 'enrollmentId' => $auth[0]->enrollment_id,
                 'class' => $auth[0]->acronym_series . 'ª ' . $auth[0]->ballot . ' - ' . $auth[0]->course . ' - ' . $auth[0]->shift,
                 'classId' => $auth[0]->class_id
-            ];
+            ]);
 
             session_cache_expire(400);
 
