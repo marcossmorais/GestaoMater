@@ -1,1 +1,23 @@
 .git
+.github
+.vscode
+.idea
+# segredos e dados locais nunca entram na imagem
+.env
+.env.*
+!.env.example
+!.env.production.example
+storage/
+*.log
+.DS_Store
+Thumbs.db
+dev/
+docs/
+brand/
+# fotos de perfil versionadas são fictícias (dev): em produção só entra a foto padrão
+public/assets/img/adminProfilePhotos/*
+public/assets/img/studentProfilePhotos/*
+public/assets/img/teacherProfilePhotos/*
+!public/assets/img/adminProfilePhotos/foto-vazia.jpg
+!public/assets/img/studentProfilePhotos/foto-vazia.jpg
+!public/assets/img/teacherProfilePhotos/foto-vazia.jpg
