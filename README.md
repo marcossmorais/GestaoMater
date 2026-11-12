@@ -88,6 +88,10 @@ Como funciona:
    DB_SSLMODE=require
    ```
 
+## Produção (VPS)
+
+`docker-compose.prod.yml` (Postgres + app + Caddy com HTTPS) e o passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md).
+
 ## Testes
 
 Smoke test que loga nos 3 portais e chama todas as rotas procurando erros de PHP/SQL (use só no banco local). Precisa do login por código, então rode o app com `CLERK_*` vazios (`CLERK_PUBLISHABLE_KEY= CLERK_SECRET_KEY= docker compose up -d app`). O `--writes` altera os dados de teste; recrie o banco depois.

@@ -13,6 +13,7 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **RBAC docente** no servidor (`curso.etapa`, `App/Models/Teacher/TeacherAccess.php`): Anos Iniciais edita todas as disciplinas da turma; Finais/EM só a própria. Negado = 403 + linha `NEGADO` na auditoria
 - [x] Auth Clerk · [x] Responsivo mobile · [ ] Modo noturno
 - [x] **Migrações em banco existente** (`database/migrate.php`): registra em `schema_migrations` (com checksum) e aplica só as pendentes, cada uma numa transação, com trava contra deploy simultâneo. Banco criado pelo Docker entra com `--baseline=NN`; `database/dev/` nunca roda
+- [x] **Montagem de produção** (`docker-compose.prod.yml`, [DEPLOY.md](DEPLOY.md)): código dentro da imagem, Caddy com HTTPS automático, banco e app sem porta publicada, erros fora da tela, volumes para banco, atestados e fotos, `.env` fora da imagem. Admin fictício do seed sem e-mail (migração 23) e primeiro admin real por `database/create-admin.php`
 - [x] **Login do admin separado**: tela própria em `/admin` (sem abas e sem cadastro), fora da página inicial; docente e aluno alternam só entre si. Sessão de um portal por vez (`PortalAccount::open`), o admin não reaproveita a sessão do Clerk de outro portal, e entradas e recusas no admin vão para a auditoria (`LOGIN` / `LOGIN_NEGADO`)
 
 ## 2. Portal Docente
