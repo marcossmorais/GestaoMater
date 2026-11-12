@@ -3,6 +3,11 @@
 > Dados **fictícios**, gerados por `database/dev/generate_dev_seed.py` e carregados só no banco local (Docker).
 > Escola: 1 curso (Ensino Médio), 9 turmas (1ª a 3ª série, A/B/C), 12 disciplinas, 14 professores e 300 alunos,
 > com notas e faltas lançadas na 1ª unidade.
+>
+> **Fund. 1** (`99d_dev_anos_iniciais.sql` + `99n_dev_fund1_titular.sql`): a última turma (3ª C · EF1) é de Anos Iniciais.
+> Titular: **Nicolas Ramos Rocha** (Português, Matemática, História, Geografia e Ciências; faz a chamada do dia).
+> Especialistas: Miguel Gonçalves Cardoso (Inglês), Camila Almeida Rodrigues (Ed. Física) e Davi Ribeiro Moreira (Artes),
+> que não fazem chamada. Aluna com faltas para ver a frequência em dias: Valentina Ferreira Nunes (código 670941).
 
 ## Como entrar
 

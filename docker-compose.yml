@@ -50,6 +50,7 @@ services:
       - ./database/dev/99k_dev_mural.sql:/docker-entrypoint-initdb.d/99k_dev_mural.sql:ro
       - ./database/dev/99l_dev_faltas_por_data.sql:/docker-entrypoint-initdb.d/99l_dev_faltas_por_data.sql:ro
       - ./database/dev/99m_dev_roteiro_provas.sql:/docker-entrypoint-initdb.d/99m_dev_roteiro_provas.sql:ro
+      - ./database/dev/99n_dev_fund1_titular.sql:/docker-entrypoint-initdb.d/99n_dev_fund1_titular.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${DB_USER:-mater} -d ${DB_NAME:-mater}"]
       interval: 5s
