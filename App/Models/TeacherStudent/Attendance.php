@@ -15,8 +15,8 @@ class Attendance extends Model
 {
 
     /**
-     * Turmas/disciplinas em que o professor pode lançar no período letivo ativo (próprias e, nos Anos Iniciais,
-     * todas as da turma), com total de alunos e a última chamada de hoje
+     * Turmas/disciplinas atribuídas ao professor no período letivo ativo, com total de alunos e a última chamada de hoje.
+     * No Fund. 1 (stage 'iniciais') a chamada é a diária (DailyAttendance); estas linhas servem a notas e diário.
      *
      * @return array
      */
