@@ -158,6 +158,18 @@ class StudentAttendance extends Model
                 return null;
             }
 
+            // Fund. 1: frequência em dias; o abono é calculado pelo atestado aprovado, aqui só se conta quantos dias cobre
+            $Daily = new \App\Models\TeacherStudent\DailyAttendance($this->db);
+            $class = $this->db->prepare("SELECT fk_id_turma_matricula FROM matricula WHERE id_matricula = :enrollment");
+            $class->execute([':enrollment' => $certificate->fk_id_matricula]);
+
+            if ($Daily->isDaily((int) $class->fetchColumn())) {
+                $total = $Daily->absentDaysBetween($certificate->fk_id_matricula, $certificate->data_inicio, $certificate->data_fim);
+                $this->finish($id, 'Aprovado', $answer, $total);
+                $this->db->commit();
+                return $total;
+            }
+
             $absences = $this->db->prepare(
                 "SELECT fk_id_turma_disciplina AS dc, fk_id_unidade AS unity, SUM(quantidade_aulas) AS lessons
                  FROM chamada

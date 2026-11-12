@@ -4,6 +4,9 @@ $rule = $this->view->rule;
 $rows = $this->view->rows;
 $fmt = function ($n) { return $n === null ? '–' : str_replace('.', ',', (string) round((float) $n, 1)); };
 $counts = function ($unit) { return $unit['closed'] && !$unit['needsRecovery']; };
+// Fund. 1: frequência em dias (chamada do titular), não por matéria
+$daily = $this->view->dailyAttendance ?? null;
+$pctText = function ($n) { return $n === null ? '–' : str_replace('.', ',', (string) round((float) $n, 1)) . '%'; };
 $status = [
     'aprovado' => ['Aprovado', 'm-pill-ok'],
     'possivel' => ['Em andamento', 'm-pill-info'],
@@ -24,6 +27,9 @@ $status = [
     <?php if (!$rows) { ?>
         <div class="m-empty">Nenhuma disciplina vinculada à sua turma.</div>
     <?php } else { ?>
+        <?php if ($daily !== null) { ?>
+            <p class="m-muted-note"><strong>Frequência: <?= $pctText($daily['attendance']) ?></strong> · <?= (int) $daily['absences'] ?> dia<?= (int) $daily['absences'] === 1 ? '' : 's' ?> de falta em <?= (int) $daily['days'] ?> dia<?= (int) $daily['days'] === 1 ? '' : 's' ?> letivo<?= (int) $daily['days'] === 1 ? '' : 's' ?><?= $daily['excused'] ? ' (' . (int) $daily['excused'] . ' abonado' . ((int) $daily['excused'] === 1 ? '' : 's') . ')' : '' ?>.</p>
+        <?php } ?>
         <div class="m-bul-tools"><button type="button" class="btn btn-light" data-bul-all aria-expanded="false"><i class="fas fa-expand-alt mr-2" aria-hidden="true"></i><span>Expandir todas</span></button></div>
         <div class="m-overview-wrap">
             <table class="m-overview m-bulletin-table">
@@ -32,7 +38,7 @@ $status = [
                         <th>Matéria</th>
                         <?php for ($u = 1; $u <= $rule['units']; $u++) { ?><th><?= $u ?>º bim.</th><?php } ?>
                         <th>Média do ano</th>
-                        <th>Faltas</th>
+                        <?php if ($daily === null) { ?><th>Faltas</th><?php } ?>
                         <th>Situação</th>
                     </tr>
                 </thead>
@@ -50,11 +56,11 @@ $status = [
                                 <td data-label="<?= $u ?>º bim." class="<?= $class ?>"><?= $fmt($unit['grade']) ?><?= $unit['recovered'] ? '<sup>R</sup>' : ($unit['grade'] !== null && !$unit['closed'] ? '<sup>*</sup>' : '') ?></td>
                             <?php } ?>
                             <td data-label="Média do ano"><strong><?= $closedAll ? $fmt($sim['average']) : '–' ?></strong></td>
-                            <td data-label="Faltas"><?= (int) $d['absences'] ?><?= $d['excused'] ? ' <small>(' . (int) $d['excused'] . ' abon.)</small>' : '' ?></td>
+                            <?php if ($daily === null) { ?><td data-label="Faltas"><?= (int) $d['absences'] ?><?= $d['excused'] ? ' <small>(' . (int) $d['excused'] . ' abon.)</small>' : '' ?></td><?php } ?>
                             <td data-label="Situação"><span class="m-pill <?= $pill ?>"><?= $label ?></span></td>
                         </tr>
                         <tr class="m-bul-detail <?= \App\Tools\Subject::css($d['discipline']) ?>" hidden>
-                            <td colspan="<?= (int) $rule['units'] + 4 ?>">
+                            <td colspan="<?= (int) $rule['units'] + ($daily === null ? 4 : 3) ?>">
                                 <div data-perf='<?= htmlspecialchars(json_encode(['units' => array_map(function ($unit) use ($counts) { return $counts($unit) ? $unit['grade'] : null; }, $d['units'])]), ENT_QUOTES) ?>'>
                                     <table class="m-bul-exams">
                                         <thead>

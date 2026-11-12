@@ -6,6 +6,8 @@ $rule = $this->view->rule;
 $rows = $this->view->rows;
 $fmt = function ($n) { return $n === null ? '–' : str_replace('.', ',', (string) round((float) $n, 1)); };
 $statusText = ['aprovado' => 'Média atingida', 'possivel' => 'Em andamento', 'impossivel' => 'Abaixo da média'];
+// Fund. 1: frequência em dias (chamada do titular), não por disciplina
+$daily = $this->view->dailyAttendance ?? null;
 
 $docTitle = 'Boletim — ' . $enrollment->name;
 $docHeading = 'Boletim escolar · ' . $enrollment->school_year;
@@ -18,6 +20,9 @@ require __DIR__ . '/documentHead.php';
             <div><span>Turma</span><?= htmlspecialchars($enrollment->acronym_series) ?>ª <?= htmlspecialchars($enrollment->ballot) ?> · <?= htmlspecialchars($enrollment->course_name) ?></div>
             <div><span>Turno</span><?= htmlspecialchars($enrollment->shift) ?></div>
             <div><span>Matrícula</span><?= (int) $enrollment->enrollment_id ?></div>
+            <?php if ($daily !== null) { ?>
+                <div><span>Frequência</span><?= $daily['attendance'] === null ? '–' : $fmt($daily['attendance']) . '%' ?> · <?= (int) $daily['absences'] ?> dia(s) de falta em <?= (int) $daily['days'] ?> letivo(s)<?= $daily['excused'] ? ', ' . (int) $daily['excused'] . ' abonado(s)' : '' ?></div>
+            <?php } ?>
         </div>
 
         <div>
@@ -27,7 +32,7 @@ require __DIR__ . '/documentHead.php';
                         <th>Disciplina</th>
                         <?php for ($u = 1; $u <= $rule['units']; $u++) { ?><th><?= $u ?>º bim.</th><?php } ?>
                         <th>Média do ano</th>
-                        <th>Faltas (abonadas)</th>
+                        <?php if ($daily === null) { ?><th>Faltas (abonadas)</th><?php } ?>
                         <th>Situação</th>
                     </tr>
                 </thead>
@@ -39,7 +44,7 @@ require __DIR__ . '/documentHead.php';
                                 <td class="<?= $unit['grade'] !== null && $unit['closed'] && $unit['grade'] < $rule['passing'] ? 'low' : '' ?>"><?= $unit['grade'] === null ? '–' : $fmt($unit['grade']) . ($unit['recovered'] ? ' <small>(R)</small>' : (!$unit['closed'] ? ' <small>*</small>' : '')) ?></td>
                             <?php } ?>
                             <td><?= $d['simulation']['missing'] ? '–' : $fmt($d['simulation']['average']) ?></td>
-                            <td><?= (int) $d['absences'] ?> (<?= (int) $d['excused'] ?>)</td>
+                            <?php if ($daily === null) { ?><td><?= (int) $d['absences'] ?> (<?= (int) $d['excused'] ?>)</td><?php } ?>
                             <td><?= $statusText[$d['simulation']['status']] ?></td>
                         </tr>
                     <?php } ?>

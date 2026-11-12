@@ -4,6 +4,7 @@ namespace App\Models\Teacher;
 
 use MF\Model\Model;
 use App\Models\TeacherStudent\Gradebook;
+use App\Models\TeacherStudent\DailyAttendance;
 
 /**
  * Painel inicial do docente: aulas do dia, pendências e alunos que pedem atenção.
@@ -38,8 +39,12 @@ class TeacherDashboard extends Model
                 serie.sigla || 'ª ' || cedula_turma.cedula AS label,
                 curso.sigla AS course,
                 turno.nome_turno AS shift,
-                (SELECT TO_CHAR(MAX(c.criado_em), 'HH24:MI') FROM chamada c
-                  WHERE c.fk_id_turma_disciplina = gh.fk_id_turma_disciplina AND c.data_aula = :date) AS attendance_at,
+                -- Fund. 1: vale a chamada do dia da turma (titular)
+                CASE WHEN curso.etapa = '" . DailyAttendance::STAGE . "'
+                    THEN (SELECT TO_CHAR(cd.atualizado_em, 'HH24:MI') FROM chamada_diaria cd WHERE cd.fk_id_turma = t.id_turma AND cd.data_aula = :date)
+                    ELSE (SELECT TO_CHAR(MAX(c.criado_em), 'HH24:MI') FROM chamada c
+                          WHERE c.fk_id_turma_disciplina = gh.fk_id_turma_disciplina AND c.data_aula = :date)
+                END AS attendance_at,
                 EXISTS (SELECT 1 FROM aula a WHERE a.fk_id_turma_disciplina = gh.fk_id_turma_disciplina AND a.data_aula = :date) AS lesson_done
             FROM grade_horario gh
             INNER JOIN horario_aula ha ON (gh.fk_id_horario_aula = ha.id_horario_aula)
@@ -183,6 +188,14 @@ class TeacherDashboard extends Model
         $stmt->execute([':unity' => (int) $unity]);
         foreach ($stmt->fetchAll(\PDO::FETCH_OBJ) as $row) $byClass[(int) $row->id]['absences'] = (int) $row->absences;
 
+        // Fund. 1: dias de falta da turma (chamada diária) na primeira disciplina dela, para não contar a turma várias vezes
+        $daily = $this->dailyClasses($disciplineClasses);
+        if ($daily) {
+            foreach ((new DailyAttendance($this->db))->absencesByClass(array_keys($daily), $unity) as $classId => $count) {
+                $byClass[$daily[$classId]]['absences'] += $count;
+            }
+        }
+
         foreach ($byClass as &$class) {
             $class['average'] = $class['graded'] ? round($class['sum'] / $class['graded'], 1) : null;
             $status['none'] += max(0, $class['students'] - $class['graded']);
@@ -288,8 +301,38 @@ class TeacherDashboard extends Model
         );
 
         $stmt->execute([':unity' => (int) $unity]);
+        $rows = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
-        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+        // Fund. 1: dias de falta da chamada diária, somados por aluno
+        $daily = $this->dailyClasses($disciplineClasses);
+        if ($daily) {
+            $byId = [];
+            foreach ($rows as $r) $byId[(int) $r->id] = $r;
+            foreach ((new DailyAttendance($this->db))->absentStudents(array_keys($daily), $unity) as $s) {
+                if (isset($byId[(int) $s->id])) $byId[(int) $s->id]->absences += (int) $s->absences;
+                else $byId[(int) $s->id] = (object) ['id' => (int) $s->id, 'name' => $s->name, 'label' => $s->label, 'absences' => (int) $s->absences];
+            }
+            $rows = array_values($byId);
+            usort($rows, function ($a, $b) { return [$b->absences, $a->name] <=> [$a->absences, $b->name]; });
+            $rows = array_slice($rows, 0, (int) $limit);
+        }
+
+        return $rows;
+    }
+
+
+    /**
+     * Fund. 1 nas turmas do professor: [id_turma => primeira turma_disciplina dele nela]
+     *
+     * @param array $disciplineClasses linhas de Attendance::disciplineClassesByTeacher
+     */
+    private function dailyClasses(array $disciplineClasses)
+    {
+        $result = [];
+        foreach ($disciplineClasses as $dc) {
+            if ($dc->stage === DailyAttendance::STAGE && !isset($result[(int) $dc->class_id])) $result[(int) $dc->class_id] = (int) $dc->discipline_class_id;
+        }
+        return $result;
     }
 
 
@@ -357,6 +400,12 @@ class TeacherDashboard extends Model
 
         foreach ($stmt->fetchAll(\PDO::FETCH_OBJ) as $row) {
             $add($row->enrollment_id, $row->name, (int) $row->discipline_class_id, "{$row->absences} faltas no bimestre", 1, 'absences');
+        }
+
+        // Fund. 1: dias de falta da chamada diária (um alerta por aluno, na primeira disciplina do professor na turma)
+        $daily = $this->dailyClasses($disciplineClasses);
+        foreach ((new DailyAttendance($this->db))->absentStudents(array_keys($daily), $unity, self::ABSENCE_ALERT) as $s) {
+            $add($s->id, $s->name, $daily[(int) $s->class_id], "{$s->absences} dias de falta no bimestre", 1, 'absences');
         }
 
         $students = array_values($students);

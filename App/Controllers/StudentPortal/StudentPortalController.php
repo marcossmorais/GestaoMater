@@ -124,8 +124,16 @@ class StudentPortalController extends Action
 
         // aba Frequência
         $StudentAttendance = Container::getModel('Student\\StudentAttendance');
-        $this->view->missedDays = $StudentAttendance->missedDays($_SESSION['Student']['enrollmentId']);
         $this->view->submissions = $StudentAttendance->submissions($_SESSION['Student']['enrollmentId']);
+
+        // Fund. 1: frequência em dias (chamada diária); demais etapas: por matéria
+        $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        $this->view->dailyAttendance = $Daily->isDaily($_SESSION['Student']['classId'])
+            ? $Daily->summary($_SESSION['Student']['enrollmentId'], $_SESSION['Student']['classId'])
+            : null;
+        $this->view->missedDays = $this->view->dailyAttendance !== null
+            ? $Daily->missedDays($_SESSION['Student']['enrollmentId'])
+            : $StudentAttendance->missedDays($_SESSION['Student']['enrollmentId']);
 
         $this->render("pages/home", "SimpleLayout", "studentPortal");
     }
@@ -370,6 +378,7 @@ class StudentPortalController extends Action
         $this->view->rule = $Performance->rule();
         $this->view->rows = $Performance->byDiscipline((int) $_SESSION['Student']['enrollmentId'], (int) $_SESSION['Student']['classId']);
         $this->view->studentExams = $this->studentExams($this->view->rows);
+        $this->view->dailyAttendance = $this->dailyAttendance((int) $_SESSION['Student']['enrollmentId'], (int) $_SESSION['Student']['classId']);
 
         // cada avaliação com tipo e data, para o detalhe por matéria
         $exams = [];
@@ -404,10 +413,13 @@ class StudentPortalController extends Action
         $Performance = Container::getModel('Student\StudentPerformance');
         $rule = $Performance->rule();
         $rows = $Performance->byDiscipline($enrollmentId, $enrollment->class_id);
+        $daily = $this->dailyAttendance($enrollmentId, (int) $enrollment->class_id);
 
         $content = ['matricula' => $enrollmentId, 'nome' => $enrollment->name, 'ano' => $enrollment->school_year, 'regra' => $rule, 'disciplinas' => array_map(function ($d) {
             return [$d['discipline'], array_column($d['units'], 'grade'), $d['absences'], $d['excused'], $d['simulation']['status']];
         }, $rows)];
+        // Fund. 1: a frequência impressa é a do dia (entra no que o código de validação garante)
+        if ($daily !== null) $content['frequencia_dias'] = $daily;
 
         $code = Container::getModel('Student\IssuedDocument')->issue('boletim', $enrollmentId, $enrollment->name, $content, 'aluno', $_SESSION['Student']['id'] ?? null);
         $url = rtrim(getenv('APP_URL') ?: '', '/') . '/validar?codigo=' . $code;
@@ -417,11 +429,22 @@ class StudentPortalController extends Action
         $this->view->enrollment = $enrollment;
         $this->view->rule = $rule;
         $this->view->rows = $rows;
+        $this->view->dailyAttendance = $daily;
         $this->view->authCode = $code;
         $this->view->validationUrl = $url;
         $this->view->qrSvg = \App\Tools\DocumentSigner::qrSvg($url);
 
         require __DIR__ . '/../../Views/studentPortal/bulletinDocument.php';
+    }
+
+
+    /**
+     * Fund. 1: frequência em dias do aluno (chamada diária), ou null nas demais etapas
+     */
+    private function dailyAttendance($enrollmentId, $classId)
+    {
+        $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        return $Daily->isDaily($classId) ? $Daily->summary($enrollmentId, $classId) : null;
     }
 
     /**

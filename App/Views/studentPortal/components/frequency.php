@@ -8,12 +8,22 @@ $missed = $this->view->missedDays ?? [];
 $submissions = $this->view->submissions ?? [];
 $pct = function ($n) { return $n === null ? '–' : str_replace('.', ',', (string) round((float) $n, 1)) . '%'; };
 
-$lessons = array_sum(array_column($rows, 'lessons'));
-$absences = array_sum(array_column($rows, 'absences'));
-$excused = array_sum(array_column($rows, 'excused'));
-$overall = $lessons > 0 ? round(100 * max(0, $lessons - max(0, $absences - $excused)) / $lessons, 1) : null;
+// Fund. 1: frequência em dias (chamada diária do titular); demais etapas: por matéria
+$daily = $this->view->dailyAttendance ?? null;
+
+if ($daily !== null) {
+    $absences = $daily['absences'];
+    $excused = $daily['excused'];
+    $overall = $daily['attendance'];
+    $dated = count($missed);
+} else {
+    $lessons = array_sum(array_column($rows, 'lessons'));
+    $absences = array_sum(array_column($rows, 'absences'));
+    $excused = array_sum(array_column($rows, 'excused'));
+    $overall = $lessons > 0 ? round(100 * max(0, $lessons - max(0, $absences - $excused)) / $lessons, 1) : null;
+    $dated = array_sum(array_map(function ($m) { return (int) $m->lessons; }, $missed));
+}
 $minimum = 75;
-$dated = array_sum(array_map(function ($m) { return (int) $m->lessons; }, $missed));
 
 $monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 $weekNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -37,15 +47,25 @@ $submissionStatus = [
         <div class="m-page-head">
             <div>
                 <h5>Frequência</h5>
-                <p>Sua presença em cada matéria e os dias de aula perdidos. O mínimo é <?= $minimum ?>%.</p>
+                <?php if ($daily !== null) { ?>
+                    <p>Sua presença nos dias de aula: <?= (int) $daily['absences'] ?> falta<?= (int) $daily['absences'] === 1 ? '' : 's' ?> em <?= (int) $daily['days'] ?> dia<?= (int) $daily['days'] === 1 ? '' : 's' ?> letivo<?= (int) $daily['days'] === 1 ? '' : 's' ?>. O mínimo é <?= $minimum ?>%.</p>
+                <?php } else { ?>
+                    <p>Sua presença em cada matéria e os dias de aula perdidos. O mínimo é <?= $minimum ?>%.</p>
+                <?php } ?>
             </div>
         </div>
 
         <div class="m-freq-tiles">
             <div class="card m-freq-tile <?= $overall !== null && $overall < $minimum ? 'is-low' : '' ?>"><strong><?= $pct($overall) ?></strong><small>Frequência geral</small></div>
-            <div class="card m-freq-tile"><strong><?= (int) $absences ?></strong><small>Faltas</small></div>
-            <div class="card m-freq-tile"><strong><?= (int) $excused ?></strong><small>Abonadas</small></div>
-            <div class="card m-freq-tile"><strong><?= count($byDay) ?></strong><small>Dias perdidos</small></div>
+            <?php if ($daily !== null) { ?>
+                <div class="card m-freq-tile"><strong><?= (int) $absences ?></strong><small>Dias de falta</small></div>
+                <div class="card m-freq-tile"><strong><?= (int) $excused ?></strong><small>Abonados</small></div>
+                <div class="card m-freq-tile"><strong><?= (int) $daily['days'] ?></strong><small>Dias letivos</small></div>
+            <?php } else { ?>
+                <div class="card m-freq-tile"><strong><?= (int) $absences ?></strong><small>Faltas</small></div>
+                <div class="card m-freq-tile"><strong><?= (int) $excused ?></strong><small>Abonadas</small></div>
+                <div class="card m-freq-tile"><strong><?= count($byDay) ?></strong><small>Dias perdidos</small></div>
+            <?php } ?>
         </div>
 
         <div class="m-freq-grid">
@@ -105,6 +125,7 @@ $submissionStatus = [
                 <?php } ?>
             </div>
 
+            <?php if ($daily === null) { ?>
             <div class="card m-panel">
                 <div class="m-panel-head"><h6><i class="fas fa-chart-pie mr-2"></i>Por matéria</h6></div>
                 <ul class="m-freq-list">
@@ -117,6 +138,7 @@ $submissionStatus = [
                     <?php } ?>
                 </ul>
             </div>
+            <?php } ?>
         </div>
 
         <div class="card m-panel mt-3">
@@ -142,7 +164,9 @@ $submissionStatus = [
                     <li class="m-freq-day">
                         <span class="m-freq-date"><strong><?= $day->format('d') ?></strong><small><?= $weekNames[(int) $day->format('w')] ?></small></span>
                         <span class="m-freq-subjects">
-                            <?php foreach ($items as $m) { ?><span><?= htmlspecialchars($m->discipline) ?> <small>(<?= (int) $m->lessons ?> aula<?= (int) $m->lessons === 1 ? '' : 's' ?>)</small></span><?php } ?>
+                            <?php if ($daily !== null) { ?>
+                                <span>Faltou no dia</span>
+                            <?php } else { foreach ($items as $m) { ?><span><?= htmlspecialchars($m->discipline) ?> <small>(<?= (int) $m->lessons ?> aula<?= (int) $m->lessons === 1 ? '' : 's' ?>)</small></span><?php } } ?>
                         </span>
                         <?php if ($state && $items[0]->certificate !== 'Recusado') { ?>
                             <span class="m-pill <?= $state[0] ?>"><?= $state[1] ?></span>
