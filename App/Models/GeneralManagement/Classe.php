@@ -262,6 +262,8 @@ class Classe extends Model
             periodo_disponivel.ano_letivo AS school_term ,
             periodo_letivo.id_ano_letivo AS school_term_id ,
             situacao_periodo_letivo.id_situacao_periodo_letivo AS school_term_situation ,
+            curso.etapa AS stage ,
+            turma.fk_id_professor_titular AS homeroom_teacher_id ,
 
             (SELECT COUNT(matricula.id_matricula) FROM matricula WHERE matricula.fk_id_turma_matricula = turma.id_turma ) as student_total
             
@@ -286,6 +288,33 @@ class Classe extends Model
         $stmt->execute();
 
         return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+
+    /**
+     * Fund. 1: marca o professor titular da turma (ou tira, com null). Só aceita professor com disciplina na turma.
+     *
+     * @return string|null erro ('etapa' | 'professor') ou null se gravou
+     */
+    public function setHomeroomTeacher($classId, $teacherId)
+    {
+
+        $stage = $this->db->prepare("SELECT curso.etapa FROM turma INNER JOIN curso ON (turma.fk_id_curso = curso.id_curso) WHERE turma.id_turma = :class");
+        $stage->execute([':class' => (int) $classId]);
+        if ($stage->fetchColumn() !== \App\Models\TeacherStudent\DailyAttendance::STAGE) return 'etapa';
+
+        if ($teacherId !== null) {
+            $teaches = $this->db->prepare("SELECT 1 FROM turma_disciplina WHERE fk_id_turma = :class AND fk_id_professor = :teacher LIMIT 1");
+            $teaches->execute([':class' => (int) $classId, ':teacher' => (int) $teacherId]);
+            if (!$teaches->fetchColumn()) return 'professor';
+        }
+
+        $stmt = $this->db->prepare("UPDATE turma SET fk_id_professor_titular = :teacher WHERE id_turma = :class");
+        $stmt->bindValue(':teacher', $teacherId, $teacherId === null ? \PDO::PARAM_NULL : \PDO::PARAM_INT);
+        $stmt->bindValue(':class', (int) $classId, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return null;
     }
 
     /**

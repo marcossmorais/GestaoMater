@@ -453,6 +453,35 @@ class AdminManagementController extends Action
     }
 
 
+    /**
+     * Fund. 1: professor titular da turma (POST classId, teacherId; vazio tira). Ele faz a chamada diária.
+     */
+    public function classHomeroomSave()
+    {
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        $classId = (int) ($_POST['classId'] ?? 0);
+        $teacherId = (int) ($_POST['teacherId'] ?? 0) ?: null;
+
+        $error = Container::getModel('GeneralManagement\\Classe')->setHomeroomTeacher($classId, $teacherId);
+
+        if ($error) {
+            http_response_code(422);
+            echo $error === 'etapa' ? 'Professor titular só existe nas turmas do Fund. 1.' : 'O titular precisa ter ao menos uma disciplina nesta turma.';
+            return;
+        }
+
+        echo json_encode(['status' => 'success']);
+    }
+
+
     public function studentsAverage()
     {
 

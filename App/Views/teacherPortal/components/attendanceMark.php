@@ -1,5 +1,6 @@
 <?php
-// Chamada rápida na tela da turma. Entrada: $openUnits (bimestres abertos).
+// Chamada rápida na tela da turma. Entrada: $openUnits (bimestres abertos) e $daily (Fund. 1: chamada do dia, ou null).
+$daily = $daily ?? null;
 ?>
 <div id="attendance" class="m-att">
 
@@ -26,10 +27,11 @@
             </div>
 
             <div class="m-att-field">
-                <span class="m-att-label">Data da aula</span>
+                <span class="m-att-label"><?= $daily ? 'Dia' : 'Data da aula' ?></span>
                 <input type="date" class="form-control m-att-date-input" data-att-date value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>">
             </div>
 
+            <?php if (!$daily) { ?>
             <div class="m-att-field">
                 <span class="m-att-label">Aulas seguidas</span>
                 <div class="m-stepper">
@@ -38,6 +40,7 @@
                     <button type="button" data-att-lessons="1" aria-label="Mais uma aula"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
+            <?php } ?>
 
             <div class="m-att-field m-att-field-grow">
                 <span class="m-att-label">Buscar aluno</span>
