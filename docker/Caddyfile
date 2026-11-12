@@ -1,0 +1,20 @@
+# HTTPS automático (Let's Encrypt) na frente do app. APP_DOMAIN vem do .env (ex.: portal.colegio.com.br).
+# O DNS do domínio precisa apontar para a VPS e as portas 80/443 precisam estar abertas.
+{$APP_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# atestados e fotos: até 10 MB (o PHP já limita cada arquivo)
+	request_body {
+		max_size 12MB
+	}
+
+	reverse_proxy app:80
+}
