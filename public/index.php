@@ -9,6 +9,9 @@
 		Dotenv\Dotenv::createUnsafeImmutable(dirname(__DIR__))->safeLoad();
 	}
 
+	// em produção, sem Clerk ou sem chave de assinatura forte o site não abre (motivo só no log)
+	\App\Tools\ProductionCheck::enforce();
+
 	$route = new \App\Route;
 
 ?>
