@@ -10,7 +10,8 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 
 ## 1. Transversal
 - [x] **Trilha de auditoria** imutável (`database/10_auditoria.sql`, `App/Tools/Audit.php`): triggers em notas, faltas, chamadas, atestados e ocorrências; download de declarações pelo aluno
-- [x] **RBAC docente** no servidor (`curso.etapa`, `App/Models/Teacher/TeacherAccess.php`): Anos Iniciais edita todas as disciplinas da turma; Finais/EM só a própria. Negado = 403 + linha `NEGADO` na auditoria
+- [x] **RBAC docente** no servidor (`App/Models/Teacher/TeacherAccess.php`): cada professor edita só as disciplinas atribuídas a ele e vê a turma inteira. Negado = 403 + linha `NEGADO` na auditoria
+- [x] **Fund. 1 com titular e chamada diária** (`database/24_fund1_titular_chamada_diaria.sql`, `App/Models/TeacherStudent/DailyAttendance.php`): o admin marca o professor titular da turma no perfil da turma; ele faz uma chamada por dia (salvar de novo corrige), especialistas não fazem chamada e editam só a disciplina deles (antes, qualquer professor com uma disciplina editava todas). Frequência em dias (letivos = dias com chamada; atestado aprovado abona o dia) no portal do aluno, boletim, boletim A4, declaração de frequência, carômetro e home do professor. A chamada por disciplina é recusada no Fund. 1. Avaliação do Fund. 1 aguarda as regras da escola
 - [x] Auth Clerk · [x] Responsivo mobile · [ ] Modo noturno
 - [x] **Migrações em banco existente** (`database/migrate.php`): registra em `schema_migrations` (com checksum) e aplica só as pendentes, cada uma numa transação, com trava contra deploy simultâneo. Banco criado pelo Docker entra com `--baseline=NN`; `database/dev/` nunca roda
 - [x] **Montagem de produção** (`docker-compose.prod.yml`, [DEPLOY.md](DEPLOY.md)): código dentro da imagem, Caddy com HTTPS automático, banco e app sem porta publicada, erros fora da tela, volumes para banco, atestados e fotos, `.env` fora da imagem. Admin fictício do seed sem e-mail (migração 23) e primeiro admin real por `database/create-admin.php`
@@ -19,7 +20,7 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 ## 2. Portal Docente
 - [x] Chamada rápida por carômetro
 - [x] Grade de horários
-- [x] Anos Iniciais: seleção de disciplinas na chamada e no diário
+- [x] Anos Iniciais: seleção de disciplinas no diário (a chamada é a diária do titular)
 - [x] Ensino Médio: edição restrita à própria disciplina + visão geral da turma (`/portal-docente/turma?id=`, pontos por disciplina na unidade)
 - [x] Docente não acessa mais rotas `/admin` (antes podia chamar toda a gestão)
 - [x] **Diário** (`/portal-docente/diario`, `database/12_diario_aula.sql`): habilidade BNCC (texto + código validado) + observação, vinculado à chamada do dia
