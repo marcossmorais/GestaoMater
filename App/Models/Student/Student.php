@@ -423,14 +423,20 @@ class Student extends People
     public function updateProfilePicture()
     {
 
-        $query = "UPDATE aluno SET foto_perfil_aluno = :profilePhoto WHERE aluno.id_aluno = :studentId";
+        // devolve a foto anterior (para apagar do disco): o nome vem do banco, não do formulário
+        $query = "UPDATE aluno SET foto_perfil_aluno = :profilePhoto
+                  FROM (SELECT foto_perfil_aluno AS old FROM aluno WHERE id_aluno = :studentId) previous
+                  WHERE aluno.id_aluno = :studentId
+                  RETURNING previous.old";
 
         $stmt = $this->db->prepare($query);
 
         $stmt->bindValue(':profilePhoto', $this->__get('profilePhoto'));
-        $stmt->bindValue(':studentId', $this->__get('studentId'));
+        $stmt->bindValue(':studentId', (int) $this->__get('studentId'), \PDO::PARAM_INT);
 
         $stmt->execute();
+
+        return $stmt->fetchColumn() ?: null;
     }
 
 

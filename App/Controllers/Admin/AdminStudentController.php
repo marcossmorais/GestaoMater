@@ -271,13 +271,18 @@ class AdminStudentController extends Action
         $Student = Container::getModel('Student\\Student');
         $Tool = new Tools();
 
-        empty($_GET['oldPhoto']) ? '' : unlink('../public/assets/img/studentProfilePhotos/' . $_POST['oldPhoto']);
+        $dir = '../public/assets/img/studentProfilePhotos/';
 
-        $Tool->image($Student, '../public/assets/img/studentProfilePhotos/');
+        if ($Tool->image($Student, $dir) !== true) {
+            http_response_code(422);
+            echo 'Foto inválida: envie JPG, PNG ou WebP de até 5 MB.';
+            return;
+        }
 
         $Student->__set('studentId', $_POST['id']);
 
-        $Student->updateProfilePicture();
+        // a foto antiga sai do disco só depois de a nova estar gravada e salva no banco
+        $Tool->removeImage($dir, $Student->updateProfilePicture());
     }
 
 

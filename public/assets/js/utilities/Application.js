@@ -13,7 +13,8 @@ class Application {
             cache: false,
             contentType: false,
             processData: false,
-            error: error => tools.showToast('Tente novamente mais tarde', 'bg-info'),
+            // 422 = dado recusado pelo servidor (ex.: foto inválida): mostra o motivo que ele mandou
+            error: xhr => tools.showToast(xhr.status === 422 && xhr.responseText ? xhr.responseText : 'Tente novamente mais tarde', 'bg-info'),
             success: data => console.log(data)
         })
     }

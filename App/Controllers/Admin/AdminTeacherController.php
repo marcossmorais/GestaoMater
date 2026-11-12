@@ -199,12 +199,17 @@ class AdminTeacherController extends Action
         $Teacher = Container::getModel('Teacher\\Teacher');
         $Tool = new Tools();
 
-        empty($_GET['oldPhoto']) ? '' : unlink('../public/assets/img/teacherProfilePhotos/' . $_POST['oldPhoto']);
+        $dir = '../public/assets/img/teacherProfilePhotos/';
 
-        $Tool->image($Teacher, '../public/assets/img/teacherProfilePhotos/');
+        if ($Tool->image($Teacher, $dir) !== true) {
+            http_response_code(422);
+            echo 'Foto inválida: envie JPG, PNG ou WebP de até 5 MB.';
+            return;
+        }
 
         $Teacher->__set('teacherId', $_POST['id']);
 
-        $Teacher->updateProfilePicture();
+        // a foto antiga sai do disco só depois de a nova estar gravada e salva no banco
+        $Tool->removeImage($dir, $Teacher->updateProfilePicture());
     }
 }
