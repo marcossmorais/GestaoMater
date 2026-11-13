@@ -111,6 +111,9 @@ class StudentPortalController extends Action
 
         $ClassSchedule = Container::getModel('GeneralManagement\\ClassSchedule');
         $this->view->classSchedule = $ClassSchedule->getScheduleByClass($_SESSION['Student']['classId']);
+        // Fund. 1: os horários sem especialista são do titular
+        $this->view->homeroomTeacher = $ClassSchedule->homeroomTeacherName($_SESSION['Student']['classId']);
+        $this->view->scheduleSlots = $this->view->homeroomTeacher ? $ClassSchedule->slotsForClass($_SESSION['Student']['classId']) : [];
         $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
         $this->view->shortDayNames = \App\Models\GeneralManagement\ClassSchedule::shortDayNames();
 
@@ -471,7 +474,11 @@ class StudentPortalController extends Action
     {
         if (!isset($_SESSION)) session_start();
 
-        $this->view->classSchedule = Container::getModel('GeneralManagement\ClassSchedule')->getScheduleByClass($_SESSION['Student']['classId']);
+        $ClassSchedule = Container::getModel('GeneralManagement\ClassSchedule');
+        $this->view->classSchedule = $ClassSchedule->getScheduleByClass($_SESSION['Student']['classId']);
+        // Fund. 1: os horários sem especialista são do titular
+        $this->view->homeroomTeacher = $ClassSchedule->homeroomTeacherName($_SESSION['Student']['classId']);
+        $this->view->scheduleSlots = $this->view->homeroomTeacher ? $ClassSchedule->slotsForClass($_SESSION['Student']['classId']) : [];
         $this->view->dayNames = \App\Models\GeneralManagement\ClassSchedule::dayNames();
 
         require __DIR__ . '/../../Views/studentPortal/scheduleDocument.php';
