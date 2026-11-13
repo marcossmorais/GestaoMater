@@ -583,6 +583,18 @@ class Route extends Bootstrap
 			'action' => 'classHomeroomSave'
 		);
 
+		$routes['adminClassScheduleEditor'] = array(
+			'route' => '/admin/gestao/turma/perfil-turma/horario',
+			'controller' => 'Admin\\AdminManagementController',
+			'action' => 'classScheduleEditor'
+		);
+
+		$routes['adminClassScheduleSave'] = array(
+			'route' => '/admin/gestao/turma/perfil-turma/horario/salvar',
+			'controller' => 'Admin\\AdminManagementController',
+			'action' => 'classScheduleSave'
+		);
+
 		$routes['adminClassDisciplineInsert'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/turma-disciplina/inserir',
 			'controller' => 'Admin\\AdminManagementController',

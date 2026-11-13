@@ -28,6 +28,10 @@
                                         <span class="box-icon"><i class="fas fa-boxes"></i></span> Disciplinas
                                     </a>
 
+                                    <a class="collapsed" href="#" data-toggle="collapse" aria-expanded="false" data-target="#class-schedule">
+                                        <span class="box-icon"><i class="fas fa-calendar-alt"></i></span> Horário
+                                    </a>
+
 
                                 <?php } ?>
 
@@ -329,6 +333,17 @@
                     </div>
 
                 </div>
+
+                <?php if (isset($_SESSION['Admin']) && $_SESSION['Admin']['hierarchyFunction'] <= 2) { ?>
+                    <div class="col-lg-11 mx-auto collapse" id="class-schedule" data-parent="#main-accordion-class" data-class-id="<?= (int) $this->view->classId ?>">
+                        <div class="col-lg-12 col-sm-11 mx-auto mb-3 p-0">
+                            <h5 class="mt-2">Horário da turma</h5>
+                        </div>
+                        <div class="col-lg-12 mb-3 p-0" data-schedule-editor>
+                            <p class="text-muted">Carregando…</p>
+                        </div>
+                    </div>
+                <?php } ?>
 
                 <div class="col-lg-11 mx-auto collapse" id="class-profile-assessments" data-parent="#main-accordion-class">
 

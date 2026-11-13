@@ -482,6 +482,88 @@ class AdminManagementController extends Action
     }
 
 
+    /**
+     * Quem monta a grade: o mesmo nível que edita as disciplinas da turma (hierarquia 1 ou 2)
+     */
+    private function canEditSchedule()
+    {
+
+        if (!isset($_SESSION)) session_start();
+
+        return isset($_SESSION['Admin']) && (int) $_SESSION['Admin']['hierarchyFunction'] <= 2;
+    }
+
+
+    /**
+     * Grade de horários da turma para montar (HTML do painel Horário do perfil da turma; GET classId)
+     */
+    public function classScheduleEditor()
+    {
+
+        if (!$this->canEditSchedule()) {
+            http_response_code(403);
+            return;
+        }
+
+        $classId = (int) ($_GET['classId'] ?? 0);
+        $Schedule = Container::getModel('GeneralManagement\\ClassSchedule');
+
+        $this->view->classId = $classId;
+        $this->view->scheduleSlots = $Schedule->slotsForClass($classId);
+        $this->view->scheduleDisciplines = $Schedule->disciplinesForClass($classId);
+        $this->view->scheduleGrid = $Schedule->gridForClass($classId);
+        $this->view->scheduleHomeroom = $Schedule->homeroomTeacherName($classId);
+        $this->view->scheduleDays = array_intersect_key(\App\Models\GeneralManagement\ClassSchedule::dayNames(), array_flip(\App\Models\GeneralManagement\ClassSchedule::WEEKDAYS));
+
+        require __DIR__ . '/../../Views/admin/management/components/classSchedule.php';
+    }
+
+
+    /**
+     * Grava a grade inteira da turma (POST classId, cell[dia][faixa] = turma_disciplina)
+     */
+    public function classScheduleSave()
+    {
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+
+        if (!$this->canEditSchedule()) {
+            \App\Tools\Audit::log(\App\Connection::getDb(), 'NEGADO', 'grade_horario', $_POST['classId'] ?? null, 'montar grade');
+            http_response_code(403);
+            echo 'Sem permissão para montar a grade.';
+            return;
+        }
+
+        // a grade vazia apaga tudo: só aceita o envio do próprio formulário (que manda grid=1)
+        if (($_POST['grid'] ?? '') !== '1') {
+            http_response_code(422);
+            echo 'Envio incompleto da grade.';
+            return;
+        }
+
+        $days = \App\Models\GeneralManagement\ClassSchedule::dayNames();
+        $result =Container::getModel('GeneralManagement\\ClassSchedule')->saveGrid((int) ($_POST['classId'] ?? 0), (array) ($_POST['cell'] ?? []));
+
+        if ($result) {
+            http_response_code(422);
+            if ($result['error'] === 'celula') {
+                echo 'A grade mudou (disciplina ou horário fora da turma). Feche e abra o horário de novo.';
+                return;
+            }
+            echo 'Professor com aula em outra turma no mesmo horário: ' . implode('; ', array_map(function ($c) use ($days) {
+                return $c->teacher . ' (' . $days[$c->day] . ' ' . $c->start . ', ' . $c->other_class . ')';
+            }, $result['conflicts']));
+            return;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'success']);
+    }
+
+
     public function studentsAverage()
     {
 

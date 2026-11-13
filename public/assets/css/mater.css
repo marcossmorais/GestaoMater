@@ -1330,6 +1330,10 @@ html body .m-overview td a { color: inherit !important; font-weight: 600; }
 .m-saved-banner > span { flex: 1; font-size: 13px; }
 .m-saved-banner small { display: block; color: var(--m-muted); }
 .m-saved-banner a { font-weight: 600; font-size: 13px; white-space: nowrap; }
+/* admin: montar o horário da turma (um cartão por dia; empilha no celular) */
+.m-schedule-editor { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.m-schedule-editor .m-schedule-day { margin: 0; }
+.m-schedule-editor select { font-size: 13px; }
 /* barra inferior: só o item ativo tem o traço azul (o tema antigo punha borda branca em todos, que virava azul no escuro) */
 html body .navbar.fixed-bottom .nav-link:not(.link-active):not([aria-expanded="true"]) { border-bottom-color: transparent !important; }
 /* cards de turma: sempre em linha (selo · texto · seta), mais compactos no celular */
