@@ -583,6 +583,24 @@ class Route extends Bootstrap
 			'action' => 'classHomeroomSave'
 		);
 
+		$routes['adminClassSubstitutionList'] = array(
+			'route' => '/admin/gestao/turma/perfil-turma/substituicao/lista',
+			'controller' => 'Admin\\AdminManagementController',
+			'action' => 'classSubstitutionList'
+		);
+
+		$routes['adminClassSubstitutionSave'] = array(
+			'route' => '/admin/gestao/turma/perfil-turma/substituicao/salvar',
+			'controller' => 'Admin\\AdminManagementController',
+			'action' => 'classSubstitutionSave'
+		);
+
+		$routes['adminClassSubstitutionDelete'] = array(
+			'route' => '/admin/gestao/turma/perfil-turma/substituicao/deletar',
+			'controller' => 'Admin\\AdminManagementController',
+			'action' => 'classSubstitutionDelete'
+		);
+
 		$routes['adminClassScheduleEditor'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/horario',
 			'controller' => 'Admin\\AdminManagementController',
@@ -980,6 +998,18 @@ class Route extends Bootstrap
 			'route' => '/portal-docente/chamada-diaria/salvar',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
 			'action' => 'dailyAttendanceSave'
+		);
+
+		$routes['dailyLogSaveTeacherPortal'] = array(
+			'route' => '/portal-docente/diario-do-dia/salvar',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'dailyLogSave'
+		);
+
+		$routes['dailyLogBnccTeacherPortal'] = array(
+			'route' => '/portal-docente/diario-do-dia/bncc',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'dailyLogBncc'
 		);
 
 		$routes['lessonsTeacherPortal'] = array(

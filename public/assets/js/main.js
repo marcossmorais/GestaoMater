@@ -123,6 +123,55 @@ $(document).on("click", "#profileClassModal #buttonSaveHomeroom", function () {
 })
 
 
+// Fund. 1: substituição do titular por período
+function reloadSubstitutions(classId) {
+    $("#profileClassModal [data-substitution-list]").load("/admin/gestao/turma/perfil-turma/substituicao/lista?classId=" + encodeURIComponent(classId))
+}
+
+$(document).on("click", "#profileClassModal #buttonSaveSubstitution", function () {
+
+    const button = $(this).prop("disabled", true)
+    const form = $("#formSubstitution")
+
+    $.ajax({
+        url: "/admin/gestao/turma/perfil-turma/substituicao/salvar",
+        type: "POST",
+        data: form.serialize(),
+        success: () => {
+            tools.showToast("Substituto designado", "bg-success")
+            form.find("select, input[type=date], input[type=text]").val("")
+            reloadSubstitutions(form.find("[name=classId]").val())
+        },
+        error: xhr => tools.showToast(xhr.status === 422 && xhr.responseText ? xhr.responseText : "Tente novamente mais tarde", "bg-info"),
+        complete: () => button.prop("disabled", false)
+    })
+
+})
+
+$(document).on("click", "#profileClassModal [data-substitution-delete]", function () {
+
+    if (!window.confirm("Remover esta substituição? O substituto perde o acesso à turma.")) return
+
+    const button = $(this).prop("disabled", true)
+    const classId = $("#formSubstitution [name=classId]").val()
+
+    $.ajax({
+        url: "/admin/gestao/turma/perfil-turma/substituicao/deletar",
+        type: "POST",
+        data: { id: button.data("substitutionDelete"), classId: classId },
+        success: () => {
+            tools.showToast("Substituição removida", "bg-success")
+            reloadSubstitutions(classId)
+        },
+        error: xhr => {
+            tools.showToast(xhr.status === 422 && xhr.responseText ? xhr.responseText : "Tente novamente mais tarde", "bg-info")
+            button.prop("disabled", false)
+        }
+    })
+
+})
+
+
 // Horário da turma: carrega a grade ao abrir o painel (pega as disciplinas adicionadas no modal) e grava inteira
 $(document).on("show.bs.collapse", "#profileClassModal #class-schedule", function (event) {
 

@@ -90,7 +90,13 @@ class TeacherPortalController extends Action
         $this->view->today = $today;
         $this->view->lessonsDate = $lessonsDate;
         $this->view->lessons = $lessons;
-        $this->view->pending = $Dashboard->pending(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses), $openUnits);
+        $pending = $Dashboard->pending(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses), $openUnits);
+        // Fund. 1: dia com chamada e sem diário do dia, nas turmas em que é titular
+        $homerooms = [];
+        foreach (Container::getModel('TeacherStudent\\DailyAttendance')->homeroomClasses($teacherId) as $h) $homerooms[(int) $h->class_id] = $h->label . ' · ' . $h->course . ' · ' . $h->shift;
+        $pending['daily'] = Container::getModel('TeacherStudent\\DailyLog')->missing(array_keys($homerooms));
+        $this->view->pending = $pending;
+        $this->view->homerooms = $homerooms;
         $this->view->atRisk = $Dashboard->atRisk($disciplineClasses, max($openUnits), $rule);
         $this->view->topAbsences = $Dashboard->topAbsences($disciplineClasses, max($openUnits));
         $this->view->charts = $Dashboard->charts($disciplineClasses, max($openUnits), $rule, $this->view->atRisk);
@@ -111,9 +117,14 @@ class TeacherPortalController extends Action
 
         $teacherId = (int) $_SESSION['Teacher']['id'];
         $classes = Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($teacherId);
+        // Fund. 1: turma do titular ou da substituição de hoje, mesmo sem disciplina dele nela
+        $homerooms = Container::getModel('TeacherStudent\\DailyAttendance')->homeroomClasses($teacherId);
 
-        if ($classes) {
-            $classIds = array_map(function ($c) { return (int) $c->class_id; }, $classes);
+        if ($classes || $homerooms) {
+            $classIds = array_values(array_unique(array_merge(
+                array_map(function ($c) { return (int) $c->class_id; }, $homerooms),
+                array_map(function ($c) { return (int) $c->class_id; }, $classes)
+            )));
             $classId = (int) ($_SESSION['Teacher']['lastClass'] ?? 0);
 
             if (!in_array($classId, $classIds, true)) {
@@ -476,9 +487,17 @@ class TeacherPortalController extends Action
         $unity = (int) ($_GET['unity'] ?? 0);
         if (!in_array($unity, $openUnits, true)) $unity = max($openUnits);
 
-        if (!$Daily->homeroomFor($_SESSION['Teacher']['id'], $classId)) {
+        $class = $Daily->homeroomFor($_SESSION['Teacher']['id'], $classId);
+        if (!$class) {
             http_response_code(403);
             echo json_encode(['error' => 'sem-permissao']);
+            return;
+        }
+
+        // substituto: só nas datas do período
+        if (!$Daily->covers($class, $date)) {
+            http_response_code(403);
+            echo json_encode(['error' => 'fora-da-substituicao', 'from' => $class->substitute_from, 'until' => $class->substitute_until]);
             return;
         }
 
@@ -540,6 +559,14 @@ class TeacherPortalController extends Action
             return;
         }
 
+        // substituto: só nas datas do período
+        if (!$Daily->covers($class, $date)) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', 'chamada_diaria', $classId, ['data' => $date, 'motivo' => 'fora da substituição']);
+            http_response_code(403);
+            echo json_encode(['error' => 'fora-da-substituicao', 'from' => $class->substitute_from, 'until' => $class->substitute_until]);
+            return;
+        }
+
         if (!in_array($unity, $this->openUnits(Container::getModel('Admin\\Settings')), true)) {
             http_response_code(422);
             echo json_encode(['error' => 'unidade-fechada']);
@@ -566,12 +593,6 @@ class TeacherPortalController extends Action
             return;
         }
 
-        // disciplinas do titular nesta turma, para seguir direto ao diário
-        $own = array_values(array_filter(
-            Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($teacherId),
-            function ($c) use ($classId) { return (int) $c->class_id === $classId; }
-        ));
-
         echo json_encode([
             'id' => $id,
             'daily' => true,
@@ -580,7 +601,6 @@ class TeacherPortalController extends Action
             'absent' => count($absent),
             'lessons' => 1,
             'disciplines' => [],
-            'disciplineClasses' => array_map(function ($c) { return (int) $c->discipline_class_id; }, $own),
             'unity' => $unity,
             'date' => $date,
             'formattedDate' => date('d/m/Y', strtotime($date)),
@@ -592,6 +612,104 @@ class TeacherPortalController extends Action
     /**
      * Diário de aula: habilidade BNCC, observação, atividades e exceções
      */
+    /**
+     * Fund. 1: grava o diário do dia da turma (POST JSON: classId, date, text, codes[]). Só o titular; de novo no mesmo dia corrige.
+     */
+    public function dailyLogSave()
+    {
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        if (!isset($_SESSION)) session_start();
+
+        $DailyLog = Container::getModel('TeacherStudent\\DailyLog');
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $teacherId = (int) $_SESSION['Teacher']['id'];
+        $classId = (int) ($input['classId'] ?? 0);
+        $date = trim((string) ($input['date'] ?? ''));
+
+        $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        $class = $Daily->homeroomFor($teacherId, $classId);
+        if (!$class) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', 'diario_dia', $classId, ['data' => $date]);
+            http_response_code(403);
+            echo json_encode(['error' => 'sem-permissao']);
+            return;
+        }
+
+        // substituto: só nas datas do período
+        if (!$Daily->covers($class, $date)) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', 'diario_dia', $classId, ['data' => $date, 'motivo' => 'fora da substituição']);
+            http_response_code(403);
+            echo json_encode(['error' => 'fora-da-substituicao', 'from' => $class->substitute_from, 'until' => $class->substitute_until]);
+            return;
+        }
+
+        $fail = function ($error) {
+            http_response_code(422);
+            echo json_encode(['error' => $error]);
+        };
+
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !strtotime($date) || $date > date('Y-m-d')) return $fail('data-invalida');
+
+        $text = trim(str_replace("\r\n", "\n", (string) ($input['text'] ?? '')));
+        if ($text === '') return $fail('diario-vazio');
+        if (mb_strlen($text) > \App\Models\TeacherStudent\DailyLog::MAX_TEXT) return $fail('texto-muito-longo');
+
+        $codes = [];
+        foreach ((array) ($input['codes'] ?? []) as $code) {
+            $code = strtoupper(preg_replace('/\s+/', '', (string) $code));
+            if (!preg_match(\App\Models\TeacherStudent\Lesson::BNCC_CODE, $code)) return $fail('codigo-bncc-invalido');
+            $codes[$code] = $code;
+        }
+        if (count($codes) > \App\Models\TeacherStudent\DailyLog::MAX_CODES) return $fail('codigos-demais');
+
+        $corrected = $DailyLog->find($classId, $date) !== null;
+
+        try {
+            $id = $DailyLog->save($classId, $teacherId, $date, $text, array_values($codes));
+        } catch (\Throwable $e) {
+            error_log('Diário do dia: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'falha-ao-salvar']);
+            return;
+        }
+
+        echo json_encode(['id' => $id, 'date' => $date, 'corrected' => $corrected]);
+    }
+
+
+    /**
+     * Fund. 1: busca BNCC do diário do dia, em todos os componentes do ano da turma (só o titular)
+     */
+    public function dailyLogBncc()
+    {
+
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION)) session_start();
+
+        $class = Container::getModel('TeacherStudent\\DailyAttendance')->homeroomFor($_SESSION['Teacher']['id'], (int) ($_GET['turma'] ?? 0));
+
+        if (!$class) {
+            http_response_code(403);
+            echo json_encode(['error' => 'sem-permissao']);
+            return;
+        }
+
+        $query = mb_substr((string) ($_GET['q'] ?? ''), 0, 80);
+        $skills = Container::getModel('TeacherStudent\\Bncc')->search($query, \App\Models\TeacherStudent\DailyAttendance::STAGE, (int) $class->series_acronym, '');
+
+        echo json_encode(['skills' => $skills], JSON_UNESCAPED_UNICODE);
+    }
+
+
     public function lessons()
     {
 
@@ -607,6 +725,8 @@ class TeacherPortalController extends Action
         $this->view->teachers = $Lesson->teachers();
         $this->view->classDisciplines = $Lesson->classDisciplines(array_unique(array_map(function ($c) { return $c->class_id; }, $classes)));
         $this->view->pageTab = ($_GET['aba'] ?? '') === 'horario' ? 'horario' : 'planejamento';
+        // Fund. 1: o titular registra o diário do dia na página da turma
+        $this->view->homerooms = Container::getModel('TeacherStudent\\DailyAttendance')->homeroomClasses((int) $_SESSION['Teacher']['id']);
 
         // quadro de horários semanal do professor: agrupado por dia (2=Segunda ... 6=Sexta)
         $schedule = Container::getModel('GeneralManagement\\ClassSchedule')->getScheduleByTeacher((int) $_SESSION['Teacher']['id']);

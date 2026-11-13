@@ -16,6 +16,9 @@ $tabs = ['chamada' => ['fa-clipboard-check', 'Chamada'], 'alunos' => ['fa-users'
 if (!$this->view->canTakeAttendance) unset($tabs['chamada']);
 $isDaily = $this->view->isDaily;
 $daily = $this->view->daily;
+// Fund. 1: o titular registra um diário único por dia, ao lado da chamada
+if ($daily) $tabs = array_slice($tabs, 0, 1, true) + ['diario' => ['fa-book-open', 'Diário do dia']] + array_slice($tabs, 1, null, true);
+$plainTab = in_array($tab, ['chamada', 'diario'], true); // sem bimestre nem busca de aluno
 $ownDisciplines = $this->view->ownDisciplines;
 $showDisciplines = $tab === 'chamada' && !$isDaily && count($ownDisciplines) > 1;
 $absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
@@ -30,9 +33,16 @@ $absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
             <div class="m-att-head">
                 <div class="m-att-head-title">
                     <h5><?= htmlspecialchars($this->view->classLabel) ?></h5>
-                    <p><?= $tab === 'notas' ? count($overview['students']) : count($roster) ?> alunos<?= $tab === 'alunos' ? ' · toque no aluno para abrir o perfil' : ($tab === 'chamada' ? ($isDaily ? ' · chamada do dia: todos começam presentes, toque em quem faltou' : ' · todos começam presentes, toque em quem faltou') : '') ?></p>
+                    <p><?= $tab === 'notas' ? count($overview['students']) : count($roster) ?> alunos<?= $tab === 'alunos' ? ' · toque no aluno para abrir o perfil' : ($tab === 'chamada' ? ($isDaily ? ' · chamada do dia: todos começam presentes, toque em quem faltou' : ' · todos começam presentes, toque em quem faltou') : ($tab === 'diario' ? ' · um registro por dia para a turma; salvar de novo corrige' : '')) ?></p>
                 </div>
             </div>
+
+            <?php if ($daily && $daily['from'] !== null && in_array($tab, ['chamada', 'diario'], true)) { ?>
+                <p class="m-saved-banner m-sub-banner">
+                    <i class="fas fa-user-clock"></i>
+                    <span><strong>Você está substituindo o titular.</strong> Chamada e diário desta turma liberados de <?= date('d/m', strtotime($daily['from'])) ?> a <?= date('d/m/Y', strtotime($daily['until'])) ?>; depois, o acesso acaba sozinho.</span>
+                </p>
+            <?php } ?>
 
             <div class="card m-att-toolbar">
                 <form class="m-att-field m-class-filter" action="/portal-docente/turma" method="get" data-auto-submit>
@@ -65,7 +75,7 @@ $absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
                         <input type="hidden" name="ver" value="chamada">
                     </form>
                 <?php } ?>
-                <?php if ($tab !== 'chamada') { ?>
+                <?php if (!$plainTab) { ?>
                 <div class="m-att-field">
                     <span class="m-att-label">Bimestre</span>
                     <div class="m-seg">
@@ -75,7 +85,7 @@ $absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
                     </div>
                 </div>
                 <?php } ?>
-                <?php if ($tab !== 'chamada') { ?>
+                <?php if (!$plainTab) { ?>
                     <div class="m-att-field m-att-field-grow">
                         <span class="m-att-label">Buscar aluno</span>
                         <div class="m-att-search">
@@ -120,6 +130,8 @@ $absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
             <?php } elseif ($tab === 'chamada') {
                 $openUnits = $this->view->openUnits;
                 require __DIR__ . '/components/attendanceMark.php';
+            } elseif ($tab === 'diario') {
+                require __DIR__ . '/components/dailyLog.php';
             } else {
                 $grade = function ($n) { return number_format((float) $n, 1, ',', ''); };
                 $totals = [];
@@ -209,6 +221,9 @@ $absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
 
 <script src="<?= asset('/assets/js/quickNote.js') ?>" defer></script>
 <script src="<?= asset('/assets/js/classRoster.js') ?>" defer></script>
+<?php if ($tab === 'diario') { ?>
+    <script src="<?= asset('/assets/js/dailyLog.js') ?>" defer></script>
+<?php } ?>
 <?php if ($tab === 'chamada') {
     $disciplineClasses = $this->view->disciplineClasses;
     require __DIR__ . '/components/classCards.php';

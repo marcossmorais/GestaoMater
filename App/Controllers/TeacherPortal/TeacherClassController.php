@@ -477,14 +477,18 @@ class TeacherClassController extends Action
         $classFilter = [];
         foreach ($all as $c) $classFilter[(int) $c->class_id] = $c->series_acronym . 'ª ' . $c->ballot . ' · ' . $c->course . ' · ' . $c->shift;
 
-        // Fund. 1: a chamada é a diária, só do titular; especialista não faz chamada
+        // Fund. 1: a chamada é a diária, só do titular (ou do substituto no período); especialista não faz chamada
         $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        // turma em que substitui sem ter disciplina nela também entra no filtro
+        foreach ($Daily->homeroomClasses($this->teacherId()) as $h) $classFilter[(int) $h->class_id] ??= $h->label . ' · ' . $h->course . ' · ' . $h->shift;
         $isDaily = $Daily->isDaily($classId);
         $homeroom = $isDaily ? $Daily->homeroomFor($this->teacherId(), $classId) : null;
         $canTakeAttendance = $isDaily ? $homeroom !== null : (bool) $own;
 
-        $tab = in_array($_GET['ver'] ?? '', ['alunos', 'notas'], true) ? $_GET['ver'] : 'chamada';
+        $tab = in_array($_GET['ver'] ?? '', ['alunos', 'notas', 'diario'], true) ? $_GET['ver'] : 'chamada';
         if ($tab === 'chamada' && !$canTakeAttendance) $tab = 'alunos';
+        // diário do dia: só o titular do Fund. 1
+        if ($tab === 'diario' && !$homeroom) $tab = 'alunos';
         $_SESSION['Teacher']['lastClass'] = $classId;
 
         // chamada: disciplina pedida na URL, se for do professor nesta turma; senão, a primeira
@@ -503,6 +507,9 @@ class TeacherClassController extends Action
             'course' => $homeroom->course,
             'shift' => $homeroom->shift,
             'students' => (int) $homeroom->student_total,
+            // substituição: as datas permitidas (null para o titular)
+            'from' => $homeroom->substitute_from,
+            'until' => $homeroom->substitute_until,
         ] : null;
         $this->view->tab = $tab;
         $this->view->classFilter = $classFilter;
@@ -512,6 +519,15 @@ class TeacherClassController extends Action
         $this->view->openUnits = $this->openUnits();
         // só o que a aba mostra
         $this->view->overview = $tab === 'notas' ? $Gradebook->classOverview($classId, $unity, $this->view->rule) : null;
+        if ($tab === 'diario') {
+            $date = trim((string) ($_GET['data'] ?? ''));
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !strtotime($date) || $date > date('Y-m-d')) $date = date('Y-m-d');
+            if (!$Daily->covers($homeroom, $date)) $date = date('Y-m-d'); // substituto: hoje está sempre no período
+            $DailyLog = Container::getModel('TeacherStudent\\DailyLog');
+            $this->view->logDate = $date;
+            $this->view->log = $DailyLog->find($classId, $date);
+            $this->view->recentLogs = $DailyLog->recent($classId);
+        }
         $this->view->roster = $tab === 'notas' ? [] : Container::getModel('TeacherStudent\\StudentFile')->classRoster($classId, $ownIds, $unity);
         $this->view->quickNotes = \App\Models\TeacherStudent\StudentFile::QUICK_NOTES;
         $this->view->quickDisciplines = array_map(function ($c) {

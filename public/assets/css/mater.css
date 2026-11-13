@@ -1330,6 +1330,15 @@ html body .m-overview td a { color: inherit !important; font-weight: 600; }
 .m-saved-banner > span { flex: 1; font-size: 13px; }
 .m-saved-banner small { display: block; color: var(--m-muted); }
 .m-saved-banner a { font-weight: 600; font-size: 13px; white-space: nowrap; }
+/* diário do dia (Fund. 1) */
+.m-dlog-status { align-self: flex-end; margin: 0 0 10px; font-size: 13px; color: var(--m-muted); }
+.m-dlog-status .fa-check-circle { color: var(--m-success); }
+.m-dlog-codes { margin-top: 8px; }
+.m-dlog-codes:empty { display: none; }
+.m-dlog .m-todo a[aria-current] { background: var(--m-row-hover); }
+.m-dlog { padding-bottom: 88px; }
+.m-sub-banner { background: rgba(217, 119, 6, .12); }
+.m-sub-banner > i { color: var(--m-warning, #d97706); } /* a lista não fica atrás da barra fixa de salvar */
 /* admin: montar o horário da turma (um cartão por dia; empilha no celular) */
 .m-schedule-editor { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
 .m-schedule-editor .m-schedule-day { margin: 0; }

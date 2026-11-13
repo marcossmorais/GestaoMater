@@ -26,7 +26,8 @@ $className = function ($id) use ($classes) {
 };
 
 $now = (new DateTime('now', new DateTimeZone('America/Sao_Paulo')))->format('H:i');
-$pendingTotal = count($pending['lessons']) + count($pending['exams']);
+$pendingTotal = count($pending['lessons']) + count($pending['exams']) + count($pending['daily']);
+$homerooms = $this->view->homerooms;
 ?>
 
 <section id="home">
@@ -234,6 +235,12 @@ $pendingTotal = count($pending['lessons']) + count($pending['exams']);
                             <div class="m-empty"><i class="fas fa-check-circle mr-2"></i>Tudo em dia.</div>
                         <?php } else { ?>
                             <ul class="m-todo">
+                                <?php foreach ($pending['daily'] as $p) { ?>
+                                    <li><a href="/portal-docente/turma?id=<?= (int) $p->class_id ?>&ver=diario&data=<?= htmlspecialchars($p->date) ?>">
+                                        <i class="fas fa-book-open"></i>
+                                        <span><strong>Diário do dia <?= $shortDate($p->date) ?></strong><small><?= htmlspecialchars($homerooms[(int) $p->class_id] ?? '') ?> · chamada feita, dia sem registro</small></span>
+                                    </a></li>
+                                <?php } ?>
                                 <?php foreach ($pending['lessons'] as $p) { ?>
                                     <li><a href="/portal-docente/diario?turma=<?= (int) $p->discipline_class_id ?>&data=<?= htmlspecialchars($p->date) ?>">
                                         <i class="fas fa-book-open"></i>

@@ -447,9 +447,91 @@ class AdminManagementController extends Action
         $this->view->availableSeries = $Series->listForSelect();
         $this->view->availableCourse = $Course->listForSelect();
         $this->view->availableClassRoom = $ClassRoom->listForSelect();
-        $this->view->activeSchoolTerm = $SchoolTerm->activeScheduledSchoolTerm();       
+        $this->view->activeSchoolTerm = $SchoolTerm->activeScheduledSchoolTerm();
+        // Fund. 1: substituição do titular por período
+        $Substitution = Container::getModel('GeneralManagement\\Substitution');
+        $this->view->substitutions = $Substitution->forClass($Classe->__get('classId'));
+        $this->view->activeTeachers = $Substitution->teachers();
 
         $this->render('management/components/modalClassProfile', 'SimpleLayout');
+    }
+
+
+    /**
+     * Fund. 1: lista de substituições da turma (HTML do bloco do perfil da turma; GET classId)
+     */
+    public function classSubstitutionList()
+    {
+
+        $this->view->substitutions = Container::getModel('GeneralManagement\\Substitution')->forClass((int) ($_GET['classId'] ?? 0));
+        require __DIR__ . '/../../Views/admin/management/components/substitutionList.php';
+    }
+
+
+    /**
+     * Fund. 1: designa o substituto do titular por período (POST classId, teacherId, start, end, reason)
+     */
+    public function classSubstitutionSave()
+    {
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+
+        $start = trim((string) ($_POST['start'] ?? ''));
+        $end = trim((string) ($_POST['end'] ?? ''));
+        $reason = trim((string) ($_POST['reason'] ?? ''));
+        $valid = function ($d) { return preg_match('/^\d{4}-\d{2}-\d{2}$/', $d) && strtotime($d); };
+
+        $messages = [
+            'datas' => 'Informe as datas de início e de fim.',
+            'passado' => 'A substituição não pode terminar antes de hoje.',
+            'motivo' => 'Motivo muito longo (até 255 caracteres).',
+            'etapa' => 'Substituição de titular só existe nas turmas do Fund. 1.',
+            'professor' => 'Escolha um professor com conta ativa.',
+            'titular' => 'Este professor já é o titular da turma.',
+            'periodo' => 'A data de fim precisa ser igual ou depois da de início.',
+            'longo' => 'Período longo demais (até ' . \App\Models\GeneralManagement\Substitution::MAX_DAYS . ' dias). Para afastamento longo, troque o titular.',
+            'sobreposta' => 'Já existe uma substituição nesta turma que cruza essas datas.',
+        ];
+
+        $error = null;
+        if (!$valid($start) || !$valid($end)) $error = 'datas';
+        elseif ($end < date('Y-m-d')) $error = 'passado';
+        elseif (mb_strlen($reason) > 255) $error = 'motivo';
+        else $error = Container::getModel('GeneralManagement\\Substitution')->add((int) ($_POST['classId'] ?? 0), (int) ($_POST['teacherId'] ?? 0), $start, $end, $reason);
+
+        if ($error) {
+            http_response_code(422);
+            echo $messages[$error];
+            return;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'success']);
+    }
+
+
+    /**
+     * Fund. 1: remove a substituição (POST id, classId)
+     */
+    public function classSubstitutionDelete()
+    {
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+
+        if (!Container::getModel('GeneralManagement\\Substitution')->delete((int) ($_POST['id'] ?? 0), (int) ($_POST['classId'] ?? 0))) {
+            http_response_code(422);
+            echo 'Substituição não encontrada.';
+            return;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'success']);
     }
 
 
@@ -474,7 +556,11 @@ class AdminManagementController extends Action
 
         if ($error) {
             http_response_code(422);
-            echo $error === 'etapa' ? 'Professor titular só existe nas turmas do Fund. 1.' : 'O titular precisa ter ao menos uma disciplina nesta turma.';
+            echo [
+                'etapa' => 'Professor titular só existe nas turmas do Fund. 1.',
+                'professor' => 'O titular precisa ter ao menos uma disciplina nesta turma.',
+                'turno' => 'Este professor já é titular de outra turma neste turno. Ele pode ter uma turma de manhã e outra de tarde.',
+            ][$error];
             return;
         }
 
