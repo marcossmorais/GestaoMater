@@ -20,6 +20,8 @@ Depois: entrar em `https://<domínio>/admin` pelo Clerk com esse e-mail e, em **
 
 O banco de produção não recebe `database/dev/` (dados fictícios), e a imagem não leva as fotos de perfil fictícias versionadas (só a `foto-vazia.jpg`, pelo `.dockerignore`). O admin do `02_seed.sql` fica sem e-mail (migração 23) até virar o admin real pelo `create-admin.php`.
 
+Se o site responder **503 "Sistema temporariamente indisponível"**, a configuração de produção está incompleta: o motivo aparece em `docker compose -f docker-compose.prod.yml logs app | grep mater:` (Clerk desligado, `APP_SIGNING_KEY` curta ou a de desenvolvimento, `APP_URL` sem https). Corrija o `.env` e rode `up -d` de novo.
+
 ## Atualizar
 ```bash
 cd /opt/mater && git pull

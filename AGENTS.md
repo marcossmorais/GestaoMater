@@ -62,7 +62,7 @@ Smoke test precisa do login por código: suba com `CLERK_*` vazios. Antes de abr
 ## Segurança
 - Manter PHP e imagem base atualizados (`docker compose build --pull`). Rodar `composer audit` ao mexer em dependências.
 - Atualizar PHP = **recriar o container**, não só trocar binário/imagem: `docker compose up -d --build --pull always`. Processo antigo continua vulnerável na memória. Sem Docker: reiniciar `apache2`/`php-fpm`. Depois, confirmar a versão **servida** (requisição HTTP com `PHP_VERSION`), não só `php -v` no CLI.
-- Em produção: `docker-compose.prod.yml` ([docs/DEPLOY.md](docs/DEPLOY.md)) já liga `PHP_DISPLAY_ERRORS=Off`, OPcache sem revalidar e cookie `secure`; exige `APP_URL` real, Clerk e `APP_SIGNING_KEY`. `DB_SSLMODE=require` quando o banco é externo (Supabase); na VPS o banco fica na rede interna do Docker.
+- Em produção: `docker-compose.prod.yml` ([docs/DEPLOY.md](docs/DEPLOY.md)) já liga `PHP_DISPLAY_ERRORS=Off`, OPcache sem revalidar e cookie `secure`; exige `APP_URL` real, Clerk e `APP_SIGNING_KEY` (com `APP_ENV=production`, o `App/Tools/ProductionCheck.php` responde 503 se faltar Clerk, https ou chave forte). `DB_SSLMODE=require` quando o banco é externo (Supabase); na VPS o banco fica na rede interna do Docker.
 - Arquivo novo gravado pelo sistema precisa de volume no `docker-compose.prod.yml` (a imagem é recriada a cada deploy).
 - `APP_SIGNING_KEY` (32+ caracteres, `openssl rand -hex 32`) assina os documentos. Nunca versionar; trocar a chave invalida todos os documentos já emitidos.
 - Documento oficial só imprime dado real do banco ou do `.env` (`SCHOOL_*`). Nada de valor padrão inventado (endereço, CNPJ, frequência).
