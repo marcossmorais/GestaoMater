@@ -9,6 +9,15 @@ foreach ($this->view->classSchedule ?? [] as $s) {
     $slots[(int) $s->ordem_aula] = ['start' => $s->hora_inicio, 'end' => $s->hora_fim];
     if (!in_array((int) $s->dia_semana, $days, true)) $days[] = (int) $s->dia_semana;
 }
+// Fund. 1: todas as faixas da turma entram; horário sem especialista é aula do titular
+$homeroom = $this->view->homeroomTeacher ?? null;
+if ($homeroom) {
+    foreach ($this->view->scheduleSlots ?? [] as $s) $slots[(int) $s->position] = ['start' => $s->start, 'end' => $s->finish];
+}
+$cellFor = function ($order, $day) use ($grid, $homeroom) {
+    if (isset($grid[$order][$day])) return $grid[$order][$day];
+    return $homeroom ? (object) ['nome_disciplina' => 'Professor(a) titular', 'nome_professor' => $homeroom, 'homeroom' => true] : null;
+};
 ksort($slots);
 sort($days);
 $room = !empty($this->view->classSchedule) ? $this->view->classSchedule[0]->sala : '';

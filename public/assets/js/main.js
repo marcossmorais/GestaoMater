@@ -172,6 +172,35 @@ $(document).on("click", "#profileClassModal [data-substitution-delete]", functio
 })
 
 
+// Horário da turma: carrega a grade ao abrir o painel (pega as disciplinas adicionadas no modal) e grava inteira
+$(document).on("show.bs.collapse", "#profileClassModal #class-schedule", function (event) {
+
+    if (event.target !== this) return
+
+    const box = $(this).find("[data-schedule-editor]")
+    box.html('<p class="text-muted">Carregando…</p>')
+    box.load("/admin/gestao/turma/perfil-turma/horario?classId=" + encodeURIComponent($(this).data("classId")), (response, status) => {
+        if (status === "error") box.html('<p class="text-muted">Não foi possível carregar o horário.</p>')
+    })
+
+})
+
+$(document).on("click", "#profileClassModal #buttonSaveSchedule", function () {
+
+    const button = $(this).prop("disabled", true)
+
+    $.ajax({
+        url: "/admin/gestao/turma/perfil-turma/horario/salvar",
+        type: "POST",
+        data: $("#formClassSchedule").serialize(),
+        success: () => tools.showToast("Horário salvo", "bg-success"),
+        error: xhr => tools.showToast((xhr.status === 422 || xhr.status === 403) && xhr.responseText ? xhr.responseText : "Tente novamente mais tarde", "bg-info"),
+        complete: () => button.prop("disabled", false)
+    })
+
+})
+
+
 $(document).on("click", "#profileClassModal #buttonAddClassDiscipline", function () {
 
     application.addSinglePart("#addClassDiscipline", "/admin/gestao/turma/perfil-turma/turma-disciplina/inserir", "Disciplina adicionada", false)

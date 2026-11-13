@@ -39,7 +39,7 @@ require __DIR__ . '/scheduleGrid.php';
                             <?php } ?>
                             <tr>
                                 <td class="m-sched-time"><strong><?= $slot['start'] ?></strong><small><?= $slot['end'] ?></small></td>
-                                <?php foreach ($days as $d) { $lesson = $grid[$order][$d] ?? null; ?>
+                                <?php foreach ($days as $d) { $lesson = $cellFor($order, $d); ?>
                                     <td class="<?= $lesson ? Subject::css($lesson->nome_disciplina) : '' ?>">
                                         <?php if ($lesson) { ?>
                                             <strong><?= htmlspecialchars($lesson->nome_disciplina) ?></strong>
@@ -58,7 +58,7 @@ require __DIR__ . '/scheduleGrid.php';
                     <?php foreach ($days as $d) { ?>
                         <section class="<?= $d === $today ? 'is-today' : '' ?>">
                             <h6><?= htmlspecialchars($dayNames[$d]) ?></h6>
-                            <?php foreach ($slots as $order => $slot) { $lesson = $grid[$order][$d] ?? null; ?>
+                            <?php foreach ($slots as $order => $slot) { $lesson = $cellFor($order, $d); ?>
                                 <?php if ($gap = $gapBefore($order)) { ?><p class="m-sched-gap">Intervalo · <?= $gap ?></p><?php } ?>
                                 <?php if ($lesson) { ?>
                                     <div class="m-sched-lesson <?= Subject::css($lesson->nome_disciplina) ?>">

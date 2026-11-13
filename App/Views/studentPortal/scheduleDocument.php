@@ -29,7 +29,7 @@ require __DIR__ . '/documentHead.php';
                         <?php } ?>
                         <tr>
                             <td class="time"><strong><?= $slot['start'] ?></strong><small><?= $slot['end'] ?></small></td>
-                            <?php foreach ($days as $d) { $lesson = $grid[$order][$d] ?? null; ?>
+                            <?php foreach ($days as $d) { $lesson = $cellFor($order, $d); ?>
                                 <td><?php if ($lesson) { ?><strong><?= htmlspecialchars($lesson->nome_disciplina) ?></strong><small><?= htmlspecialchars($lesson->nome_professor) ?></small><?php } else { ?>–<?php } ?></td>
                             <?php } ?>
                         </tr>

@@ -8,6 +8,8 @@
 > Titular: **Nicolas Ramos Rocha** (Português, Matemática, História, Geografia e Ciências; faz a chamada do dia).
 > Especialistas: Miguel Gonçalves Cardoso (Inglês), Camila Almeida Rodrigues (Ed. Física) e Davi Ribeiro Moreira (Artes),
 > que não fazem chamada. Aluna com faltas para ver a frequência em dias: Valentina Ferreira Nunes (código 670941).
+> Horário (`99o_dev_fund1_horarios.sql`, horários **fictícios**): faixas próprias do Fund. 1 (recreio 14:40–15:00, saída 16:40)
+> e a grade só com os especialistas; no portal do aluno, os outros horários aparecem como do titular.
 
 ## Como entrar
 
