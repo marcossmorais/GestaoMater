@@ -36,6 +36,7 @@ services:
       - ./database/23_admin_padrao_sem_email.sql:/docker-entrypoint-initdb.d/23_admin_padrao_sem_email.sql:ro
       - ./database/24_fund1_titular_chamada_diaria.sql:/docker-entrypoint-initdb.d/24_fund1_titular_chamada_diaria.sql:ro
       - ./database/25_titular_um_por_turno.sql:/docker-entrypoint-initdb.d/25_titular_um_por_turno.sql:ro
+      - ./database/26_fund1_diario_do_dia.sql:/docker-entrypoint-initdb.d/26_fund1_diario_do_dia.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro

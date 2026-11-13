@@ -344,12 +344,11 @@
         }).join('');
 
         // chamada e diário em sequência: segue direto para o registro da aula, com a mesma turma, disciplinas e data
-        // (chamada do dia: as disciplinas do titular nesta turma; sem nenhuma, fica na confirmação)
-        const lessonIds = daily ? (data.disciplineClasses || []) : [cls.id];
-        const lessonSubjects = daily ? lessonIds : Array.from(state.subjects);
-        const lessonUrl = lessonIds.length
-            ? `/portal-docente/diario?turma=${lessonIds[0]}&disciplinas=${lessonSubjects.join(',')}${state.date ? `&data=${state.date}` : ''}`
-            : null;
+        // (chamada do dia: o diário do dia da turma, na aba ao lado)
+        const lessonSubjects = Array.from(state.subjects);
+        const lessonUrl = daily
+            ? `/portal-docente/turma?id=${daily.classId}&ver=diario&data=${encodeURIComponent(data.date || state.date || '')}`
+            : `/portal-docente/diario?turma=${cls.id}&disciplinas=${lessonSubjects.join(',')}${state.date ? `&data=${state.date}` : ''}`;
         const lessonLink = $('[data-att-lesson]');
         lessonLink.hidden = !lessonUrl;
         if (lessonUrl) lessonLink.href = lessonUrl;

@@ -1330,6 +1330,13 @@ html body .m-overview td a { color: inherit !important; font-weight: 600; }
 .m-saved-banner > span { flex: 1; font-size: 13px; }
 .m-saved-banner small { display: block; color: var(--m-muted); }
 .m-saved-banner a { font-weight: 600; font-size: 13px; white-space: nowrap; }
+/* diário do dia (Fund. 1) */
+.m-dlog-status { align-self: flex-end; margin: 0 0 10px; font-size: 13px; color: var(--m-muted); }
+.m-dlog-status .fa-check-circle { color: var(--m-success); }
+.m-dlog-codes { margin-top: 8px; }
+.m-dlog-codes:empty { display: none; }
+.m-dlog .m-todo a[aria-current] { background: var(--m-row-hover); }
+.m-dlog { padding-bottom: 88px; } /* a lista não fica atrás da barra fixa de salvar */
 /* barra inferior: só o item ativo tem o traço azul (o tema antigo punha borda branca em todos, que virava azul no escuro) */
 html body .navbar.fixed-bottom .nav-link:not(.link-active):not([aria-expanded="true"]) { border-bottom-color: transparent !important; }
 /* cards de turma: sempre em linha (selo · texto · seta), mais compactos no celular */

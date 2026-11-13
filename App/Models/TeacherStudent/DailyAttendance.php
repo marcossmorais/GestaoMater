@@ -46,6 +46,7 @@ class DailyAttendance extends Model
         $stmt = $this->db->prepare(
             "SELECT turma.id_turma AS class_id,
                     serie.sigla || 'ª ' || cedula_turma.cedula AS label,
+                    serie.sigla AS series_acronym,
                     curso.sigla AS course,
                     turno.nome_turno AS shift,
                     (SELECT COUNT(*) FROM matricula
