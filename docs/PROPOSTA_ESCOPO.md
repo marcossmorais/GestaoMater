@@ -21,6 +21,7 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] Chamada rápida por carômetro
 - [x] Grade de horários
 - [x] Anos Iniciais: seleção de disciplinas no diário (a chamada é a diária do titular)
+- [x] **Fund. 1: diário do dia** (`database/26_fund1_diario_do_dia.sql`, `App/Models/TeacherStudent/DailyLog.php`): o titular registra um texto único por dia para a turma, com até 10 códigos BNCC opcionais de qualquer componente do ano, na aba **Diário do dia** da página da turma (salvar de novo corrige; auditado). Depois da chamada do dia, segue direto para ele; a home lista os dias com chamada e sem diário; especialistas continuam no diário por disciplina
 - [x] Ensino Médio: edição restrita à própria disciplina + visão geral da turma (`/portal-docente/turma?id=`, pontos por disciplina na unidade)
 - [x] Docente não acessa mais rotas `/admin` (antes podia chamar toda a gestão)
 - [x] **Diário** (`/portal-docente/diario`, `database/12_diario_aula.sql`): habilidade BNCC (texto + código validado) + observação, vinculado à chamada do dia
