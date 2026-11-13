@@ -970,6 +970,18 @@ class Route extends Bootstrap
 			'action' => 'dailyAttendanceSave'
 		);
 
+		$routes['dailyLogSaveTeacherPortal'] = array(
+			'route' => '/portal-docente/diario-do-dia/salvar',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'dailyLogSave'
+		);
+
+		$routes['dailyLogBnccTeacherPortal'] = array(
+			'route' => '/portal-docente/diario-do-dia/bncc',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'dailyLogBncc'
+		);
+
 		$routes['lessonsTeacherPortal'] = array(
 			'route' => '/portal-docente/diario',
 			'controller' => 'TeacherPortal\TeacherPortalController',

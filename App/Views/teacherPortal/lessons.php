@@ -33,6 +33,14 @@ require __DIR__ . '/components/classCards.php';
 
                 <div data-page-panel="planejamento" <?= $this->view->pageTab === 'planejamento' ? '' : 'hidden' ?>>
 
+                <?php foreach ($this->view->homerooms as $h) { ?>
+                    <p class="m-saved-banner">
+                        <i class="fas fa-book-open"></i>
+                        <span><strong><?= htmlspecialchars($h->label) ?> · Fund. 1:</strong> o diário do titular é um texto único por dia, na página da turma.</span>
+                        <a href="/portal-docente/turma?id=<?= (int) $h->class_id ?>&ver=diario">Diário do dia</a>
+                    </p>
+                <?php } ?>
+
                 <?php if (count($disciplineClasses) === 0) { ?>
 
                     <div class="card m-panel m-empty">
