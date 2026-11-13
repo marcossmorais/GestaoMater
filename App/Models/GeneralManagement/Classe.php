@@ -307,12 +307,31 @@ class Classe extends Model
             $teaches = $this->db->prepare("SELECT 1 FROM turma_disciplina WHERE fk_id_turma = :class AND fk_id_professor = :teacher LIMIT 1");
             $teaches->execute([':class' => (int) $classId, ':teacher' => (int) $teacherId]);
             if (!$teaches->fetchColumn()) return 'professor';
+
+            // titular em uma turma por turno (no mesmo ano letivo); o índice turma_titular_turno_unico garante
+            $busy = $this->db->prepare(
+                "SELECT 1 FROM turma AS outra
+                INNER JOIN turma AS esta ON (esta.id_turma = :class)
+                WHERE outra.id_turma <> esta.id_turma
+                AND outra.fk_id_professor_titular = :teacher
+                AND outra.fk_id_turno = esta.fk_id_turno
+                AND outra.fk_id_periodo_letivo = esta.fk_id_periodo_letivo
+                LIMIT 1"
+            );
+            $busy->execute([':class' => (int) $classId, ':teacher' => (int) $teacherId]);
+            if ($busy->fetchColumn()) return 'turno';
         }
 
         $stmt = $this->db->prepare("UPDATE turma SET fk_id_professor_titular = :teacher WHERE id_turma = :class");
         $stmt->bindValue(':teacher', $teacherId, $teacherId === null ? \PDO::PARAM_NULL : \PDO::PARAM_INT);
         $stmt->bindValue(':class', (int) $classId, \PDO::PARAM_INT);
-        $stmt->execute();
+
+        try {
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            if ($e->getCode() === '23505') return 'turno'; // dois admins salvando ao mesmo tempo
+            throw $e;
+        }
 
         return null;
     }

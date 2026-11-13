@@ -474,7 +474,11 @@ class AdminManagementController extends Action
 
         if ($error) {
             http_response_code(422);
-            echo $error === 'etapa' ? 'Professor titular só existe nas turmas do Fund. 1.' : 'O titular precisa ter ao menos uma disciplina nesta turma.';
+            echo [
+                'etapa' => 'Professor titular só existe nas turmas do Fund. 1.',
+                'professor' => 'O titular precisa ter ao menos uma disciplina nesta turma.',
+                'turno' => 'Este professor já é titular de outra turma neste turno. Ele pode ter uma turma de manhã e outra de tarde.',
+            ][$error];
             return;
         }
 
