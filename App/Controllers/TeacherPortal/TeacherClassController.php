@@ -477,8 +477,10 @@ class TeacherClassController extends Action
         $classFilter = [];
         foreach ($all as $c) $classFilter[(int) $c->class_id] = $c->series_acronym . 'ª ' . $c->ballot . ' · ' . $c->course . ' · ' . $c->shift;
 
-        // Fund. 1: a chamada é a diária, só do titular; especialista não faz chamada
+        // Fund. 1: a chamada é a diária, só do titular (ou do substituto no período); especialista não faz chamada
         $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        // turma em que substitui sem ter disciplina nela também entra no filtro
+        foreach ($Daily->homeroomClasses($this->teacherId()) as $h) $classFilter[(int) $h->class_id] ??= $h->label . ' · ' . $h->course . ' · ' . $h->shift;
         $isDaily = $Daily->isDaily($classId);
         $homeroom = $isDaily ? $Daily->homeroomFor($this->teacherId(), $classId) : null;
         $canTakeAttendance = $isDaily ? $homeroom !== null : (bool) $own;
@@ -505,6 +507,9 @@ class TeacherClassController extends Action
             'course' => $homeroom->course,
             'shift' => $homeroom->shift,
             'students' => (int) $homeroom->student_total,
+            // substituição: as datas permitidas (null para o titular)
+            'from' => $homeroom->substitute_from,
+            'until' => $homeroom->substitute_until,
         ] : null;
         $this->view->tab = $tab;
         $this->view->classFilter = $classFilter;
@@ -517,6 +522,7 @@ class TeacherClassController extends Action
         if ($tab === 'diario') {
             $date = trim((string) ($_GET['data'] ?? ''));
             if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !strtotime($date) || $date > date('Y-m-d')) $date = date('Y-m-d');
+            if (!$Daily->covers($homeroom, $date)) $date = date('Y-m-d'); // substituto: hoje está sempre no período
             $DailyLog = Container::getModel('TeacherStudent\\DailyLog');
             $this->view->logDate = $date;
             $this->view->log = $DailyLog->find($classId, $date);

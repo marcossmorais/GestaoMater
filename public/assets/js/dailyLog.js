@@ -18,6 +18,7 @@
 
     const errors = {
         'sem-permissao': 'Só o professor titular registra o diário desta turma.',
+        'fora-da-substituicao': 'Como substituto, você só registra nas datas da sua substituição.',
         'data-invalida': 'Data inválida (não pode ser futura).',
         'diario-vazio': 'Escreva o que foi trabalhado no dia.',
         'texto-muito-longo': 'Texto longo demais.',

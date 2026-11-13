@@ -117,9 +117,14 @@ class TeacherPortalController extends Action
 
         $teacherId = (int) $_SESSION['Teacher']['id'];
         $classes = Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($teacherId);
+        // Fund. 1: turma do titular ou da substituição de hoje, mesmo sem disciplina dele nela
+        $homerooms = Container::getModel('TeacherStudent\\DailyAttendance')->homeroomClasses($teacherId);
 
-        if ($classes) {
-            $classIds = array_map(function ($c) { return (int) $c->class_id; }, $classes);
+        if ($classes || $homerooms) {
+            $classIds = array_values(array_unique(array_merge(
+                array_map(function ($c) { return (int) $c->class_id; }, $homerooms),
+                array_map(function ($c) { return (int) $c->class_id; }, $classes)
+            )));
             $classId = (int) ($_SESSION['Teacher']['lastClass'] ?? 0);
 
             if (!in_array($classId, $classIds, true)) {
@@ -482,9 +487,17 @@ class TeacherPortalController extends Action
         $unity = (int) ($_GET['unity'] ?? 0);
         if (!in_array($unity, $openUnits, true)) $unity = max($openUnits);
 
-        if (!$Daily->homeroomFor($_SESSION['Teacher']['id'], $classId)) {
+        $class = $Daily->homeroomFor($_SESSION['Teacher']['id'], $classId);
+        if (!$class) {
             http_response_code(403);
             echo json_encode(['error' => 'sem-permissao']);
+            return;
+        }
+
+        // substituto: só nas datas do período
+        if (!$Daily->covers($class, $date)) {
+            http_response_code(403);
+            echo json_encode(['error' => 'fora-da-substituicao', 'from' => $class->substitute_from, 'until' => $class->substitute_until]);
             return;
         }
 
@@ -543,6 +556,14 @@ class TeacherPortalController extends Action
             Audit::log(\App\Connection::getDb(), 'NEGADO', 'chamada_diaria', $classId, ['data' => $date]);
             http_response_code(403);
             echo json_encode(['error' => 'sem-permissao']);
+            return;
+        }
+
+        // substituto: só nas datas do período
+        if (!$Daily->covers($class, $date)) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', 'chamada_diaria', $classId, ['data' => $date, 'motivo' => 'fora da substituição']);
+            http_response_code(403);
+            echo json_encode(['error' => 'fora-da-substituicao', 'from' => $class->substitute_from, 'until' => $class->substitute_until]);
             return;
         }
 
@@ -613,10 +634,20 @@ class TeacherPortalController extends Action
         $classId = (int) ($input['classId'] ?? 0);
         $date = trim((string) ($input['date'] ?? ''));
 
-        if (!Container::getModel('TeacherStudent\\DailyAttendance')->homeroomFor($teacherId, $classId)) {
+        $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        $class = $Daily->homeroomFor($teacherId, $classId);
+        if (!$class) {
             Audit::log(\App\Connection::getDb(), 'NEGADO', 'diario_dia', $classId, ['data' => $date]);
             http_response_code(403);
             echo json_encode(['error' => 'sem-permissao']);
+            return;
+        }
+
+        // substituto: só nas datas do período
+        if (!$Daily->covers($class, $date)) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', 'diario_dia', $classId, ['data' => $date, 'motivo' => 'fora da substituição']);
+            http_response_code(403);
+            echo json_encode(['error' => 'fora-da-substituicao', 'from' => $class->substitute_from, 'until' => $class->substitute_until]);
             return;
         }
 
