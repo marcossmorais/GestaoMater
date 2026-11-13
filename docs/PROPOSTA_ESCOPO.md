@@ -20,6 +20,8 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 ## 2. Portal Docente
 - [x] Chamada rápida por carômetro
 - [x] Grade de horários
+- [x] **Admin monta a grade** (`database/28_grade_horario_admin.sql`, `ClassSchedule::saveGrid`): perfil da turma → **Horário**, um cartão por dia com a disciplina de cada faixa do turno da turma; grava a grade inteira e recusa professor com aula em outra turma no mesmo horário (antes não havia tela: a grade só existia nos dados de teste)
+- [x] **Fund. 1: horário** (`database/29_horario_por_etapa.sql`): faixas por etapa (entrada igual, recreio e saída próprios); a grade do Fund. 1 tem só os especialistas e, no portal do aluno (tela e impressão), os outros horários aparecem como do titular. [ ] Horários reais do Fund. 1: aguardam a escola (no dev, fictícios em `database/dev/99o_dev_fund1_horarios.sql`)
 - [x] Anos Iniciais: seleção de disciplinas no diário (a chamada é a diária do titular)
 - [x] Ensino Médio: edição restrita à própria disciplina + visão geral da turma (`/portal-docente/turma?id=`, pontos por disciplina na unidade)
 - [x] Docente não acessa mais rotas `/admin` (antes podia chamar toda a gestão)
