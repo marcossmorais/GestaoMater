@@ -106,6 +106,23 @@ $(document).on("click", "#profileStudentModal #buttonAddNoteStudent", function (
 })
 
 
+// Fund. 1: professor titular da turma (faz a chamada do dia)
+$(document).on("click", "#profileClassModal #buttonSaveHomeroom", function () {
+
+    const button = $(this).prop("disabled", true)
+
+    $.ajax({
+        url: "/admin/gestao/turma/perfil-turma/titular/salvar",
+        type: "POST",
+        data: $("#formHomeroom").serialize(),
+        success: () => tools.showToast("Professor titular salvo", "bg-success"),
+        error: xhr => tools.showToast(xhr.status === 422 && xhr.responseText ? xhr.responseText : "Tente novamente mais tarde", "bg-info"),
+        complete: () => button.prop("disabled", false)
+    })
+
+})
+
+
 $(document).on("click", "#profileClassModal #buttonAddClassDiscipline", function () {
 
     application.addSinglePart("#addClassDiscipline", "/admin/gestao/turma/perfil-turma/turma-disciplina/inserir", "Disciplina adicionada", false)

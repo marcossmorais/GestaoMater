@@ -141,6 +141,32 @@
                         </div>
                     </div>
 
+                    <?php
+                    // Fund. 1: o professor titular (polivalente) faz a chamada do dia; os especialistas editam só a disciplina deles
+                    $classRow = $this->view->classData[0];
+                    if (($classRow->stage ?? '') === \App\Models\TeacherStudent\DailyAttendance::STAGE) {
+                        $homeroomOptions = [];
+                        foreach ($this->view->listTeacher as $t) $homeroomOptions[(int) $t->id] = $t->name;
+                    ?>
+                        <div class="col-lg-12 mb-3">
+                            <form class="card p-3" id="formHomeroom" data-homeroom-form>
+                                <input type="hidden" name="classId" value="<?= (int) $classRow->class_id ?>">
+                                <label class="font-weight-bold mb-1" for="homeroomTeacher">Professor titular (Fund. 1)</label>
+                                <small class="text-muted mb-2">Faz a chamada do dia e edita as disciplinas atribuídas a ele. Os especialistas editam só a disciplina deles.</small>
+                                <div class="d-flex flex-wrap" style="gap:.5rem">
+                                    <select class="form-control custom-select" id="homeroomTeacher" name="teacherId" style="min-height:44px;flex:1 1 220px">
+                                        <option value="">Sem titular</option>
+                                        <?php foreach ($homeroomOptions as $id => $name) { ?>
+                                            <option value="<?= $id ?>" <?= $id === (int) $classRow->homeroom_teacher_id ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <button type="button" class="btn btn-success" id="buttonSaveHomeroom" style="min-height:44px">Salvar titular</button>
+                                </div>
+                                <?php if (!$homeroomOptions) { ?><small class="text-muted mt-2">Adicione as disciplinas da turma com os professores antes de escolher o titular.</small><?php } ?>
+                            </form>
+                        </div>
+                    <?php } ?>
+
                     <div class="col-lg-12">
 
                         <div class="row mb-3">

@@ -2,9 +2,13 @@
 // Todos começam presentes; um toque no card marca/desmarca a falta. Sem recarregar a página.
 (function () {
 
-    const config = window.MATER_ATTENDANCE || { classes: [], current: 0, photoBase: '' };
+    const config = window.MATER_ATTENDANCE || { classes: [], current: 0, daily: null, photoBase: '' };
     const root = document.getElementById('attendance');
     if (!root) return;
+
+    // Fund. 1: chamada do dia da turma (titular). Uma por dia; salvar de novo corrige a lista.
+    const daily = config.daily || null;
+    const absenceLabel = daily ? 'dias de falta no bimestre' : 'faltas no bimestre';
 
     const $ = (sel) => root.querySelector(sel);
     const $$ = (sel) => Array.from(root.querySelectorAll(sel));
@@ -14,11 +18,12 @@
     const saveButton = $('[data-att-save]');
     const searchInput = $('[data-att-search]');
 
-    const state = { cls: null, unity: null, date: null, lessons: 1, students: [], absent: new Set(), subjects: new Set(), saving: false, finished: false };
+    const state = { cls: null, unity: null, date: null, lessons: 1, students: [], absent: new Set(), subjects: new Set(), saving: false, finished: false, dirty: false };
 
     const errors = {
         'turma-nao-encontrada': 'Turma não encontrada para o seu usuário.',
-        'sem-permissao': 'Você não tem permissão para lançar nesta turma/disciplina.',
+        'sem-permissao': daily ? 'Só o professor titular faz a chamada desta turma.' : 'Você não tem permissão para lançar nesta turma/disciplina.',
+        'chamada-diaria': 'Nesta turma a chamada é a do dia, feita pelo professor titular.',
         'unidade-fechada': 'Este bimestre está fechado para lançamentos.',
         'aluno-fora-da-turma': 'A lista de alunos mudou. Abra a turma novamente.',
         'nao-autenticado': 'Sua sessão expirou. Entre novamente.',
@@ -61,11 +66,14 @@
 
     // ---------- Abrir a turma/disciplina
     async function openClass(id, keepUnity) {
-        const cls = config.classes.find((c) => c.id === id);
+        const cls = daily
+            ? { id: daily.classId, classId: daily.classId, stage: 'iniciais', label: daily.label, discipline: 'chamada do dia', students: daily.students }
+            : config.classes.find((c) => c.id === id);
         if (!cls) return;
 
         state.cls = cls;
         state.absent = new Set();
+        state.dirty = false;
         state.lessons = 1;
         const dateInput = $('[data-att-date]');
         state.date = dateInput ? dateInput.value : new Date().toISOString().slice(0, 10);
@@ -73,7 +81,8 @@
 
         if (!keepUnity) state.subjects = new Set([cls.id]);
         renderSubjects();
-        $('[data-att-lessons-value]').textContent = '1';
+        const lessonsValue = $('[data-att-lessons-value]');
+        if (lessonsValue) lessonsValue.textContent = '1';
         searchInput.value = '';
 
         grid.innerHTML = skeleton(Math.min(cls.students || 8, 12));
@@ -81,9 +90,10 @@
         updateCounters();
 
         try {
-            const response = await fetch(`/portal-docente/chamada/alunos?disciplineClass=${cls.id}&unity=${state.unity}&date=${encodeURIComponent(state.date)}`, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            });
+            const url = daily
+                ? `/portal-docente/chamada-diaria/alunos?classId=${daily.classId}&unity=${state.unity}&date=${encodeURIComponent(state.date)}`
+                : `/portal-docente/chamada/alunos?disciplineClass=${cls.id}&unity=${state.unity}&date=${encodeURIComponent(state.date)}`;
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'erro');
 
@@ -91,11 +101,16 @@
             state.students = data.students;
             setActiveUnity(data.unity);
 
+            // chamada do dia já feita: abre com as faltas salvas, para corrigir
+            if (daily) state.absent = new Set(data.students.filter((s) => s.absentOnDate).map((s) => s.id));
+
             const warning = $('[data-att-warning]');
             if (data.doneTodayAt) {
                 const todayIso = new Date().toISOString().slice(0, 10);
                 const dayLabel = state.date === todayIso ? 'hoje' : `no dia ${state.date.split('-').reverse().join('/')}`;
-                warning.innerHTML = `<i class="fas fa-info-circle mr-2"></i>Você já fez a chamada desta turma ${dayLabel} às <strong>${escapeHtml(data.doneTodayAt)}</strong>. Salvar de novo lança as faltas de mais uma aula.`;
+                warning.innerHTML = daily
+                    ? `<i class="fas fa-info-circle mr-2"></i>A chamada de ${dayLabel} já foi salva às <strong>${escapeHtml(data.doneTodayAt)}</strong>. As faltas marcadas abaixo são as salvas; salvar de novo substitui a lista do dia.`
+                    : `<i class="fas fa-info-circle mr-2"></i>Você já fez a chamada desta turma ${dayLabel} às <strong>${escapeHtml(data.doneTodayAt)}</strong>. Salvar de novo lança as faltas de mais uma aula.`;
                 warning.hidden = false;
             } else {
                 warning.hidden = true;
@@ -111,7 +126,7 @@
     function renderSubjects() {
         const box = $('[data-att-subjects]');
         const subjects = config.classes.filter((c) => c.classId === state.cls.classId);
-        box.hidden = state.cls.stage !== 'iniciais' || subjects.length < 2;
+        box.hidden = daily !== null || state.cls.stage !== 'iniciais' || subjects.length < 2;
         if (box.hidden) return;
 
         $('[data-att-subjects-list]').innerHTML = subjects.map((c) => {
@@ -164,7 +179,7 @@
                     <span class="m-att-ring ${ringClass}" style="--p:${ring}">
                         <strong>${lack}</strong>
                     </span>
-                    <small class="m-att-ring-label">faltas no bimestre</small>
+                    <small class="m-att-ring-label">${absenceLabel}</small>
                 </button>`;
         }).join('');
 
@@ -178,6 +193,7 @@
 
         const id = parseInt(card.dataset.student, 10);
         state.absent.has(id) ? state.absent.delete(id) : state.absent.add(id);
+        state.dirty = true;
         if (navigator.vibrate) navigator.vibrate(12);
         renderOne(card, id);
         updateCounters();
@@ -217,9 +233,10 @@
         const unity = parseInt(button.dataset.value, 10);
         if (unity === state.unity) return;
         const keepAbsent = new Set(state.absent);
+        const keepDirty = state.dirty;
         state.unity = unity;
         setActiveUnity(unity);
-        openClass(state.cls.id, true).then(() => { state.absent = keepAbsent; render(); });
+        openClass(state.cls.id, true).then(() => { state.absent = keepAbsent; state.dirty = keepDirty; render(); });
     });
 
     function setActiveUnity(unity) {
@@ -232,6 +249,11 @@
         dateInput.addEventListener('change', () => {
             if (!state.cls) return;
             state.date = dateInput.value || new Date().toISOString().slice(0, 10);
+            // chamada do dia: outro dia abre com as faltas salvas daquele dia
+            if (daily) {
+                openClass(state.cls.id, true);
+                return;
+            }
             const keepAbsent = new Set(state.absent);
             openClass(state.cls.id, true).then(() => {
                 state.absent = keepAbsent;
@@ -256,11 +278,12 @@
     }
 
     // Todos presentes
-    $('[data-att-reset]').addEventListener('click', () => { state.absent.clear(); render(); });
+    $('[data-att-reset]').addEventListener('click', () => { state.absent.clear(); state.dirty = true; render(); });
 
     // Trocar de turma ou de aba com faltas marcadas: o navegador pede confirmação
+    // (na chamada do dia, só se algo mudou: ela já abre com as faltas salvas)
     window.addEventListener('beforeunload', (event) => {
-        if (state.absent.size === 0 || state.finished) return;
+        if (state.finished || (daily ? !state.dirty : state.absent.size === 0)) return;
         event.preventDefault();
         event.returnValue = '';
     });
@@ -273,17 +296,20 @@
         updateCounters();
 
         try {
-            const response = await fetch('/portal-docente/chamada/salvar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                body: JSON.stringify({
+            const body = daily
+                ? { classId: daily.classId, unity: state.unity, date: state.date, absent: Array.from(state.absent) }
+                : {
                     disciplineClass: state.cls.id,
                     disciplineClasses: Array.from(state.subjects),
                     unity: state.unity,
                     date: state.date,
                     lessons: state.lessons,
                     absent: Array.from(state.absent)
-                })
+                };
+            const response = await fetch(daily ? '/portal-docente/chamada-diaria/salvar' : '/portal-docente/chamada/salvar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                body: JSON.stringify(body)
             });
             const data = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(data.error || 'falha-ao-salvar');
@@ -305,18 +331,33 @@
         const lessonsText = data.lessons > 1 ? ` (${data.lessons} aulas)` : '';
         const dateStr = data.formattedDate || (state.date ? state.date.split('-').reverse().join('/') : '');
         const subject = (data.disciplines && data.disciplines.length) ? data.disciplines.join(', ') : cls.discipline;
+        const corrected = data.corrected ? ' Chamada do dia corrigida.' : '';
         $('[data-att-done-summary]').textContent = data.absent === 0
-            ? `${cls.label} · ${subject} (${dateStr}): todos os ${data.present} alunos presentes${lessonsText}.`
-            : `${cls.label} · ${subject} (${dateStr}): ${data.present} presentes e ${data.absent} ausente${data.absent > 1 ? 's' : ''}${lessonsText} no ${data.unity}º bimestre.`;
+            ? `${cls.label} · ${subject} (${dateStr}): todos os ${data.present} alunos presentes${lessonsText}.${corrected}`
+            : `${cls.label} · ${subject} (${dateStr}): ${data.present} presentes e ${data.absent} ausente${data.absent > 1 ? 's' : ''}${lessonsText} no ${data.unity}º bimestre.${corrected}`;
 
         const absentNames = state.students.filter((s) => state.absent.has(s.id));
-        $('[data-att-done-list]').innerHTML = absentNames.map((s) =>
-            `<li><span class="m-att-dot"></span>${escapeHtml(s.name)}<small>${s.totalLack + data.lessons} faltas</small></li>`
-        ).join('');
+        const unit = daily ? ['dia de falta', 'dias de falta'] : ['falta', 'faltas'];
+        $('[data-att-done-list]').innerHTML = absentNames.map((s) => {
+            const total = s.totalLack + data.lessons;
+            return `<li><span class="m-att-dot"></span>${escapeHtml(s.name)}<small>${total} ${unit[total === 1 ? 0 : 1]}</small></li>`;
+        }).join('');
 
         // chamada e diário em sequência: segue direto para o registro da aula, com a mesma turma, disciplinas e data
-        const lessonUrl = `/portal-docente/diario?turma=${cls.id}&disciplinas=${Array.from(state.subjects).join(',')}${state.date ? `&data=${state.date}` : ''}`;
-        $('[data-att-lesson]').href = lessonUrl;
+        // (chamada do dia: as disciplinas do titular nesta turma; sem nenhuma, fica na confirmação)
+        const lessonIds = daily ? (data.disciplineClasses || []) : [cls.id];
+        const lessonSubjects = daily ? lessonIds : Array.from(state.subjects);
+        const lessonUrl = lessonIds.length
+            ? `/portal-docente/diario?turma=${lessonIds[0]}&disciplinas=${lessonSubjects.join(',')}${state.date ? `&data=${state.date}` : ''}`
+            : null;
+        const lessonLink = $('[data-att-lesson]');
+        lessonLink.hidden = !lessonUrl;
+        if (lessonUrl) lessonLink.href = lessonUrl;
+        if (!lessonUrl) {
+            show('done');
+            toast('Chamada salva');
+            return;
+        }
 
         try {
             sessionStorage.setItem('mater-chamada-salva', JSON.stringify({
@@ -338,6 +379,6 @@
         openClass(state.cls.id);
     });
 
-    openClass(config.current);
+    openClass(daily ? daily.classId : config.current);
 
 })();

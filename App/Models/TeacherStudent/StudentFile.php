@@ -72,8 +72,16 @@ class StudentFile extends Model
         );
 
         $stmt->execute([':class' => (int) $classId, ':unity' => (int) $unity]);
+        $roster = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
-        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+        // Fund. 1: faltas em dias (chamada diária do titular), iguais para todos os professores da turma
+        $Daily = new DailyAttendance($this->db);
+        if ($Daily->isDaily($classId)) {
+            $days = $Daily->absencesByEnrollment([(int) $classId], $unity);
+            foreach ($roster as $s) $s->absences = $days[(int) $s->id] ?? 0;
+        }
+
+        return $roster;
     }
 
 

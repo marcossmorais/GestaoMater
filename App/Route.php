@@ -576,6 +576,13 @@ class Route extends Bootstrap
 			'action' => 'classProfile'
 		);
 
+		// Fund. 1: professor titular da turma
+		$routes['adminClassHomeroomSave'] = array(
+			'route' => '/admin/gestao/turma/perfil-turma/titular/salvar',
+			'controller' => 'Admin\\AdminManagementController',
+			'action' => 'classHomeroomSave'
+		);
+
 		$routes['adminClassDisciplineInsert'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/turma-disciplina/inserir',
 			'controller' => 'Admin\\AdminManagementController',
@@ -948,6 +955,19 @@ class Route extends Bootstrap
 			'route' => '/portal-docente/chamada/salvar',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
 			'action' => 'attendanceSave'
+		);
+
+		// Fund. 1: chamada diária do professor titular
+		$routes['dailyAttendanceStudentsTeacherPortal'] = array(
+			'route' => '/portal-docente/chamada-diaria/alunos',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'dailyAttendanceStudents'
+		);
+
+		$routes['dailyAttendanceSaveTeacherPortal'] = array(
+			'route' => '/portal-docente/chamada-diaria/salvar',
+			'controller' => 'TeacherPortal\\TeacherPortalController',
+			'action' => 'dailyAttendanceSave'
 		);
 
 		$routes['lessonsTeacherPortal'] = array(

@@ -37,14 +37,27 @@ trait DeclarationTrait
         $enrollment = $enrollmentData[0];
         $summary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
 
-        // frequência real: aulas dadas (chamadas) menos faltas não abonadas
-        $lessons = 0;
-        $counted = 0;
-        foreach (Container::getModel('Student\\StudentPerformance')->byDiscipline($enrollmentId, $enrollment->class_id) as $d) {
-            $lessons += $d['lessons'];
-            $counted += max(0, $d['absences'] - $d['excused']);
+        // Fund. 1: frequência em dias (chamada diária do titular)
+        $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        $daily = $Daily->isDaily($enrollment->class_id) ? $Daily->summary($enrollmentId, $enrollment->class_id) : null;
+
+        if ($daily !== null) {
+            $attendance = $daily['attendance'];
+            $summary = (object) [
+                'total_faltas' => $daily['absences'],
+                'faltas_abonadas' => $daily['excused'],
+                'faltas_injustificadas' => max(0, $daily['absences'] - $daily['excused']),
+            ];
+        } else {
+            // frequência real: aulas dadas (chamadas) menos faltas não abonadas
+            $lessons = 0;
+            $counted = 0;
+            foreach (Container::getModel('Student\\StudentPerformance')->byDiscipline($enrollmentId, $enrollment->class_id) as $d) {
+                $lessons += $d['lessons'];
+                $counted += max(0, $d['absences'] - $d['excused']);
+            }
+            $attendance = $lessons > 0 ? round(100 * max(0, $lessons - $counted) / $lessons, 1) : null;
         }
-        $attendance = $lessons > 0 ? round(100 * max(0, $lessons - $counted) / $lessons, 1) : null;
 
         $docType = 'declaracao_' . $type;
         $content = [
@@ -59,6 +72,7 @@ trait DeclarationTrait
             'abonadas' => (int) $summary->faltas_abonadas,
             'frequencia' => $attendance,
         ];
+        if ($daily !== null) $content['frequencia_dias'] = $daily;
 
         $code = Container::getModel('Student\\IssuedDocument')->issue($docType, $enrollmentId, $student->name, $content, $actorType, $actorId);
         $validationUrl = rtrim(getenv('APP_URL') ?: '', '/') . '/validar?codigo=' . $code;
@@ -70,6 +84,7 @@ trait DeclarationTrait
         $this->view->summary = $summary;
         $this->view->type = $type;
         $this->view->attendance = $attendance;
+        $this->view->dailyAttendance = $daily;
         $this->view->authCode = $code;
         $this->view->validationUrl = $validationUrl;
         $this->view->qrSvg = DocumentSigner::qrSvg($validationUrl);

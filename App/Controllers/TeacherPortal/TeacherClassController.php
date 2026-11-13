@@ -477,8 +477,14 @@ class TeacherClassController extends Action
         $classFilter = [];
         foreach ($all as $c) $classFilter[(int) $c->class_id] = $c->series_acronym . 'ª ' . $c->ballot . ' · ' . $c->course . ' · ' . $c->shift;
 
+        // Fund. 1: a chamada é a diária, só do titular; especialista não faz chamada
+        $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        $isDaily = $Daily->isDaily($classId);
+        $homeroom = $isDaily ? $Daily->homeroomFor($this->teacherId(), $classId) : null;
+        $canTakeAttendance = $isDaily ? $homeroom !== null : (bool) $own;
+
         $tab = in_array($_GET['ver'] ?? '', ['alunos', 'notas'], true) ? $_GET['ver'] : 'chamada';
-        if ($tab === 'chamada' && !$own) $tab = 'alunos';
+        if ($tab === 'chamada' && !$canTakeAttendance) $tab = 'alunos';
         $_SESSION['Teacher']['lastClass'] = $classId;
 
         // chamada: disciplina pedida na URL, se for do professor nesta turma; senão, a primeira
@@ -489,6 +495,15 @@ class TeacherClassController extends Action
         }
 
         $this->view->editable = $ownIds;
+        $this->view->isDaily = $isDaily;
+        $this->view->canTakeAttendance = $canTakeAttendance;
+        $this->view->daily = $homeroom ? [
+            'classId' => (int) $homeroom->class_id,
+            'label' => $homeroom->label,
+            'course' => $homeroom->course,
+            'shift' => $homeroom->shift,
+            'students' => (int) $homeroom->student_total,
+        ] : null;
         $this->view->tab = $tab;
         $this->view->classFilter = $classFilter;
         $this->view->disciplineClasses = $all;
@@ -549,6 +564,12 @@ class TeacherClassController extends Action
         foreach ($this->view->performance as $p) {
             foreach ($p['units'] as $unit) if ($unit['grade'] !== null) $grades[] = (float) $unit['grade'];
             if ($p['attendance'] !== null) $attendance[] = (float) $p['attendance'];
+        }
+        // Fund. 1: a frequência é a do dia (chamada do titular), não por matéria
+        $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        if ($Daily->isDaily($student->class_id)) {
+            $dailyAttendance = $Daily->summary($student->id, $student->class_id)['attendance'];
+            $attendance = $dailyAttendance === null ? [] : [(float) $dailyAttendance];
         }
         $tones = \App\Tools\PedagogicalIndex::countTones(array_map(function ($n) { return $n->text; }, $this->view->notes));
         $this->view->tones = $tones;

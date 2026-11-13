@@ -12,8 +12,13 @@ $quickNotes = $this->view->quickNotes;
 $quickDisciplines = $this->view->quickDisciplines;
 $link = function ($u, $t) { return '?id=' . (int) $this->view->classId . '&unidade=' . (int) $u . '&ver=' . $t; };
 $tabs = ['chamada' => ['fa-clipboard-check', 'Chamada'], 'alunos' => ['fa-users', 'Alunos'], 'notas' => ['fa-table', 'Notas da turma']];
+// Fund. 1: chamada só para o titular (diária); especialista não vê a aba
+if (!$this->view->canTakeAttendance) unset($tabs['chamada']);
+$isDaily = $this->view->isDaily;
+$daily = $this->view->daily;
 $ownDisciplines = $this->view->ownDisciplines;
-$showDisciplines = $tab === 'chamada' && count($ownDisciplines) > 1 && $ownDisciplines[0]->stage !== 'iniciais';
+$showDisciplines = $tab === 'chamada' && !$isDaily && count($ownDisciplines) > 1;
+$absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
 ?>
 
 <section id="classOverview" class="m-att">
@@ -25,7 +30,7 @@ $showDisciplines = $tab === 'chamada' && count($ownDisciplines) > 1 && $ownDisci
             <div class="m-att-head">
                 <div class="m-att-head-title">
                     <h5><?= htmlspecialchars($this->view->classLabel) ?></h5>
-                    <p><?= $tab === 'notas' ? count($overview['students']) : count($roster) ?> alunos<?= $tab === 'alunos' ? ' · toque no aluno para abrir o perfil' : ($tab === 'chamada' ? ' · todos começam presentes, toque em quem faltou' : '') ?></p>
+                    <p><?= $tab === 'notas' ? count($overview['students']) : count($roster) ?> alunos<?= $tab === 'alunos' ? ' · toque no aluno para abrir o perfil' : ($tab === 'chamada' ? ($isDaily ? ' · chamada do dia: todos começam presentes, toque em quem faltou' : ' · todos começam presentes, toque em quem faltou') : '') ?></p>
                 </div>
             </div>
 
@@ -102,7 +107,7 @@ $showDisciplines = $tab === 'chamada' && count($ownDisciplines) > 1 && $ownDisci
                                     <span class="m-att-avatar"><?php if ($s->photo) { ?><img src="<?= $app_url ?>/assets/img/studentProfilePhotos/<?= htmlspecialchars($s->photo) ?>" alt="" loading="lazy"><?php } else { ?><span style="--h:<?= crc32($s->name) % 360 ?>"><?= htmlspecialchars($initials) ?></span><?php } ?></span>
                                     <span class="m-att-name"><?= htmlspecialchars($s->name) ?></span>
                                     <span class="m-att-ring <?= $s->absences >= 10 ? 'is-high' : ($s->absences >= 5 ? 'is-mid' : '') ?>" style="--p:<?= $ring ?>"><strong><?= (int) $s->absences ?></strong></span>
-                                    <small class="m-att-ring-label">faltas no bimestre</small>
+                                    <small class="m-att-ring-label"><?= $absenceLabel ?></small>
                                 </a>
                                 <?php if ($quickDisciplines) { ?>
                                     <button type="button" class="btn btn-light m-roster-note" data-note-student="<?= (int) $s->id ?>" data-note-name="<?= htmlspecialchars($s->name) ?>"><i class="fas fa-comment-medical mr-2"></i>Observação</button>
@@ -212,6 +217,8 @@ $showDisciplines = $tab === 'chamada' && count($ownDisciplines) > 1 && $ownDisci
         window.MATER_ATTENDANCE = {
             classes: <?= json_encode($classesJson, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
             current: <?= (int) $this->view->discipline ?>,
+            // Fund. 1: chamada diária da turma (titular); null nas demais etapas
+            daily: <?= json_encode($daily, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
             photoBase: <?= json_encode($app_url . '/assets/img/studentProfilePhotos/') ?>
         };
     </script>

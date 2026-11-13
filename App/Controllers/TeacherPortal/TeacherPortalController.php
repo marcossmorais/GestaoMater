@@ -281,6 +281,13 @@ class TeacherPortalController extends Action
             return;
         }
 
+        // Fund. 1 conta a frequência por dia: a chamada é a diária, do titular
+        if ($disciplineClass->stage === \App\Models\TeacherStudent\DailyAttendance::STAGE) {
+            http_response_code(422);
+            echo json_encode(['error' => 'chamada-diaria']);
+            return;
+        }
+
         if (!in_array($unity, $openUnits, true)) $unity = max($openUnits);
 
         $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
@@ -348,6 +355,13 @@ class TeacherPortalController extends Action
         if ($targets === null) return;
 
         $disciplineClass = $targets[0];
+
+        // Fund. 1 conta a frequência por dia: falta por disciplina deixaria a frequência em duas contas
+        if ($disciplineClass->stage === \App\Models\TeacherStudent\DailyAttendance::STAGE) {
+            http_response_code(422);
+            echo json_encode(['error' => 'chamada-diaria']);
+            return;
+        }
 
         if (!in_array($unity, $this->openUnits($Settings), true)) {
             http_response_code(422);
@@ -432,6 +446,146 @@ class TeacherPortalController extends Action
         }
 
         return $targets;
+    }
+
+
+    /**
+     * Fund. 1: data válida (YYYY-MM-DD, até hoje), ou hoje
+     */
+    private function attendanceDate($value)
+    {
+        $date = trim((string) $value);
+        return (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) && strtotime($date) && $date <= date('Y-m-d')) ? $date : date('Y-m-d');
+    }
+
+
+    /**
+     * Fund. 1: JSON com os alunos da turma, os dias de falta no bimestre e quem já faltou na data (só o titular)
+     */
+    public function dailyAttendanceStudents()
+    {
+
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION)) session_start();
+
+        $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        $classId = (int) ($_GET['classId'] ?? 0);
+        $date = $this->attendanceDate($_GET['date'] ?? '');
+        $openUnits = $this->openUnits(Container::getModel('Admin\\Settings'));
+        $unity = (int) ($_GET['unity'] ?? 0);
+        if (!in_array($unity, $openUnits, true)) $unity = max($openUnits);
+
+        if (!$Daily->homeroomFor($_SESSION['Teacher']['id'], $classId)) {
+            http_response_code(403);
+            echo json_encode(['error' => 'sem-permissao']);
+            return;
+        }
+
+        $certificates = Container::getModel('TeacherStudent\\MedicalCertificate')->getActiveCertificatesForClassAndDate($classId, $date);
+
+        $students = array_map(function ($s) use ($certificates) {
+            $cert = $certificates[(int) $s->enrollment_id] ?? null;
+            return [
+                'id' => (int) $s->enrollment_id,
+                'name' => $s->name,
+                'photo' => $s->photo,
+                'totalLack' => (int) $s->absent_days,
+                'absentOnDate' => (bool) $s->absent_on_date,
+                'hasCertificate' => $cert !== null,
+                'certificateReason' => $cert ? $cert->motivo : null,
+                'certificateDoctor' => $cert ? $cert->medico_nome : null,
+                'certificateDates' => $cert ? ($cert->data_inicio_fmt . ' até ' . $cert->data_fim_fmt) : null,
+            ];
+        }, $Daily->students($classId, $unity, $date));
+
+        echo json_encode([
+            'unity' => $unity,
+            'date' => $date,
+            'doneTodayAt' => $Daily->doneAt($classId, $date),
+            'students' => $students,
+        ]);
+    }
+
+
+    /**
+     * Fund. 1: grava a chamada do dia (POST JSON: classId, unity, date, absent[]). Só o titular; de novo no mesmo dia corrige.
+     */
+    public function dailyAttendanceSave()
+    {
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'metodo-invalido']);
+            return;
+        }
+
+        if (!isset($_SESSION)) session_start();
+
+        $Daily = Container::getModel('TeacherStudent\\DailyAttendance');
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $teacherId = (int) $_SESSION['Teacher']['id'];
+        $classId = (int) ($input['classId'] ?? 0);
+        $unity = (int) ($input['unity'] ?? 0);
+        $date = $this->attendanceDate($input['date'] ?? '');
+        $absent = array_values(array_unique(array_map('intval', (array) ($input['absent'] ?? []))));
+
+        $class = $Daily->homeroomFor($teacherId, $classId);
+        if (!$class) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', 'chamada_diaria', $classId, ['data' => $date]);
+            http_response_code(403);
+            echo json_encode(['error' => 'sem-permissao']);
+            return;
+        }
+
+        if (!in_array($unity, $this->openUnits(Container::getModel('Admin\\Settings')), true)) {
+            http_response_code(422);
+            echo json_encode(['error' => 'unidade-fechada']);
+            return;
+        }
+
+        // só aceita matrículas que são realmente da turma
+        $enrolled = array_map(function ($s) { return (int) $s->enrollment_id; }, $Daily->students($classId, $unity, $date));
+
+        if (array_diff($absent, $enrolled)) {
+            http_response_code(422);
+            echo json_encode(['error' => 'aluno-fora-da-turma']);
+            return;
+        }
+
+        $corrected = $Daily->doneAt($classId, $date) !== null;
+
+        try {
+            $id = $Daily->save($classId, $unity, $teacherId, $absent, count($enrolled) - count($absent), $date);
+        } catch (\Throwable $e) {
+            error_log('Chamada diária: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'falha-ao-salvar']);
+            return;
+        }
+
+        // disciplinas do titular nesta turma, para seguir direto ao diário
+        $own = array_values(array_filter(
+            Container::getModel('TeacherStudent\\Attendance')->disciplineClassesByTeacher($teacherId),
+            function ($c) use ($classId) { return (int) $c->class_id === $classId; }
+        ));
+
+        echo json_encode([
+            'id' => $id,
+            'daily' => true,
+            'corrected' => $corrected,
+            'present' => count($enrolled) - count($absent),
+            'absent' => count($absent),
+            'lessons' => 1,
+            'disciplines' => [],
+            'disciplineClasses' => array_map(function ($c) { return (int) $c->discipline_class_id; }, $own),
+            'unity' => $unity,
+            'date' => $date,
+            'formattedDate' => date('d/m/Y', strtotime($date)),
+            'savedAt' => date('H:i'),
+        ]);
     }
 
 

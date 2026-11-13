@@ -354,9 +354,11 @@ $attendanceText = $attendance === null ? null : str_replace('.', ',', (string) $
             <?php if ($type === 'frequencia') { ?>
                 <div class="m-doc-body">
                     Atestamos ainda que, durante o período letivo em curso, o(a) referido(a) estudante cumpriu 
-                    <?php if ($attendanceText) { ?>com o percentual de assiduidade de <strong><?= $attendanceText ?></strong> (aulas registradas no sistema), <?php } ?>
-                    tendo sido computadas <strong><?= (int)$summary->total_faltas ?> faltas</strong>, 
-                    das quais <strong><?= (int)$summary->faltas_abonadas ?> foram devidamente abonadas e justificadas</strong> 
+                    <?php $dailyDecl = $this->view->dailyAttendance ?? null; // Fund. 1: frequência contada em dias ?>
+                    <?php if ($attendanceText) { ?>com o percentual de assiduidade de <strong><?= $attendanceText ?></strong> (<?= $dailyDecl ? (int) $dailyDecl['days'] . ' dias letivos registrados no sistema' : 'aulas registradas no sistema' ?>), <?php } ?>
+                    tendo sido computad<?= $dailyDecl ? 'os' : 'as' ?> <strong><?= (int)$summary->total_faltas ?> <?= $dailyDecl ? 'dias de falta' : 'faltas' ?></strong>,
+                    <?php if ($dailyDecl) { ?>dos quais <strong><?= (int)$summary->faltas_abonadas ?> foram devidamente abonados e justificados</strong> <?php } else { ?>
+                    das quais <strong><?= (int)$summary->faltas_abonadas ?> foram devidamente abonadas e justificadas</strong> <?php } ?>
                     mediante apresentação tempestiva de atestados médicos e declarações legais acolhidas pela Secretaria Escolar, 
                     atendendo plenamente às exigências do Art. 24, inciso VI da Lei de Diretrizes e Bases da Educação Nacional (Lei nº 9.394/96).
                 </div>

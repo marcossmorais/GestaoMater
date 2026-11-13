@@ -7,26 +7,19 @@ use MF\Model\Model;
 /**
  * Regras de acesso do professor (proposta v2.0 §04/§05). Sempre checar no servidor.
  *
- * - Anos Iniciais (curso.etapa = 'iniciais'): polivalente, atua em todas as disciplinas das turmas em que leciona.
- * - Anos Finais / Ensino Médio: especialista, vê a turma inteira mas edita só a própria disciplina.
+ * - Todo professor edita só as disciplinas atribuídas a ele em turma_disciplina e vê a turma inteira.
+ * - Fund. 1 (curso.etapa = 'iniciais'): o titular (turma.fk_id_professor_titular) recebe as disciplinas dele e faz a
+ *   chamada diária (DailyAttendance); os especialistas (Ed. Física, Inglês…) editam só a deles e não fazem chamada.
+ *   Antes, qualquer professor com uma disciplina na turma editava todas: o especialista mexia em Português.
  */
 class TeacherAccess extends Model
 {
 
     /**
      * Condição SQL: turma_disciplina editável pelo professor :teacherId.
-     * Exige os aliases turma_disciplina, turma e curso na consulta.
+     * Mantém os aliases turma_disciplina, turma e curso nas consultas que a usam.
      */
-    const EDITABLE = "(
-        turma_disciplina.fk_id_professor = :teacherId
-        OR (
-            curso.etapa = 'iniciais'
-            AND EXISTS (
-                SELECT 1 FROM turma_disciplina own_td
-                WHERE own_td.fk_id_turma = turma.id_turma AND own_td.fk_id_professor = :teacherId
-            )
-        )
-    )";
+    const EDITABLE = "(turma_disciplina.fk_id_professor = :teacherId)";
 
 
     /**
@@ -53,13 +46,16 @@ class TeacherAccess extends Model
 
 
     /**
-     * O professor pode ver o desempenho geral desta turma? (leciona ao menos uma disciplina nela)
+     * O professor pode ver o desempenho geral desta turma? (leciona ao menos uma disciplina nela ou é o titular)
      */
     public function canViewClass($teacherId, $classId)
     {
 
         $stmt = $this->db->prepare(
-            "SELECT 1 FROM turma_disciplina WHERE fk_id_turma = :classId AND fk_id_professor = :teacherId LIMIT 1"
+            "SELECT 1 FROM turma_disciplina WHERE fk_id_turma = :classId AND fk_id_professor = :teacherId
+             UNION ALL
+             SELECT 1 FROM turma WHERE id_turma = :classId AND fk_id_professor_titular = :teacherId
+             LIMIT 1"
         );
 
         $stmt->bindValue(':teacherId', (int) $teacherId, \PDO::PARAM_INT);
