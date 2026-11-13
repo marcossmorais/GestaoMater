@@ -24,6 +24,7 @@
         'turma-nao-encontrada': 'Turma não encontrada para o seu usuário.',
         'sem-permissao': daily ? 'Só o professor titular faz a chamada desta turma.' : 'Você não tem permissão para lançar nesta turma/disciplina.',
         'chamada-diaria': 'Nesta turma a chamada é a do dia, feita pelo professor titular.',
+        'fora-da-substituicao': 'Como substituto, você só lança nas datas da sua substituição.',
         'unidade-fechada': 'Este bimestre está fechado para lançamentos.',
         'aluno-fora-da-turma': 'A lista de alunos mudou. Abra a turma novamente.',
         'nao-autenticado': 'Sua sessão expirou. Entre novamente.',
@@ -245,6 +246,8 @@
 
     // Data da aula
     const dateInput = $('[data-att-date]');
+    // substituto: o calendário só oferece as datas da substituição (o servidor confere de novo)
+    if (dateInput && daily && daily.from) dateInput.min = daily.from;
     if (dateInput) {
         dateInput.addEventListener('change', () => {
             if (!state.cls) return;

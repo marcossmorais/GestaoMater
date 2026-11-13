@@ -583,6 +583,24 @@ class Route extends Bootstrap
 			'action' => 'classHomeroomSave'
 		);
 
+		$routes['adminClassSubstitutionList'] = array(
+			'route' => '/admin/gestao/turma/perfil-turma/substituicao/lista',
+			'controller' => 'Admin\\AdminManagementController',
+			'action' => 'classSubstitutionList'
+		);
+
+		$routes['adminClassSubstitutionSave'] = array(
+			'route' => '/admin/gestao/turma/perfil-turma/substituicao/salvar',
+			'controller' => 'Admin\\AdminManagementController',
+			'action' => 'classSubstitutionSave'
+		);
+
+		$routes['adminClassSubstitutionDelete'] = array(
+			'route' => '/admin/gestao/turma/perfil-turma/substituicao/deletar',
+			'controller' => 'Admin\\AdminManagementController',
+			'action' => 'classSubstitutionDelete'
+		);
+
 		$routes['adminClassDisciplineInsert'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/turma-disciplina/inserir',
 			'controller' => 'Admin\\AdminManagementController',

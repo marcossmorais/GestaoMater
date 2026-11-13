@@ -14,7 +14,7 @@ $logLink = function ($date) { return '/portal-docente/turma?id=' . (int) $this->
         <div class="m-lesson-row">
             <label class="m-att-field">
                 <span class="m-att-label">Dia</span>
-                <input type="date" class="form-control" name="date" value="<?= htmlspecialchars($logDate) ?>" max="<?= date('Y-m-d') ?>" data-dlog-date required>
+                <input type="date" class="form-control" name="date" value="<?= htmlspecialchars($logDate) ?>" max="<?= date('Y-m-d') ?>" <?= $this->view->daily['from'] !== null ? 'min="' . htmlspecialchars($this->view->daily['from']) . '"' : '' ?> data-dlog-date required>
             </label>
             <p class="m-dlog-status" data-dlog-status>
                 <?php if ($log) { ?>

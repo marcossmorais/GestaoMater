@@ -37,6 +37,13 @@ $absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
                 </div>
             </div>
 
+            <?php if ($daily && $daily['from'] !== null && in_array($tab, ['chamada', 'diario'], true)) { ?>
+                <p class="m-saved-banner m-sub-banner">
+                    <i class="fas fa-user-clock"></i>
+                    <span><strong>Você está substituindo o titular.</strong> Chamada e diário desta turma liberados de <?= date('d/m', strtotime($daily['from'])) ?> a <?= date('d/m/Y', strtotime($daily['until'])) ?>; depois, o acesso acaba sozinho.</span>
+                </p>
+            <?php } ?>
+
             <div class="card m-att-toolbar">
                 <form class="m-att-field m-class-filter" action="/portal-docente/turma" method="get" data-auto-submit>
                     <label class="m-att-label" for="classFilter">Turma</label>

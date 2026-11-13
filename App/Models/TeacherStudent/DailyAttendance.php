@@ -38,13 +38,16 @@ class DailyAttendance extends Model
 
 
     /**
-     * Turmas de Fund. 1 do período letivo ativo em que o professor é o titular, com total de alunos e a chamada de hoje
+     * Turmas de Fund. 1 do período letivo ativo em que o professor é o titular ou o substituto hoje
+     * (substituicao_titular, database/27), com total de alunos e a chamada de hoje.
+     * substitute_from/substitute_until (YYYY-MM-DD) só vêm preenchidos na substituição: ela vale só nessas datas.
      */
     public function homeroomClasses($teacherId)
     {
 
         $stmt = $this->db->prepare(
-            "SELECT turma.id_turma AS class_id,
+            "SELECT DISTINCT ON (serie.sigla, cedula_turma.cedula, turma.id_turma)
+                    turma.id_turma AS class_id,
                     serie.sigla || 'ª ' || cedula_turma.cedula AS label,
                     serie.sigla AS series_acronym,
                     curso.sigla AS course,
@@ -52,16 +55,20 @@ class DailyAttendance extends Model
                     (SELECT COUNT(*) FROM matricula
                       WHERE matricula.fk_id_turma_matricula = turma.id_turma AND matricula.fk_id_situacao_aluno = 1) AS student_total,
                     (SELECT TO_CHAR(cd.atualizado_em, 'HH24:MI') FROM chamada_diaria cd
-                      WHERE cd.fk_id_turma = turma.id_turma AND cd.data_aula = CURRENT_DATE) AS done_today_at
+                      WHERE cd.fk_id_turma = turma.id_turma AND cd.data_aula = CURRENT_DATE) AS done_today_at,
+                    CASE WHEN turma.fk_id_professor_titular = :teacher THEN NULL ELSE TO_CHAR(s.data_inicio, 'YYYY-MM-DD') END AS substitute_from,
+                    CASE WHEN turma.fk_id_professor_titular = :teacher THEN NULL ELSE TO_CHAR(s.data_fim, 'YYYY-MM-DD') END AS substitute_until
              FROM turma
              INNER JOIN curso ON (turma.fk_id_curso = curso.id_curso)
              INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
              INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
              INNER JOIN turno ON (turma.fk_id_turno = turno.id_turno)
              INNER JOIN periodo_letivo ON (turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo)
-             WHERE turma.fk_id_professor_titular = :teacher AND curso.etapa = :stage
-             AND periodo_letivo.fk_id_situacao_periodo_letivo = 1
-             ORDER BY serie.sigla, cedula_turma.cedula"
+             LEFT JOIN substituicao_titular s ON (s.fk_id_turma = turma.id_turma AND s.fk_id_professor_substituto = :teacher
+                                                  AND CURRENT_DATE BETWEEN s.data_inicio AND s.data_fim)
+             WHERE (turma.fk_id_professor_titular = :teacher OR s.id_substituicao IS NOT NULL)
+             AND curso.etapa = :stage AND periodo_letivo.fk_id_situacao_periodo_letivo = 1
+             ORDER BY serie.sigla, cedula_turma.cedula, turma.id_turma"
         );
         $stmt->execute([':teacher' => (int) $teacherId, ':stage' => self::STAGE]);
 
@@ -70,7 +77,7 @@ class DailyAttendance extends Model
 
 
     /**
-     * A turma (Fund. 1) do período ativo, se o professor for o titular dela (ou null)
+     * A turma (Fund. 1) do período ativo, se o professor for o titular dela ou o substituto hoje (ou null)
      */
     public function homeroomFor($teacherId, $classId)
     {
@@ -80,6 +87,20 @@ class DailyAttendance extends Model
         }
 
         return null;
+    }
+
+
+    /**
+     * O titular lança em qualquer data; o substituto, só nas datas do período dele
+     *
+     * @param object $homeroom linha de homeroomClasses/homeroomFor
+     */
+    public function covers($homeroom, $date)
+    {
+
+        if ($homeroom->substitute_from === null) return true;
+
+        return $date >= $homeroom->substitute_from && $date <= $homeroom->substitute_until;
     }
 
 

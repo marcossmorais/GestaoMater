@@ -1336,7 +1336,9 @@ html body .m-overview td a { color: inherit !important; font-weight: 600; }
 .m-dlog-codes { margin-top: 8px; }
 .m-dlog-codes:empty { display: none; }
 .m-dlog .m-todo a[aria-current] { background: var(--m-row-hover); }
-.m-dlog { padding-bottom: 88px; } /* a lista não fica atrás da barra fixa de salvar */
+.m-dlog { padding-bottom: 88px; }
+.m-sub-banner { background: rgba(217, 119, 6, .12); }
+.m-sub-banner > i { color: var(--m-warning, #d97706); } /* a lista não fica atrás da barra fixa de salvar */
 /* barra inferior: só o item ativo tem o traço azul (o tema antigo punha borda branca em todos, que virava azul no escuro) */
 html body .navbar.fixed-bottom .nav-link:not(.link-active):not([aria-expanded="true"]) { border-bottom-color: transparent !important; }
 /* cards de turma: sempre em linha (selo · texto · seta), mais compactos no celular */

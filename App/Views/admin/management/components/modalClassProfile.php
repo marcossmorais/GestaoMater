@@ -165,6 +165,43 @@
                                 <?php if (!$homeroomOptions) { ?><small class="text-muted mt-2">Adicione as disciplinas da turma com os professores antes de escolher o titular.</small><?php } ?>
                             </form>
                         </div>
+
+                        <div class="col-lg-12 mb-3">
+                            <div class="card p-3" data-substitution>
+                                <span class="font-weight-bold mb-1">Substituição do titular</span>
+                                <small class="text-muted mb-2">No período, o substituto faz a chamada e o diário do dia desta turma (só nessas datas); depois, o acesso acaba sozinho. Afastamento longo: troque o titular acima.</small>
+                                <div data-substitution-list>
+                                    <?php require __DIR__ . '/substitutionList.php'; ?>
+                                </div>
+                                <form id="formSubstitution" class="mt-3">
+                                    <input type="hidden" name="classId" value="<?= (int) $classRow->class_id ?>">
+                                    <div class="form-row">
+                                        <div class="col-md-6 mb-2">
+                                            <label class="mb-1" for="substitutionTeacher">Substituto</label>
+                                            <select class="form-control custom-select" id="substitutionTeacher" name="teacherId" style="min-height:44px" required>
+                                                <option value="">Escolha</option>
+                                                <?php foreach ($this->view->activeTeachers as $t) { if ((int) $t->id === (int) $classRow->homeroom_teacher_id) continue; ?>
+                                                    <option value="<?= (int) $t->id ?>"><?= htmlspecialchars($t->name) ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-6 col-md-3 mb-2">
+                                            <label class="mb-1" for="substitutionStart">Início</label>
+                                            <input type="date" class="form-control" id="substitutionStart" name="start" min="<?= date('Y-m-d') ?>" style="min-height:44px" required>
+                                        </div>
+                                        <div class="col-6 col-md-3 mb-2">
+                                            <label class="mb-1" for="substitutionEnd">Fim</label>
+                                            <input type="date" class="form-control" id="substitutionEnd" name="end" min="<?= date('Y-m-d') ?>" style="min-height:44px" required>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <label class="mb-1" for="substitutionReason">Motivo <small class="text-muted">(opcional)</small></label>
+                                            <input type="text" class="form-control" id="substitutionReason" name="reason" maxlength="255" placeholder="Ex.: atestado, formação" style="min-height:44px">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-success" id="buttonSaveSubstitution" style="min-height:44px">Designar substituto</button>
+                                </form>
+                            </div>
+                        </div>
                     <?php } ?>
 
                     <div class="col-lg-12">

@@ -55,6 +55,9 @@ class TeacherAccess extends Model
             "SELECT 1 FROM turma_disciplina WHERE fk_id_turma = :classId AND fk_id_professor = :teacherId
              UNION ALL
              SELECT 1 FROM turma WHERE id_turma = :classId AND fk_id_professor_titular = :teacherId
+             UNION ALL
+             SELECT 1 FROM substituicao_titular
+              WHERE fk_id_turma = :classId AND fk_id_professor_substituto = :teacherId AND CURRENT_DATE BETWEEN data_inicio AND data_fim
              LIMIT 1"
         );
 
