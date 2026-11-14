@@ -33,7 +33,7 @@ class AdminController extends Action
 
         if (count($auth) != 1) {
 
-            \App\Auth\PortalAccount::logAdminFailure('dados-incorretos');
+            \App\Auth\PortalAccount::logFailure('admin', 'dados-incorretos');
             header('Location: /admin?error=dados-incorretos');
 
         } else {
@@ -53,7 +53,7 @@ class AdminController extends Action
 
             } else {
 
-                \App\Auth\PortalAccount::logAdminFailure('conta-desativada');
+                \App\Auth\PortalAccount::logFailure('admin', 'conta-desativada');
                 header("Location: /admin?error=conta-desativada");
             }
         }
@@ -304,9 +304,7 @@ class AdminController extends Action
     public function exit()
     {
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
-
-        unset($_SESSION['Admin']);
+        \App\Auth\PortalAccount::close('admin');
 
         header('Location: /admin' . (\App\Auth\Clerk::enabled() ? '?logout=1' : ''));
     }

@@ -37,6 +37,7 @@ class TeacherPortalController extends Action
 
         if (count($auth) != 1) {
 
+            \App\Auth\PortalAccount::logFailure('docente', 'dados-incorretos');
             header('Location: /portal-docente?error=dados-incorretos');
         } else {
 
@@ -54,6 +55,7 @@ class TeacherPortalController extends Action
                 header('Location: /portal-docente/home');
             } else {
 
+                \App\Auth\PortalAccount::logFailure('docente', 'conta-desativada');
                 header("Location: /portal-docente?error=conta-desativada");
             }
         }
@@ -902,9 +904,7 @@ class TeacherPortalController extends Action
     public function exit()
     {
 
-        if (!isset($_SESSION)) session_start();
-
-        unset($_SESSION['Teacher']);
+        \App\Auth\PortalAccount::close('docente');
 
         header('Location: /portal-docente' . (\App\Auth\Clerk::enabled() ? '?logout=1' : ''));
     }

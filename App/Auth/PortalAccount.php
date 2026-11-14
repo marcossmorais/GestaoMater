@@ -46,7 +46,7 @@ class PortalAccount
     /**
      * Abre a sessão de um único portal: troca o id da sessão e descarta o login
      * de qualquer outro portal, para que admin, docente e aluno nunca convivam
-     * no mesmo navegador. Entrada no admin vai para a auditoria.
+     * no mesmo navegador. Toda entrada vai para a auditoria (LOGIN).
      */
     public static function open($portal, array $data)
     {
@@ -60,17 +60,31 @@ class PortalAccount
 
         $_SESSION[self::SESSION_KEYS[$portal]] = $data;
 
-        if ($portal === 'admin') {
-            Audit::log(Connection::getDb(), 'LOGIN', 'administrador', $data['id']);
-        }
+        Audit::log(Connection::getDb(), 'LOGIN', self::PORTALS[$portal]['table'], $data['id']);
     }
 
     /**
-     * Tentativa de entrada no admin recusada (sem nome nem e-mail: só IP e motivo)
+     * Saída do portal: registra na auditoria (LOGOUT) enquanto o ator ainda está na sessão e encerra o login
      */
-    public static function logAdminFailure($reason)
+    public static function close($portal)
     {
-        Audit::log(Connection::getDb(), 'LOGIN_NEGADO', 'administrador', null, ['motivo' => $reason]);
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $key = self::SESSION_KEYS[$portal];
+
+        if (!empty($_SESSION[$key]['id'])) {
+            Audit::log(Connection::getDb(), 'LOGOUT', self::PORTALS[$portal]['table'], $_SESSION[$key]['id']);
+        }
+
+        unset($_SESSION[$key]);
+    }
+
+    /**
+     * Tentativa de entrada recusada (LOGIN_NEGADO). LGPD: sem o nome ou e-mail digitado, só IP e motivo
+     */
+    public static function logFailure($portal, $reason)
+    {
+        Audit::log(Connection::getDb(), 'LOGIN_NEGADO', self::PORTALS[$portal]['table'], null, ['motivo' => $reason]);
     }
 
     /**
