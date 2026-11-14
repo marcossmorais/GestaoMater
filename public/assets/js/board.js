@@ -117,6 +117,7 @@
                 <article class="card m-board-post is-type-${escapeHtml(p.type)}${p.pinned ? ' is-pinned' : ''}">
                     <header>
                         ${typeTags(p)}
+                        ${p.audience === 'responsaveis' ? '<span class="m-board-family"><i class="fas fa-users" aria-hidden="true"></i>Para a família</span>' : ''}
                         <strong>Coordenação</strong>
                         <small>${escapeHtml(p.postedAt)}</small>
                     </header>

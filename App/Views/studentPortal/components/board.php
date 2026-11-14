@@ -13,6 +13,7 @@ $postCard = function ($post, $title, $meta, $readAttr) use ($types) {
     <article class="card m-board-post is-type-<?= htmlspecialchars($post->type) ?><?= $post->pinned ? ' is-pinned' : '' ?><?= $post->read_by_me ? ' is-read' : '' ?>" <?= $readAttr ?>="<?= (int) $post->id ?>" data-discipline="<?= htmlspecialchars($title) ?>">
         <header>
             <span class="m-board-tag"><i class="fas <?= $type['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($type['label']) ?></span>
+            <?php if (($post->audience ?? '') === 'responsaveis') { ?><span class="m-board-family"><i class="fas fa-users" aria-hidden="true"></i>Para a família</span><?php } ?>
             <?php if ($post->pinned) { ?><span class="m-board-pin"><i class="fas fa-thumbtack mr-1"></i>Fixado</span><?php } ?>
             <strong><?= htmlspecialchars($title) ?></strong>
             <small><?= htmlspecialchars($meta) ?></small>

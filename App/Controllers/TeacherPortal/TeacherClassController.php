@@ -99,7 +99,7 @@ class TeacherClassController extends Action
         $general = Container::getModel('TeacherStudent\\GeneralBoard')->forClass($classId);
 
         $this->json(['general' => array_map(function ($p) {
-            return ['id' => (int) $p->id, 'text' => $p->text, 'type' => $p->type, 'pinned' => (bool) $p->pinned, 'postedAt' => $p->posted_at];
+            return ['id' => (int) $p->id, 'text' => $p->text, 'type' => $p->type, 'pinned' => (bool) $p->pinned, 'audience' => $p->audience, 'postedAt' => $p->posted_at];
         }, $general), 'posts' => array_map(function ($p) use ($access, $teacherId) {
             return [
                 'id' => (int) $p->id,
@@ -113,6 +113,21 @@ class TeacherClassController extends Action
                 'canManage' => $access->canEdit($teacherId, $p->discipline_class_id),
             ];
         }, $posts)]);
+    }
+
+
+    /**
+     * Confirma a leitura de um aviso da coordenação para os professores
+     */
+    public function generalBoardRead()
+    {
+        if (($input = $this->input()) === null) return;
+
+        if (!Container::getModel('TeacherStudent\\GeneralBoard')->markReadTeacher((int) ($input['id'] ?? 0), $this->teacherId())) {
+            return $this->json(['error' => 'aviso-nao-encontrado'], 404);
+        }
+
+        $this->json(['status' => 'success']);
     }
 
 
