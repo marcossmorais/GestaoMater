@@ -21,6 +21,7 @@ require __DIR__ . '../../../../config/variables.php';
             <li name="gestao"><a href="/admin/gestao"><i class="fas fa-sliders-h"></i><span class="link-name">Gestão geral</span></a></li>
 
             <li name="mural"><a href="/admin/mural"><i class="fas fa-thumbtack"></i><span class="link-name">Mural geral</span></a></li>
+            <li name="cronograma"><a href="/admin/cronograma"><i class="fas fa-calendar-alt"></i><span class="link-name">Cronograma</span></a></li>
 
             <li name="pedagogico"><a href="/admin/pedagogico"><i class="fas fa-inbox"></i><span class="link-name">Recebidos</span></a></li>
 
