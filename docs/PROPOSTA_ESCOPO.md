@@ -85,7 +85,7 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **Virada de ano** (#19): copia turmas com disciplinas e professores para o novo período e rematricula em lote (aprovado sobe, reprovado repete, última série conclui), com prévia e confirmação única
 - [ ] **Tela de auditoria** e registro de acessos (#20)
 - [ ] **Cronograma escolar** editável com Notificar no Mural (#21)
-- [ ] **Avisos segmentados** para professores, turmas e responsáveis (#22)
+- [x] **Avisos segmentados** para professores, turmas e responsáveis (#22): em `/admin/mural`, público Alunos, Responsáveis ou Professores; alunos e responsáveis para a escola ou turmas escolhidas (aparecem no portal do aluno, com selo "Para a família" no dos responsáveis, que usam o login do aluno); professores veem no início do portal docente e confirmam a leitura. Até 3 fixados por público, garantido no banco (cada turma vê no máximo 3; professores, 3). Leitura "X de N" por aviso e filtro por público
 - [ ] **Ocorrências**: painel de ciência pendente (#23)
 - [ ] **Documentação**: modelo editável, lote e log de downloads (#24)
 - [ ] **Gestão de exceções**: troca de professor ou matéria na aula (#25)
