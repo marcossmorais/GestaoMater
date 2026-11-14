@@ -40,6 +40,7 @@ services:
       - ./database/27_fund1_substituicao.sql:/docker-entrypoint-initdb.d/27_fund1_substituicao.sql:ro
       - ./database/28_grade_horario_admin.sql:/docker-entrypoint-initdb.d/28_grade_horario_admin.sql:ro
       - ./database/29_horario_por_etapa.sql:/docker-entrypoint-initdb.d/29_horario_por_etapa.sql:ro
+      - ./database/30_avisos_segmentados.sql:/docker-entrypoint-initdb.d/30_avisos_segmentados.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro
@@ -57,6 +58,7 @@ services:
       - ./database/dev/99m_dev_roteiro_provas.sql:/docker-entrypoint-initdb.d/99m_dev_roteiro_provas.sql:ro
       - ./database/dev/99n_dev_fund1_titular.sql:/docker-entrypoint-initdb.d/99n_dev_fund1_titular.sql:ro
       - ./database/dev/99o_dev_fund1_horarios.sql:/docker-entrypoint-initdb.d/99o_dev_fund1_horarios.sql:ro
+      - ./database/dev/99p_dev_avisos_segmentados.sql:/docker-entrypoint-initdb.d/99p_dev_avisos_segmentados.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${DB_USER:-mater} -d ${DB_NAME:-mater}"]
       interval: 5s
