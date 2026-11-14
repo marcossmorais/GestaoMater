@@ -37,6 +37,7 @@ class StudentPortalController extends Action
 
         if (count($auth) != 1) {
 
+            \App\Auth\PortalAccount::logFailure('aluno', 'dados-incorretos');
             header('Location: /portal-aluno?error=dados-incorretos');
 
         } else {
@@ -346,9 +347,7 @@ class StudentPortalController extends Action
     public function exit()
     {
 
-        if (!isset($_SESSION)) session_start();
-
-        unset($_SESSION['Student']);
+        \App\Auth\PortalAccount::close('aluno');
 
         header('Location: /portal-aluno' . (\App\Auth\Clerk::enabled() ? '?logout=1' : ''));
     }

@@ -40,7 +40,7 @@ class AuthController extends Action
         $id = PortalAccount::findId($portal, $claims->sub, $emails);
 
         if ($id === null) {
-            if ($portal === 'admin') PortalAccount::logAdminFailure('sem-cadastro');
+            PortalAccount::logFailure($portal, 'sem-cadastro');
             http_response_code(403);
             echo json_encode(['error' => 'sem-cadastro']);
             return;
@@ -49,7 +49,7 @@ class AuthController extends Action
         $error = PortalAccount::startSession($portal, $id);
 
         if ($error) {
-            if ($portal === 'admin') PortalAccount::logAdminFailure($error);
+            PortalAccount::logFailure($portal, $error);
             http_response_code(403);
             echo json_encode(['error' => $error]);
             return;

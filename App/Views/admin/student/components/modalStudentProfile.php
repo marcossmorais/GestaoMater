@@ -101,6 +101,13 @@ require __DIR__ . '../../../../../config/variables.php';
                                                 <span class="box-icon"><i class="fas fa-file-alt mr-3"></i></span> Observações
                                             </a>
 
+                                            <?php if (!isset($_SESSION)) session_start(); if (isset($_SESSION['Admin']) && (int) $_SESSION['Admin']['hierarchyFunction'] === 1) { ?>
+                                                <!-- histórico de notas, faltas, atestados e ocorrências do aluno: a auditoria filtrada por ele -->
+                                                <a href="/admin/auditoria?aluno=<?= (int) $student->id ?>&de=<?= date('Y') ?>-01-01" target="_blank" rel="noopener">
+                                                    <span class="box-icon"><i class="fas fa-history mr-3"></i></span> Histórico (auditoria)
+                                                </a>
+                                            <?php } ?>
+
                                             <?php if (!isset($_SESSION)) session_start();
 
                                             if (isset($_SESSION['Admin']) && $_SESSION['Admin']['hierarchyFunction'] <= 2) { 

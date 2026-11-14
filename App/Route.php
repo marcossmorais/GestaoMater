@@ -66,6 +66,18 @@ class Route extends Bootstrap
 			'action' => 'index'
 		);
 
+		$routes['adminAudit'] = array(
+			'route' => '/admin/auditoria',
+			'controller' => 'Admin\\AdminAuditController',
+			'action' => 'index'
+		);
+
+		$routes['adminAuditExport'] = array(
+			'route' => '/admin/auditoria/exportar',
+			'controller' => 'Admin\\AdminAuditController',
+			'action' => 'export'
+		);
+
 		$routes['adminImportTemplate'] = array(
 			'route' => '/admin/importacao/modelo',
 			'controller' => 'Admin\\AdminImportController',

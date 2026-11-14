@@ -1343,6 +1343,45 @@ html body .m-overview td a { color: inherit !important; font-weight: 600; }
 .m-schedule-editor { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
 .m-schedule-editor .m-schedule-day { margin: 0; }
 .m-schedule-editor select { font-size: 13px; }
+/* admin: auditoria (tabela vira cartão no celular) */
+.m-audit-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; align-items: end; padding: 16px; }
+.m-audit-filters label { margin: 0; font-size: 12px; font-weight: 600; color: var(--m-muted); display: flex; flex-direction: column; gap: 4px; }
+.m-audit-filters .form-control { min-height: 44px; }
+.m-audit-student { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--m-muted); }
+.m-audit-student strong { color: var(--m-text); font-size: 14px; }
+.m-audit-actions { display: flex; gap: 8px; }
+.m-audit-actions .btn, .m-audit-bar .btn, .m-audit-pages .btn { min-height: 44px; display: inline-flex; align-items: center; }
+.m-audit-choices { margin: 0; padding-left: 18px; }
+.m-audit-choices a { display: inline-block; padding: 8px 0; }
+.m-audit-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 16px 0 8px; }
+.m-audit-bar > span { flex: 1; font-size: 13px; color: var(--m-muted); }
+.m-audit-wrap { padding: 0; overflow: hidden; }
+.m-audit { width: 100%; border-collapse: collapse; font-size: 13px; }
+.m-audit th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--m-muted); padding: 10px 12px; border-bottom: 1px solid var(--m-border); }
+#audit .m-audit th, #audit .m-audit td { text-align: left; }
+.m-audit td { padding: 10px 12px; border-bottom: 1px solid var(--m-border); vertical-align: top; color: var(--m-text); }
+.m-audit td:first-child { white-space: nowrap; color: var(--m-muted); }
+.m-audit td small { display: block; color: var(--m-muted); }
+.m-audit-action { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--m-row-hover); white-space: nowrap; }
+.m-audit-action.is-new { background: rgba(22, 163, 74, .12); color: var(--m-success); }
+.m-audit-action.is-edit { background: rgba(37, 99, 235, .12); color: var(--m-primary-text); }
+.m-audit-action.is-del, .m-audit-action.is-deny { background: rgba(220, 38, 38, .12); color: var(--m-danger); }
+.m-audit-changes { list-style: none; margin: 6px 0 0; padding: 0; }
+.m-audit-changes li { font-size: 12px; }
+.m-audit-changes span { color: var(--m-muted); }
+.m-audit-changes del { color: var(--m-danger); }
+.m-audit-changes ins { color: var(--m-success); text-decoration: none; font-weight: 600; }
+.m-audit-pages { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; margin-top: 16px; font-size: 13px; color: var(--m-muted); }
+@media (max-width: 767px) {
+  .m-audit thead { display: none; }
+  .m-audit tr { display: block; padding: 12px; border-bottom: 1px solid var(--m-border); }
+  .m-audit td { display: flex; gap: 8px; padding: 2px 0; border: 0; }
+  .m-audit td::before { content: attr(data-label); flex: 0 0 72px; font-size: 11px; color: var(--m-muted); text-transform: uppercase; }
+  .m-audit td > * { min-width: 0; }
+}
+@media print {
+  #audit .m-audit-filters, #audit .m-audit-bar .btn, #audit .m-audit-pages { display: none !important; }
+}
 /* barra inferior: só o item ativo tem o traço azul (o tema antigo punha borda branca em todos, que virava azul no escuro) */
 html body .navbar.fixed-bottom .nav-link:not(.link-active):not([aria-expanded="true"]) { border-bottom-color: transparent !important; }
 /* cards de turma: sempre em linha (selo · texto · seta), mais compactos no celular */
