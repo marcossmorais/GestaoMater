@@ -158,7 +158,9 @@ class GeneralBoard extends Model
     public function post($adminId, $text, $type, $pinned, $audience, array $classIds)
     {
 
-        $this->db->beginTransaction();
+        // dentro de uma transação de quem chamou (ex.: Notificar no mural do cronograma), quem fecha é ela
+        $own = !$this->db->inTransaction();
+        if ($own) $this->db->beginTransaction();
 
         try {
             $stmt = $this->db->prepare(
@@ -183,9 +185,9 @@ class GeneralBoard extends Model
                 }
             }
 
-            $this->db->commit();
+            if ($own) $this->db->commit();
         } catch (\Throwable $e) {
-            if ($this->db->inTransaction()) $this->db->rollBack();
+            if ($own && $this->db->inTransaction()) $this->db->rollBack();
             throw $e;
         }
 
