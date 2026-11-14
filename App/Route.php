@@ -1078,6 +1078,12 @@ class Route extends Bootstrap
 			'action' => 'boardDelete'
 		);
 
+		$routes['teacherGeneralBoardRead'] = array(
+			'route' => '/portal-docente/mural/geral/lido',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'generalBoardRead'
+		);
+
 		$routes['teacherGrades'] = array(
 			'route' => '/portal-docente/notas',
 			'controller' => 'TeacherPortal\TeacherClassController',

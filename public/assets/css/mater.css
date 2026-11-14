@@ -1647,3 +1647,24 @@ html body #pagina .m-imp-rollover select.form-control { height: 44px; font-size:
   .m-imp-msg { min-width: 0; text-align: right; }
   .m-imp-rollover .btn, .m-imp-confirm .btn { width: 100%; justify-content: center; }
 }
+
+/* ---------- Avisos gerais por público (#22) */
+.m-board-audiences .m-board-type { --k: var(--m-primary); }
+.m-board-audience { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; font-size: 12px; font-weight: 800; color: var(--m-primary-text); background: var(--m-primary-soft); border-radius: 10px; }
+.m-board-audience i { font-size: 11px; }
+.m-class-picks { border: 0; padding: 0; margin: 0; min-width: 0; }
+.m-class-picks legend { font-size: inherit; margin-bottom: 6px; }
+.m-class-picks legend small { font-weight: 400; color: var(--m-muted); }
+.m-class-picks-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 12px; max-height: 220px; overflow-y: auto; padding: 8px; border: 1px solid var(--m-border); border-radius: 8px; background: var(--m-surface); }
+.m-class-picks-list label { display: flex; align-items: center; gap: 8px; min-height: 36px; margin: 0; font-size: 14px; cursor: pointer; }
+.m-class-picks-summary { margin: 6px 0 0; font-size: 13px; color: var(--m-muted); }
+.m-board-filter { flex-wrap: wrap; }
+.m-board-filter .btn { border: 0; background: transparent; color: var(--m-muted); font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 8px; }
+.m-board-filter .btn.is-active { background: var(--m-surface); color: var(--m-primary-text); box-shadow: 0 1px 3px rgba(16, 32, 72, .14); }
+.m-board-family { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; font-size: 12px; font-weight: 800; color: var(--m-primary-text); background: var(--m-primary-soft); border-radius: 10px; }
+@media (max-width: 767.98px) {
+  .m-class-picks-list { grid-template-columns: 1fr; }
+  .m-class-picks-list label { min-height: 44px; }
+  .m-board-filter { display: flex; width: 100%; }
+  .m-board-filter .btn { flex: 1; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+}

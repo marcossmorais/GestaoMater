@@ -57,6 +57,51 @@ $homerooms = $this->view->homerooms;
                 <a class="m-tile m-subj-purple" href="/portal-docente/mural"><span class="m-tile-ico"><i class="fas fa-thumbtack"></i></span><strong>Mural</strong><small>Avisos para a turma</small></a>
             </nav>
 
+            <?php if ($this->view->notices) { $noticeTypes = \App\Models\TeacherStudent\ClassBoard::TYPES; ?>
+                <section class="m-board m-teacher-notices" data-teacher-notices aria-labelledby="teacherNoticesTitle">
+                    <h5 class="m-section-title" id="teacherNoticesTitle"><i class="fas fa-school mr-2"></i>Avisos da coordenação</h5>
+                    <?php foreach ($this->view->notices as $n) { $nt = $noticeTypes[$n->type] ?? $noticeTypes['aviso']; ?>
+                        <article class="card m-board-post is-type-<?= htmlspecialchars($n->type) ?><?= $n->pinned ? ' is-pinned' : '' ?><?= $n->read_by_me ? ' is-read' : '' ?>" data-teacher-notice="<?= (int) $n->id ?>">
+                            <header>
+                                <span class="m-board-tag"><i class="fas <?= $nt['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($nt['label']) ?></span>
+                                <?php if ($n->pinned) { ?><span class="m-board-pin"><i class="fas fa-thumbtack mr-1"></i>Fixado</span><?php } ?>
+                                <strong>Coordenação</strong>
+                                <small><?= htmlspecialchars($n->posted_at) ?></small>
+                            </header>
+                            <p><?= nl2br(htmlspecialchars($n->text)) ?></p>
+                            <footer>
+                                <?php if ($n->read_by_me) { ?>
+                                    <span class="m-board-read"><i class="fas fa-check-double mr-1"></i>Lido</span>
+                                <?php } else { ?>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-notice-read><i class="fas fa-check mr-1"></i>Marcar como lido</button>
+                                <?php } ?>
+                            </footer>
+                        </article>
+                    <?php } ?>
+                </section>
+                <script>
+                    document.querySelector('[data-teacher-notices]').addEventListener('click', async (event) => {
+                        const button = event.target.closest('[data-notice-read]');
+                        if (!button) return;
+                        const card = button.closest('[data-teacher-notice]');
+                        button.disabled = true;
+                        try {
+                            const response = await fetch('/portal-docente/mural/geral/lido', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                                body: JSON.stringify({ id: parseInt(card.dataset.teacherNotice, 10) })
+                            });
+                            if (!response.ok) throw new Error();
+                            card.classList.add('is-read');
+                            button.outerHTML = '<span class="m-board-read"><i class="fas fa-check-double mr-1"></i>Lido</span>';
+                        } catch (e) {
+                            button.disabled = false;
+                            window.alert('Não foi possível marcar como lido. Tente de novo.');
+                        }
+                    });
+                </script>
+            <?php } ?>
+
             <?php
             $charts = $this->view->charts;
             $activity = $this->view->activity;

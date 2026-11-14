@@ -102,6 +102,11 @@ class TeacherPortalController extends Action
         $this->view->charts = $Dashboard->charts($disciplineClasses, max($openUnits), $rule, $this->view->atRisk);
         $this->view->activity = $Dashboard->activity(array_map(function ($c) { return (int) $c->discipline_class_id; }, $disciplineClasses));
         $this->view->rule = $rule;
+        // avisos da coordenação para os professores: fixados e os ainda não lidos
+        $this->view->notices = array_values(array_filter(
+            Container::getModel('TeacherStudent\\GeneralBoard')->forTeacher($teacherId),
+            function ($n) { return $n->pinned || !$n->read_by_me; }
+        ));
 
         $this->render('home', 'TeacherPortalLayout', 'teacherPortal');
     }
