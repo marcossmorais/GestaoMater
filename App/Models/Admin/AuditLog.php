@@ -444,7 +444,9 @@ class AuditLog extends Model
             case 'aviso_turma':
                 return $parts($dc, $this->short($d['aviso'] ?? null));
             case 'aviso_geral':
-                return $parts(isset($d['fk_id_turma']) ? $n('class', $d['fk_id_turma']) : 'toda a escola', $this->short($d['aviso'] ?? null));
+                // desde a migração 30 as turmas ficam em aviso_geral_turma; o registro guarda só o público
+                $audience = ['alunos' => 'para os alunos', 'responsaveis' => 'para os responsáveis', 'professores' => 'para os professores'][$d['publico'] ?? ''] ?? null;
+                return $parts($audience ?? (isset($d['fk_id_turma']) ? $n('class', $d['fk_id_turma']) : 'toda a escola'), $this->short($d['aviso'] ?? null));
             case 'evento_escolar':
                 return $parts($d['titulo'] ?? null, $date($d['data_inicio'] ?? null));
             case 'documento_emitido':
