@@ -28,6 +28,10 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li name="importacao"><a href="/admin/importacao"><i class="fas fa-file-import"></i><span class="link-name">Importação</span></a></li>
 
+            <?php if ((int) $_SESSION['Admin']['hierarchyFunction'] === 1) { ?>
+            <li name="auditoria"><a href="/admin/auditoria"><i class="fas fa-history"></i><span class="link-name">Auditoria</span></a></li>
+            <?php } ?>
+
             <hr class='bg-white col-lg-9 mx-auto'>
 
             <p>Navegação</p>
