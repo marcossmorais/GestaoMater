@@ -92,6 +92,7 @@ class AuditLog extends Model
         'valor_avaliacao' => 'Valor',
         'descricao' => 'Descrição',
         'titulo' => 'Título',
+        'notificado_em' => 'Notificado no mural',
         'aviso' => 'Aviso',
         'fixado' => 'Fixado',
         'tipo' => 'Tipo',

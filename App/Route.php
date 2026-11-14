@@ -1198,6 +1198,30 @@ class Route extends Bootstrap
 			'action' => 'post'
 		);
 
+		$routes['adminCalendar'] = array(
+			'route' => '/admin/cronograma',
+			'controller' => 'Admin\\AdminCalendarController',
+			'action' => 'index'
+		);
+
+		$routes['adminCalendarSave'] = array(
+			'route' => '/admin/cronograma/salvar',
+			'controller' => 'Admin\\AdminCalendarController',
+			'action' => 'save'
+		);
+
+		$routes['adminCalendarDelete'] = array(
+			'route' => '/admin/cronograma/excluir',
+			'controller' => 'Admin\\AdminCalendarController',
+			'action' => 'delete'
+		);
+
+		$routes['adminCalendarNotify'] = array(
+			'route' => '/admin/cronograma/notificar',
+			'controller' => 'Admin\\AdminCalendarController',
+			'action' => 'notify'
+		);
+
 		$routes['adminBoardPin'] = array(
 			'route' => '/admin/mural/fixar',
 			'controller' => 'Admin\\AdminBoardController',

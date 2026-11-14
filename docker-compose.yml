@@ -41,6 +41,7 @@ services:
       - ./database/28_grade_horario_admin.sql:/docker-entrypoint-initdb.d/28_grade_horario_admin.sql:ro
       - ./database/29_horario_por_etapa.sql:/docker-entrypoint-initdb.d/29_horario_por_etapa.sql:ro
       - ./database/30_avisos_segmentados.sql:/docker-entrypoint-initdb.d/30_avisos_segmentados.sql:ro
+      - ./database/31_cronograma_admin.sql:/docker-entrypoint-initdb.d/31_cronograma_admin.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro

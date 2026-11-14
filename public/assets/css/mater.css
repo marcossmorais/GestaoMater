@@ -1707,3 +1707,51 @@ html body #pagina .m-imp-rollover select.form-control { height: 44px; font-size:
   .m-board-filter { display: flex; width: 100%; }
   .m-board-filter .btn { flex: 1; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 }
+
+/* ---------- Cronograma escolar do admin (#21) */
+.is-ev-evento, .m-cal-pill.is-ev-evento, .m-cal-slot.is-ev-evento { --k: #7B61FF; }
+.is-ev-prova, .m-cal-pill.is-ev-prova, .m-cal-slot.is-ev-prova { --k: #E8508C; }
+.is-ev-reuniao, .m-cal-pill.is-ev-reuniao, .m-cal-slot.is-ev-reuniao { --k: #0EA5E9; }
+.is-ev-feriado, .m-cal-pill.is-ev-feriado, .m-cal-slot.is-ev-feriado { --k: #22B07D; }
+.is-ev-recesso, .m-cal-pill.is-ev-recesso, .m-cal-slot.is-ev-recesso { --k: #F59E0B; }
+.is-ev-outro, .m-cal-pill.is-ev-outro, .m-cal-slot.is-ev-outro { --k: #64748B; }
+.m-cal-dots i[class*="is-ev-"], .m-cal-legend i[class*="is-ev-"] { background: var(--k); }
+.m-cal-slot[class*="is-ev-"] { background: color-mix(in srgb, var(--k) 12%, transparent); color: var(--m-text); text-decoration: none; }
+.m-admin-cal a.m-cal-pill, .m-admin-cal a.m-cal-slot, .m-admin-cal .m-cal-col-head a, .m-admin-cal a.m-cal-num { text-decoration: none; color: var(--m-text); }
+.m-admin-cal a.m-cal-num.is-today { color: #fff; }
+.m-admin-cal .m-cal-day { cursor: default; }
+html body #pagina .card.m-board-post[class*="is-ev-"] { border-left: 4px solid var(--k) !important; }
+.m-cal-filter { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+.m-cal-filter label { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; font-weight: 700; color: var(--m-muted); }
+.m-cal-filter select { width: auto; max-width: 320px; }
+.m-cal-year { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.m-cal-year-month { padding: 10px 12px; border: 1px solid var(--m-border); border-radius: 12px; background: var(--m-surface); min-width: 0; }
+.m-cal-year-name { display: flex; justify-content: space-between; align-items: center; min-height: 32px; font-weight: 900; color: var(--m-text); text-decoration: none; }
+.m-cal-year-name small { font-weight: 800; color: var(--m-muted); }
+.m-cal-year-month ul { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.m-cal-year-month li { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 6px; font-size: 12px; }
+.m-cal-year-month li > span { color: var(--m-muted); font-weight: 700; white-space: nowrap; }
+.m-cal-form-title { margin: 0 0 8px; font-weight: 900; }
+.m-cal-form-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.m-cal-form small { font-weight: 400; color: var(--m-muted); text-transform: none; letter-spacing: 0; }
+.m-cal-status { display: inline-flex; align-items: center; padding: 2px 8px; font-size: 12px; font-weight: 700; color: var(--m-muted); background: var(--m-surface-2); border-radius: 10px; }
+.m-cal-status.is-warn { color: #9A5B00; background: #FFF3D6; }
+html.nightMode .m-cal-status.is-warn { color: #FFD48A; background: rgba(245, 158, 11, .18); }
+.m-cal-notify { margin-top: 10px; padding: 10px 12px; border: 1px dashed var(--m-border); border-radius: 10px; }
+.m-cal-notify-preview { margin: 0 0 8px; padding: 8px 10px; font-size: 14px; background: var(--m-surface-2); border-radius: 8px; }
+.m-cal-notify fieldset { border: 0; margin: 0 0 8px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.m-cal-notify legend { width: 100%; font-size: inherit; margin-bottom: 4px; }
+.m-cal-notify legend small { font-weight: 400; color: var(--m-muted); text-transform: none; letter-spacing: 0; }
+.m-cal-notify label { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin: 0; cursor: pointer; }
+@media (max-width: 767.98px) {
+  .m-cal-form-row { grid-template-columns: 1fr; }
+  .m-cal-filter { justify-content: stretch; }
+  .m-cal-filter label { flex: 1; flex-wrap: wrap; }
+  .m-cal-filter select { max-width: none; width: 100%; }
+  .m-cal-notify label { min-height: 44px; }
+  .m-cal-event .m-post-actions .btn, .m-cal-notify .btn { min-height: 44px; }
+  .m-admin-cal .m-cal-head .m-board-filter { order: 2; }
+  .m-admin-cal .m-cal-nav .btn { min-height: 44px; min-width: 44px; }
+}
+#adminCalendar .m-cal-legend span { padding: 0; background: none; border: 0; box-shadow: none; border-radius: 0; }
+#adminCalendar .m-cal-legend i, #adminCalendar .m-cal-dots i { display: inline-block; flex: none; width: 9px; height: 9px; border-radius: 50%; }
