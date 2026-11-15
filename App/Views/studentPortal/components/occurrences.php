@@ -21,7 +21,7 @@ foreach ($occurrences as $occ) {
         $badgeStyle = 'badge-danger';
     }
 ?>
-    <div class="col-11 mx-auto card mb-3 shadow-sm border" style="border-radius: 12px;" data-portal-occ="<?= $occ->id_ocorrencia ?>">
+    <div class="col-11 mx-auto card mb-3 shadow-sm border<?= $occ->requer_ciencia && !$occ->ciencia_responsavel ? ' m-occ-pending' : '' ?>" style="border-radius: 12px;" id="ocorrencia-<?= (int) $occ->id_ocorrencia ?>" data-portal-occ="<?= (int) $occ->id_ocorrencia ?>">
         <div class="row p-3">
             <div class="col-sm-1 d-flex justify-content-center align-items-center">
                 <i class="fas <?= $icon ?> fa-2x"></i>
