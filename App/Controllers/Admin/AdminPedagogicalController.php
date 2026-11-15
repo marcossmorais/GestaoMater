@@ -112,7 +112,7 @@ class AdminPedagogicalController extends Action
         $Request = Container::getModel('TeacherStudent\\OccurrenceRequest');
 
         if (!empty($input['accept'])) {
-            $done = $Request->accept($id, $answer, !empty($input['visible'])) !== null;
+            $done = $Request->accept($id, $answer, !empty($input['visible']), !empty($input['requireAck'])) !== null;
         } else {
             if ($answer === '') return $this->json(['error' => 'motivo-obrigatorio'], 422);
             $done = $Request->reject($id, $answer);
