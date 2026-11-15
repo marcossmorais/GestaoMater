@@ -1755,3 +1755,10 @@ html.nightMode .m-cal-status.is-warn { color: #FFD48A; background: rgba(245, 158
 }
 #adminCalendar .m-cal-legend span { padding: 0; background: none; border: 0; box-shadow: none; border-radius: 0; }
 #adminCalendar .m-cal-legend i, #adminCalendar .m-cal-dots i { display: inline-block; flex: none; width: 9px; height: 9px; border-radius: 50%; }
+
+/* ---------- Auditoria: registros por página */
+.m-audit-per { margin: 0; }
+.m-audit-per label { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 13px; color: var(--m-muted); white-space: nowrap; }
+.m-audit-per select { width: auto; min-width: 72px; min-height: 44px; }
+@media (max-width: 767.98px) { .m-audit-per { width: 100%; } }
+@media print { .m-audit-per { display: none !important; } }

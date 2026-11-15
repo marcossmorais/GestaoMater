@@ -88,6 +88,6 @@ class AdminAuditController extends Action
         });
         fclose($out);
 
-        Audit::log(\App\Connection::getDb(), 'EXPORTAR', 'auditoria', null, ['filtros' => array_diff_key($filters, ['pagina' => 1]), 'linhas' => $lines]);
+        Audit::log(\App\Connection::getDb(), 'EXPORTAR', 'auditoria', null, ['filtros' => array_diff_key($filters, ['pagina' => 1, 'por' => 1]), 'linhas' => $lines]);
     }
 }

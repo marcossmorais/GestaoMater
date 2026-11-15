@@ -6,9 +6,10 @@ $result = $this->view->result;
 $total = $this->view->total;
 
 $query = array_filter(array_diff_key($f, ['pagina' => 1]), function ($v) { return $v !== '' && $v !== 0; });
+if ($f['por'] === \App\Models\Admin\AuditLog::PER_PAGE) unset($query['por']);
 $pageUrl = function ($page) use ($query) { return '/admin/auditoria?' . http_build_query($query + ['pagina' => $page]); };
 $actionClass = ['INSERT' => 'is-new', 'UPDATE' => 'is-edit', 'DELETE' => 'is-del', 'NEGADO' => 'is-deny', 'LOGIN_NEGADO' => 'is-deny', 'EXPORTAR' => 'is-edit'];
-$start = ($f['pagina'] - 1) * \App\Models\Admin\AuditLog::PER_PAGE;
+$start = ($f['pagina'] - 1) * $f['por'];
 ?>
 
 <section id="audit">
@@ -68,6 +69,7 @@ $start = ($f['pagina'] - 1) * \App\Models\Admin\AuditLog::PER_PAGE;
                 <?php } else { ?>
                     <label>Aluno <input type="search" class="form-control" name="alunoNome" value="<?= htmlspecialchars($this->view->studentName) ?>" placeholder="Nome (3 letras ou mais)"></label>
                 <?php } ?>
+                <?php if (isset($query['por'])) { ?><input type="hidden" name="por" value="<?= (int) $f['por'] ?>"><?php } ?>
                 <div class="m-audit-actions">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-filter mr-2"></i>Filtrar</button>
                     <a class="btn btn-light" href="/admin/auditoria">Limpar</a>
@@ -89,6 +91,18 @@ $start = ($f['pagina'] - 1) * \App\Models\Admin\AuditLog::PER_PAGE;
 
             <div class="m-audit-bar">
                 <span><?= $total > 10000 ? 'Mais de 10.000' : number_format($total, 0, ',', '.') ?> registro<?= $total === 1 ? '' : 's' ?> de <?= date('d/m/Y', strtotime($f['de'])) ?> a <?= date('d/m/Y', strtotime($f['ate'])) ?></span>
+                <form class="m-audit-per" method="get" action="/admin/auditoria">
+                    <?php foreach (array_diff_key($query, ['por' => 1]) as $k => $v) { ?><input type="hidden" name="<?= htmlspecialchars($k) ?>" value="<?= htmlspecialchars((string) $v) ?>"><?php } ?>
+                    <label>Mostrar
+                        <select class="form-control" name="por" onchange="this.form.submit()">
+                            <?php foreach (\App\Models\Admin\AuditLog::PER_PAGE_OPTIONS as $n) { ?>
+                                <option value="<?= $n ?>" <?= $f['por'] === $n ? 'selected' : '' ?>><?= $n ?></option>
+                            <?php } ?>
+                        </select>
+                        por página
+                    </label>
+                    <noscript><button class="btn btn-light">Aplicar</button></noscript>
+                </form>
                 <?php if ($total) { ?>
                     <a class="btn btn-light" href="<?= htmlspecialchars('/admin/auditoria/exportar?' . http_build_query($query + ($this->view->studentName !== '' && !$f['aluno'] ? ['alunoNome' => $this->view->studentName] : []))) ?>"><i class="fas fa-file-csv mr-2"></i>Exportar CSV<?= $total > \App\Models\Admin\AuditLog::EXPORT_LIMIT ? ' (primeiros ' . number_format(\App\Models\Admin\AuditLog::EXPORT_LIMIT, 0, ',', '.') . ')' : '' ?></a>
                     <button type="button" class="btn btn-light" onclick="window.print()"><i class="fas fa-print mr-2"></i>Imprimir / PDF</button>
