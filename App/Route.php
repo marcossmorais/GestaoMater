@@ -200,6 +200,12 @@ class Route extends Bootstrap
 			'action' => 'declarationAttendance'
 		);
 
+		$routes['adminOccurrences'] = array(
+			'route' => '/admin/ocorrencias',
+			'controller' => 'Admin\\AdminOccurrenceController',
+			'action' => 'index'
+		);
+
 		$routes['adminListOccurrences'] = array(
 			'route' => '/admin/aluno/ocorrencias/listar',
 			'controller' => 'Admin\\AdminStudentController',
