@@ -14,6 +14,8 @@ class AuditLog extends Model
 {
 
     const PER_PAGE = 50;
+    // quantos registros por página o admin pode escolher
+    const PER_PAGE_OPTIONS = [5, 10, 15, 20, 50];
     const EXPORT_LIMIT = 20000;
 
     // o que foi alterado (auditoria.entidade)
@@ -137,6 +139,7 @@ class AuditLog extends Model
             'acao' => array_key_exists($get['acao'] ?? '', self::ACTIONS) ? $get['acao'] : '',
             'turma' => max(0, (int) ($get['turma'] ?? 0)),
             'aluno' => max(0, (int) ($get['aluno'] ?? 0)),
+            'por' => in_array((int) ($get['por'] ?? 0), self::PER_PAGE_OPTIONS, true) ? (int) $get['por'] : self::PER_PAGE,
             'pagina' => max(1, (int) ($get['pagina'] ?? 1)),
         ];
 
@@ -213,13 +216,13 @@ class AuditLog extends Model
             "SELECT a.*, TO_CHAR(a.criado_em AT TIME ZONE 'America/Sao_Paulo', 'DD/MM/YYYY HH24:MI:SS') AS quando
              FROM auditoria a WHERE $where
              ORDER BY a.id_auditoria DESC
-             LIMIT " . (self::PER_PAGE + 1) . ' OFFSET ' . (($f['pagina'] - 1) * self::PER_PAGE)
+             LIMIT " . ($f['por'] + 1) . ' OFFSET ' . (($f['pagina'] - 1) * $f['por'])
         );
         $stmt->execute($params);
         $rows = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
-        $more = count($rows) > self::PER_PAGE;
-        $rows = array_slice($rows, 0, self::PER_PAGE);
+        $more = count($rows) > $f['por'];
+        $rows = array_slice($rows, 0, $f['por']);
 
         return ['rows' => $this->describeAll($rows), 'more' => $more];
     }
