@@ -144,6 +144,27 @@ require __DIR__ . '../../../../config/variables.php';
                         </div>
                         <img class="m-hero-art" src="<?= $app_url ?>/assets/img/illustrations/students.svg" alt="">
                     </div>
+
+                    <?php $pendingOcc = $this->view->pendingOccurrences ?? []; if ($pendingOcc) { $n = count($pendingOcc); ?>
+                        <div class="m-occ-alert" role="alert" data-occ-alert>
+                            <i class="fas fa-signature" aria-hidden="true"></i>
+                            <div>
+                                <strong><?= $n === 1 ? 'Um comunicado da escola aguarda' : $n . ' comunicados da escola aguardam' ?> a ciência dos responsáveis</strong>
+                                <span>Responsável: leia e toque em "Confirmar ciência" no comunicado.</span>
+                            </div>
+                            <a class="btn btn-warning" href="#ocorrencia-<?= (int) $pendingOcc[0] ?>">Ver comunicado</a>
+                        </div>
+                        <script>
+                            // o comunicado fica no Mural: abre a aba antes de rolar até ele
+                            document.querySelector('[data-occ-alert] a').addEventListener('click', function (event) {
+                                const target = document.querySelector(this.getAttribute('href'));
+                                if (!target) return;
+                                event.preventDefault();
+                                if (window.jQuery) jQuery('#mural').collapse('show');
+                                setTimeout(function () { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 350);
+                            });
+                        </script>
+                    <?php } ?>
                 </div>
 
                 <div class="col-lg-12">
@@ -354,7 +375,13 @@ require __DIR__ . '../../../../config/variables.php';
             const box = document.getElementById('occAckBox_' + id);
             if (box) {
                 box.innerHTML = '<span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Ciência dos Pais Confirmada</span>';
+                box.closest('[data-portal-occ]').classList.remove('m-occ-pending');
             }
+            // some o aviso do topo quando não sobra nenhuma pendente
+            const next = document.querySelector('.m-occ-pending[data-portal-occ]');
+            const alertBox = document.querySelector('[data-occ-alert]');
+            if (alertBox && !next) alertBox.remove();
+            else if (alertBox) alertBox.querySelector('a').setAttribute('href', '#ocorrencia-' + next.dataset.portalOcc);
             alert('Ciência confirmada com sucesso!');
         } catch (err) {
             alert(err.message || 'Erro ao confirmar ciência.');
