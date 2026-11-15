@@ -126,6 +126,7 @@ $pendingCertificates = count(array_filter($certificates, function ($c) { return 
                                     <input type="text" class="form-control" maxlength="255" data-request-answer>
                                 </label>
                                 <label class="m-overview-low"><input type="checkbox" data-request-visible> Visível para a família</label>
+                                <label class="m-overview-low"><input type="checkbox" data-request-ack> Pedir ciência da família <small>(fica visível para ela)</small></label>
                                 <div class="m-actions">
                                     <button type="button" class="btn btn-primary" data-request-action="accept"><i class="fas fa-check mr-2"></i>Aceitar e registrar ocorrência</button>
                                     <button type="button" class="btn btn-light" data-request-action="reject">Recusar</button>
@@ -178,7 +179,8 @@ $pendingCertificates = count(array_filter($certificates, function ($c) { return 
                         id: parseInt(card.dataset.request, 10),
                         accept: action.dataset.requestAction === 'accept',
                         answer: card.querySelector('[data-request-answer]').value.trim(),
-                        visible: card.querySelector('[data-request-visible]').checked
+                        visible: card.querySelector('[data-request-visible]').checked,
+                        requireAck: card.querySelector('[data-request-ack]').checked
                     });
                 }
                 window.location.reload();

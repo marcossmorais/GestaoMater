@@ -93,6 +93,7 @@ class StudentPortalController extends Action
         $Occurrence = Container::getModel('TeacherStudent\\Occurrence');
 
         $this->view->listOccurrences = $Occurrence->getForPortal($_SESSION['Student']['enrollmentId']);
+        $this->view->pendingOccurrences = $Occurrence->pendingForPortal($_SESSION['Student']['enrollmentId']);
 
         $this->view->lackList = $Lack->readByIdStudent();
         $this->view->disciplineAverageList = $DisciplineAverage->readByIdStudent();

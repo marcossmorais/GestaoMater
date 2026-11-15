@@ -97,7 +97,7 @@ class OccurrenceRequest extends Model
      *
      * @return int|null id da ocorrência; null se já foi analisada
      */
-    public function accept($id, $answer, $visibleToFamily)
+    public function accept($id, $answer, $visibleToFamily, $requireAck = false)
     {
 
         $this->db->beginTransaction();
@@ -129,6 +129,7 @@ class OccurrenceRequest extends Model
                 'gravidade' => $request->gravidade,
                 'medida_tomada' => $answer,
                 'visivel_responsavel' => $visibleToFamily,
+                'requer_ciencia' => $requireAck,
                 'registrado_por' => mb_substr($request->teacher, 0, 100),
                 'data_ocorrencia' => $request->data_fato,
             ]);
