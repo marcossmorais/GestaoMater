@@ -201,8 +201,6 @@ class TeacherPortalController extends Action
         $Address =  Container::getModel('People\\Address');
         $Telephone = Container::getModel('People\Telephone');
 
-        $Tool = new Tools();
-
         if (!isset($_SESSION)) session_start();
 
         // endereço e telefone são sempre os do próprio professor (antes vinham do navegador)
@@ -212,23 +210,30 @@ class TeacherPortalController extends Action
             http_response_code(404);
             return;
         }
-        $_POST['addressId'] = $own->address_id;
-        $_POST['telephoneId'] = $own->telephone_id;
+        // tudo validado no servidor: esses dados aparecem nas telas do admin
+        $input = \App\Tools\ProfileInput::validate($_POST);
+        if (isset($input['error'])) {
+            http_response_code(422);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => $input['error']]);
+            return;
+        }
+        $data = $input['data'];
 
-        $Address->__set('addressId', $_POST['addressId']);
-        $Address->__set('district', $_POST['district']);
-        $Address->__set('address', $_POST['address']);
-        $Address->__set('uf', $_POST['uf']);
-        $Address->__set('county', $_POST['county']);
-        $Address->__set('zipCode', $Tool->formatElement($_POST['zipCode']));
+        $Address->__set('addressId', $own->address_id);
+        $Address->__set('district', $data['district']);
+        $Address->__set('address', $data['address']);
+        $Address->__set('uf', $data['uf']);
+        $Address->__set('county', $data['county']);
+        $Address->__set('zipCode', $data['zipCode']);
 
-        $Telephone->__set('telephoneId', $_POST['telephoneId']);
-        $Telephone->__set('telephoneNumber', $Tool->formatElement($_POST['telephoneNumber']));
+        $Telephone->__set('telephoneId', $own->telephone_id);
+        $Telephone->__set('telephoneNumber', $data['telephoneNumber']);
 
-        $Teacher->__set('email', $_POST['email']);
-        $Teacher->__set('accessCode', $_POST['accessCode']);
-        $Teacher->__set('fk_id_blood_type', $_POST['bloodType']);
-        $Teacher->__set('fk_id_pcd', $_POST['pcd']);
+        $Teacher->__set('email', $data['email']);
+        $Teacher->__set('accessCode', $data['accessCode']);
+        $Teacher->__set('fk_id_blood_type', $data['bloodType']);
+        $Teacher->__set('fk_id_pcd', $data['pcd']);
         $Teacher->__set('teacherId', $_SESSION['Teacher']['id']);
 
         $Telephone->update();

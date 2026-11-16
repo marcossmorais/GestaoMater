@@ -44,11 +44,15 @@
                 body: new URLSearchParams(new FormData(form)),
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
-            if (!response.ok) throw new Error();
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                // 422 traz a mensagem do campo recusado; o resto é erro genérico
+                throw new Error(response.status === 422 && data.error ? data.error : '');
+            }
             toggle(false);
             toast('Dados atualizados', 'bg-success');
         } catch (e) {
-            toast('Não foi possível salvar. Tente de novo.', 'bg-danger');
+            toast(e.message || 'Não foi possível salvar. Tente de novo.', 'bg-danger');
         } finally {
             save.disabled = false;
         }
