@@ -56,10 +56,10 @@ foreach ($periods as $p) $yearOf[(int) $p->id] = $p->year . ' · ' . mb_strtolow
 ?>
     <div class="m-kpis m-obs-kpis">
         <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-users"></i></div><div><div class="m-kpi-label">Turmas a criar</div><div class="m-kpi-value"><?= count($plan['toCreate']) ?></div></div></div>
-        <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-book"></i></div><div><div class="m-kpi-label">Disciplinas copiadas</div><div class="m-kpi-value"><?= $plan['disciplines'] ?></div></div></div>
-        <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-level-up-alt"></i></div><div><div class="m-kpi-label">Promovidos</div><div class="m-kpi-value"><?= $c['promovidos'] ?></div></div></div>
-        <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-redo"></i></div><div><div class="m-kpi-label">Retidos</div><div class="m-kpi-value"><?= $c['retidos'] ?></div></div></div>
-        <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-graduation-cap"></i></div><div><div class="m-kpi-label">Concluintes</div><div class="m-kpi-value"><?= $c['concluintes'] ?></div></div></div>
+        <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-book"></i></div><div><div class="m-kpi-label">Disciplinas copiadas</div><div class="m-kpi-value"><?= htmlspecialchars((string) $plan['disciplines']) ?></div></div></div>
+        <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-level-up-alt"></i></div><div><div class="m-kpi-label">Promovidos</div><div class="m-kpi-value"><?= htmlspecialchars((string) $c['promovidos']) ?></div></div></div>
+        <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-redo"></i></div><div><div class="m-kpi-label">Retidos</div><div class="m-kpi-value"><?= htmlspecialchars((string) $c['retidos']) ?></div></div></div>
+        <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-graduation-cap"></i></div><div><div class="m-kpi-label">Concluintes</div><div class="m-kpi-value"><?= htmlspecialchars((string) $c['concluintes']) ?></div></div></div>
     </div>
 
     <?php if ($c['sem_resultado'] || $c['ja_matriculados']) { ?>
@@ -82,7 +82,7 @@ foreach ($periods as $p) $yearOf[(int) $p->id] = $p->year . ' · ' . mb_strtolow
                             <?php foreach ($plan['destinations'] as $d) { ?>
                                 <tr>
                                     <td data-label="Turma"><?= htmlspecialchars($d['label']) ?></td>
-                                    <td data-label="Alunos"><?= $d['total'] ?></td>
+                                    <td data-label="Alunos"><?= htmlspecialchars((string) $d['total']) ?></td>
                                     <td data-label="Situação"><?= $d['new'] ? '<span class="m-pill m-pill-info">nova</span>' : '<span class="m-pill m-pill-ok">já existe</span>' ?></td>
                                 </tr>
                             <?php } ?>
@@ -114,8 +114,8 @@ foreach ($periods as $p) $yearOf[(int) $p->id] = $p->year . ' · ' . mb_strtolow
             <p>Tudo será gravado de uma vez no período <strong><?= htmlspecialchars($yearOf[$this->view->target]) ?></strong>. Se algo falhar, nada fica gravado. As matrículas do período de origem não são alteradas.</p>
             <form method="post" action="/admin/importacao/virada/confirmar"
                   onsubmit="if (!confirm('Confirmar a virada de ano? Esta ação cria turmas e matrículas no novo período.')) return false; this.querySelector('button').disabled = true">
-                <input type="hidden" name="origem" value="<?= $this->view->origin ?>">
-                <input type="hidden" name="destino" value="<?= $this->view->target ?>">
+                <input type="hidden" name="origem" value="<?= htmlspecialchars((string) $this->view->origin) ?>">
+                <input type="hidden" name="destino" value="<?= htmlspecialchars((string) $this->view->target) ?>">
                 <input type="hidden" name="sem_resultado" value="<?= htmlspecialchars($this->view->pending) ?>">
                 <input type="hidden" name="hash" value="<?= htmlspecialchars($plan['hash']) ?>">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-check mr-2"></i>Confirmar virada de ano</button>

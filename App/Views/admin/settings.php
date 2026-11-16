@@ -20,8 +20,8 @@ require __DIR__ . '../../../config/variables.php';
 
                         <div class="col-lg-10 mx-auto main-sheet">
                             <div class="row p-3">
-                                <span class="col-lg-12"><?= $this->view->data[0]->name ?></span>
-                                <span class="col-lg-12"><?= $this->view->data[0]->hierarchy_function ?></span>
+                                <span class="col-lg-12"><?= htmlspecialchars((string) $this->view->data[0]->name) ?></span>
+                                <span class="col-lg-12"><?= htmlspecialchars((string) $this->view->data[0]->hierarchy_function) ?></span>
                             </div>
                         </div>
 
@@ -92,9 +92,9 @@ require __DIR__ . '../../../config/variables.php';
 
                             <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*">
 
-                            <input type="hidden" id="id" value="<?= $this->view->data[0]->id ?>" name="id">
+                            <input type="hidden" id="id" value="<?= htmlspecialchars((string) $this->view->data[0]->id) ?>" name="id">
 
-                            <input type="hidden" id="oldPhoto" name="oldPhoto" value="<?= $this->view->data[0]->profile_photo ?>">
+                            <input type="hidden" id="oldPhoto" name="oldPhoto" value="<?= htmlspecialchars((string) $this->view->data[0]->profile_photo) ?>">
 
                             <div class="row">
 
@@ -154,13 +154,13 @@ require __DIR__ . '../../../config/variables.php';
 
                                         <select class="custom-select form-control" disabled name="controlRematrug">
 
-                                            <option value="<?= $this->view->currentStatusRematrium[0]->option_value ?>"><?= $this->view->currentStatusRematrium[0]->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $this->view->currentStatusRematrium[0]->option_value) ?>"><?= htmlspecialchars((string) $this->view->currentStatusRematrium[0]->option_text) ?></option>
 
                                             <?php foreach ($this->view->registrationControlOptions as $key => $value) { ?>
 
                                                 <?php if ($value->option_value != $this->view->currentStatusRematrium[0]->option_value) { ?>
 
-                                                    <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
 
                                             <?php }
                                             } ?>
@@ -180,11 +180,11 @@ require __DIR__ . '../../../config/variables.php';
 
                                         <select class="custom-select form-control" disabled name="controlUnity">
 
-                                            <option value="<?= $this->view->unitControlCurrent[0]->option_value ?>"><?= $this->view->unitControlCurrent[0]->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $this->view->unitControlCurrent[0]->option_value) ?>"><?= htmlspecialchars((string) $this->view->unitControlCurrent[0]->option_text) ?></option>
 
                                             <?php foreach ($this->view->unitControlList as $key => $value) { ?>
                                                 <?php if ($value->option_value != $this->view->unitControlCurrent[0]->option_value) { ?>
-                                                    <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
                                             <?php }
                                             } ?>
 
@@ -206,11 +206,11 @@ require __DIR__ . '../../../config/variables.php';
 
                     <div class="col-lg-11 mx-auto collapse show" id="accordion-data-admin" data-parent="#main-accordion-settings">
 
-                        <form id="adminDate<?= $admin->id ?>" class="col-lg-12" action="">
+                        <form id="adminDate<?= htmlspecialchars((string) $admin->id) ?>" class="col-lg-12" action="">
 
-                            <input type="hidden" value="<?= $admin->id ?>" name="adminId">
-                            <input type="hidden" value="<?= $admin->telephone_id ?>" name="telephoneId">
-                            <input type="hidden" value="<?= $admin->address_id ?>" name="addressId">
+                            <input type="hidden" value="<?= htmlspecialchars((string) $admin->id) ?>" name="adminId">
+                            <input type="hidden" value="<?= htmlspecialchars((string) $admin->telephone_id) ?>" name="telephoneId">
+                            <input type="hidden" value="<?= htmlspecialchars((string) $admin->address_id) ?>" name="addressId">
 
                             <div class="row mb-3 mt-2 ml-2 d-flex align-items-center">
 
@@ -222,9 +222,9 @@ require __DIR__ . '../../../config/variables.php';
 
                                         <div class="col-4 d-flex justify-content-end">
 
-                                            <span idElement="#adminDate<?= $admin->id ?>" formGroup="containerSettingsModal" class="mr-2 edit-data-icon" data-toggle="tooltip" data-placement="left" title="Editar"><i class="fas fa-edit"></i></span>
+                                            <span idElement="#adminDate<?= htmlspecialchars((string) $admin->id) ?>" formGroup="containerSettingsModal" class="mr-2 edit-data-icon" data-toggle="tooltip" data-placement="left" title="Editar"><i class="fas fa-edit"></i></span>
 
-                                            <span idElement="#adminDate<?= $admin->id ?>" routeUpdate="/admin/configuracoes/perfil/atualizar" toastData="Dados atualizados" routeData="#adminDate<?= $admin->id ?>" container="containerSettingsModal" routeList="/admin/configuracoes" class="mr-2 update-data-icon" data-toggle="tooltip" data-placement="top" title="Atualizar"><i class="fas fa-check"></i></span>
+                                            <span idElement="#adminDate<?= htmlspecialchars((string) $admin->id) ?>" routeUpdate="/admin/configuracoes/perfil/atualizar" toastData="Dados atualizados" routeData="#adminDate<?= htmlspecialchars((string) $admin->id) ?>" container="containerSettingsModal" routeList="/admin/configuracoes" class="mr-2 update-data-icon" data-toggle="tooltip" data-placement="top" title="Atualizar"><i class="fas fa-check"></i></span>
 
                                         </div>
 
@@ -240,7 +240,7 @@ require __DIR__ . '../../../config/variables.php';
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Nome:</span>
                                 </div>
-                                <input type="text" id="name" name="name" disabled class="form-control" value="<?= $admin->name ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="text" id="name" name="name" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->name) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
 
@@ -248,7 +248,7 @@ require __DIR__ . '../../../config/variables.php';
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">CPF:</span>
                                 </div>
-                                <input type="text" onload="this.value = this.value.mask('000.000.000-00')" id="cpf" name="cpf" disabled class="form-control" value="<?= $admin->cpf ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="text" onload="this.value = this.value.mask('000.000.000-00')" id="cpf" name="cpf" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->cpf) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
                             <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
@@ -258,10 +258,10 @@ require __DIR__ . '../../../config/variables.php';
                                 </div>
 
                                 <select id="sex" name="sex" disabled class="form-control custom-select">
-                                    <option value="<?= $admin->sex_id ?>"><?= $admin->sex ?></option>
+                                    <option value="<?= htmlspecialchars((string) $admin->sex_id) ?>"><?= htmlspecialchars((string) $admin->sex) ?></option>
                                     <?php foreach ($this->view->availableSex as $key => $sex) { ?>
                                         <?php if ($sex->option_value != $admin->sex_id) { ?>
-                                            <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $sex->option_value) ?>"><?= htmlspecialchars((string) $sex->option_text) ?></option>
                                     <?php }
                                     } ?>
                                 </select>
@@ -272,21 +272,21 @@ require __DIR__ . '../../../config/variables.php';
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Nacionalidade:</span>
                                 </div>
-                                <input type="text" id="nationality" name="nationality" disabled class="form-control" value="<?= $admin->nationality ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="text" id="nationality" name="nationality" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->nationality) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
                             <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Naturalidade:</span>
                                 </div>
-                                <input type="text" id="naturalness" name="naturalness" disabled class="form-control" value="<?= $admin->naturalness ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="text" id="naturalness" name="naturalness" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->naturalness) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
                             <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Data de Nascimento:</span>
                                 </div>
-                                <input type="date" id="birthDate" name="birthDate" disabled class="form-control" value="<?= $admin->birth_date ?>" max="2006-01-31" min="1940-01-31" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="date" id="birthDate" name="birthDate" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->birth_date) ?>" max="2006-01-31" min="1940-01-31" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
                             <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
@@ -296,10 +296,10 @@ require __DIR__ . '../../../config/variables.php';
                                 </div>
 
                                 <select id="pcd" name="pcd" disabled class="form-control custom-select">
-                                    <option value="<?= $admin->pcd_id ?>"><?= $admin->pcd ?></option>
+                                    <option value="<?= htmlspecialchars((string) $admin->pcd_id) ?>"><?= htmlspecialchars((string) $admin->pcd) ?></option>
                                     <?php foreach ($this->view->pcd as $key => $pcd) { ?>
                                         <?php if ($pcd->option_value != $admin->pcd_id) { ?>
-                                            <option value="<?= $pcd->option_value ?>"><?= $pcd->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $pcd->option_value) ?>"><?= htmlspecialchars((string) $pcd->option_text) ?></option>
                                     <?php }
                                     } ?>
                                 </select>
@@ -313,10 +313,10 @@ require __DIR__ . '../../../config/variables.php';
                                 </div>
 
                                 <select id="bloodType" name="bloodType" disabled class="form-control custom-select">
-                                    <option value="<?= $admin->blood_type_id ?>"><?= $admin->blood_type ?></option>
+                                    <option value="<?= htmlspecialchars((string) $admin->blood_type_id) ?>"><?= htmlspecialchars((string) $admin->blood_type) ?></option>
                                     <?php foreach ($this->view->bloodType as $key => $bloodType) { ?>
                                         <?php if ($bloodType->option_value != $admin->blood_type_id) { ?>
-                                            <option value="<?= $bloodType->option_value ?>"><?= $bloodType->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $bloodType->option_value) ?>"><?= htmlspecialchars((string) $bloodType->option_text) ?></option>
                                     <?php }
                                     } ?>
                                 </select>
@@ -327,7 +327,7 @@ require __DIR__ . '../../../config/variables.php';
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Código de acesso ao portal:</span>
                                 </div>
-                                <input id="accessCode" name="accessCode" type="password" disabled class="form-control" value="<?= $admin->access_code ?>" maxlength="30" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input id="accessCode" name="accessCode" type="password" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->access_code) ?>" maxlength="30" aria-label="Username" aria-describedby="addon-wrapping">
                                 <div class="input-group-append">
                                     <div class="input-group-text input-group-accessCode"><i class="fas fa-eye-slash"></i></div>
                                 </div>
@@ -341,7 +341,7 @@ require __DIR__ . '../../../config/variables.php';
 
 
                                 <select id="hierarchyFunction" name="hierarchyFunction" disabled class="form-control custom-select">
-                                    <option value="<?= $admin->hierarchy_function_id ?>"><?= $admin->hierarchy_function ?></option>
+                                    <option value="<?= htmlspecialchars((string) $admin->hierarchy_function_id) ?>"><?= htmlspecialchars((string) $admin->hierarchy_function) ?></option>
 
                                     <?php
 
@@ -349,7 +349,7 @@ require __DIR__ . '../../../config/variables.php';
 
                                         foreach ($this->listHierarchyFunction as $key => $value) { ?>
                                             <?php if ($value->option_value != $admin->hierarchy_function_id) { ?>
-                                                <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
                                     <?php }
                                         }
                                     } ?>
@@ -365,10 +365,10 @@ require __DIR__ . '../../../config/variables.php';
                                 </div>
 
                                 <select id="accountState" name="accountState" disabled class="form-control custom-select">
-                                    <option value="<?= $admin->account_state_id ?>"><?= $admin->account_state ?></option>
+                                    <option value="<?= htmlspecialchars((string) $admin->account_state_id) ?>"><?= htmlspecialchars((string) $admin->account_state) ?></option>
                                     <?php foreach ($this->view->accountStates as $key => $account) { ?>
                                         <?php if ($account->option_value != $admin->account_state_id) { ?>
-                                            <option value="<?= $account->option_value ?>"><?= $account->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $account->option_value) ?>"><?= htmlspecialchars((string) $account->option_text) ?></option>
                                     <?php }
                                     } ?>
                                 </select>
@@ -382,35 +382,35 @@ require __DIR__ . '../../../config/variables.php';
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">CEP:</span>
                                 </div>
-                                <input type="text" id="zipCode" name="zipCode" disabled class="form-control" value="<?= $admin->zip_code ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="text" id="zipCode" name="zipCode" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->zip_code) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
                             <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">UF:</span>
                                 </div>
-                                <input type="text" id="uf" name="uf" disabled class="form-control" value="<?= $admin->uf ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="text" id="uf" name="uf" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->uf) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
                             <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Município:</span>
                                 </div>
-                                <input type="text" id="county" name="county" disabled class="form-control" value="<?= $admin->county ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="text" id="county" name="county" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->county) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
                             <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Bairro:</span>
                                 </div>
-                                <input type="text" id="district" name="district" disabled class="form-control" value="<?= $admin->district ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="text" id="district" name="district" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->district) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
                             <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Endereço:</span>
                                 </div>
-                                <input type="text" id="address" name="address" disabled class="form-control" value="<?= $admin->address ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input type="text" id="address" name="address" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->address) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
 
@@ -418,14 +418,14 @@ require __DIR__ . '../../../config/variables.php';
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Telefone: </span>
                                 </div>
-                                <input id="telephoneNumber" name="telephoneNumber" type="text" disabled class="form-control" value="<?= $admin->telephone_number ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input id="telephoneNumber" name="telephoneNumber" type="text" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->telephone_number) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
                             <div class="input-group d-flex justify-content-start col-lg-11 flex-nowrap">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="addon-wrapping">Email: </span>
                                 </div>
-                                <input id="email" name="email" type="text" disabled class="form-control" value="<?= $admin->email ?>" aria-label="Username" aria-describedby="addon-wrapping">
+                                <input id="email" name="email" type="text" disabled class="form-control" value="<?= htmlspecialchars((string) $admin->email) ?>" aria-label="Username" aria-describedby="addon-wrapping">
                             </div>
 
 

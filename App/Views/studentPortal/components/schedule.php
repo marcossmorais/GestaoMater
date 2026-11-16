@@ -38,7 +38,7 @@ require __DIR__ . '/scheduleGrid.php';
                                 <tr class="m-sched-gap"><td colspan="<?= count($days) + 1 ?>">Intervalo · <?= $gap ?></td></tr>
                             <?php } ?>
                             <tr>
-                                <td class="m-sched-time"><strong><?= $slot['start'] ?></strong><small><?= $slot['end'] ?></small></td>
+                                <td class="m-sched-time"><strong><?= htmlspecialchars((string) $slot['start']) ?></strong><small><?= htmlspecialchars((string) $slot['end']) ?></small></td>
                                 <?php foreach ($days as $d) { $lesson = $cellFor($order, $d); ?>
                                     <td class="<?= $lesson ? Subject::css($lesson->nome_disciplina) : '' ?>">
                                         <?php if ($lesson) { ?>
@@ -62,7 +62,7 @@ require __DIR__ . '/scheduleGrid.php';
                                 <?php if ($gap = $gapBefore($order)) { ?><p class="m-sched-gap">Intervalo · <?= $gap ?></p><?php } ?>
                                 <?php if ($lesson) { ?>
                                     <div class="m-sched-lesson <?= Subject::css($lesson->nome_disciplina) ?>">
-                                        <span><?= $slot['start'] ?>–<?= $slot['end'] ?></span>
+                                        <span><?= htmlspecialchars((string) $slot['start']) ?>–<?= htmlspecialchars((string) $slot['end']) ?></span>
                                         <div><strong><?= htmlspecialchars($lesson->nome_disciplina) ?></strong><small><?= htmlspecialchars($lesson->nome_professor) ?></small></div>
                                     </div>
                                 <?php } ?>

@@ -61,7 +61,7 @@
 
                                             <?php foreach ($this->view->availableCourse as $key => $course) { ?>
 
-                                                <option value="<?= $course->option_value ?>"><?= $course->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $course->option_value) ?>"><?= htmlspecialchars((string) $course->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -79,7 +79,7 @@
 
                                             <?php foreach ($this->view->availableSeries as $key => $series) { ?>
 
-                                                <option value="<?= $series->option_value ?>"><?= $series->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $series->option_value) ?>"><?= htmlspecialchars((string) $series->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -97,7 +97,7 @@
 
                                             <?php foreach ($this->view->availableShift as $key => $shift) { ?>
 
-                                                <option value="<?= $shift->option_value ?>"><?= $shift->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $shift->option_value) ?>"><?= htmlspecialchars((string) $shift->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -115,7 +115,7 @@
 
                                             <?php foreach ($this->view->allSchoolTerm as $key => $schoolTerm) { ?>
 
-                                                <option value="<?= $schoolTerm->option_value ?>"><?= $schoolTerm->option_text ?> - <?= $schoolTerm->situation ?></option>
+                                                <option value="<?= htmlspecialchars((string) $schoolTerm->option_value) ?>"><?= htmlspecialchars((string) $schoolTerm->option_text) ?> - <?= htmlspecialchars((string) $schoolTerm->situation) ?></option>
 
                                             <?php } ?>
 
@@ -261,7 +261,7 @@
 
                                             <?php foreach ($this->view->availableSeries as $key => $series) { ?>
 
-                                                <option value="<?= $series->option_value ?>"><?= $series->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $series->option_value) ?>"><?= htmlspecialchars((string) $series->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -277,7 +277,7 @@
 
                                             <?php foreach ($this->view->availableBallot as $key => $ballot) { ?>
 
-                                                <option value="<?= $ballot->option_value ?>"><?= $ballot->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $ballot->option_value) ?>"><?= htmlspecialchars((string) $ballot->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -293,7 +293,7 @@
 
                                             <?php foreach ($this->view->availableCourse as $key => $course) { ?>
 
-                                                <option value="<?= $course->option_value ?>"><?= $course->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $course->option_value) ?>"><?= htmlspecialchars((string) $course->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -309,7 +309,7 @@
 
                                             <?php foreach ($this->view->availableShift as $key => $shift) { ?>
 
-                                                <option value="<?= $shift->option_value ?>"><?= $shift->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $shift->option_value) ?>"><?= htmlspecialchars((string) $shift->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -329,7 +329,7 @@
 
                                             <?php foreach ($this->view->availableClassRoom as $key => $classRoom) { ?>
 
-                                                <option value="<?= $classRoom->option_value ?>"><?= $classRoom->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $classRoom->option_value) ?>"><?= htmlspecialchars((string) $classRoom->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -345,7 +345,7 @@
 
                                             <?php foreach ($this->view->activeScheduledSchoolTerm as $key => $schoolTerm) { ?>
 
-                                                <option value="<?= $schoolTerm->option_value ?>"><?= $schoolTerm->option_text ?> - <?= $schoolTerm->situation ?></option>
+                                                <option value="<?= htmlspecialchars((string) $schoolTerm->option_value) ?>"><?= htmlspecialchars((string) $schoolTerm->option_text) ?> - <?= htmlspecialchars((string) $schoolTerm->situation) ?></option>
 
                                             <?php } ?>
 

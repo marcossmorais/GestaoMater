@@ -33,8 +33,8 @@ $section = function ($title, $icon, array $items, $empty) {
         <?php } else { ?>
             <ul class="m-updates-list">
                 <?php foreach ($items as $u) { $time = strtotime($u['date']); ?>
-                    <li class="<?= $u['class'] ?>">
-                        <i class="fas <?= $u['icon'] ?>" aria-hidden="true"></i>
+                    <li class="<?= htmlspecialchars((string) $u['class']) ?>">
+                        <i class="fas <?= htmlspecialchars((string) $u['icon']) ?>" aria-hidden="true"></i>
                         <div>
                             <strong><?= htmlspecialchars($u['title']) ?></strong>
                             <span><?= htmlspecialchars($u['detail']) ?></span>

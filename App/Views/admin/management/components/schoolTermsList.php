@@ -19,11 +19,11 @@ if (count($this->view->listSchoolTerm) >= 1) {
             $schoolPeriodSituation = "school-term-scheduled";
         } ?>
 
-        <form id="formSchoolTerm<?= $schoolTerm->school_term_id ?>" class="card mb-4 <?= $schoolPeriodSituation ?>" >
+        <form id="formSchoolTerm<?= htmlspecialchars((string) $schoolTerm->school_term_id) ?>" class="card mb-4 <?= $schoolPeriodSituation ?>" >
 
             <div class="form-row col-lg-11 mx-auto d-flex align-items-center option-icon-group">
 
-                <div class="col-sm-8 font-weight-bold">Período letivo do ano de <?= $schoolTerm->school_year ?></div>
+                <div class="col-sm-8 font-weight-bold">Período letivo do ano de <?= htmlspecialchars((string) $schoolTerm->school_year) ?></div>
 
                 <?php 
 
@@ -35,19 +35,19 @@ if (count($this->view->listSchoolTerm) >= 1) {
 
                 <div class="col-sm-4 d-flex justify-content-end mt-2">
 
-                    <span idElement="#formSchoolTerm<?= $schoolTerm->school_term_id ?>" formGroup="containerListSchoolTerm" class="mr-2 edit-data-icon" data-toggle="tooltip" data-placement="left" title="Editar">
+                    <span idElement="#formSchoolTerm<?= htmlspecialchars((string) $schoolTerm->school_term_id) ?>" formGroup="containerListSchoolTerm" class="mr-2 edit-data-icon" data-toggle="tooltip" data-placement="left" title="Editar">
 
                         <i class="fas fa-edit"></i>
 
                     </span>
 
-                    <span idElement="#formSchoolTerm<?= $schoolTerm->school_term_id ?>" routeUpdate="/admin/gestao/periodo-letivo/atualizar" toastData="Periodo Letivo Atualizado" container="containerListSchoolTerm" routeList="/admin/gestao/periodo-letivo/lista" class="mr-2 update-data-icon" data-toggle="tooltip" data-placement="bottom" title="Atualizar">
+                    <span idElement="#formSchoolTerm<?= htmlspecialchars((string) $schoolTerm->school_term_id) ?>" routeUpdate="/admin/gestao/periodo-letivo/atualizar" toastData="Periodo Letivo Atualizado" container="containerListSchoolTerm" routeList="/admin/gestao/periodo-letivo/lista" class="mr-2 update-data-icon" data-toggle="tooltip" data-placement="bottom" title="Atualizar">
 
                         <i class="fas fa-check"></i>
 
                     </span>
 
-                    <!-- <span idElement="#formSchoolTerm<?= $schoolTerm->school_term_id ?>" routeDelete="/admin/gestao/periodo-letivo/deletar" toastData="Periodo Letivo Deletado" container="containerListSchoolTerm" routeList="/admin/gestao/periodo-letivo/lista" class="mr-2 delete-data-icon" data-toggle="tooltip" data-placement="right" title="Deletar">
+                    <!-- <span idElement="#formSchoolTerm<?= htmlspecialchars((string) $schoolTerm->school_term_id) ?>" routeDelete="/admin/gestao/periodo-letivo/deletar" toastData="Periodo Letivo Deletado" container="containerListSchoolTerm" routeList="/admin/gestao/periodo-letivo/lista" class="mr-2 delete-data-icon" data-toggle="tooltip" data-placement="right" title="Deletar">
 
                         <i class="fas fa-trash-alt"></i>
 
@@ -61,16 +61,16 @@ if (count($this->view->listSchoolTerm) >= 1) {
 
             <div class="form-row col-lg-11 mx-auto mt-4 mb-2">
 
-                <input class="form-control" name="schoolTermId" value="<?= $schoolTerm->school_term_id ?>" type="hidden">
+                <input class="form-control" name="schoolTermId" value="<?= htmlspecialchars((string) $schoolTerm->school_term_id) ?>" type="hidden">
 
                 <div class="form-group col-sm-4">
                     <label for="startDate">Data de início:</label>
-                    <input class="form-control" disabled name="startDate" value="<?= $schoolTerm->start_date ?>" type="date" id="startDate">
+                    <input class="form-control" disabled name="startDate" value="<?= htmlspecialchars((string) $schoolTerm->start_date) ?>" type="date" id="startDate">
                 </div>
 
                 <div class="form-group col-sm-4">
                     <label for="endDate">Data de fim:</label>
-                    <input class="form-control" disabled value="<?= $schoolTerm->end_date ?>" type="date" name="endDate" id="endDate">
+                    <input class="form-control" disabled value="<?= htmlspecialchars((string) $schoolTerm->end_date) ?>" type="date" name="endDate" id="endDate">
                 </div>
 
                 <div class="form-group col-sm-4">
@@ -79,11 +79,11 @@ if (count($this->view->listSchoolTerm) >= 1) {
 
                     <select name="schoolTermSituation" disabled id="schoolTermSituation" class="form-control custom-select" name="schoolTermSituation" required>
 
-                        <option value="<?= $schoolTerm->fk_id_situation_school_term ?>"><?= $schoolTerm->situation_school_term ?></option>
+                        <option value="<?= htmlspecialchars((string) $schoolTerm->fk_id_situation_school_term) ?>"><?= htmlspecialchars((string) $schoolTerm->situation_school_term) ?></option>
 
                         <?php foreach ($this->view->listSchoolTermStates as $i => $situation) { ?>
                             <?php if ($situation->option_value != $schoolTerm->fk_id_situation_school_term) { ?>
-                                <option value="<?= $situation->option_value ?>"><?= $situation->option_text ?></option>
+                                <option value="<?= htmlspecialchars((string) $situation->option_value) ?>"><?= htmlspecialchars((string) $situation->option_text) ?></option>
                         <?php }
                         } ?>
 

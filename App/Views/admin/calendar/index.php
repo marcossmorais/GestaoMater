@@ -60,7 +60,7 @@ $pill = function ($e) use ($types) {
                     <span class="m-att-label">Tipo</span>
                     <div class="m-board-types" data-cal-types role="group" aria-label="Tipo">
                         <?php foreach ($types as $key => $t) { ?>
-                            <button type="button" class="m-board-type is-ev-<?= $key ?> <?= $key === 'evento' ? 'is-active' : '' ?>" data-type="<?= $key ?>" aria-pressed="<?= $key === 'evento' ? 'true' : 'false' ?>"><i class="fas <?= $t['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($t['label']) ?></button>
+                            <button type="button" class="m-board-type is-ev-<?= $key ?> <?= $key === 'evento' ? 'is-active' : '' ?>" data-type="<?= $key ?>" aria-pressed="<?= $key === 'evento' ? 'true' : 'false' ?>"><i class="fas <?= htmlspecialchars((string) $t['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($t['label']) ?></button>
                         <?php } ?>
                     </div>
                 </div>
@@ -121,7 +121,7 @@ $pill = function ($e) use ($types) {
                             $monthEvents = array_filter($events, function ($e) use ($ym) { return substr($e->start, 0, 7) <= $ym && substr($e->finish, 0, 7) >= $ym; });
                         ?>
                             <div class="m-cal-year-month">
-                                <a class="m-cal-year-name" href="<?= htmlspecialchars($url(['visao' => 'mes', 'data' => $ym . '-01'])) ?>"><?= $monthNames[$m] ?> <small><?= count($monthEvents) ?: '' ?></small></a>
+                                <a class="m-cal-year-name" href="<?= htmlspecialchars($url(['visao' => 'mes', 'data' => $ym . '-01'])) ?>"><?= htmlspecialchars((string) $monthNames[$m]) ?> <small><?= count($monthEvents) ?: '' ?></small></a>
                                 <?php if (!$monthEvents) { ?><p class="m-cal-free">Sem eventos</p><?php } ?>
                                 <ul>
                                     <?php foreach ($monthEvents as $e) { ?>
@@ -157,7 +157,7 @@ $pill = function ($e) use ($types) {
                     <div class="m-cal-week">
                         <?php for ($d = $from, $i = 0; $d <= $to; $d = $d->modify('+1 day'), $i++) { $ymd = $d->format('Y-m-d'); ?>
                             <div class="m-cal-col">
-                                <div class="m-cal-col-head"><a href="<?= htmlspecialchars($url(['visao' => 'dia', 'data' => $ymd])) ?>"><?= $weekNames[$i] ?> <?= $d->format('d/m') ?></a><?php if ($ymd === $today) { ?><span class="m-cal-num is-today" aria-label="hoje">•</span><?php } ?></div>
+                                <div class="m-cal-col-head"><a href="<?= htmlspecialchars($url(['visao' => 'dia', 'data' => $ymd])) ?>"><?= htmlspecialchars((string) $weekNames[$i]) ?> <?= $d->format('d/m') ?></a><?php if ($ymd === $today) { ?><span class="m-cal-num is-today" aria-label="hoje">•</span><?php } ?></div>
                                 <?php if (empty($byDay[$ymd])) { ?><span class="m-cal-free">Sem eventos</span><?php } ?>
                                 <?php foreach ($byDay[$ymd] ?? [] as $e) { ?>
                                     <a class="m-cal-slot is-ev-<?= htmlspecialchars($e->type) ?>" href="#evento-<?= (int) $e->id ?>"><b><?= htmlspecialchars($e->title) ?></b><small><?= htmlspecialchars($types[$e->type]['label'] ?? '') ?> · <?= htmlspecialchars($e->class_label ?: 'Escola') ?></small></a>
@@ -179,7 +179,7 @@ $pill = function ($e) use ($types) {
             <?php foreach ($events as $e) { $t = $types[$e->type] ?? $types['outro']; ?>
                 <article class="card m-board-post m-cal-event is-ev-<?= htmlspecialchars($e->type) ?>" id="evento-<?= (int) $e->id ?>" data-cal-event='<?= htmlspecialchars(json_encode(['id' => (int) $e->id, 'title' => $e->title, 'description' => (string) $e->description, 'type' => $e->type, 'start' => $e->start, 'finish' => $e->finish, 'class' => (int) $e->class_id], JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>'>
                     <header>
-                        <span class="m-board-tag"><i class="fas <?= $t['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($t['label']) ?></span>
+                        <span class="m-board-tag"><i class="fas <?= htmlspecialchars((string) $t['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($t['label']) ?></span>
                         <strong><?= htmlspecialchars($e->title) ?></strong>
                         <small><?= $when($e) ?> · <?= htmlspecialchars($e->class_label ?: 'Toda a escola') ?></small>
                         <?php if ($e->changed_after_notice) { ?>

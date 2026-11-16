@@ -2,7 +2,7 @@
 
     foreach ($this->view->listClass as $i => $class) { ?>
 
-        <option value="<?= $class->class_id ?>"><?= $class->series_acronym . ' ' . $class->ballot . ' - ' . $class->course_acronym . ' - ' . $class->shift  ?></option>
+        <option value="<?= htmlspecialchars((string) $class->class_id) ?>"><?= htmlspecialchars((string) ($class->series_acronym . ' ' . $class->ballot . ' - ' . $class->course_acronym . ' - ' . $class->shift)) ?></option>
 
     <?php }
 } else { ?>
@@ -18,7 +18,7 @@
     ?>
         <?php if ($totalVacancies >= 1) { ?>
 
-            <option value="<?= $class->id_class ?>"><?= $newName ?></option>
+            <option value="<?= htmlspecialchars((string) $class->id_class) ?>"><?= htmlspecialchars((string) $newName) ?></option>
 
         <?php } ?>
 

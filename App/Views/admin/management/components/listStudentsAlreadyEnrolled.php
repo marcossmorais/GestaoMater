@@ -70,9 +70,9 @@ array_multisort($order, SORT_ASC, $studentsRematrung);
                         <img class="miniature-photo" src='<?= $value['profilePhoto'] == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $value['profilePhoto'] ?>' alt="" onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>" ' style="width: 30px;">
                     </td>
 
-                    <td class="text-left"><?= $value['name'] ?></td>
-                    <td><?= $value['status'] ?></td>
-                    <td><?= $value['newClass'] ?></td>
+                    <td class="text-left"><?= htmlspecialchars((string) $value['name']) ?></td>
+                    <td><?= htmlspecialchars((string) $value['status']) ?></td>
+                    <td><?= htmlspecialchars((string) $value['newClass']) ?></td>
                 </tr>
             <?php } ?>
         </tbody>

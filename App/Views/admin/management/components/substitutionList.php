@@ -8,7 +8,7 @@ $statusLabel = ['ativa' => ['badge-success', 'Em andamento'], 'agendada' => ['ba
     <ul class="list-unstyled mb-0">
         <?php foreach ($this->view->substitutions as $s) { $badge = $statusLabel[$s->status]; ?>
             <li class="d-flex flex-wrap align-items-center py-2 border-bottom" style="gap:.5rem">
-                <span class="badge <?= $badge[0] ?>"><?= $badge[1] ?></span>
+                <span class="badge <?= htmlspecialchars((string) $badge[0]) ?>"><?= htmlspecialchars((string) $badge[1]) ?></span>
                 <span style="flex:1 1 200px">
                     <strong><?= htmlspecialchars($s->teacher) ?></strong> · <?= htmlspecialchars($s->start_date) ?> a <?= htmlspecialchars($s->end_date) ?>
                     <?php if ($s->reason) { ?><br><small class="text-muted"><?= htmlspecialchars($s->reason) ?></small><?php } ?>

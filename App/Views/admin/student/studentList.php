@@ -25,7 +25,7 @@
                                     <option value="0">Todos</option>
                                     <?php foreach ($this->view->availableCourse as $key => $course) { ?>
 
-                                        <option value="<?= $course->option_value ?>"><?= $course->option_text ?></option>
+                                        <option value="<?= htmlspecialchars((string) $course->option_value) ?>"><?= htmlspecialchars((string) $course->option_text) ?></option>
 
                                     <?php } ?>
                                 </select>
@@ -36,7 +36,7 @@
                                 <select class="form-control custom-select" name="shift" id="shift">
                                     <option value="0">Todos</option>
                                     <?php foreach ($this->view->availableShift as $key => $shift) { ?>
-                                        <option value="<?= $shift->option_value ?>"><?= $shift->option_text ?></option>
+                                        <option value="<?= htmlspecialchars((string) $shift->option_value) ?>"><?= htmlspecialchars((string) $shift->option_text) ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -60,7 +60,7 @@
                                     <select class="form-control custom-select" name="sex">
                                         <option value="0">Todos</option>
                                         <?php foreach ($this->view->availableSex as $key => $sex) { ?>
-                                            <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $sex->option_value) ?>"><?= htmlspecialchars((string) $sex->option_text) ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -70,7 +70,7 @@
                                     <select class="form-control custom-select" name="series" id="series">
                                         <option value="0">Todas</option>
                                         <?php foreach ($this->view->availableSeries as $key => $series) { ?>
-                                            <option value="<?= $series->option_value ?>"><?= $series->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $series->option_value) ?>"><?= htmlspecialchars((string) $series->option_text) ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -85,7 +85,7 @@
 
                                         <?php foreach ($this->view->allSchoolTerm as $key => $schoolTerm) { ?>
 
-                                            <option value="<?= $schoolTerm->option_value ?>"><?= $schoolTerm->option_text ?> - <?= $schoolTerm->situation ?></option>
+                                            <option value="<?= htmlspecialchars((string) $schoolTerm->option_value) ?>"><?= htmlspecialchars((string) $schoolTerm->option_text) ?> - <?= htmlspecialchars((string) $schoolTerm->situation) ?></option>
 
                                         <?php } ?>
 

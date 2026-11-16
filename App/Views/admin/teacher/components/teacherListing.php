@@ -10,25 +10,25 @@ require __DIR__ . '../../../../../config/variables.php';
 
         <?php $photoDir =  "$app_url/assets/img/teacherProfilePhotos/" ?>
 
-        <tr class="" id="teacher<?= $teacher->id ?>">
+        <tr class="" id="teacher<?= htmlspecialchars((string) $teacher->id) ?>">
 
             <td class="text-right">
                 <img class="miniature-photo" src='<?= $teacher->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $teacher->profile_photo ?>' alt="" onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>"'>
             </td>
 
-            <td class="text-left"><?= $teacher->name ?></td>
+            <td class="text-left"><?= htmlspecialchars((string) $teacher->name) ?></td>
 
             <?php if ($this->view->typeTeacherList != 'class' && isset($this->view->typeTeacherList)) { ?>
 
-                <td><?= $teacher->email ?></td>
-                <td><?= $teacher->account_status ?></td>
-                <td><?= $teacher->total_discipline ?></td>
+                <td><?= htmlspecialchars((string) $teacher->email) ?></td>
+                <td><?= htmlspecialchars((string) $teacher->account_status) ?></td>
+                <td><?= htmlspecialchars((string) $teacher->total_discipline) ?></td>
 
             <?php } else { ?>
 
-                <td><?= $teacher->email ?></td>
+                <td><?= htmlspecialchars((string) $teacher->email) ?></td>
 
-                <td class=""><?= $teacher->discipline_name ?></td>
+                <td class=""><?= htmlspecialchars((string) $teacher->discipline_name) ?></td>
 
             <?php } ?>
         </tr>

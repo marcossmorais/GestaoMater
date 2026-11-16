@@ -32,12 +32,12 @@ $headers = $rows ? array_keys($rows[0]['summary']) : [];
             </div>
 
             <div class="m-kpis m-obs-kpis">
-                <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-plus"></i></div><div><div class="m-kpi-label">Novos</div><div class="m-kpi-value"><?= $counts['novo'] ?></div></div></div>
+                <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-plus"></i></div><div><div class="m-kpi-label">Novos</div><div class="m-kpi-value"><?= htmlspecialchars((string) $counts['novo']) ?></div></div></div>
                 <?php if ($preview['type'] === 'alunos') { ?>
-                    <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-user-check"></i></div><div><div class="m-kpi-label">Só matrícula</div><div class="m-kpi-value"><?= $counts['matricular'] ?></div></div></div>
+                    <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-user-check"></i></div><div><div class="m-kpi-label">Só matrícula</div><div class="m-kpi-value"><?= htmlspecialchars((string) $counts['matricular']) ?></div></div></div>
                 <?php } ?>
-                <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-forward"></i></div><div><div class="m-kpi-label">Ignorados</div><div class="m-kpi-value"><?= $counts['ignorar'] ?></div></div></div>
-                <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-times"></i></div><div><div class="m-kpi-label">Com erro</div><div class="m-kpi-value <?= $counts['erro'] ? 'is-low' : '' ?>"><?= $counts['erro'] ?></div></div></div>
+                <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-forward"></i></div><div><div class="m-kpi-label">Ignorados</div><div class="m-kpi-value"><?= htmlspecialchars((string) $counts['ignorar']) ?></div></div></div>
+                <div class="card m-kpi"><div class="m-kpi-icon"><i class="fas fa-times"></i></div><div><div class="m-kpi-label">Com erro</div><div class="m-kpi-value <?= $counts['erro'] ? 'is-low' : '' ?>"><?= htmlspecialchars((string) $counts['erro']) ?></div></div></div>
             </div>
 
             <?php if ($preview['missing']) { ?>
@@ -55,7 +55,7 @@ $headers = $rows ? array_keys($rows[0]['summary']) : [];
                     <p><strong>Nada novo para gravar.</strong> Todas as linhas já estão cadastradas.</p>
                     <a href="/admin/importacao?tipo=<?= htmlspecialchars($preview['type']) ?>" class="btn btn-light">Voltar</a>
                 <?php } else { ?>
-                    <p>Serão gravados <strong><?= $counts['novo'] ?></strong> <?= $preview['type'] === 'turmas' ? 'turma(s)' : 'cadastro(s)' ?><?= $counts['matricular'] ? ' e <strong>' . $counts['matricular'] . '</strong> matrícula(s) de alunos já cadastrados' : '' ?>, de uma vez. Se algo falhar, nada fica gravado.</p>
+                    <p>Serão gravados <strong><?= htmlspecialchars((string) $counts['novo']) ?></strong> <?= $preview['type'] === 'turmas' ? 'turma(s)' : 'cadastro(s)' ?><?= $counts['matricular'] ? ' e <strong>' . $counts['matricular'] . '</strong> matrícula(s) de alunos já cadastrados' : '' ?>, de uma vez. Se algo falhar, nada fica gravado.</p>
                     <form method="post" action="/admin/importacao/confirmar" onsubmit="this.querySelector('button').disabled = true">
                         <input type="hidden" name="token" value="<?= htmlspecialchars($this->view->token) ?>">
                         <button type="submit" class="btn btn-primary"><i class="fas fa-check mr-2"></i>Importar <?= $toSave ?> linha<?= $toSave === 1 ? '' : 's' ?></button>
@@ -73,7 +73,7 @@ $headers = $rows ? array_keys($rows[0]['summary']) : [];
                         <tbody>
                             <?php foreach ($rows as $r) { [$class, $label] = $statusLabel[$r['status']]; ?>
                                 <tr>
-                                    <td data-label="Linha"><?= $r['line'] ?></td>
+                                    <td data-label="Linha"><?= htmlspecialchars((string) $r['line']) ?></td>
                                     <td data-label="Situação"><span class="m-pill <?= $class ?>"><?= $label ?></span></td>
                                     <?php foreach ($headers as $h) { ?><td data-label="<?= htmlspecialchars($h) ?>"><?= htmlspecialchars((string) ($r['summary'][$h] ?? '')) ?></td><?php } ?>
                                     <td data-label="Observação" class="m-imp-msg <?= $r['status'] === 'erro' ? 'is-low' : '' ?>"><?= htmlspecialchars(implode(' ', $r['messages'])) ?: '—' ?></td>

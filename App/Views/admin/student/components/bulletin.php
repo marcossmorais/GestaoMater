@@ -102,7 +102,7 @@ foreach ($this->view->disciplineAverageList as $y => $discipline) {
             <?php foreach ($disciplineId as $key => $discipline) { ?>
 
                 <tr class="text-center">
-                    <td><?= $discipline['disciplina'] ?></td>
+                    <td><?= htmlspecialchars((string) $discipline['disciplina']) ?></td>
                     <td><?= isset($discipline['notas']['I']) ? round($discipline['notas']['I'], 1) : '0' ?></td>
                     <td><?= isset($discipline['faltas']['I']) ? $discipline['faltas']['I'] : '0' ?></td>
                     <td><?= isset($discipline['notas']['II']) ? round($discipline['notas']['II'], 1) : '0' ?></td>
@@ -120,7 +120,7 @@ foreach ($this->view->disciplineAverageList as $y => $discipline) {
         <tfoot>
 
             <tr>
-                <td colspan="9" class="text-center">Situação do aluno(a): <?= $this->view->enrollmentId[0]->situation ?></td>
+                <td colspan="9" class="text-center">Situação do aluno(a): <?= htmlspecialchars((string) $this->view->enrollmentId[0]->situation) ?></td>
 
             </tr>
 

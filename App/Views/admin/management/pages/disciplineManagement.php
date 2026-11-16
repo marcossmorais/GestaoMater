@@ -58,7 +58,7 @@
                                     <option value="0">Todas</option>
 
                                     <?php foreach ($this->view->listModality as $key => $modality) { ?>
-                                        <option value="<?= $modality->option_value ?>"><?= $modality->option_text ?></option>
+                                        <option value="<?= htmlspecialchars((string) $modality->option_value) ?>"><?= htmlspecialchars((string) $modality->option_text) ?></option>
                                     <?php } ?>
 
                                 </select>
@@ -137,7 +137,7 @@
 
                                             <?php foreach ($this->view->listModality as $key => $modality) { ?>
 
-                                                <option value="<?= $modality->option_value ?>"><?= $modality->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $modality->option_value) ?>"><?= htmlspecialchars((string) $modality->option_text) ?></option>
 
                                             <?php } ?>
 

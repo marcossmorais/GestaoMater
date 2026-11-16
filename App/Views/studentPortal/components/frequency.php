@@ -114,7 +114,7 @@ $submissionStatus = [
                             $period = $s->start_date === $s->end_date ? $s->start_date : $s->start_date . ' a ' . $s->end_date;
                         ?>
                             <li>
-                                <div><strong><?= htmlspecialchars(StudentAttendance::TYPES[$s->type] ?? $s->type) ?></strong> <span class="m-pill <?= $state[0] ?>"><?= $state[1] ?></span></div>
+                                <div><strong><?= htmlspecialchars(StudentAttendance::TYPES[$s->type] ?? $s->type) ?></strong> <span class="m-pill <?= htmlspecialchars((string) $state[0]) ?>"><?= htmlspecialchars((string) $state[1]) ?></span></div>
                                 <small><?= htmlspecialchars($period) ?><?= $s->excused ? ' · ' . (int) $s->excused . ' falta' . ((int) $s->excused === 1 ? '' : 's') . ' abonada' . ((int) $s->excused === 1 ? '' : 's') : '' ?></small>
                                 <p><?= htmlspecialchars($s->reason) ?></p>
                                 <?php if ($s->answer) { ?><p class="m-muted-note mb-0">Coordenação: <?= htmlspecialchars($s->answer) ?></p><?php } ?>
@@ -162,14 +162,14 @@ $submissionStatus = [
                 ?>
                     <?php if ($month !== $lastMonth) { $lastMonth = $month; ?><li class="m-freq-month"><?= $month ?></li><?php } ?>
                     <li class="m-freq-day">
-                        <span class="m-freq-date"><strong><?= $day->format('d') ?></strong><small><?= $weekNames[(int) $day->format('w')] ?></small></span>
+                        <span class="m-freq-date"><strong><?= $day->format('d') ?></strong><small><?= htmlspecialchars((string) $weekNames[(int) $day->format('w')]) ?></small></span>
                         <span class="m-freq-subjects">
                             <?php if ($daily !== null) { ?>
                                 <span>Faltou no dia</span>
                             <?php } else { foreach ($items as $m) { ?><span><?= htmlspecialchars($m->discipline) ?> <small>(<?= (int) $m->lessons ?> aula<?= (int) $m->lessons === 1 ? '' : 's' ?>)</small></span><?php } } ?>
                         </span>
                         <?php if ($state && $items[0]->certificate !== 'Recusado') { ?>
-                            <span class="m-pill <?= $state[0] ?>"><?= $state[1] ?></span>
+                            <span class="m-pill <?= htmlspecialchars((string) $state[0]) ?>"><?= htmlspecialchars((string) $state[1]) ?></span>
                         <?php } else { ?>
                             <button type="button" class="btn btn-light" data-freq-justify="<?= htmlspecialchars($date) ?>">Justificar</button>
                         <?php } ?>

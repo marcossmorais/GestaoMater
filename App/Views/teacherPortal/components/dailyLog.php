@@ -56,7 +56,7 @@ $logLink = function ($date) { return '/portal-docente/turma?id=' . (int) $this->
                     <li><a href="<?= htmlspecialchars($logLink($day->date)) ?>" <?= $day->date === $logDate ? 'aria-current="date"' : '' ?>>
                         <i class="fas <?= $done ? 'fa-check-circle' : 'fa-exclamation-circle' ?>"></i>
                         <span>
-                            <strong><?= htmlspecialchars($day->short_date) ?> · <?= $weekdayNames[(int) $day->weekday] ?></strong>
+                            <strong><?= htmlspecialchars($day->short_date) ?> · <?= htmlspecialchars((string) $weekdayNames[(int) $day->weekday]) ?></strong>
                             <small><?= $done ? htmlspecialchars(mb_strimwidth($day->text, 0, 90, '…')) : 'Chamada feita, sem diário' ?></small>
                         </span>
                     </a></li>

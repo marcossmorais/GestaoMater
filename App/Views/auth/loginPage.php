@@ -42,7 +42,7 @@ $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Entrar — <?= $portal['title'] ?> | Mater</title>
+    <title>Entrar — <?= htmlspecialchars((string) $portal['title']) ?> | Mater</title>
     <link rel="preload" href="<?= $app_url ?>/assets/fonts/nunito/nunito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= asset('/assets/css/auth.css') ?>">
     <link rel="icon" type="image/png" href="<?= $app_url ?>/favicon.png">
@@ -56,11 +56,11 @@ $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) 
             <a class="logo" href="/"><img src="<?= $app_url ?>/assets/img/logo-components/logo-completa-branca-480.png" alt="Mater" width="200" height="65"></a>
 
             <div>
-                <h1><?= $portal['headline'] ?></h1>
-                <p><?= $portal['text'] ?></p>
+                <h1><?= htmlspecialchars((string) $portal['headline']) ?></h1>
+                <p><?= htmlspecialchars((string) $portal['text']) ?></p>
             </div>
 
-            <div class="art"><img src="<?= $app_url ?>/assets/img/illustrations/<?= $portal['art'] ?>" alt=""></div>
+            <div class="art"><img src="<?= $app_url ?>/assets/img/illustrations/<?= htmlspecialchars((string) $portal['art']) ?>" alt=""></div>
 
             <small>© <?= date('Y') ?> Mater — Colégio e Curso</small>
         </aside>
@@ -73,13 +73,13 @@ $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) 
                 <?php if ($tabs) { ?>
                     <nav class="tabs" aria-label="Portais">
                         <?php foreach ($tabs as $key => $p) { ?>
-                            <a href="<?= $p['url'] ?>" class="<?= $key === $loginPortal ? 'active' : '' ?>"><?= $p['tab'] ?></a>
+                            <a href="<?= htmlspecialchars((string) $p['url']) ?>" class="<?= $key === $loginPortal ? 'active' : '' ?>"><?= htmlspecialchars((string) $p['tab']) ?></a>
                         <?php } ?>
                     </nav>
                 <?php } ?>
 
                 <h2>Entrar</h2>
-                <p class="sub"><?= $portal['title'] ?></p>
+                <p class="sub"><?= htmlspecialchars((string) $portal['title']) ?></p>
 
                 <?php if ($error) { ?>
                     <div class="alert" role="alert"><?= htmlspecialchars($error) ?></div>
@@ -99,7 +99,7 @@ $error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) 
 
                     <span class="dev-badge">Modo desenvolvimento</span>
 
-                    <form action="<?= $portal['action'] ?>" method="POST">
+                    <form action="<?= htmlspecialchars((string) $portal['action']) ?>" method="POST">
                         <div class="field">
                             <label for="name">Nome completo</label>
                             <input type="text" id="name" name="name" autocomplete="name" required>

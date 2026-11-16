@@ -23,11 +23,11 @@
 
                 foreach ($this->view->listExam as $i => $exam) { ?>
 
-                    <tr id="exam<?= $exam->exam_id ?>">
+                    <tr id="exam<?= htmlspecialchars((string) $exam->exam_id) ?>">
                         <td><?= $total++ ?></td>
-                        <td><?= $exam->exam_description ?></td>
-                        <td><?= $exam->discipline_name ?></td>
-                        <td class="text-center"><?= $exam->unity ?></td>
+                        <td><?= htmlspecialchars((string) $exam->exam_description) ?></td>
+                        <td><?= htmlspecialchars((string) $exam->discipline_name) ?></td>
+                        <td class="text-center"><?= htmlspecialchars((string) $exam->unity) ?></td>
                         <td class="text-center"><?= number_format($exam->exam_value, 1, '.', '') ?></td>
                     </tr>
 
@@ -58,7 +58,7 @@
                 ?>
 
                     <tr>
-                        <td class="text-center" colspan="5"> <i class="far fa-sticky-note mr-3"></i> <?= $sum ?> pontos já atribuidos na <?= $this->view->listExam[0]->unity ?> unidade de <?= $this->view->listExam[0]->discipline_name ?> ( Restam <?= 10 - $sum ?> <?= $pointsOrTenths ?> )</td>
+                        <td class="text-center" colspan="5"> <i class="far fa-sticky-note mr-3"></i> <?= $sum ?> pontos já atribuidos na <?= htmlspecialchars((string) $this->view->listExam[0]->unity) ?> unidade de <?= htmlspecialchars((string) $this->view->listExam[0]->discipline_name) ?> ( Restam <?= 10 - $sum ?> <?= $pointsOrTenths ?> )</td>
                     </tr>
 
                 <?php }

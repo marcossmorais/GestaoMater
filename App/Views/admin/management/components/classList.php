@@ -6,11 +6,11 @@ if (count($this->view->listClass) >= 1) {
 
         <?php $shift = substr($class->shift, 0, 1) ?>
 
-        <tr id="classe<?= $class->class_id ?>">
-            <td><?= $class->course ?>-<?= $class->series_acronym ?><?= $shift ?>-<?= $class->ballot ?></td>
-            <td><?= $class->classroom_number ?></td>
-            <td><?= $class->student_total ?></td>
-            <td><?= $class->school_term ?></td>
+        <tr id="classe<?= htmlspecialchars((string) $class->class_id) ?>">
+            <td><?= htmlspecialchars((string) $class->course) ?>-<?= htmlspecialchars((string) $class->series_acronym) ?><?= $shift ?>-<?= htmlspecialchars((string) $class->ballot) ?></td>
+            <td><?= htmlspecialchars((string) $class->classroom_number) ?></td>
+            <td><?= htmlspecialchars((string) $class->student_total) ?></td>
+            <td><?= htmlspecialchars((string) $class->school_term) ?></td>
         </tr>
 
     <?php } ?>
