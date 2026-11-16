@@ -300,51 +300,6 @@ class StudentPortalController extends Action
         $_SESSION['Student']['class'] = $class0[0]->series_id . 'ª ' . $class0[0]->ballot . ' - ' . $class0[0]->course_name . ' - ' . $class0[0]->shift;
     }
 
-    public function updateStudentPortal()
-    {
-
-        if (!isset($_SESSION)) session_start();
-
-        $Address =  Container::getModel('People\\Address');
-        $Telephone = Container::getModel('People\Telephone');
-        $Student = Container::getModel('Student\\Student');
-
-        $Tool = new Tools();
-
-        // endereço e telefone são sempre os do próprio aluno (ignora ids vindos do navegador)
-        $StudentEnrollment = Container::getModel('Student\\StudentEnrollment');
-        $StudentEnrollment->__set('studentEnrollmentId', $_SESSION['Student']['enrollmentId']);
-        $StudentEnrollment->__set('fk_id_student', $_SESSION['Student']['id']);
-        $Student->__set('studentId', $_SESSION['Student']['id']);
-        $own = $Student->dataGeneral($StudentEnrollment)[0] ?? null;
-        if (!$own) {
-            http_response_code(404);
-            return;
-        }
-
-        $Address->__set('addressId', $own->address_id);
-        $Address->__set('district', $_POST['district']);
-        $Address->__set('address', $_POST['address']);
-        $Address->__set('uf', $_POST['uf']);
-        $Address->__set('county', $_POST['county']);
-        $Address->__set('zipCode', $Tool->formatElement($_POST['zipCode']));
-
-        $Telephone->__set('telephoneId', $own->telephone_id);
-        $Telephone->__set('telephoneNumber', $Tool->formatElement($_POST['telephoneNumber']));
-
-        $Student->__set('accessCode', $_POST['accessCode']);
-        $Student->__set('email', $_POST['email']);
-        $Student->__set('fk_id_blood_type', $_POST['bloodType']);
-        $Student->__set('fk_id_pcd', $_POST['pcd']);
-        $Student->__set('studentId', $_SESSION['Student']['id']);
-
-        $Telephone->update();
-        $Address->update();
-        $Student->updatePath();
-
-    }
-
-
     public function exit()
     {
 
