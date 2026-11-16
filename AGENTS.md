@@ -53,7 +53,8 @@ Smoke test precisa do login por código: suba com `CLERK_*` vazios. Antes de abr
 
 ## Código
 - Seguir o estilo do arquivo vizinho. Controllers finos, SQL nos Models, sempre PDO com parâmetros (sem concatenar input).
-- Escapar toda saída em views (`htmlspecialchars`). Validar permissão **no servidor**, nunca só no front.
+- Escapar toda saída em views (`htmlspecialchars`), inclusive nas telas antigas do admin. Validar permissão **no servidor**, nunca só no front.
+- Rota que grava dado leva `'method' => 'POST'` em `App/Route.php` (GET recebe 405). Todo POST vindo de outro site recebe 403 no roteador (`Route::sameOrigin`).
 - RBAC: aluno vê só os próprios dados; todo docente vê a turma inteira e edita só as disciplinas atribuídas a ele (`turma_disciplina`). Fund. 1 (`curso.etapa = 'iniciais'`): o titular (`turma.fk_id_professor_titular`) recebe as disciplinas de base e faz a chamada **diária** (frequência em dias, `chamada_diaria`); especialistas editam só a deles e não fazem chamada. Substituto (`substituicao_titular`, designado pelo admin) faz chamada e diário do dia só nas datas do período; o acesso de titular/substituto passa sempre por `DailyAttendance::homeroomFor` + `covers`.
 - Rotas `/admin` são só do admin. Docente usa `/portal-docente/*` e toda escrita passa por `App/Models/Teacher/TeacherAccess.php`; negado = 403 + `Audit::log(..., 'NEGADO', ...)`.
 - Mobile-first: alvos de toque ≥ 44px; tabela vira card no celular.
