@@ -85,6 +85,18 @@ class PortalAccount
     public static function logFailure($portal, $reason)
     {
         Audit::log(Connection::getDb(), 'LOGIN_NEGADO', self::PORTALS[$portal]['table'], null, ['motivo' => $reason]);
+        (new \App\Tools\RateLimit(Connection::getDb()))->hit(\App\Tools\RateLimit::LOGIN, \App\Tools\RateLimit::ip());
+    }
+
+
+    /**
+     * Este IP errou o login por código vezes demais na janela? (10 erros em 15 minutos, todos os portais)
+     */
+    public static function tooManyFailures($portal)
+    {
+        $blocked = (new \App\Tools\RateLimit(Connection::getDb()))->exceeded(\App\Tools\RateLimit::LOGIN, \App\Tools\RateLimit::ip());
+        if ($blocked) Audit::log(Connection::getDb(), 'LOGIN_NEGADO', self::PORTALS[$portal]['table'], null, ['motivo' => 'muitas-tentativas']);
+        return $blocked;
     }
 
     /**

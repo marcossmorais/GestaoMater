@@ -17,7 +17,19 @@ class DocumentController extends Action
         $code = trim((string) ($_GET['codigo'] ?? ''));
 
         $this->view->code = $code;
-        $this->view->result = $code === '' ? null : Container::getModel('Student\\IssuedDocument')->validate($code);
+        $this->view->result = null;
+
+        if ($code !== '') {
+            // página pública: limita as consultas por IP para ninguém varrer códigos (App/Tools/RateLimit.php)
+            $RateLimit = new \App\Tools\RateLimit(\App\Connection::getDb());
+            if ($RateLimit->hit(\App\Tools\RateLimit::VALIDATE, \App\Tools\RateLimit::ip())) {
+                $this->view->result = Container::getModel('Student\\IssuedDocument')->validate($code);
+            } else {
+                http_response_code(429);
+                header('Retry-After: ' . \App\Tools\RateLimit::VALIDATE['window']);
+                $this->view->result = ['status' => 'too_many'];
+            }
+        }
 
         header('X-Robots-Tag: noindex');
         require __DIR__ . '/../../Views/index/validateDocument.php';
