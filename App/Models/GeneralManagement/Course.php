@@ -30,16 +30,24 @@ class Course extends Model
      * 
      * @return void
      */
+    // etapa do segmento: define a chamada (diária do titular no Fund. 1), as séries e a regra de avaliação
+    const STAGES = [
+        'iniciais' => 'Fundamental I (1º ao 5º ano)',
+        'finais' => 'Fundamental II (6º ao 9º ano)',
+        'medio' => 'Ensino Médio (1ª à 3ª série)',
+    ];
+
     public function insert()
     {
 
-        $query = "INSERT INTO curso(nome_curso, sigla , fk_id_modalidade_curso) VALUES (:courseName, :acronym, :fk_id_modality)";
+        $query = "INSERT INTO curso(nome_curso, sigla , fk_id_modalidade_curso, etapa) VALUES (:courseName, :acronym, :fk_id_modality, :stage)";
 
         $stmt = $this->db->prepare($query);
 
         $stmt->bindValue(":courseName", $this->__get("courseName"));
         $stmt->bindValue(":acronym", $this->__get("acronym"));
         $stmt->bindValue(":fk_id_modality", $this->__get("fk_id_modality"));
+        $stmt->bindValue(":stage", $this->__get("stage"));
 
         $stmt->execute();
     }
@@ -60,6 +68,8 @@ class Course extends Model
             curso.id_curso AS course_id , 
             curso.nome_curso AS course_name , 
             curso.sigla AS acronym ,
+            curso.etapa AS stage ,
+            (SELECT COUNT(*) FROM turma WHERE turma.fk_id_curso = curso.id_curso) AS class_total ,
             modalidade_curso.id_modalidade_curso AS course_mode_id ,
             modalidade_curso.modalidade_curso AS course_mode 
             
@@ -100,7 +110,11 @@ class Course extends Model
             
             nome_curso = :courseName , 
             sigla = :acronym , 
-            fk_id_modalidade_curso = :fk_id_modality 
+            fk_id_modalidade_curso = :fk_id_modality ,
+            -- a etapa só muda enquanto o segmento não tem turma (as turmas usam as séries da etapa)
+            etapa = CASE WHEN :stage::varchar IS NOT NULL
+                          AND NOT EXISTS (SELECT 1 FROM turma WHERE turma.fk_id_curso = curso.id_curso)
+                         THEN :stage::varchar ELSE etapa END
             
             WHERE curso.id_curso = :courseId
         
@@ -112,6 +126,7 @@ class Course extends Model
         $stmt->bindValue(":acronym", $this->__get("acronym"));
         $stmt->bindValue(":courseId", $this->__get("courseId"));
         $stmt->bindValue(":fk_id_modality", $this->__get("fk_id_modality"));
+        $stmt->bindValue(":stage", $this->__get("stage"));
 
         $stmt->execute();
     }

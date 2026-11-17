@@ -176,6 +176,7 @@ class AdminManagementController extends Action
         $Course->__set('courseName', $_POST['courseName']);
         $Course->__set('acronym', $_POST['acronym']);
         $Course->__set('fk_id_modality', $_POST['courseMode']);
+        $Course->__set('stage', isset($Course::STAGES[$_POST['stage'] ?? '']) ? $_POST['stage'] : 'medio');
 
         $Course->insert();
     }
@@ -201,6 +202,8 @@ class AdminManagementController extends Action
         $Course->__set('courseName', $_POST['courseName']);
         $Course->__set('acronym', $_POST['acronym']);
         $Course->__set('fk_id_modality', $_POST['courseMode']);
+        // etapa inválida ou ausente: mantém a atual (o model também não troca se o segmento já tem turma)
+        $Course->__set('stage', isset($Course::STAGES[$_POST['stage'] ?? '']) ? $_POST['stage'] : null);
 
         $Course->update();
     }
@@ -352,6 +355,14 @@ class AdminManagementController extends Action
         $Class->__set('fk_id_course', $_POST['course']);
         $Class->__set('fk_id_shift', $_POST['shift']);
         $Class->__set('fk_id_series', $_POST['series']);
+
+        // a série precisa ser da etapa do segmento (6º ano só no Fund. 2, 1ª série só no Médio)
+        if (!$Class->seriesMatchesCourse((int) ($_POST['course'] ?? 0), (int) ($_POST['series'] ?? 0))) {
+            http_response_code(422);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'A série escolhida não é da etapa desse segmento.']);
+            return;
+        }
 
         $Class->insert();
     }

@@ -39,7 +39,12 @@ class Application {
 
                 },
 
-                error: error => tools.showToast('Tente novamente mais tarde', 'bg-info')
+                error: error => {
+                    // o servidor pode explicar a recusa ({"error": "..."}), ex.: série de outra etapa
+                    let message = 'Tente novamente mais tarde'
+                    try { message = JSON.parse(error.responseText).error || message } catch (e) {}
+                    tools.showToast(message, error.status === 422 ? 'bg-danger' : 'bg-info')
+                }
 
             })
 

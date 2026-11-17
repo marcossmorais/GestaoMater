@@ -33,7 +33,7 @@ if (count($this->view->listCourse) >= 1) {
 
             <div class="form-row mt-4 mb-2 col-lg-11 mx-auto">
 
-                <div class="form-group col-lg-5">
+                <div class="form-group col-lg-4">
                     <label for="">Nome do segmento:</label>
                     <input class="form-control" disabled value="<?= htmlspecialchars((string) $course->course_name) ?>" type="text" name="courseName" id="">
                 </div>
@@ -43,7 +43,7 @@ if (count($this->view->listCourse) >= 1) {
                     <input class="form-control" maxlength="4" disabled onkeyup="this.value = this.value.toUpperCase()" value="<?= htmlspecialchars((string) $course->acronym) ?>" type="text" name="acronym" id="">
                 </div>
 
-                <div class="form-group col-lg-5">
+                <div class="form-group col-lg-3">
 
                     <label for="">Modalidade:</label>
 
@@ -58,6 +58,20 @@ if (count($this->view->listCourse) >= 1) {
                         <?php } ?>
 
                     </select>
+                </div>
+
+                <div class="form-group col-lg-3">
+                    <label for="">Etapa:</label>
+                    <?php if ((int) $course->class_total > 0) { ?>
+                        <?php // com turma cadastrada a etapa fica travada: as turmas usam as séries dela ?>
+                        <input class="form-control" disabled readonly value="<?= htmlspecialchars(\App\Models\GeneralManagement\Course::STAGES[$course->stage] ?? $course->stage) ?>" title="Tem turma cadastrada: a etapa não muda">
+                    <?php } else { ?>
+                        <select name="stage" disabled class="form-control custom-select">
+                            <?php foreach (\App\Models\GeneralManagement\Course::STAGES as $key => $label) { ?>
+                                <option value="<?= htmlspecialchars($key) ?>" <?= $course->stage === $key ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+                            <?php } ?>
+                        </select>
+                    <?php } ?>
                 </div>
 
             </div>
