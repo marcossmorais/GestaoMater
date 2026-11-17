@@ -74,7 +74,7 @@ class OccurrenceRequest extends Model
             "SELECT s.id_solicitacao AS id, s.categoria AS category, s.titulo AS title, s.descricao AS description, s.gravidade AS severity,
                     s.situacao AS status, s.resposta AS answer, TO_CHAR(s.data_fato, 'DD/MM/YYYY') AS date,
                     matricula.id_matricula AS enrollment_id, aluno.nome_aluno AS student, professor.nome_professor AS teacher, disciplina.nome_disciplina AS discipline,
-                    serie.sigla || 'ª ' || cedula_turma.cedula AS class_label
+                    serie.sigla || ' ' || cedula_turma.cedula AS class_label
              FROM solicitacao_ocorrencia s
              INNER JOIN matricula ON (s.fk_id_matricula = matricula.id_matricula)
              INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)

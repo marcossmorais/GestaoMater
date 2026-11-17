@@ -240,6 +240,22 @@ class Classe extends Model
      * 
      * @return array
      */
+    /**
+     * A série é da mesma etapa do segmento? (1º–5º ano no Fund. 1, 6º–9º no Fund. 2, 1ª–3ª série no Médio)
+     */
+    public function seriesMatchesCourse($courseId, $seriesId)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT 1 FROM curso INNER JOIN serie ON (serie.etapa = curso.etapa)
+             WHERE curso.id_curso = :course AND serie.id_serie = :series"
+        );
+        $stmt->execute([':course' => (int) $courseId, ':series' => (int) $seriesId]);
+
+        return (bool) $stmt->fetchColumn();
+    }
+
+
     public function dataGeneral()
     {
 

@@ -287,7 +287,7 @@ class Occurrence extends Model
 
         $stmt = $this->db->prepare(
             "SELECT od.id_ocorrencia AS id, aluno.id_aluno AS student_id, aluno.nome_aluno AS student,
-                    serie.sigla || 'ª ' || cedula_turma.cedula || ' ' || curso.sigla AS class_label,
+                    serie.sigla || ' ' || cedula_turma.cedula || ' ' || curso.sigla AS class_label,
                     od.categoria AS category, od.gravidade AS severity, od.titulo AS title, od.registrado_por AS author,
                     TO_CHAR(od.data_ocorrencia, 'DD/MM/YYYY') AS date,
                     od.requer_ciencia AS requires_ack, od.ciencia_responsavel AS acknowledged, od.visivel_responsavel AS visible,

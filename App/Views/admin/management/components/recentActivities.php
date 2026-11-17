@@ -95,7 +95,7 @@ function currentDate($array)
 
                         <div class="row">
 
-                            <p class="mt-3 text-justify">Criou a avaliação "<?= htmlspecialchars((string) $value['value']->exam_description) ?>" referente a <?= htmlspecialchars((string) $value['value']->unity) ?>ª unidade da disciplina de <?= htmlspecialchars((string) $value['value']->discipline_name) ?> na turma do <?= htmlspecialchars((string) $value['value']->acronym_series) ?>ª <?= htmlspecialchars((string) $value['value']->ballot) ?>-<?= htmlspecialchars((string) $value['value']->course) ?>-<?= htmlspecialchars((string) $value['value']->shift) ?></p>
+                            <p class="mt-3 text-justify">Criou a avaliação "<?= htmlspecialchars((string) $value['value']->exam_description) ?>" referente a <?= htmlspecialchars((string) $value['value']->unity) ?>ª unidade da disciplina de <?= htmlspecialchars((string) $value['value']->discipline_name) ?> na turma do <?= htmlspecialchars((string) $value['value']->acronym_series) ?> <?= htmlspecialchars((string) $value['value']->ballot) ?>-<?= htmlspecialchars((string) $value['value']->course) ?>-<?= htmlspecialchars((string) $value['value']->shift) ?></p>
 
                         </div>
 
@@ -228,7 +228,7 @@ function currentDate($array)
 
                         <div class="row">
 
-                            <p class="mt-3 col-lg-12 p-0 text-justify">Adicionou na turma <?= htmlspecialchars((string) $value['value']->acronym_series) ?>ª <?= htmlspecialchars((string) $value['value']->ballot) ?>-<?= htmlspecialchars((string) $value['value']->course) ?>-<?= htmlspecialchars((string) $value['value']->shift) ?> o seguite aviso: "<?= htmlspecialchars((string) $value['value']->warning) ?>"</p>
+                            <p class="mt-3 col-lg-12 p-0 text-justify">Adicionou na turma <?= htmlspecialchars((string) $value['value']->acronym_series) ?> <?= htmlspecialchars((string) $value['value']->ballot) ?>-<?= htmlspecialchars((string) $value['value']->course) ?>-<?= htmlspecialchars((string) $value['value']->shift) ?> o seguite aviso: "<?= htmlspecialchars((string) $value['value']->warning) ?>"</p>
 
                         </div>
 

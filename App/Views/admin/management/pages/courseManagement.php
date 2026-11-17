@@ -73,7 +73,7 @@
                                             <hr class="">
 
                                             <div class="form-row mt-1 mb-2 col-lg-12">
-                                                <div class="form-group col-sm-4">
+                                                <div class="form-group col-sm-3">
                                                     <label for="courseName">Nome do segmento:</label>
                                                     <input class="form-control is-valid" value="" type="text" name="courseName" id="courseName" required>
                                                 </div>
@@ -83,7 +83,7 @@
                                                     <input class="form-control is-valid" maxlength="4" value="" type="text" name="acronym" id="acronym" required>
                                                 </div>
 
-                                                <div class="form-group col-sm-4">
+                                                <div class="form-group col-sm-2">
 
                                                     <label for="courseMode">Modalidade:</label>
 
@@ -97,6 +97,14 @@
 
                                                 </div>
 
+                                                <div class="form-group col-sm-3">
+                                                    <label for="stage">Etapa:</label>
+                                                    <select name="stage" id="stage" class="form-control custom-select" required>
+                                                        <?php foreach (\App\Models\GeneralManagement\Course::STAGES as $key => $label) { ?>
+                                                            <option value="<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($label) ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
 
                                                 <div class="form-group col-sm-2">
                                                     <label for="">&nbsp;</label>

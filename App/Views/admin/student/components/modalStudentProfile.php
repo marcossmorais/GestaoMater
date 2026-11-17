@@ -231,7 +231,7 @@ require __DIR__ . '../../../../../config/variables.php';
                     <input value="<?= htmlspecialchars((string) $enr->school_year) ?>" type="hidden" id="schoolYear">
                     <input id="courseModality" value="<?= htmlspecialchars((string) $enr->course_modality) ?>" type="hidden" name="courseModality">
                     <?php $modality = $enr->course_modality_id == 1 ? '' : 'Técnico' ?>
-                    <input type="hidden" id="series" value="<?= htmlspecialchars((string) $enr->acronym_series) ?>ª - <?= $modality ?> em <?= htmlspecialchars((string) $enr->course_name) ?> ">
+                    <input type="hidden" id="series" value="<?= htmlspecialchars((string) $enr->acronym_series) ?> - <?= $modality ?> em <?= htmlspecialchars((string) $enr->course_name) ?> ">
 
                     <div class="m-prof-head">
 
@@ -2334,7 +2334,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                     if($this->view->studentDataEnrollment[0]->class_id != $value->class_id){ ?>
 
-                                                    <option value="<?= htmlspecialchars((string) $value->class_id) ?>"><?= htmlspecialchars((string) $value->series) ?> ª <?= htmlspecialchars((string) $value->ballot) ?> - <?= htmlspecialchars((string) $value->course) ?> - <?= htmlspecialchars((string) $value->shift) ?> - <?= htmlspecialchars((string) $value->school_year) ?> - Vagas: <?= $value->student_capacity - $value->student_total ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $value->class_id) ?>"><?= htmlspecialchars((string) $value->series) ?> <?= htmlspecialchars((string) $value->ballot) ?> - <?= htmlspecialchars((string) $value->course) ?> - <?= htmlspecialchars((string) $value->shift) ?> - <?= htmlspecialchars((string) $value->school_year) ?> - Vagas: <?= $value->student_capacity - $value->student_total ?></option>
 
                                             <?php }}
                                             } ?>

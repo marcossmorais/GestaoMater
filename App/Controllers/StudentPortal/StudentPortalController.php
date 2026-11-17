@@ -48,7 +48,7 @@ class StudentPortalController extends Action
                 'profilePhoto' => $auth[0]->student_photo,
                 'hierarchyFunction' => $auth[0]->hierarchy_function,
                 'enrollmentId' => $auth[0]->enrollment_id,
-                'class' => $auth[0]->acronym_series . 'ª ' . $auth[0]->ballot . ' - ' . $auth[0]->course . ' - ' . $auth[0]->shift,
+                'class' => $auth[0]->acronym_series . ' ' . $auth[0]->ballot . ' - ' . $auth[0]->course . ' - ' . $auth[0]->shift,
                 'classId' => $auth[0]->class_id
             ]);
 
@@ -297,7 +297,7 @@ class StudentPortalController extends Action
         $Classe->__set('classId', $class[0]->class_id);
         $class0 = $Classe->dataGeneral("<> 0");
 
-        $_SESSION['Student']['class'] = $class0[0]->series_id . 'ª ' . $class0[0]->ballot . ' - ' . $class0[0]->course_name . ' - ' . $class0[0]->shift;
+        $_SESSION['Student']['class'] = $class0[0]->series_acronym . ' ' . $class0[0]->ballot . ' - ' . $class0[0]->course_name . ' - ' . $class0[0]->shift;
     }
 
     public function exit()

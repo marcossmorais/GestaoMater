@@ -202,7 +202,7 @@ class PortalAccount
                     'profilePhoto' => $s->profile_photo,
                     'hierarchyFunction' => $s->hierarchy_function,
                     'enrollmentId' => $s->enrollment_id,
-                    'class' => $s->acronym_series . 'ª ' . $s->ballot . ' - ' . $s->course . ' - ' . $s->shift,
+                    'class' => $s->acronym_series . ' ' . $s->ballot . ' - ' . $s->course . ' - ' . $s->shift,
                     'classId' => $s->class_id,
                 ]);
                 return null;

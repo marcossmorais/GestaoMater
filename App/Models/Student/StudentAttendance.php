@@ -122,7 +122,7 @@ class StudentAttendance extends Model
                     atestado_medico.resposta AS answer, atestado_medico.faltas_abonadas AS excused, atestado_medico.anexo_documento IS NOT NULL AS has_file,
                     TO_CHAR(atestado_medico.data_inicio, 'DD/MM/YYYY') AS start_date, TO_CHAR(atestado_medico.data_fim, 'DD/MM/YYYY') AS end_date,
                     TO_CHAR(atestado_medico.criado_em, 'DD/MM/YYYY \"às\" HH24:MI') AS sent_at,
-                    aluno.nome_aluno AS student, serie.sigla || 'ª ' || cedula_turma.cedula AS class_label
+                    aluno.nome_aluno AS student, serie.sigla || ' ' || cedula_turma.cedula AS class_label
              FROM atestado_medico
              INNER JOIN matricula ON (atestado_medico.fk_id_matricula = matricula.id_matricula)
              INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)

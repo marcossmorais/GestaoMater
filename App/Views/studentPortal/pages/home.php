@@ -208,7 +208,7 @@ require __DIR__ . '../../../../config/variables.php';
 
                         <?php $modality = $this->view->studentDataGeneral[0]->course_modality_id == 1 ? '' : 'Técnico' ?>
 
-                        <input type="hidden" id="series" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->acronym_series) ?>ª - <?= $modality ?> em <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->course_name) ?> ">
+                        <input type="hidden" id="series" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->acronym_series) ?> - <?= $modality ?> em <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->course_name) ?> ">
 
                     </div>
 

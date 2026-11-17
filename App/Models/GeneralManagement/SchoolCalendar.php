@@ -24,7 +24,7 @@ class SchoolCalendar extends Model
     const SELECT = "SELECT e.id_evento AS id, e.titulo AS title, e.descricao AS description, e.tipo AS type,
                            TO_CHAR(e.data_inicio, 'YYYY-MM-DD') AS start, TO_CHAR(COALESCE(e.data_fim, e.data_inicio), 'YYYY-MM-DD') AS finish,
                            e.fk_id_turma AS class_id,
-                           serie.sigla || 'ª ' || cedula_turma.cedula || ' ' || curso.sigla AS class_label,
+                           serie.sigla || ' ' || cedula_turma.cedula || ' ' || curso.sigla AS class_label,
                            TO_CHAR(e.notificado_em, 'DD/MM/YYYY HH24:MI') AS notified_at,
                            (e.notificado_em IS NOT NULL AND e.atualizado_em > e.notificado_em) AS changed_after_notice
                     FROM evento_escolar e

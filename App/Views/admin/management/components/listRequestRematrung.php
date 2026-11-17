@@ -62,7 +62,7 @@ $totalRequest = 0;
 
                         <?php foreach ($this->view->nextClass as $key => $class) { ?>
 
-                            <option value="<?= htmlspecialchars((string) $class->class_id) ?>"><?= htmlspecialchars((string) $class->series) ?> ª <?= htmlspecialchars((string) $class->ballot) ?> - <?= htmlspecialchars((string) $class->course) ?> - <?= htmlspecialchars((string) $class->shift) ?> - <?= htmlspecialchars((string) $class->school_year) ?> - Vagas: <?= $class->student_capacity - $class->student_total ?></option>
+                            <option value="<?= htmlspecialchars((string) $class->class_id) ?>"><?= htmlspecialchars((string) $class->series) ?> <?= htmlspecialchars((string) $class->ballot) ?> - <?= htmlspecialchars((string) $class->course) ?> - <?= htmlspecialchars((string) $class->shift) ?> - <?= htmlspecialchars((string) $class->school_year) ?> - Vagas: <?= $class->student_capacity - $class->student_total ?></option>
 
                         <?php } ?>
 
