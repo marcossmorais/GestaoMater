@@ -87,7 +87,7 @@ function currentDate($array)
 
                             <div class="col-1 d-flex justify-content-center align-items-center"><img class="miniature-photo" src='<?= $value['value']->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $value['value']->profile_photo ?>' alt="" onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>"'></div>
 
-                            <div class="col-7 teacher-name"><?= isset($teacherName) ? $teacherName : $value['value']->teacher_name ?> - <?= currentDate($value['value']->post_date) ?></div>
+                            <div class="col-7 teacher-name"><?= htmlspecialchars((string) (isset($teacherName) ? $teacherName : $value['value']->teacher_name)) ?> - <?= currentDate($value['value']->post_date) ?></div>
 
                             <div class="col-4 d-flex justify-content-end"><span class="badge badge-pill p-2 badge-info ml-auto">Avaliação</span></div>
 
@@ -95,7 +95,7 @@ function currentDate($array)
 
                         <div class="row">
 
-                            <p class="mt-3 text-justify">Criou a avaliação "<?= $value['value']->exam_description ?>" referente a <?= $value['value']->unity ?>ª unidade da disciplina de <?= $value['value']->discipline_name ?> na turma do <?= $value['value']->acronym_series ?>ª <?= $value['value']->ballot ?>-<?= $value['value']->course ?>-<?= $value['value']->shift ?></p>
+                            <p class="mt-3 text-justify">Criou a avaliação "<?= htmlspecialchars((string) $value['value']->exam_description) ?>" referente a <?= htmlspecialchars((string) $value['value']->unity) ?>ª unidade da disciplina de <?= htmlspecialchars((string) $value['value']->discipline_name) ?> na turma do <?= htmlspecialchars((string) $value['value']->acronym_series) ?>ª <?= htmlspecialchars((string) $value['value']->ballot) ?>-<?= htmlspecialchars((string) $value['value']->course) ?>-<?= htmlspecialchars((string) $value['value']->shift) ?></p>
 
                         </div>
 
@@ -114,7 +114,7 @@ function currentDate($array)
 
                             <div class="col-1 d-flex justify-content-center align-items-center"><img class="miniature-photo" src='<?= $value['value']->student_profile_photo == null ? $photoStudentDir . "foto-vazia.jpg" : $photoStudentDir . $value['value']->student_profile_photo ?>' alt="" onerror='this.src="<?= $photoStudentDir . "foto-vazia.jpg" ?>"' style="margin-left: -30px"></div>
 
-                            <div class="col-6 teacher-name"><?= isset($teacherName) ? $teacherName : $value['value']->teacher_name ?> - <?= currentDate($value['value']->post_date) ?></div>
+                            <div class="col-6 teacher-name"><?= htmlspecialchars((string) (isset($teacherName) ? $teacherName : $value['value']->teacher_name)) ?> - <?= currentDate($value['value']->post_date) ?></div>
 
                             <div class="col-4 d-flex justify-content-end"><span class="badge badge-pill p-2 badge-success">Nota avaliação</span></div>
 
@@ -122,7 +122,7 @@ function currentDate($array)
 
                         <div class="row">
 
-                            <p class="mt-3 col-lg-12 p-0 text-justify">Lançou a nota do aluno(a): <?= $value['value']->student_name ?> referente a avaliação "<?= $value['value']->exam_description  ?>" da <?= $value['value']->unity ?>ª unidade da disciplina de <?= $value['value']->discipline_name ?></p>
+                            <p class="mt-3 col-lg-12 p-0 text-justify">Lançou a nota do aluno(a): <?= htmlspecialchars((string) $value['value']->student_name) ?> referente a avaliação "<?= htmlspecialchars((string) $value['value']->exam_description) ?>" da <?= htmlspecialchars((string) $value['value']->unity) ?>ª unidade da disciplina de <?= htmlspecialchars((string) $value['value']->discipline_name) ?></p>
 
                         </div>
 
@@ -140,7 +140,7 @@ function currentDate($array)
 
                             <div class="col-1 d-flex justify-content-center align-items-center"><img class="miniature-photo" src='<?= $value['value']->student_profile_photo == null ? $photoStudentDir . "foto-vazia.jpg" : $photoStudentDir . $value['value']->student_profile_photo ?>' alt="" onerror='this.src="<?= $photoStudentDir . "foto-vazia.jpg" ?>"' style="margin-left: -30px"></div>
 
-                            <div class="col-8 teacher-name"><?= isset($teacherName) ? $teacherName : $value['value']->teacher_name ?> - <?= currentDate($value['value']->post_date) ?></div>
+                            <div class="col-8 teacher-name"><?= htmlspecialchars((string) (isset($teacherName) ? $teacherName : $value['value']->teacher_name)) ?> - <?= currentDate($value['value']->post_date) ?></div>
 
                             <div class="col-2 d-flex justify-content-end"><span class="badge badge-pill p-2 badge-primary">Faltas</span></div>
 
@@ -148,7 +148,7 @@ function currentDate($array)
 
                         <div class="row">
 
-                            <p class="mt-3 col-lg-12 p-0 text-justify">Lançou as faltas do aluno(a): <?= $value['value']->student_name ?> referente a <?= $value['value']->unity ?>ª unidade da disciplina de <?= $value['value']->discipline_name ?></p>
+                            <p class="mt-3 col-lg-12 p-0 text-justify">Lançou as faltas do aluno(a): <?= htmlspecialchars((string) $value['value']->student_name) ?> referente a <?= htmlspecialchars((string) $value['value']->unity) ?>ª unidade da disciplina de <?= htmlspecialchars((string) $value['value']->discipline_name) ?></p>
 
                         </div>
 
@@ -169,7 +169,7 @@ function currentDate($array)
                             <div class="col-1 d-flex justify-content-center align-items-center"><img class="miniature-photo" src='<?= $value['value']->student_profile_photo == null ? $photoStudentDir . "foto-vazia.jpg" : $photoStudentDir . $value['value']->student_profile_photo ?>' alt="" onerror='this.src="<?= $photoStudentDir . "foto-vazia.jpg" ?>"' style="margin-left: -30px"></div>
 
 
-                            <div class="col-8 teacher-name"><?= isset($teacherName) ? $teacherName : $value['value']->teacher_name ?> - <?= currentDate($value['value']->post_date) ?></div>
+                            <div class="col-8 teacher-name"><?= htmlspecialchars((string) (isset($teacherName) ? $teacherName : $value['value']->teacher_name)) ?> - <?= currentDate($value['value']->post_date) ?></div>
 
                             <div class="col-2 d-flex justify-content-end"><span class="badge badge-pill p-2 badge-success">Média final</span></div>
 
@@ -177,7 +177,7 @@ function currentDate($array)
 
                         <div class="row">
 
-                            <p class="mt-3 col-lg-12 p-0 text-justify">Lançou a média final do aluno(a): <?= $value['value']->student_name ?> referente a disciplina de <?= $value['value']->discipline_name ?></p>
+                            <p class="mt-3 col-lg-12 p-0 text-justify">Lançou a média final do aluno(a): <?= htmlspecialchars((string) $value['value']->student_name) ?> referente a disciplina de <?= htmlspecialchars((string) $value['value']->discipline_name) ?></p>
 
                         </div>
 
@@ -196,7 +196,7 @@ function currentDate($array)
 
                             <div class="col-1 d-flex justify-content-center align-items-center"><img class="miniature-photo" src='<?= $value['value']->student_profile_photo == null ? $photoStudentDir . "foto-vazia.jpg" : $photoStudentDir . $value['value']->student_profile_photo ?>' alt="" onerror='this.src="<?= $photoStudentDir . "foto-vazia.jpg" ?>"' style="margin-left: -30px"></div>
 
-                            <div class="col-8 teacher-name"><?= isset($teacherName) ? $teacherName : $value['value']->teacher_name ?> - <?= currentDate($value['value']->post_date) ?></div>
+                            <div class="col-8 teacher-name"><?= htmlspecialchars((string) (isset($teacherName) ? $teacherName : $value['value']->teacher_name)) ?> - <?= currentDate($value['value']->post_date) ?></div>
 
                             <div class="col-2 d-flex justify-content-end"><span class="badge badge-pill p-2 badge-info">Observação</span></div>
 
@@ -204,7 +204,7 @@ function currentDate($array)
 
                         <div class="row">
 
-                            <p class="mt-3 col-lg-12 p-0 text-justify">Adicionou uma observação ao aluno(a): <?= $value['value']->student_name ?> referente a <?= $value['value']->unity ?> unidade da disciplina de <?= $value['value']->discipline_name ?></p>
+                            <p class="mt-3 col-lg-12 p-0 text-justify">Adicionou uma observação ao aluno(a): <?= htmlspecialchars((string) $value['value']->student_name) ?> referente a <?= htmlspecialchars((string) $value['value']->unity) ?> unidade da disciplina de <?= htmlspecialchars((string) $value['value']->discipline_name) ?></p>
 
                         </div>
 
@@ -220,7 +220,7 @@ function currentDate($array)
 
                             <div class="col-1 d-flex justify-content-center align-items-center"><img class="miniature-photo" src='<?= $value['value']->teacher_profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $value['value']->teacher_profile_photo ?>' alt="" onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>"'></div>
 
-                            <div class="col-7 teacher-name"><?= isset($teacherName) ? $teacherName : $value['value']->teacher_name ?> - <?= currentDate($value['value']->post_date) ?></div>
+                            <div class="col-7 teacher-name"><?= htmlspecialchars((string) (isset($teacherName) ? $teacherName : $value['value']->teacher_name)) ?> - <?= currentDate($value['value']->post_date) ?></div>
 
                             <div class="col-4 d-flex justify-content-end"><span class="badge badge-pill p-2 badge-warning">Aviso</span></div>
 
@@ -228,7 +228,7 @@ function currentDate($array)
 
                         <div class="row">
 
-                            <p class="mt-3 col-lg-12 p-0 text-justify">Adicionou na turma <?= $value['value']->acronym_series ?>ª <?= $value['value']->ballot ?>-<?= $value['value']->course ?>-<?= $value['value']->shift ?> o seguite aviso: "<?= $value['value']->warning ?>"</p>
+                            <p class="mt-3 col-lg-12 p-0 text-justify">Adicionou na turma <?= htmlspecialchars((string) $value['value']->acronym_series) ?>ª <?= htmlspecialchars((string) $value['value']->ballot) ?>-<?= htmlspecialchars((string) $value['value']->course) ?>-<?= htmlspecialchars((string) $value['value']->shift) ?> o seguite aviso: "<?= htmlspecialchars((string) $value['value']->warning) ?>"</p>
 
                         </div>
 

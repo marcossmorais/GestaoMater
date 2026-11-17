@@ -84,9 +84,9 @@
 
                 <form action="" id="dataClass">
 
-                    <input type="hidden" name="series" value="<?= $this->view->classData[0]->series_id ?>">
-                    <input type="hidden" name="course" value="<?= $this->view->classData[0]->course_id ?>">
-                    <input type="hidden" name="classId" value="<?= $this->view->classData[0]->class_id ?>">
+                    <input type="hidden" name="series" value="<?= htmlspecialchars((string) $this->view->classData[0]->series_id) ?>">
+                    <input type="hidden" name="course" value="<?= htmlspecialchars((string) $this->view->classData[0]->course_id) ?>">
+                    <input type="hidden" name="classId" value="<?= htmlspecialchars((string) $this->view->classData[0]->class_id) ?>">
 
                 </form>
 
@@ -99,7 +99,7 @@
 
                             <div class="row">
 
-                                <span class="col-12 mx-auto"><?= $this->view->classData[0]->series_acronym ?>ª <?= $this->view->classData[0]->ballot ?> <?= $this->view->classData[0]->course ?> <?= $this->view->classData[0]->shift ?> - Período Letivo <?= $this->view->classData[0]->school_term ?></span>
+                                <span class="col-12 mx-auto"><?= htmlspecialchars((string) $this->view->classData[0]->series_acronym) ?>ª <?= htmlspecialchars((string) $this->view->classData[0]->ballot) ?> <?= htmlspecialchars((string) $this->view->classData[0]->course) ?> <?= htmlspecialchars((string) $this->view->classData[0]->shift) ?> - Período Letivo <?= htmlspecialchars((string) $this->view->classData[0]->school_term) ?></span>
 
                             </div>
                         </div>
@@ -127,7 +127,7 @@
                         <div class="row d-flex align-items-center p-0">
 
                             <div class="col-sm-6 p-0">
-                                <h5 class="mt-2"><?= $this->view->classData[0]->series_acronym ?>ª <?= $this->view->classData[0]->ballot ?> <?= $this->view->classData[0]->course ?> <?= $this->view->classData[0]->shift ?></h5>
+                                <h5 class="mt-2"><?= htmlspecialchars((string) $this->view->classData[0]->series_acronym) ?>ª <?= htmlspecialchars((string) $this->view->classData[0]->ballot) ?> <?= htmlspecialchars((string) $this->view->classData[0]->course) ?> <?= htmlspecialchars((string) $this->view->classData[0]->shift) ?></h5>
                             </div>
 
                             <div class="col-sm-6 col-12 p-0">
@@ -136,7 +136,7 @@
 
                                     <a class="font-weight-bold" aria-expanded="true" data-toggle="collapse" data-target="#students-list"><span class="mr-2"><i class="fas fa-user-friends"></i> Alunos</span></a>
 
-                                    <a class="collapsed font-weight-bold" aria-expanded="false" data-toggle="collapse" data-target="#teacher-list" routeData="<?= $this->view->classId ?>"><span class=""><i class="fas fa-chalkboard-teacher"></i> Docentes</span></a>
+                                    <a class="collapsed font-weight-bold" aria-expanded="false" data-toggle="collapse" data-target="#teacher-list" routeData="<?= htmlspecialchars((string) $this->view->classId) ?>"><span class=""><i class="fas fa-chalkboard-teacher"></i> Docentes</span></a>
 
                                 </div>
 
@@ -326,7 +326,7 @@
 
                                                         <?php foreach ($this->view->teacherAvailable as $key => $teacher) { ?>
 
-                                                            <option value="<?= $teacher->option_value ?>"><?= $teacher->option_text ?></option>
+                                                            <option value="<?= htmlspecialchars((string) $teacher->option_value) ?>"><?= htmlspecialchars((string) $teacher->option_text) ?></option>
 
                                                         <?php } ?>
 
@@ -334,7 +334,7 @@
 
                                                 </div>
 
-                                                <input type="hidden" name="classId" value="<?= $this->view->classId ?>">
+                                                <input type="hidden" name="classId" value="<?= htmlspecialchars((string) $this->view->classId) ?>">
 
                                                 <div class="form-group col-sm-6">
 
@@ -421,7 +421,7 @@
                                             <input name="examDescription" id="examDescription" type="text" placeholder="Nome da avaliação" class="form-control">
                                         </div>
 
-                                        <input type="hidden" value="<?= $this->view->classId ?>" name="classId">
+                                        <input type="hidden" value="<?= htmlspecialchars((string) $this->view->classId) ?>" name="classId">
 
                                         <div class="form-group col-sm-4">
 
@@ -433,7 +433,7 @@
 
                                                 <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                    <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                                 <?php } ?>
 
@@ -451,7 +451,7 @@
 
                                                 <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                    <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                                 <?php } ?>
 
@@ -489,7 +489,7 @@
 
                                                 <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                    <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                                 <?php } ?>
 
@@ -518,7 +518,7 @@
 
                                                 <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                    <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                                 <?php } ?>
 
@@ -545,7 +545,7 @@
 
                     <form id="formClassId" action="">
 
-                        <input type="hidden" value="<?= $this->view->classId ?>" name="classId">
+                        <input type="hidden" value="<?= htmlspecialchars((string) $this->view->classId) ?>" name="classId">
 
                     </form>
 
@@ -572,7 +572,7 @@
                                             <input name="examDescription" id="examDescription" type="text" placeholder="Nome da avaliação" class="form-control">
                                         </div>
 
-                                        <input type="hidden" value="<?= $this->view->classId ?>" name="classId">
+                                        <input type="hidden" value="<?= htmlspecialchars((string) $this->view->classId) ?>" name="classId">
 
                                         <div class="form-group col-sm-4 col-lg-3">
 
@@ -584,7 +584,7 @@
 
                                                 <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                    <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                                 <?php } ?>
 
@@ -601,7 +601,7 @@
 
                                                 <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                    <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                                 <?php } ?>
 
@@ -753,7 +753,7 @@
 
                                 <form id="addWarning" class="col-lg-12" action="">
 
-                                    <input value="<?= $this->view->classId ?>" type="hidden" name="classId">
+                                    <input value="<?= htmlspecialchars((string) $this->view->classId) ?>" type="hidden" name="classId">
 
                                     <div class="form-row mt-3">
 
@@ -776,7 +776,7 @@
 
                                                 <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                    <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                                 <?php } ?>
 
@@ -839,7 +839,7 @@
 
                                         <select id="series" name="series" class="form-control custom-select">
 
-                                            <option value="<?= $this->view->classData[0]->series_id ?>"><?= $this->view->classData[0]->series_acronym ?></option>
+                                            <option value="<?= htmlspecialchars((string) $this->view->classData[0]->series_id) ?>"><?= htmlspecialchars((string) $this->view->classData[0]->series_acronym) ?></option>
 
                                         </select>
 
@@ -851,13 +851,13 @@
 
                                         <select id="ballot" name="ballot" class="form-control custom-select">
 
-                                            <option value="<?= $this->view->classData[0]->ballot_id ?>"><?= $this->view->classData[0]->ballot ?></option>
+                                            <option value="<?= htmlspecialchars((string) $this->view->classData[0]->ballot_id) ?>"><?= htmlspecialchars((string) $this->view->classData[0]->ballot) ?></option>
 
                                             <?php foreach ($this->view->availableBallot as $key => $ballot) { ?>
 
                                                 <?php if ($this->view->classData[0]->ballot_id != $ballot->option_value) { ?>
 
-                                                    <option value="<?= $ballot->option_value ?>"><?= $ballot->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $ballot->option_value) ?>"><?= htmlspecialchars((string) $ballot->option_text) ?></option>
 
                                             <?php }
                                             } ?>
@@ -872,7 +872,7 @@
 
                                         <select id="course" name="course" class="form-control custom-select">
 
-                                            <option value="<?= $this->view->classData[0]->course_id ?>"><?= $this->view->classData[0]->course ?></option>
+                                            <option value="<?= htmlspecialchars((string) $this->view->classData[0]->course_id) ?>"><?= htmlspecialchars((string) $this->view->classData[0]->course) ?></option>
 
                                         </select>
 
@@ -884,13 +884,13 @@
 
                                         <select id="shift" name="shift" class="form-control custom-select">
 
-                                            <option value="<?= $this->view->classData[0]->shift_id ?>"><?= $this->view->classData[0]->shift ?></option>
+                                            <option value="<?= htmlspecialchars((string) $this->view->classData[0]->shift_id) ?>"><?= htmlspecialchars((string) $this->view->classData[0]->shift) ?></option>
 
                                             <?php foreach ($this->view->availableShift as $key => $shift) { ?>
 
                                                 <?php if ($this->view->classData[0]->shift_id != $shift->option_value) { ?>
 
-                                                    <option value="<?= $shift->option_value ?>"><?= $shift->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $shift->option_value) ?>"><?= htmlspecialchars((string) $shift->option_text) ?></option>
 
                                             <?php }
                                             } ?>
@@ -905,13 +905,13 @@
 
                                         <select id="classRoom" name="classRoom" class="form-control custom-select" required>
 
-                                            <option value="<?= $this->view->classData[0]->classroom_id ?>"><?= $this->view->classData[0]->classroom_number ?></option>
+                                            <option value="<?= htmlspecialchars((string) $this->view->classData[0]->classroom_id) ?>"><?= htmlspecialchars((string) $this->view->classData[0]->classroom_number) ?></option>
 
                                             <?php foreach ($this->view->availableClassRoom as $key => $classRoom) { ?>
 
                                                 <?php if ($this->view->classData[0]->classroom_id != $classRoom->option_value) { ?>
 
-                                                    <option value="<?= $classRoom->option_value ?>"><?= $classRoom->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $classRoom->option_value) ?>"><?= htmlspecialchars((string) $classRoom->option_text) ?></option>
 
                                             <?php }
                                             } ?>
@@ -922,8 +922,8 @@
 
                                 </div>
 
-                                <input type="hidden" name="schoolTerm" value="<?= $this->view->classData[0]->school_term_id ?>">
-                                <input type="hidden" name="classId" id="classId" value="<?= $this->view->classData[0]->class_id ?>">
+                                <input type="hidden" name="schoolTerm" value="<?= htmlspecialchars((string) $this->view->classData[0]->school_term_id) ?>">
+                                <input type="hidden" name="classId" id="classId" value="<?= htmlspecialchars((string) $this->view->classData[0]->class_id) ?>">
 
                             </form>
 
@@ -954,7 +954,7 @@
                                             <input name="name" id="name" type="text" placeholder="Nome do aluno" class="form-control">
                                         </div>
 
-                                        <input type="hidden" value="<?= $this->view->classId ?>" name="classId">
+                                        <input type="hidden" value="<?= htmlspecialchars((string) $this->view->classId) ?>" name="classId">
 
                                         <div class="form-group col-sm-4">
 
@@ -966,7 +966,7 @@
 
                                                 <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                    <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                                 <?php } ?>
 
@@ -984,7 +984,7 @@
 
                                                 <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                    <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                                 <?php } ?>
 
@@ -992,7 +992,7 @@
 
                                         </div>
 
-                                        <input type="hidden" name="classId" value="<?= $this->view->classData[0]->class_id ?>">
+                                        <input type="hidden" name="classId" value="<?= htmlspecialchars((string) $this->view->classData[0]->class_id) ?>">
                                         <input type="hidden" id="examDescription" name="examDescription" value="">
 
                                         <div class="form-group col-lg-2 col-sm-1 col-5">

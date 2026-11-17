@@ -35,7 +35,8 @@ class Route extends Bootstrap
 		$routes['adminLogin'] = array(
 			'route' => '/admin/login',
 			'controller' => 'Admin\\AdminController',
-			'action' => 'auth'
+			'action' => 'auth',
+			'method' => 'POST'
 		);
 
 		$routes['adminExit'] = array(
@@ -87,13 +88,15 @@ class Route extends Bootstrap
 		$routes['adminImportPreview'] = array(
 			'route' => '/admin/importacao/previa',
 			'controller' => 'Admin\\AdminImportController',
-			'action' => 'preview'
+			'action' => 'preview',
+			'method' => 'POST'
 		);
 
 		$routes['adminImportConfirm'] = array(
 			'route' => '/admin/importacao/confirmar',
 			'controller' => 'Admin\\AdminImportController',
-			'action' => 'confirm'
+			'action' => 'confirm',
+			'method' => 'POST'
 		);
 
 		$routes['adminImportCodes'] = array(
@@ -105,7 +108,8 @@ class Route extends Bootstrap
 		$routes['adminRolloverConfirm'] = array(
 			'route' => '/admin/importacao/virada/confirmar',
 			'controller' => 'Admin\\AdminImportController',
-			'action' => 'rolloverConfirm'
+			'action' => 'rolloverConfirm',
+			'method' => 'POST'
 		);
 
 		// Rotas referente aos controles do aluno no portal do administrador
@@ -119,7 +123,8 @@ class Route extends Bootstrap
 		$routes['adminStudentInsert'] = array(
 			'route' => '/admin/aluno/cadastro/inserir',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'studentInsert'
+			'action' => 'studentInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminStudentList'] = array(
@@ -149,13 +154,15 @@ class Route extends Bootstrap
 		$routes['adminUpdateStudentProfile'] = array(
 			'route' => '/admin/aluno/lista/perfil-aluno/atualizar',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'updateStudentProfile'
+			'action' => 'updateStudentProfile',
+			'method' => 'POST'
 		);
 
 		$routes['adminUpdateStudentProfilePicture'] = array(
 			'route' => '/admin/aluno/lista/perfil-aluno/atualizar-foto',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'updateStudentProfilePicture'
+			'action' => 'updateStudentProfilePicture',
+			'method' => 'POST'
 		);
 
 		$routes['adminListMedicalCertificates'] = array(
@@ -167,13 +174,15 @@ class Route extends Bootstrap
 		$routes['adminSaveMedicalCertificate'] = array(
 			'route' => '/admin/aluno/atestados/salvar',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'saveMedicalCertificate'
+			'action' => 'saveMedicalCertificate',
+			'method' => 'POST'
 		);
 
 		$routes['adminDeleteMedicalCertificate'] = array(
 			'route' => '/admin/aluno/atestados/deletar',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'deleteMedicalCertificate'
+			'action' => 'deleteMedicalCertificate',
+			'method' => 'POST'
 		);
 
 		$routes['adminStudentDeclarationEnrollment'] = array(
@@ -215,19 +224,22 @@ class Route extends Bootstrap
 		$routes['adminSaveOccurrence'] = array(
 			'route' => '/admin/aluno/ocorrencias/salvar',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'saveOccurrence'
+			'action' => 'saveOccurrence',
+			'method' => 'POST'
 		);
 
 		$routes['adminDeleteOccurrence'] = array(
 			'route' => '/admin/aluno/ocorrencias/deletar',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'deleteOccurrence'
+			'action' => 'deleteOccurrence',
+			'method' => 'POST'
 		);
 
 		$routes['studentAcknowledgeOccurrence'] = array(
 			'route' => '/portal-aluno/ocorrencias/dar-ciencia',
 			'controller' => 'StudentPortal\\StudentPortalController',
-			'action' => 'acknowledgeOccurrence'
+			'action' => 'acknowledgeOccurrence',
+			'method' => 'POST'
 		);
 
 		$routes['adminListGuardians'] = array(
@@ -239,25 +251,29 @@ class Route extends Bootstrap
 		$routes['adminSaveGuardian'] = array(
 			'route' => '/admin/aluno/responsaveis/salvar',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'saveGuardian'
+			'action' => 'saveGuardian',
+			'method' => 'POST'
 		);
 
 		$routes['adminDeleteGuardian'] = array(
 			'route' => '/admin/aluno/responsaveis/deletar',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'deleteGuardian'
+			'action' => 'deleteGuardian',
+			'method' => 'POST'
 		);
 
 		$routes['adminToggleGuardian'] = array(
 			'route' => '/admin/aluno/responsaveis/toggle',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'toggleGuardianPickup'
+			'action' => 'toggleGuardianPickup',
+			'method' => 'POST'
 		);
 
 		$routes['adminUpdateTeacherProfilePicture'] = array(
 			'route' => '/admin/professor/lista/perfil-professor/atualizar-foto',
 			'controller' => 'Admin\\AdminTeacherController',
-			'action' => 'updateTeacherProfilePicture'
+			'action' => 'updateTeacherProfilePicture',
+			'method' => 'POST'
 		);
 
 		$routes['adminStudentProfileBulletin'] = array(
@@ -291,7 +307,8 @@ class Route extends Bootstrap
 		$routes['adminTeacherInsert'] = array(
 			'route' => '/admin/professor/cadastro/inserir',
 			'controller' => 'Admin\\AdminTeacherController',
-			'action' => 'teacherInsert'
+			'action' => 'teacherInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminTeacherList'] = array(
@@ -321,7 +338,8 @@ class Route extends Bootstrap
 		$routes['adminTeacherUpdate'] = array(
 			'route' => '/admin/professor/lista/perfil-professor/atualizar',
 			'controller' => 'Admin\\AdminTeacherController',
-			'action' => 'updateTeacherProfile'
+			'action' => 'updateTeacherProfile',
+			'method' => 'POST'
 		);
 
 		// Rota da gestão geral no portal do administrador
@@ -343,7 +361,8 @@ class Route extends Bootstrap
 		$routes['adminSchoolTermInsert'] = array(
 			'route' => '/admin/gestao/periodo-letivo/inserir',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'schoolTermInsert'
+			'action' => 'schoolTermInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminSchoolTermList'] = array(
@@ -355,13 +374,15 @@ class Route extends Bootstrap
 		$routes['adminSchoolTermUpdate'] = array(
 			'route' => '/admin/gestao/periodo-letivo/atualizar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'schoolTermUpdate'
+			'action' => 'schoolTermUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminSchoolTermDelete'] = array(
 			'route' => '/admin/gestao/periodo-letivo/deletar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'schoolTermDelete'
+			'action' => 'schoolTermDelete',
+			'method' => 'POST'
 		);
 
 		$routes['adminSchoolTermAvailable'] = array(
@@ -381,7 +402,8 @@ class Route extends Bootstrap
 		$routes['adminClassRoomInsert'] = array(
 			'route' => '/admin/gestao/sala/inserir',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classRoomInsert'
+			'action' => 'classRoomInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminClassRoomList'] = array(
@@ -399,13 +421,15 @@ class Route extends Bootstrap
 		$routes['adminClassRoomDelete'] = array(
 			'route' => '/admin/gestao/sala/deletar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classRoomDelete'
+			'action' => 'classRoomDelete',
+			'method' => 'POST'
 		);
 
 		$routes['adminClassRoomUpdate'] = array(
 			'route' => '/admin/gestao/sala/atualizar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classRoomUpdate'
+			'action' => 'classRoomUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminActiveClassRoom'] = array(
@@ -425,7 +449,8 @@ class Route extends Bootstrap
 		$routes['adminCourseInsert'] = array(
 			'route' => '/admin/gestao/curso/inserir',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'courseInsert'
+			'action' => 'courseInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminCourseList'] = array(
@@ -437,13 +462,15 @@ class Route extends Bootstrap
 		$routes['adminCourseUpdate'] = array(
 			'route' => '/admin/gestao/curso/atualizar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'courseUpdate'
+			'action' => 'courseUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminCourseDelete'] = array(
 			'route' => '/admin/gestao/curso/deletar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'courseDelete'
+			'action' => 'courseDelete',
+			'method' => 'POST'
 		);
 
 		$routes['adminAvailableCourse'] = array(
@@ -481,7 +508,8 @@ class Route extends Bootstrap
 		$routes['adminDisciplineInsert'] = array(
 			'route' => '/admin/gestao/disciplina/inserir',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'disciplineInsert'
+			'action' => 'disciplineInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminDisciplineList'] = array(
@@ -493,13 +521,15 @@ class Route extends Bootstrap
 		$routes['adminDisciplineUpdate'] = array(
 			'route' => '/admin/gestao/disciplina/atualizar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'disciplineUpdate'
+			'action' => 'disciplineUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminDisciplineDelete'] = array(
 			'route' => '/admin/gestao/disciplina/deletar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'disciplineDelete'
+			'action' => 'disciplineDelete',
+			'method' => 'POST'
 		);
 
 		$routes['adminDisciplineSeek'] = array(
@@ -517,7 +547,8 @@ class Route extends Bootstrap
 		$routes['adminDisciplineAvailable'] = array(
 			'route' => '/admin/gestao/disciplina/disponiveis',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'disciplineAvailable'
+			'action' => 'disciplineAvailable',
+			'method' => 'POST'
 		);
 
 		// Rotas referente a turma no portal do administrador
@@ -531,13 +562,15 @@ class Route extends Bootstrap
 		$routes['adminClassInsert'] = array(
 			'route' => '/admin/gestao/turma/inserir',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classInsert'
+			'action' => 'classInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminClassUpdate'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/atualizar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classUpdate'
+			'action' => 'classUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminStudentsAverage'] = array(
@@ -598,7 +631,8 @@ class Route extends Bootstrap
 		$routes['adminClassHomeroomSave'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/titular/salvar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classHomeroomSave'
+			'action' => 'classHomeroomSave',
+			'method' => 'POST'
 		);
 
 		$routes['adminClassSubstitutionList'] = array(
@@ -610,13 +644,15 @@ class Route extends Bootstrap
 		$routes['adminClassSubstitutionSave'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/substituicao/salvar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classSubstitutionSave'
+			'action' => 'classSubstitutionSave',
+			'method' => 'POST'
 		);
 
 		$routes['adminClassSubstitutionDelete'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/substituicao/deletar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classSubstitutionDelete'
+			'action' => 'classSubstitutionDelete',
+			'method' => 'POST'
 		);
 
 		$routes['adminClassScheduleEditor'] = array(
@@ -628,13 +664,15 @@ class Route extends Bootstrap
 		$routes['adminClassScheduleSave'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/horario/salvar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classScheduleSave'
+			'action' => 'classScheduleSave',
+			'method' => 'POST'
 		);
 
 		$routes['adminClassDisciplineInsert'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/turma-disciplina/inserir',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'classDisciplineInsert'
+			'action' => 'classDisciplineInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminListTeacherClass'] = array(
@@ -652,7 +690,8 @@ class Route extends Bootstrap
 		$routes['adminUpdateClassDiscipline'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/turma-disciplina/atualizar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'updateClassDiscipline'
+			'action' => 'updateClassDiscipline',
+			'method' => 'POST'
 		);
 
 		$routes['adminSubjectAvailableClass'] = array(
@@ -670,13 +709,15 @@ class Route extends Bootstrap
 		$routes['adminDisciplineClassDelete'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/turma-disciplina/deletar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'disciplineClassDelete'
+			'action' => 'disciplineClassDelete',
+			'method' => 'POST'
 		);
 
 		$routes['adminExamInsert'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/avaliacoes/inserir',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'examInsert'
+			'action' => 'examInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminSumUnitGrades'] = array(
@@ -706,13 +747,15 @@ class Route extends Bootstrap
 		$routes['adminExamUpdate'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/avaliacoes/atualizar',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'examUpdate'
+			'action' => 'examUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminExamDeletar'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/avaliacoes/deletar',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'examDelete'
+			'action' => 'examDelete',
+			'method' => 'POST'
 		);
 
 		$routes['adminExamSeek'] = array(
@@ -730,7 +773,8 @@ class Route extends Bootstrap
 		$routes['adminInsertExamNote'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/boletim/adicionar-nota-avaliacao',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'insertExamNote'
+			'action' => 'insertExamNote',
+			'method' => 'POST'
 		);
 
 		$routes['adminNotesNotAddedYet'] = array(
@@ -754,7 +798,8 @@ class Route extends Bootstrap
 		$routes['adminSwitchClasses'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/troca-turma',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'switchClasses'
+			'action' => 'switchClasses',
+			'method' => 'POST'
 		);
 
 		$routes['adminNoteList'] = array(
@@ -790,19 +835,22 @@ class Route extends Bootstrap
 		$routes['adminNoteUpdate'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/avaliacoes/dados/atualizar',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'noteUpdate'
+			'action' => 'noteUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminNoteDelete'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/avaliacoes/dados/deletar',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'noteDelete'
+			'action' => 'noteDelete',
+			'method' => 'POST'
 		);
 
 		$routes['adminObservationInsert'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/obervacoes/inserir',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'observationInsert'
+			'action' => 'observationInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminObservationList'] = array(
@@ -814,19 +862,22 @@ class Route extends Bootstrap
 		$routes['adminObservationUpdate'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/obervacoes/atualizar',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'observationUpdate'
+			'action' => 'observationUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminObservationDelete'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/obervacoes/deletar',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'observationDelete'
+			'action' => 'observationDelete',
+			'method' => 'POST'
 		);
 
 		$routes['adminLackInsert'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/faltas/inserir',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'lackInsert'
+			'action' => 'lackInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminLackAvailable'] = array(
@@ -850,7 +901,8 @@ class Route extends Bootstrap
 		$routes['adminLackUpdate'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/faltas/atualizar',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'lackUpdate'
+			'action' => 'lackUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminLackSeek'] = array(
@@ -868,7 +920,8 @@ class Route extends Bootstrap
 		$routes['adminDisciplineFinalDataInsert'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/medias-finais/inserir',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'disciplineFinalDataInsert'
+			'action' => 'disciplineFinalDataInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminDisciplineAverageList'] = array(
@@ -886,7 +939,8 @@ class Route extends Bootstrap
 		$routes['adminDisciplineMediaUpdate'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aluno/medias-finais/atualizar',
 			'controller' => 'Admin\\AdminTeacherStudentController',
-			'action' => 'disciplineMediaUpdate'
+			'action' => 'disciplineMediaUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminListRematrugRequests'] = array(
@@ -904,13 +958,15 @@ class Route extends Bootstrap
 		$routes['adminRematrug'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/rematricular',
 			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'rematrug'
+			'action' => 'rematrug',
+			'method' => 'POST'
 		);
 
 		$routes['adminInsertWarning'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aviso/inserir',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'warningInsert'
+			'action' => 'warningInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminListWarning'] = array(
@@ -922,13 +978,15 @@ class Route extends Bootstrap
 		$routes['adminUpdateWarning'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aviso/atualizar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'warningUpdate'
+			'action' => 'warningUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminDeleteWarning'] = array(
 			'route' => '/admin/gestao/turma/perfil-turma/aviso/deletar',
 			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'warningDelete'
+			'action' => 'warningDelete',
+			'method' => 'POST'
 		);
 
 		// Rotas do portal do docente
@@ -942,7 +1000,8 @@ class Route extends Bootstrap
 		$routes['loginTeacherPortal'] = array(
 			'route' => '/portal-docente/login',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
-			'action' => 'auth'
+			'action' => 'auth',
+			'method' => 'POST'
 		);
 
 		$routes['homeTeacherPortal'] = array(
@@ -972,7 +1031,8 @@ class Route extends Bootstrap
 		$routes['teacherPortalUpdate'] = array(
 			'route' => '/portal-docente/perfil/atualizar',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
-			'action' => 'updateTeacherPortal'
+			'action' => 'updateTeacherPortal',
+			'method' => 'POST'
 		);
 
 		$routes['teacherPortalHome'] = array(
@@ -1002,7 +1062,8 @@ class Route extends Bootstrap
 		$routes['attendanceSaveTeacherPortal'] = array(
 			'route' => '/portal-docente/chamada/salvar',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
-			'action' => 'attendanceSave'
+			'action' => 'attendanceSave',
+			'method' => 'POST'
 		);
 
 		// Fund. 1: chamada diária do professor titular
@@ -1015,13 +1076,15 @@ class Route extends Bootstrap
 		$routes['dailyAttendanceSaveTeacherPortal'] = array(
 			'route' => '/portal-docente/chamada-diaria/salvar',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
-			'action' => 'dailyAttendanceSave'
+			'action' => 'dailyAttendanceSave',
+			'method' => 'POST'
 		);
 
 		$routes['dailyLogSaveTeacherPortal'] = array(
 			'route' => '/portal-docente/diario-do-dia/salvar',
 			'controller' => 'TeacherPortal\\TeacherPortalController',
-			'action' => 'dailyLogSave'
+			'action' => 'dailyLogSave',
+			'method' => 'POST'
 		);
 
 		$routes['dailyLogBnccTeacherPortal'] = array(
@@ -1051,19 +1114,22 @@ class Route extends Bootstrap
 		$routes['lessonPlanSaveTeacherPortal'] = array(
 			'route' => '/portal-docente/planejamento/salvar',
 			'controller' => 'TeacherPortal\\TeacherPlanningController',
-			'action' => 'planSave'
+			'action' => 'planSave',
+			'method' => 'POST'
 		);
 
 		$routes['lessonPlanDeleteTeacherPortal'] = array(
 			'route' => '/portal-docente/planejamento/excluir',
 			'controller' => 'TeacherPortal\\TeacherPlanningController',
-			'action' => 'planDelete'
+			'action' => 'planDelete',
+			'method' => 'POST'
 		);
 
 		$routes['lessonSaveTeacherPortal'] = array(
 			'route' => '/portal-docente/diario/salvar',
 			'controller' => 'TeacherPortal\TeacherPortalController',
-			'action' => 'lessonSave'
+			'action' => 'lessonSave',
+			'method' => 'POST'
 		);
 
 		$routes['teacherBoard'] = array(
@@ -1081,25 +1147,29 @@ class Route extends Bootstrap
 		$routes['teacherBoardPost'] = array(
 			'route' => '/portal-docente/mural/publicar',
 			'controller' => 'TeacherPortal\TeacherClassController',
-			'action' => 'boardPost'
+			'action' => 'boardPost',
+			'method' => 'POST'
 		);
 
 		$routes['teacherBoardPin'] = array(
 			'route' => '/portal-docente/mural/fixar',
 			'controller' => 'TeacherPortal\TeacherClassController',
-			'action' => 'boardPin'
+			'action' => 'boardPin',
+			'method' => 'POST'
 		);
 
 		$routes['teacherBoardDelete'] = array(
 			'route' => '/portal-docente/mural/excluir',
 			'controller' => 'TeacherPortal\TeacherClassController',
-			'action' => 'boardDelete'
+			'action' => 'boardDelete',
+			'method' => 'POST'
 		);
 
 		$routes['teacherGeneralBoardRead'] = array(
 			'route' => '/portal-docente/mural/geral/lido',
 			'controller' => 'TeacherPortal\TeacherClassController',
-			'action' => 'generalBoardRead'
+			'action' => 'generalBoardRead',
+			'method' => 'POST'
 		);
 
 		$routes['teacherGrades'] = array(
@@ -1117,7 +1187,8 @@ class Route extends Bootstrap
 		$routes['teacherExamSave'] = array(
 			'route' => '/portal-docente/notas/avaliacao/salvar',
 			'controller' => 'TeacherPortal\TeacherClassController',
-			'action' => 'examSave'
+			'action' => 'examSave',
+			'method' => 'POST'
 		);
 
 		$routes['teacherGradesStudents'] = array(
@@ -1129,7 +1200,8 @@ class Route extends Bootstrap
 		$routes['teacherGradesSave'] = array(
 			'route' => '/portal-docente/notas/salvar',
 			'controller' => 'TeacherPortal\TeacherClassController',
-			'action' => 'gradesSave'
+			'action' => 'gradesSave',
+			'method' => 'POST'
 		);
 
 		$routes['teacherClassOverview'] = array(
@@ -1147,7 +1219,8 @@ class Route extends Bootstrap
 		$routes['teacherStudentNoteSave'] = array(
 			'route' => '/portal-docente/aluno/observacao',
 			'controller' => 'TeacherPortal\TeacherClassController',
-			'action' => 'studentNoteSave'
+			'action' => 'studentNoteSave',
+			'method' => 'POST'
 		);
 
 		$routes['teacherGuides'] = array(
@@ -1159,19 +1232,22 @@ class Route extends Bootstrap
 		$routes['teacherGuideSave'] = array(
 			'route' => '/portal-docente/roteiros/salvar',
 			'controller' => 'TeacherPortal\\TeacherClassController',
-			'action' => 'guideSave'
+			'action' => 'guideSave',
+			'method' => 'POST'
 		);
 
 		$routes['teacherOccurrenceRequest'] = array(
 			'route' => '/portal-docente/aluno/ocorrencia',
 			'controller' => 'TeacherPortal\\TeacherClassController',
-			'action' => 'occurrenceRequest'
+			'action' => 'occurrenceRequest',
+			'method' => 'POST'
 		);
 
 		$routes['studentCertificateSend'] = array(
 			'route' => '/portal-aluno/frequencia/atestado',
 			'controller' => 'StudentPortal\\StudentPortalController',
-			'action' => 'certificateSend'
+			'action' => 'certificateSend',
+			'method' => 'POST'
 		);
 
 		$routes['studentCertificateFile'] = array(
@@ -1183,7 +1259,8 @@ class Route extends Bootstrap
 		$routes['adminCertificateAnswer'] = array(
 			'route' => '/admin/pedagogico/atestado/responder',
 			'controller' => 'Admin\\AdminPedagogicalController',
-			'action' => 'certificateAnswer'
+			'action' => 'certificateAnswer',
+			'method' => 'POST'
 		);
 
 		$routes['adminCertificateFile'] = array(
@@ -1201,7 +1278,8 @@ class Route extends Bootstrap
 		$routes['adminBoardPost'] = array(
 			'route' => '/admin/mural/publicar',
 			'controller' => 'Admin\\AdminBoardController',
-			'action' => 'post'
+			'action' => 'post',
+			'method' => 'POST'
 		);
 
 		$routes['adminCalendar'] = array(
@@ -1213,37 +1291,43 @@ class Route extends Bootstrap
 		$routes['adminCalendarSave'] = array(
 			'route' => '/admin/cronograma/salvar',
 			'controller' => 'Admin\\AdminCalendarController',
-			'action' => 'save'
+			'action' => 'save',
+			'method' => 'POST'
 		);
 
 		$routes['adminCalendarDelete'] = array(
 			'route' => '/admin/cronograma/excluir',
 			'controller' => 'Admin\\AdminCalendarController',
-			'action' => 'delete'
+			'action' => 'delete',
+			'method' => 'POST'
 		);
 
 		$routes['adminCalendarNotify'] = array(
 			'route' => '/admin/cronograma/notificar',
 			'controller' => 'Admin\\AdminCalendarController',
-			'action' => 'notify'
+			'action' => 'notify',
+			'method' => 'POST'
 		);
 
 		$routes['adminBoardPin'] = array(
 			'route' => '/admin/mural/fixar',
 			'controller' => 'Admin\\AdminBoardController',
-			'action' => 'pin'
+			'action' => 'pin',
+			'method' => 'POST'
 		);
 
 		$routes['adminBoardDelete'] = array(
 			'route' => '/admin/mural/excluir',
 			'controller' => 'Admin\\AdminBoardController',
-			'action' => 'delete'
+			'action' => 'delete',
+			'method' => 'POST'
 		);
 
 		$routes['studentGeneralBoardRead'] = array(
 			'route' => '/portal-aluno/mural/geral/lido',
 			'controller' => 'StudentPortal\\StudentPortalController',
-			'action' => 'generalBoardRead'
+			'action' => 'generalBoardRead',
+			'method' => 'POST'
 		);
 
 		$routes['adminPedagogical'] = array(
@@ -1255,13 +1339,15 @@ class Route extends Bootstrap
 		$routes['adminGuideSeen'] = array(
 			'route' => '/admin/pedagogico/roteiro/visto',
 			'controller' => 'Admin\\AdminPedagogicalController',
-			'action' => 'guideSeen'
+			'action' => 'guideSeen',
+			'method' => 'POST'
 		);
 
 		$routes['adminOccurrenceRequestAnswer'] = array(
 			'route' => '/admin/pedagogico/solicitacao/responder',
 			'controller' => 'Admin\\AdminPedagogicalController',
-			'action' => 'requestAnswer'
+			'action' => 'requestAnswer',
+			'method' => 'POST'
 		);
 
 		$routes['teacherSchedule'] = array(
@@ -1284,12 +1370,6 @@ class Route extends Bootstrap
 			'action' => 'index'
 		);
 
-		$routes['StudentPortalUpdate'] = array(
-			'route' => '/portal-aluno/atualizar',
-			'controller' => 'StudentPortal\\StudentPortalController',
-			'action' => 'updateStudentPortal'
-		);
-
 		$routes['HomeStudentPortal'] = array(
 			'route' => '/portal-aluno/home',
 			'controller' => 'StudentPortal\\StudentPortalController',
@@ -1299,7 +1379,8 @@ class Route extends Bootstrap
 		$routes['authStudentPortal'] = array(
 			'route' => '/portal-aluno/login',
 			'controller' => 'StudentPortal\\StudentPortalController',
-			'action' => 'auth'
+			'action' => 'auth',
+			'method' => 'POST'
 		);
 
 		$routes['exitStudentPortal'] = array(
@@ -1341,7 +1422,8 @@ class Route extends Bootstrap
 		$routes['StudentBoardRead'] = array(
 			'route' => '/portal-aluno/mural/lido',
 			'controller' => 'StudentPortal\StudentPortalController',
-			'action' => 'boardRead'
+			'action' => 'boardRead',
+			'method' => 'POST'
 		);
 
 		$routes['StudentPortalSettings'] = array(
@@ -1353,7 +1435,8 @@ class Route extends Bootstrap
 		$routes['StudentPortalUpdateSettings'] = array(
 			'route' => '/portal-aluno/configuracoes/atualizar',
 			'controller' => 'StudentPortal\\StudentPortalController',
-			'action' => 'updateSettings'
+			'action' => 'updateSettings',
+			'method' => 'POST'
 		);
 
 		// Rotas referente aos controles dos administradores no portal do administrador 
@@ -1367,19 +1450,22 @@ class Route extends Bootstrap
 		$routes['adminSettingsUpdate'] = array(
 			'route' => '/admin/configuracoes/atualizar',
 			'controller' => 'Admin\\AdminController',
-			'action' => 'settingsUpdate'
+			'action' => 'settingsUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminUpdateAdminProfilePicture'] = array(
 			'route' => '/admin/configuracoes/atualizar-foto',
 			'controller' => 'Admin\\AdminController',
-			'action' => 'updateAdminProfilePicture'
+			'action' => 'updateAdminProfilePicture',
+			'method' => 'POST'
 		);
 
 		$routes['adminUpdate'] = array(
 			'route' => '/admin/configuracoes/perfil/atualizar',
 			'controller' => 'Admin\\AdminController',
-			'action' => 'adminUpdate'
+			'action' => 'adminUpdate',
+			'method' => 'POST'
 		);
 
 		$routes['adminRegistration'] = array(
@@ -1391,7 +1477,8 @@ class Route extends Bootstrap
 		$routes['adminInsert'] = array(
 			'route' => '/admin/administrador/cadastro/inserir',
 			'controller' => 'Admin\\AdminController',
-			'action' => 'adminInsert'
+			'action' => 'adminInsert',
+			'method' => 'POST'
 		);
 
 		$routes['adminList'] = array(
@@ -1411,7 +1498,8 @@ class Route extends Bootstrap
 		$routes['clerkSession'] = array(
 			'route' => '/auth/clerk/sessao',
 			'controller' => 'Auth\\AuthController',
-			'action' => 'clerkSession'
+			'action' => 'clerkSession',
+			'method' => 'POST'
 		);
 
 
@@ -1438,6 +1526,16 @@ class Route extends Bootstrap
 
 	protected function run($url)
 	{
+		// escrita só por POST e só a partir do próprio site (antes um link GET ou um form de outro site alterava dados)
+		$blocked = $this->blockedRequest($url);
+		if ($blocked) {
+			http_response_code($blocked[0]);
+			if ($blocked[0] === 405) header('Allow: POST');
+			header('Content-Type: application/json');
+			echo json_encode(['error' => $blocked[1]]);
+			exit;
+		}
+
 		if (!$this->authorized($url)) {
 
 			$isAjax = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest'
@@ -1455,6 +1553,54 @@ class Route extends Bootstrap
 		}
 
 		parent::run($url);
+	}
+
+	/**
+	 * Recusa a requisição antes de chegar ao controller. Retorna [status, erro] ou null.
+	 *  - rota marcada com 'method' => 'POST' chamada por outro método → 405
+	 *  - qualquer requisição que não seja GET/HEAD vinda de outro site (Sec-Fetch-Site, Origin ou Referer) → 403
+	 */
+	private function blockedRequest($url)
+	{
+		$method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+
+		foreach ($this->getRoutes() as $route) {
+			if ($route['route'] === $url && ($route['method'] ?? null) === 'POST' && $method !== 'POST') {
+				return [405, 'metodo-invalido'];
+			}
+		}
+
+		if ($method === 'GET' || $method === 'HEAD') return null;
+
+		if (!self::sameOrigin($_SERVER)) {
+			// com a sessão aberta a auditoria registra quem foi o alvo
+			if (session_status() === PHP_SESSION_NONE) session_start();
+			\App\Tools\Audit::log(\App\Connection::getDb(), 'NEGADO', 'requisicao', null, ['motivo' => 'veio de outro site (' . $url . ')']);
+			return [403, 'origem-invalida'];
+		}
+
+		return null;
+	}
+
+	/**
+	 * A requisição veio de uma página do próprio site? Navegadores atuais mandam Sec-Fetch-Site;
+	 * os antigos, Origin ou Referer. Sem nenhum dos três (curl, scripts) não há navegador a enganar: aceita.
+	 */
+	public static function sameOrigin(array $server)
+	{
+		$site = strtolower($server['HTTP_SEC_FETCH_SITE'] ?? '');
+		if ($site !== '') return in_array($site, ['same-origin', 'none'], true);
+
+		$host = strtolower($server['HTTP_HOST'] ?? '');
+		$source = $server['HTTP_ORIGIN'] ?? ($server['HTTP_REFERER'] ?? '');
+		if ($source === '' || $source === 'null') return $source === '';
+
+		$parts = parse_url($source);
+		if (!$parts || empty($parts['host'])) return false;
+
+		$origin = strtolower($parts['host']) . (isset($parts['port']) ? ':' . $parts['port'] : '');
+
+		return $origin === $host;
 	}
 
 	private function authorized($url)

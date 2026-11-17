@@ -32,7 +32,7 @@ require __DIR__ . '../../../../config/variables.php';
 			</li>
 
 			<li class="nav-item ml-3 d-none d-md-block">
-				<b><?= $_SESSION['Admin']['name'] ?></b>
+				<b><?= htmlspecialchars((string) $_SESSION['Admin']['name']) ?></b>
 			</li>
  
 			<li class="nav-item ml-4 mr-2 d-none d-md-block">

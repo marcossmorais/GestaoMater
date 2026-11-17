@@ -90,7 +90,7 @@
                                                     <select name="courseMode" id="courseMode" class="form-control custom-select" required>
 
                                                         <?php foreach ($this->view->courseMode as $key => $value) { ?>
-                                                            <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
+                                                            <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
                                                         <?php } ?>
 
                                                     </select>

@@ -82,7 +82,7 @@ $pendingCertificates = count(array_filter($certificates, function ($c) { return 
                         <article class="card m-panel m-inbox-item <?= $c->status === 'Pendente' ? 'is-new' : '' ?>" data-certificate="<?= (int) $c->id ?>">
                             <div class="m-inbox-head">
                                 <strong><?= htmlspecialchars($c->student) ?> · <?= htmlspecialchars($c->class_label) ?></strong>
-                                <span class="m-pill <?= $pill[0] ?>"><?= $pill[1] ?></span>
+                                <span class="m-pill <?= htmlspecialchars((string) $pill[0]) ?>"><?= htmlspecialchars((string) $pill[1]) ?></span>
                             </div>
                             <small><?= htmlspecialchars(\App\Models\Student\StudentAttendance::TYPES[$c->type] ?? $c->type) ?> · falta em <?= htmlspecialchars($period) ?> · enviado em <?= htmlspecialchars($c->sent_at) ?></small>
                             <p><?= htmlspecialchars($c->reason) ?></p>
@@ -114,7 +114,7 @@ $pendingCertificates = count(array_filter($certificates, function ($c) { return 
                         <article class="card m-panel m-inbox-item <?= $r->status === 'pendente' ? 'is-new' : '' ?>" data-request="<?= (int) $r->id ?>">
                             <div class="m-inbox-head">
                                 <strong><?= htmlspecialchars($r->student) ?> · <?= htmlspecialchars($r->title) ?></strong>
-                                <span class="m-pill <?= $pill[0] ?>"><?= $pill[1] ?></span>
+                                <span class="m-pill <?= htmlspecialchars((string) $pill[0]) ?>"><?= htmlspecialchars((string) $pill[1]) ?></span>
                             </div>
                             <small><?= htmlspecialchars($r->category) ?><?= $r->category === 'Elogio' ? '' : ' · gravidade ' . htmlspecialchars($r->severity) ?> · fato em <?= htmlspecialchars($r->date) ?></small>
                             <small><?= htmlspecialchars($r->teacher) ?> · <?= htmlspecialchars($r->class_label . ' · ' . $r->discipline) ?></small>

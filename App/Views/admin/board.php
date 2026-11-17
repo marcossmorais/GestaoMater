@@ -26,7 +26,7 @@ $current = $this->view->audience;
                     <span class="m-att-label">Para quem</span>
                     <div class="m-board-types m-board-audiences" data-board-audiences role="group" aria-label="Público">
                         <?php foreach ($audiences as $key => $a) { ?>
-                            <button type="button" class="m-board-type <?= $key === 'alunos' ? 'is-active' : '' ?>" data-audience="<?= $key ?>" aria-pressed="<?= $key === 'alunos' ? 'true' : 'false' ?>"><i class="fas <?= $a['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($a['label']) ?></button>
+                            <button type="button" class="m-board-type <?= $key === 'alunos' ? 'is-active' : '' ?>" data-audience="<?= $key ?>" aria-pressed="<?= $key === 'alunos' ? 'true' : 'false' ?>"><i class="fas <?= htmlspecialchars((string) $a['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($a['label']) ?></button>
                         <?php } ?>
                     </div>
                 </div>
@@ -44,7 +44,7 @@ $current = $this->view->audience;
                     <span class="m-att-label">Tipo de aviso</span>
                     <div class="m-board-types" data-board-types>
                         <?php foreach ($types as $key => $t) { ?>
-                            <button type="button" class="m-board-type is-type-<?= $key ?> <?= $key === 'aviso' ? 'is-active' : '' ?>" data-type="<?= $key ?>" aria-pressed="<?= $key === 'aviso' ? 'true' : 'false' ?>"><i class="fas <?= $t['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($t['label']) ?></button>
+                            <button type="button" class="m-board-type is-type-<?= $key ?> <?= $key === 'aviso' ? 'is-active' : '' ?>" data-type="<?= $key ?>" aria-pressed="<?= $key === 'aviso' ? 'true' : 'false' ?>"><i class="fas <?= htmlspecialchars((string) $t['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($t['label']) ?></button>
                         <?php } ?>
                     </div>
                 </div>
@@ -76,8 +76,8 @@ $current = $this->view->audience;
             ?>
                 <article class="card m-board-post is-type-<?= htmlspecialchars($p->type) ?> <?= $p->pinned ? 'is-pinned' : '' ?>" data-admin-post="<?= (int) $p->id ?>">
                     <header>
-                        <span class="m-board-tag"><i class="fas <?= $type['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($type['label']) ?></span>
-                        <span class="m-board-audience"><i class="fas <?= $audience['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($audience['label']) ?></span>
+                        <span class="m-board-tag"><i class="fas <?= htmlspecialchars((string) $type['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($type['label']) ?></span>
+                        <span class="m-board-audience"><i class="fas <?= htmlspecialchars((string) $audience['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($audience['label']) ?></span>
                         <?php if ($p->pinned) { ?><span class="m-board-pin"><i class="fas fa-thumbtack mr-1"></i>Fixado</span><?php } ?>
                         <strong><?= htmlspecialchars($target) ?></strong>
                         <small><?= htmlspecialchars($p->posted_at) ?> · <?= $read ?> de <?= $of ?> <?= ['professores' => 'professores', 'responsaveis' => 'famílias', 'alunos' => 'alunos'][$p->audience] ?? 'alunos' ?> leram<?= $of ? ' (' . round($read * 100 / $of) . '%)' : '' ?></small>

@@ -264,8 +264,8 @@ $attendanceText = $attendance === null ? null : str_replace('.', ',', (string) $
         <div class="d-flex align-items-center">
             <span class="mr-3 font-weight-bold"><i class="fas fa-file-alt text-warning mr-2"></i>Emitir Documento Escolar</span>
             <div class="btn-group btn-group-sm">
-                <a href="?enrollmentId=<?= $enrollment->enrollment_id ?>&type=matricula" class="btn btn-outline-light <?= $type === 'matricula' ? 'active font-weight-bold' : '' ?>">Matrícula</a>
-                <a href="?enrollmentId=<?= $enrollment->enrollment_id ?>&type=frequencia" class="btn btn-outline-light <?= $type === 'frequencia' ? 'active font-weight-bold' : '' ?>">Frequência</a>
+                <a href="?enrollmentId=<?= htmlspecialchars((string) $enrollment->enrollment_id) ?>&type=matricula" class="btn btn-outline-light <?= $type === 'matricula' ? 'active font-weight-bold' : '' ?>">Matrícula</a>
+                <a href="?enrollmentId=<?= htmlspecialchars((string) $enrollment->enrollment_id) ?>&type=frequencia" class="btn btn-outline-light <?= $type === 'frequencia' ? 'active font-weight-bold' : '' ?>">Frequência</a>
             </div>
         </div>
 
@@ -334,7 +334,7 @@ $attendanceText = $attendance === null ? null : str_replace('.', ',', (string) $
                     </div>
                     <div class="m-data-item">
                         <strong>Série / Turma</strong>
-                        <span><?= $enrollment->acronym_series ?>ª Série / Ano — Turma <?= $enrollment->ballot ?></span>
+                        <span><?= htmlspecialchars((string) $enrollment->acronym_series) ?>ª Série / Ano — Turma <?= htmlspecialchars((string) $enrollment->ballot) ?></span>
                     </div>
                     <div class="m-data-item">
                         <strong>Turno de Aulas</strong>

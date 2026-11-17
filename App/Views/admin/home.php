@@ -30,9 +30,9 @@ $totals = $this->view->totals;
                     <div class="m-kpi-icon"><i class="fas fa-user-graduate"></i></div>
                     <div>
                         <div class="m-kpi-label">Alunos ativos</div>
-                        <div class="m-kpi-value"><?= $this->view->studentTotal ?>
+                        <div class="m-kpi-value"><?= htmlspecialchars((string) $this->view->studentTotal) ?>
                             <?php if ($this->view->studentsAddedToday[0]->total_student > 0) { ?>
-                                <span class="m-kpi-extra" title="Matriculados hoje">+<?= $this->view->studentsAddedToday[0]->total_student ?> hoje</span>
+                                <span class="m-kpi-extra" title="Matriculados hoje">+<?= htmlspecialchars((string) $this->view->studentsAddedToday[0]->total_student) ?> hoje</span>
                             <?php } ?>
                         </div>
                     </div>
@@ -42,7 +42,7 @@ $totals = $this->view->totals;
                     <div class="m-kpi-icon"><i class="fas fa-chalkboard-teacher"></i></div>
                     <div>
                         <div class="m-kpi-label">Docentes</div>
-                        <div class="m-kpi-value"><?= $totals->teachers ?></div>
+                        <div class="m-kpi-value"><?= htmlspecialchars((string) $totals->teachers) ?></div>
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@ $totals = $this->view->totals;
                     <div class="m-kpi-icon"><i class="fas fa-users"></i></div>
                     <div>
                         <div class="m-kpi-label">Turmas no período</div>
-                        <div class="m-kpi-value"><?= $totals->classes ?></div>
+                        <div class="m-kpi-value"><?= htmlspecialchars((string) $totals->classes) ?></div>
                     </div>
                 </div>
 
@@ -58,7 +58,7 @@ $totals = $this->view->totals;
                     <div class="m-kpi-icon"><i class="fas fa-book"></i></div>
                     <div>
                         <div class="m-kpi-label">Disciplinas</div>
-                        <div class="m-kpi-value"><?= $totals->disciplines ?></div>
+                        <div class="m-kpi-value"><?= htmlspecialchars((string) $totals->disciplines) ?></div>
                     </div>
                 </div>
 
@@ -88,7 +88,7 @@ $totals = $this->view->totals;
                                 <li>
                                     <img src="<?= $photoDir . ($value->profile_photo ?: 'foto-vazia.jpg') ?>" onerror="this.src='<?= $photoDir ?>foto-vazia.jpg'" alt="" loading="lazy">
                                     <span class="m-list-name" title="<?= htmlspecialchars($value->student_name) ?>"><?= htmlspecialchars($value->student_name) ?></span>
-                                    <span class="m-list-meta"><?= $date[2] ?>/<?= $date[1] ?></span>
+                                    <span class="m-list-meta"><?= htmlspecialchars((string) $date[2]) ?>/<?= htmlspecialchars((string) $date[1]) ?></span>
                                 </li>
                             <?php } ?>
                         </ul>

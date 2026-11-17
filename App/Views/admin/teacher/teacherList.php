@@ -25,7 +25,7 @@
                                 <select class="form-control custom-select" name="course">
                                     <option value="0">Todos</option>
                                     <?php foreach ($this->view->listCourse as $key => $course) { ?>
-                                        <option value="<?= $course->option_value ?>"><?= $course->option_text ?></option>
+                                        <option value="<?= htmlspecialchars((string) $course->option_value) ?>"><?= htmlspecialchars((string) $course->option_text) ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -35,7 +35,7 @@
                                 <select class="form-control custom-select" name="discipline">
                                     <option value="0">Todas</option>
                                     <?php foreach ($this->view->listDiscipline as $key => $discipline) { ?>
-                                        <option value="<?= $discipline->discipline_id ?>"><?= $discipline->discipline_name ?></option>
+                                        <option value="<?= htmlspecialchars((string) $discipline->discipline_id) ?>"><?= htmlspecialchars((string) $discipline->discipline_name) ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -59,7 +59,7 @@
                                     <select class="form-control custom-select" name="serie">
                                         <option value="0">Todas</option>
                                         <?php foreach ($this->view->availableSeries as $key => $serie) { ?>
-                                            <option value="<?= $serie->option_value ?>"><?= $serie->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $serie->option_value) ?>"><?= htmlspecialchars((string) $serie->option_text) ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -69,7 +69,7 @@
                                     <select class="form-control custom-select" name="shift">
                                         <option value="0">Todos</option>
                                         <?php foreach ($this->view->availableShift as $key => $shift) { ?>
-                                            <option value="<?= $shift->option_value ?>"><?= $shift->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $shift->option_value) ?>"><?= htmlspecialchars((string) $shift->option_text) ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -79,7 +79,7 @@
                                     <select class="form-control custom-select" name="sex">
                                         <option value="0">Todos</option>
                                         <?php foreach ($this->view->availableSex as $key => $sex) { ?>
-                                            <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $sex->option_value) ?>"><?= htmlspecialchars((string) $sex->option_text) ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -89,7 +89,7 @@
                                     <select class="form-control custom-select" name="classRoom">
                                         <option value="0">Todas</option>
                                         <?php foreach ($this->view->availableClassRoom as $key => $classroom) { ?>
-                                            <option value="<?= $classroom->option_value ?>"><?= $classroom->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $classroom->option_value) ?>"><?= htmlspecialchars((string) $classroom->option_text) ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>

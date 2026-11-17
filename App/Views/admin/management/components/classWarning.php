@@ -8,12 +8,12 @@ require __DIR__ . '../../../../../config/variables.php';
 
     <?php foreach ($this->view->listWarning as $i => $warning) { ?>
 
-        <form id="formWarning<?= $warning->id ?>" class="card mb-4" action="">
+        <form id="formWarning<?= htmlspecialchars((string) $warning->id) ?>" class="card mb-4" action="">
 
             <div class="form-row d-flex align-items-center col-lg-11 mx-auto">
 
-                <input type="hidden" name="id" value="<?= $warning->id ?>">
-                <input type="hidden" name="classId" value="<?= $warning->class_id ?>">
+                <input type="hidden" name="id" value="<?= htmlspecialchars((string) $warning->id) ?>">
+                <input type="hidden" name="classId" value="<?= htmlspecialchars((string) $warning->class_id) ?>">
 
                 <div class="col-lg-8 font-weight-bold">
 
@@ -21,22 +21,22 @@ require __DIR__ . '../../../../../config/variables.php';
                         <div class="col-2">
                             <img class="miniature-photo" src='<?= $warning->teacher_profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $warning->teacher_profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>"'>
                         </div>
-                        <div class="col-10"><?= $warning->teacher_name ?> - <?= $warning->discipline_name ?></div>
+                        <div class="col-10"><?= htmlspecialchars((string) $warning->teacher_name) ?> - <?= htmlspecialchars((string) $warning->discipline_name) ?></div>
                     </div>
 
                 </div>
 
                 <div class="col-lg-4 d-flex justify-content-end option-icon-group mt-2">
 
-                    <span idElement="#formWarning<?= $warning->id ?>" formGroup="containerListWarning" class="mr-2 edit-data-icon" data-toggle="tooltip" data-placement="left" title="Editar">
+                    <span idElement="#formWarning<?= htmlspecialchars((string) $warning->id) ?>" formGroup="containerListWarning" class="mr-2 edit-data-icon" data-toggle="tooltip" data-placement="left" title="Editar">
                         <i class="fas fa-edit"></i>
                     </span>
 
-                    <span idElement="#formWarning<?= $warning->id ?>" routeUpdate="/admin/gestao/turma/perfil-turma/aviso/atualizar" toastData="Aviso Atualizado" container="containerListWarning" routeList="/admin/gestao/turma/perfil-turma/aviso/listagem" class="mr-2 update-data-icon" routeData="#formWarning<?= $warning->id ?>" data-toggle="tooltip" data-placement="top" title="Atualizar">
+                    <span idElement="#formWarning<?= htmlspecialchars((string) $warning->id) ?>" routeUpdate="/admin/gestao/turma/perfil-turma/aviso/atualizar" toastData="Aviso Atualizado" container="containerListWarning" routeList="/admin/gestao/turma/perfil-turma/aviso/listagem" class="mr-2 update-data-icon" routeData="#formWarning<?= htmlspecialchars((string) $warning->id) ?>" data-toggle="tooltip" data-placement="top" title="Atualizar">
                         <i class="fas fa-check"></i>
                     </span>
 
-                    <span idElement="#formWarning<?= $warning->id ?>" routeDelete="/admin/gestao/turma/perfil-turma/aviso/deletar" toastData="Aviso Deletado" routeData="#formWarning<?= $warning->id ?>" container="containerListWarning" routeList="/admin/gestao/turma/perfil-turma/aviso/listagem" class="mr-2 delete-data-icon" data-toggle="tooltip" data-placement="right" title="Deletar">
+                    <span idElement="#formWarning<?= htmlspecialchars((string) $warning->id) ?>" routeDelete="/admin/gestao/turma/perfil-turma/aviso/deletar" toastData="Aviso Deletado" routeData="#formWarning<?= htmlspecialchars((string) $warning->id) ?>" container="containerListWarning" routeList="/admin/gestao/turma/perfil-turma/aviso/listagem" class="mr-2 delete-data-icon" data-toggle="tooltip" data-placement="right" title="Deletar">
                         <i class="fas fa-trash-alt"></i>
                     </span>
 
@@ -55,11 +55,11 @@ require __DIR__ . '../../../../../config/variables.php';
 
                 <div class="form-group col-lg-12">
                     <label for="">Descrição do aviso:</label>
-                    <textarea class="form-control mb-3 mt-2" name="description" disabled id="description" rows="5"><?= $warning->warning ?></textarea>
+                    <textarea class="form-control mb-3 mt-2" name="description" disabled id="description" rows="5"><?= htmlspecialchars((string) $warning->warning) ?></textarea>
 
                     <div class="row">
 
-                        <small class="font-weight-bold col-lg-12 text-right"> <i class="fas fa-history mr-2"></i> Adicionado em <?= $date[2] ?>/<?= $date[1] ?></small>
+                        <small class="font-weight-bold col-lg-12 text-right"> <i class="fas fa-history mr-2"></i> Adicionado em <?= htmlspecialchars((string) $date[2]) ?>/<?= htmlspecialchars((string) $date[1]) ?></small>
 
                     </div>
                 </div>

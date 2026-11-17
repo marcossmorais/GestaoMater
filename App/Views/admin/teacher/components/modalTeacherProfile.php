@@ -33,15 +33,15 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
                         <div class="m-prof-hero">
 
                             <div class="m-prof-avatar" data-toggle="tooltip" data-placement="bottom" title="Alterar foto">
-                                <img src='<?= $teacher->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $teacher->profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>"' data-toggle="modal" data-target="#profilePhotoModal" alt="Foto de <?= $teacher->name ?>">
+                                <img src='<?= $teacher->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $teacher->profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>"' data-toggle="modal" data-target="#profilePhotoModal" alt="Foto de <?= htmlspecialchars((string) $teacher->name) ?>">
                                 <span class="m-prof-avatar-edit"><i class="fas fa-camera"></i></span>
                             </div>
 
-                            <span class="m-prof-name"><?= $teacher->name ?></span>
+                            <span class="m-prof-name"><?= htmlspecialchars((string) $teacher->name) ?></span>
                             <span class="m-prof-sub">Docente</span>
 
                             <div class="m-prof-chips">
-                                <span class="m-prof-chip <?= $teacher->account_state_id == 1 ? 'is-ok' : 'is-off' ?>"><?= $teacher->account_state ?></span>
+                                <span class="m-prof-chip <?= $teacher->account_state_id == 1 ? 'is-ok' : 'is-off' ?>"><?= htmlspecialchars((string) $teacher->account_state) ?></span>
                                 <span class="m-prof-chip"><i class="fas fa-book"></i> <?= count($this->view->subjectsThatTeacherTeaches) ?> <?= count($this->view->subjectsThatTeacherTeaches) == 1 ? 'disciplina' : 'disciplinas' ?></span>
                             </div>
 
@@ -97,9 +97,9 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
 
                                         <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" id="">
 
-                                        <input type="hidden" id="id" value="<?= $teacher->id ?>" name="id">
+                                        <input type="hidden" id="id" value="<?= htmlspecialchars((string) $teacher->id) ?>" name="id">
 
-                                        <input type="hidden" id="oldPhoto" name="oldPhoto" value="<?= $teacher->profile_photo ?>">
+                                        <input type="hidden" id="oldPhoto" name="oldPhoto" value="<?= htmlspecialchars((string) $teacher->profile_photo) ?>">
 
                                         <div class="row">
 
@@ -136,11 +136,11 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
 
                     <div class="col-12 m-prof-pane collapse show" id="accordion-data-teacher" data-parent="#main-accordion">
 
-                        <form id="teacherModal<?= $teacher->id ?>" class="m-prof-form" action="">
+                        <form id="teacherModal<?= htmlspecialchars((string) $teacher->id) ?>" class="m-prof-form" action="">
 
-                            <input type="hidden" value="<?= $teacher->id ?>" name="teacherId">
-                            <input type="hidden" value="<?= $teacher->telephone_id ?>" name="telephoneId">
-                            <input type="hidden" value="<?= $teacher->address_id ?>" name="addressId">
+                            <input type="hidden" value="<?= htmlspecialchars((string) $teacher->id) ?>" name="teacherId">
+                            <input type="hidden" value="<?= htmlspecialchars((string) $teacher->telephone_id) ?>" name="telephoneId">
+                            <input type="hidden" value="<?= htmlspecialchars((string) $teacher->address_id) ?>" name="addressId">
 
                             <div class="m-prof-head">
 
@@ -151,9 +151,9 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
 
                                 <div class="m-prof-actions">
 
-                                    <span idElement="#teacherModal<?= $teacher->id ?>" formGroup="containerListTeacher" class="m-prof-btn edit-data-icon"><i class="fas fa-pen"></i> Editar</span>
+                                    <span idElement="#teacherModal<?= htmlspecialchars((string) $teacher->id) ?>" formGroup="containerListTeacher" class="m-prof-btn edit-data-icon"><i class="fas fa-pen"></i> Editar</span>
 
-                                    <span idElement="#teacherModal<?= $teacher->id ?>" routeUpdate="/admin/professor/lista/perfil-professor/atualizar" toastData="Dados atualizados" routeData="#teacherModal<?= $teacher->id ?>" container="containerTeacherProfileModal" routeList="/admin/professor/lista/perfil-professor" class="m-prof-btn is-primary update-data-icon"><i class="fas fa-check"></i> Salvar</span>
+                                    <span idElement="#teacherModal<?= htmlspecialchars((string) $teacher->id) ?>" routeUpdate="/admin/professor/lista/perfil-professor/atualizar" toastData="Dados atualizados" routeData="#teacherModal<?= htmlspecialchars((string) $teacher->id) ?>" container="containerTeacherProfileModal" routeList="/admin/professor/lista/perfil-professor" class="m-prof-btn is-primary update-data-icon"><i class="fas fa-check"></i> Salvar</span>
 
                                 </div>
 
@@ -191,26 +191,26 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
 
                                     <div class="m-prof-field m-span-2">
                                         <label for="name">Nome completo</label>
-                                        <input type="text" id="name" name="name" disabled class="form-control" value="<?= $teacher->name ?>">
+                                        <input type="text" id="name" name="name" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->name) ?>">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="cpf">CPF</label>
-                                        <input type="text" id="cpf" name="cpf" disabled class="form-control" value="<?= $teacher->cpf ?>">
+                                        <input type="text" id="cpf" name="cpf" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->cpf) ?>">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="birthDate">Data de nascimento</label>
-                                        <input type="date" id="birthDate" name="birthDate" disabled class="form-control" value="<?= $teacher->birth_date ?>" max="2006-01-31" min="1940-01-31">
+                                        <input type="date" id="birthDate" name="birthDate" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->birth_date) ?>" max="2006-01-31" min="1940-01-31">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="sex">Sexo</label>
                                         <select id="sex" name="sex" disabled class="form-control custom-select">
-                                            <option value="<?= $teacher->sex_id ?>"><?= $teacher->sex ?></option>
+                                            <option value="<?= htmlspecialchars((string) $teacher->sex_id) ?>"><?= htmlspecialchars((string) $teacher->sex) ?></option>
                                             <?php foreach ($this->view->availableSex as $key => $sex) { ?>
                                                 <?php if ($sex->option_value != $teacher->sex_id) { ?>
-                                                    <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $sex->option_value) ?>"><?= htmlspecialchars((string) $sex->option_text) ?></option>
                                             <?php }
                                             } ?>
                                         </select>
@@ -218,21 +218,21 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
 
                                     <div class="m-prof-field">
                                         <label for="nationality">Nacionalidade</label>
-                                        <input type="text" id="nationality" name="nationality" disabled class="form-control" value="<?= $teacher->nationality ?>">
+                                        <input type="text" id="nationality" name="nationality" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->nationality) ?>">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="naturalness">Naturalidade</label>
-                                        <input type="text" id="naturalness" name="naturalness" disabled class="form-control" value="<?= $teacher->naturalness ?>">
+                                        <input type="text" id="naturalness" name="naturalness" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->naturalness) ?>">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="pcd">PcD</label>
                                         <select id="pcd" name="pcd" disabled class="form-control custom-select">
-                                            <option value="<?= $teacher->pcd_id ?>"><?= $teacher->pcd ?></option>
+                                            <option value="<?= htmlspecialchars((string) $teacher->pcd_id) ?>"><?= htmlspecialchars((string) $teacher->pcd) ?></option>
                                             <?php foreach ($this->view->pcd as $key => $pcd) { ?>
                                                 <?php if ($pcd->option_value != $teacher->pcd_id) { ?>
-                                                    <option value="<?= $pcd->option_value ?>"><?= $pcd->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $pcd->option_value) ?>"><?= htmlspecialchars((string) $pcd->option_text) ?></option>
                                             <?php }
                                             } ?>
                                         </select>
@@ -241,10 +241,10 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
                                     <div class="m-prof-field">
                                         <label for="bloodType">Tipo sanguíneo</label>
                                         <select id="bloodType" name="bloodType" disabled class="form-control custom-select">
-                                            <option value="<?= $teacher->blood_type_id ?>"><?= $teacher->blood_type ?></option>
+                                            <option value="<?= htmlspecialchars((string) $teacher->blood_type_id) ?>"><?= htmlspecialchars((string) $teacher->blood_type) ?></option>
                                             <?php foreach ($this->view->bloodType as $key => $bloodType) { ?>
                                                 <?php if ($bloodType->option_value != $teacher->blood_type_id) { ?>
-                                                    <option value="<?= $bloodType->option_value ?>"><?= $bloodType->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $bloodType->option_value) ?>"><?= htmlspecialchars((string) $bloodType->option_text) ?></option>
                                             <?php }
                                             } ?>
                                         </select>
@@ -265,37 +265,37 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
 
                                     <div class="m-prof-field m-span-2">
                                         <label for="email">E-mail</label>
-                                        <input type="email" id="email" name="email" disabled class="form-control" value="<?= $teacher->email ?>">
+                                        <input type="email" id="email" name="email" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->email) ?>">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="telephoneNumber">Telefone</label>
-                                        <input id="telephoneNumber" name="telephoneNumber" type="text" disabled class="form-control" value="<?= $teacher->telephone_number ?>">
+                                        <input id="telephoneNumber" name="telephoneNumber" type="text" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->telephone_number) ?>">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="zipCode">CEP</label>
-                                        <input type="text" id="zipCode" name="zipCode" disabled class="form-control" value="<?= $teacher->zip_code ?>">
+                                        <input type="text" id="zipCode" name="zipCode" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->zip_code) ?>">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="uf">UF</label>
-                                        <input type="text" id="uf" name="uf" disabled class="form-control" value="<?= $teacher->uf ?>">
+                                        <input type="text" id="uf" name="uf" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->uf) ?>">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="county">Município</label>
-                                        <input type="text" id="county" name="county" disabled class="form-control" value="<?= $teacher->county ?>">
+                                        <input type="text" id="county" name="county" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->county) ?>">
                                     </div>
 
                                     <div class="m-prof-field">
                                         <label for="district">Bairro</label>
-                                        <input type="text" id="district" name="district" disabled class="form-control" value="<?= $teacher->district ?>">
+                                        <input type="text" id="district" name="district" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->district) ?>">
                                     </div>
 
                                     <div class="m-prof-field m-span-2">
                                         <label for="address">Endereço</label>
-                                        <input type="text" id="address" name="address" disabled class="form-control" value="<?= $teacher->address ?>">
+                                        <input type="text" id="address" name="address" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->address) ?>">
                                     </div>
 
                                 </div>
@@ -314,10 +314,10 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
                                     <div class="m-prof-field">
                                         <label for="accountState">Situação da conta</label>
                                         <select id="accountState" name="accountState" disabled class="form-control custom-select">
-                                            <option value="<?= $teacher->account_state_id ?>"><?= $teacher->account_state ?></option>
+                                            <option value="<?= htmlspecialchars((string) $teacher->account_state_id) ?>"><?= htmlspecialchars((string) $teacher->account_state) ?></option>
                                             <?php foreach ($this->view->accountStates as $key => $account) { ?>
                                                 <?php if ($account->option_value != $teacher->account_state_id) { ?>
-                                                    <option value="<?= $account->option_value ?>"><?= $account->option_text ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $account->option_value) ?>"><?= htmlspecialchars((string) $account->option_text) ?></option>
                                             <?php }
                                             } ?>
                                         </select>
@@ -326,7 +326,7 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
                                     <div class="m-prof-field">
                                         <label for="accessCode">Código de acesso ao portal</label>
                                         <div class="m-prof-secret">
-                                            <input id="accessCode" name="accessCode" type="password" disabled class="form-control" value="<?= $teacher->access_code ?>" maxlength="30">
+                                            <input id="accessCode" name="accessCode" type="password" disabled class="form-control" value="<?= htmlspecialchars((string) $teacher->access_code) ?>" maxlength="30">
                                             <div class="input-group-accessCode" title="Mostrar/ocultar"><i class="fas fa-eye-slash"></i></div>
                                         </div>
                                     </div>
@@ -366,8 +366,8 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
                                         <div class="m-prof-class-title">
                                             <span class="m-prof-kpi-icon"><i class="fas fa-users"></i></span>
                                             <div>
-                                                <div class="teacher-class-title mb-0"><?= $data[0] ?>ª <?= $data[1] ?> · <?= $data[2] ?></div>
-                                                <div class="m-prof-class-meta"><?= $data[3] ?> · Sala <?= $data[4] ?></div>
+                                                <div class="teacher-class-title mb-0"><?= htmlspecialchars((string) $data[0]) ?>ª <?= htmlspecialchars((string) $data[1]) ?> · <?= htmlspecialchars((string) $data[2]) ?></div>
+                                                <div class="m-prof-class-meta"><?= htmlspecialchars((string) $data[3]) ?> · Sala <?= htmlspecialchars((string) $data[4]) ?></div>
                                             </div>
                                         </div>
 
@@ -376,7 +376,7 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
 
                                                 if ($discipline->class_id == $data[5]) { ?>
 
-                                                    <span class="m-prof-tag"><?= $discipline->discipline_name ?></span>
+                                                    <span class="m-prof-tag"><?= htmlspecialchars((string) $discipline->discipline_name) ?></span>
 
                                             <?php }
                                             } ?>
