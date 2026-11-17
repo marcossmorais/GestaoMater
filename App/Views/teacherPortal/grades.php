@@ -97,6 +97,12 @@ require __DIR__ . '/components/classCards.php';
 
                 <div class="m-grade-list" data-gr-list></div>
 
+                <?php // lançamento errado: apaga a avaliação e as notas dela (pede confirmação; fica na auditoria) ?>
+                <div class="m-exam-delete" data-gr-delete-box hidden>
+                    <button type="button" class="btn btn-outline-danger" data-gr-delete><i class="fas fa-trash-alt mr-2"></i>Excluir esta avaliação</button>
+                    <small>Apaga a avaliação e todas as notas lançadas nela.</small>
+                </div>
+
                 <div class="m-att-bar">
                     <div class="m-att-bar-count"><span class="m-att-count" data-gr-count></span></div>
                     <button type="button" class="btn btn-primary m-att-save" data-gr-save><i class="fas fa-check mr-2"></i><span>Salvar notas</span></button>
