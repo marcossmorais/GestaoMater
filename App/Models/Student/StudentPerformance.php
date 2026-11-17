@@ -43,7 +43,8 @@ class StudentPerformance extends Model
         $rule = $this->rule();
 
         $stmt = $this->db->prepare(
-            "SELECT turma_disciplina.id_turma_disciplina AS id, disciplina.nome_disciplina AS discipline, professor.nome_professor AS teacher
+            "SELECT turma_disciplina.id_turma_disciplina AS id, disciplina.nome_disciplina AS discipline, professor.nome_professor AS teacher,
+                    avaliacoes_exigidas(turma_disciplina.id_turma_disciplina) AS required
              FROM turma_disciplina
              INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)
              INNER JOIN professor ON (turma_disciplina.fk_id_professor = professor.id_professor)
@@ -57,7 +58,7 @@ class StudentPerformance extends Model
 
         $rows = [];
         foreach ($stmt->fetchAll(\PDO::FETCH_OBJ) as $r) {
-            $rows[(int) $r->id] = ['id' => (int) $r->id, 'discipline' => $r->discipline, 'teacher' => $r->teacher, 'units' => []];
+            $rows[(int) $r->id] = ['id' => (int) $r->id, 'discipline' => $r->discipline, 'teacher' => $r->teacher, 'perBimester' => (int) $r->required, 'units' => []];
             for ($u = 1; $u <= $rule['units']; $u++) $rows[(int) $r->id]['units'][$u] = $empty;
         }
 

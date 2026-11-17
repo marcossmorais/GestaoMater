@@ -29,7 +29,7 @@
     // ---------- Simulador do bimestre: notas lançadas + as que o aluno digitar nas avaliações que faltam
     function simulateBimester(box) {
         const base = JSON.parse(box.dataset.bim);
-        const per = rule.perBimester;
+        const per = base.per || rule.perBimester;
         const result = box.querySelector('[data-bim-result]');
         const grades = base.grades.slice();
         let invalid = false;
