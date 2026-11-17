@@ -249,6 +249,29 @@ class TeacherClassController extends Action
 
 
     /**
+     * Apaga uma avaliação e as notas dela (lançamento errado). Só quem edita a disciplina, só com o bimestre aberto.
+     * A recuperação depende das regulares: se o bimestre já tem recuperação, ela sai primeiro.
+     */
+    public function examDelete()
+    {
+        if (($input = $this->input()) === null) return;
+
+        $Gradebook = Container::getModel('TeacherStudent\\Gradebook');
+        $exam = $Gradebook->exam((int) ($input['exam'] ?? 0));
+
+        if (!$exam || !$this->canEdit($exam->discipline_class_id)) return $this->deny('avaliacoes', $input['exam'] ?? null, 'exclusão de avaliação');
+        if (!in_array((int) $exam->unity, $this->openUnits(), true)) return $this->json(['error' => 'unidade-fechada'], 422);
+        if (!$exam->recovery && $Gradebook->examCount($exam->discipline_class_id, $exam->unity)['recovery']) {
+            return $this->json(['error' => 'recuperacao-antes'], 422);
+        }
+
+        $grades = $Gradebook->deleteExam($exam->id);
+
+        $this->json(['deleted' => (int) $exam->id, 'grades' => $grades]);
+    }
+
+
+    /**
      * Cria avaliação de 0 a 10 (até o limite da disciplina por bimestre) ou a recuperação do bimestre; com "exam", atualiza só os tipos.
      * O roteiro é escrito na aba Roteiro de Provas (guideSave).
      */

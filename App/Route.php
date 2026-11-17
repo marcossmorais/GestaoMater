@@ -1185,6 +1185,13 @@ class Route extends Bootstrap
 			'method' => 'POST'
 		);
 
+		$routes['teacherExamDelete'] = array(
+			'route' => '/portal-docente/notas/avaliacao/excluir',
+			'controller' => 'TeacherPortal\TeacherClassController',
+			'action' => 'examDelete',
+			'method' => 'POST'
+		);
+
 		$routes['teacherGradesStudents'] = array(
 			'route' => '/portal-docente/notas/alunos',
 			'controller' => 'TeacherPortal\TeacherClassController',

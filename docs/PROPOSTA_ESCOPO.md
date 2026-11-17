@@ -63,6 +63,7 @@ Legenda: `[x]` existe · `[ ]` falta · `[-]` remover.
 - [x] **Ficha do aluno para o docente** (`/portal-docente/aluno`): todas as disciplinas só leitura, a do professor com cada avaliação; observações rápidas de um toque (`database/17_observacao_rapida.sql`, auditadas)
 - [x] **Chamada → diário em sequência**; **busca de habilidade BNCC** por palavra ou código, filtrada pela série/disciplina (`App/Data/bncc-habilidades.tsv`, dados bncc.dev CC BY 4.0)
 - [x] **Notas**: rascunho automático no aparelho, média ao vivo e "precisa de X para fechar 7"
+- [x] **Excluir avaliação** (lançamento errado): na avaliação aberta, "Excluir esta avaliação" apaga a avaliação e as notas dela depois de confirmar (a mensagem diz quantas notas saem). Só quem edita a disciplina e só com o bimestre aberto; se o bimestre já tem recuperação, ela sai primeiro. As regulares que sobram são renumeradas (1ª, 2ª…). A avaliação e cada nota apagada ficam na auditoria; tentativa sem permissão = 403 + `NEGADO`
 - [x] **Visual educacional** (`edu.css`): professor lúdico na medida, aluno lúdico completo, cor e ícone por matéria, fonte Nunito; página inicial nova em `/` e login com a cor do portal
 - [x] **Home do docente com gráficos** (situação dos alunos, faixas de nota, média, atenção e faltas por turma) e atividade dos alunos (leitura dos avisos)
 - [x] **Boletim do aluno na regra do MATER** (bimestres de 0 a 10, média do ano); **simulador do bimestre** por avaliação; **aba Turma** só com a média da turma, sem dados de colegas

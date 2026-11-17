@@ -48,6 +48,7 @@
         'nota-acima-do-valor': 'Há nota acima do valor da avaliação.',
         'aluno-fora-da-turma': 'A lista de alunos mudou. Abra a avaliação novamente.',
         'nao-autenticado': 'Sua sessão expirou. Entre novamente.',
+        'recuperacao-antes': 'Este bimestre já tem recuperação: exclua a recuperação antes.',
         'falha-ao-salvar': 'Não foi possível salvar. Tente de novo.'
     };
 
@@ -282,6 +283,30 @@
         }
     });
 
+    // ---------- Excluir a avaliação aberta (lançamento errado)
+    $('[data-gr-delete]').addEventListener('click', async () => {
+        if (!state.exam || state.busy) return;
+        const graded = state.students.filter((s) => s.grade !== null).length;
+        const what = state.exam.recovery ? 'a recuperação' : `a ${state.exam.description}`;
+        const notes = graded ? ` As ${graded} nota${graded === 1 ? '' : 's'} lançada${graded === 1 ? '' : 's'} nela ${graded === 1 ? 'será apagada' : 'serão apagadas'}.` : '';
+        if (!window.confirm(`Excluir ${what} (${state.exam.unity}º bimestre)?${notes} Não dá para desfazer.`)) return;
+
+        state.busy = true;
+        try {
+            await api('/portal-docente/notas/avaliacao/excluir', { exam: state.exam.id });
+            clearDraft();
+            state.dirty = false;
+            state.exam = null;
+            toast('Avaliação excluída');
+            show('exams');
+            await loadExams();
+        } catch (e) {
+            toast(errors[e.message] || 'Não foi possível excluir.', 'error');
+        } finally {
+            state.busy = false;
+        }
+    });
+
     async function openExam(id) {
         const meta = state.exams.find((e) => e.id === id);
         state.dirty = false;
@@ -291,6 +316,7 @@
         examTypeBox.innerHTML = typeChips(meta ? meta.types : []);
         renderTypeHint();
         state.exam = null;
+        $('[data-gr-delete-box]').hidden = true;
         show('grades');
 
         try {
@@ -299,6 +325,7 @@
             state.students = data.students;
             state.editable = data.editable;
             $('[data-gr-closed]').hidden = data.editable;
+            $('[data-gr-delete-box]').hidden = !data.editable;
             $('[data-gr-exam-subtitle]').textContent = `${state.cls.label} · ${state.cls.discipline} · ${data.exam.recovery ? 'recuperação · ' : ''}nota de 0 a ${fmt(data.exam.value)} · ${data.exam.unity}º bimestre`;
             state.passing = data.passing;
             state.perBimester = data.perBimester;

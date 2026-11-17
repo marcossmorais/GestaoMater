@@ -1792,3 +1792,8 @@ html body#studentPortal #pagina .card.m-occ-pending { border: 2px solid #F5C66B 
 .m-audit-per select { width: auto; min-width: 72px; min-height: 44px; }
 @media (max-width: 767.98px) { .m-audit-per { width: 100%; } }
 @media print { .m-audit-per { display: none !important; } }
+
+/* Notas do docente: excluir a avaliação aberta (lançamento errado) */
+.m-exam-delete { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 16px 0 96px; }
+.m-exam-delete .btn { min-height: 44px; }
+.m-exam-delete small { color: var(--m-muted); }

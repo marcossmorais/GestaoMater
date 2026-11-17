@@ -174,6 +174,48 @@ class Gradebook extends Model
 
 
     /**
+     * Apaga a avaliação e as notas dela (lançamento errado). As regulares que sobram no bimestre são renumeradas
+     * pela data ("1ª avaliação", "2ª avaliação"…). A auditoria registra a avaliação e cada nota apagada (triggers).
+     *
+     * @return int quantas notas foram apagadas junto
+     */
+    public function deleteExam($examId)
+    {
+
+        $exam = $this->exam($examId);
+        if (!$exam) return 0;
+
+        $this->db->beginTransaction();
+
+        try {
+            $count = $this->db->prepare("SELECT COUNT(*) FROM nota_avaliacao WHERE fk_id_avaliacao = :id");
+            $count->execute([':id' => (int) $examId]);
+            $grades = (int) $count->fetchColumn();
+
+            $this->db->prepare("DELETE FROM avaliacoes WHERE id_avaliacao = :id")->execute([':id' => (int) $examId]);
+
+            if (!$exam->recovery) {
+                $this->db->prepare(
+                    "UPDATE avaliacoes a SET descricao_avaliacao = o.ordem || 'ª avaliação'
+                     FROM (SELECT id_avaliacao, ROW_NUMBER() OVER (ORDER BY data_realizada, id_avaliacao) AS ordem
+                           FROM avaliacoes
+                           WHERE fk_id_turma_disciplina_avaliacao = :disciplineClass AND fk_id_unidade_avaliacao = :unity
+                             AND NOT recuperacao) o
+                     WHERE a.id_avaliacao = o.id_avaliacao AND a.descricao_avaliacao IS DISTINCT FROM o.ordem || 'ª avaliação'"
+                )->execute([':disciplineClass' => (int) $exam->discipline_class_id, ':unity' => (int) $exam->unity]);
+            }
+
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $e;
+        }
+
+        return $grades;
+    }
+
+
+    /**
      * Cria uma avaliação de 0 a 10 (regular ou recuperação do bimestre)
      *
      * @param array $guide ['topics' => assuntos (um por linha), 'material' => material/páginas, 'notes' => observações]
