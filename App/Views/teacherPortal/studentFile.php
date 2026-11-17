@@ -25,7 +25,7 @@ $tones = $this->view->tones;
 $indexCard = function () use ($index, $tones) {
     $parts = [['grades', 'Notas', 'fa-marker'], ['attendance', 'Frequência', 'fa-user-check'], ['behavior', 'Comportamento', 'fa-comment-dots']];
     ob_start(); ?>
-    <div class="card m-panel m-index is-<?= $index['band'] ?>">
+    <div class="card m-panel m-index is-<?= htmlspecialchars((string) $index['band']) ?>">
         <div class="m-index-score">
             <strong><?= $index['score'] ?? '–' ?></strong>
             <span><?= htmlspecialchars($index['label']) ?></span>
@@ -321,7 +321,7 @@ $indexCard = function () use ($index, $tones) {
                         $pill = ['pendente' => ['m-pill-warn', 'Aguardando coordenação'], 'aceita' => ['m-pill-ok', 'Aceita'], 'recusada' => ['m-pill-bad', 'Recusada']][$r->status];
                     ?>
                         <li>
-                            <div><strong><?= htmlspecialchars($r->title) ?></strong> <span class="m-pill <?= $pill[0] ?>"><?= $pill[1] ?></span></div>
+                            <div><strong><?= htmlspecialchars($r->title) ?></strong> <span class="m-pill <?= htmlspecialchars((string) $pill[0]) ?>"><?= htmlspecialchars((string) $pill[1]) ?></span></div>
                             <small><?= htmlspecialchars($r->category) ?> · <?= htmlspecialchars($r->date) ?> · <?= htmlspecialchars($r->teacher) ?></small>
                             <p><?= nl2br(htmlspecialchars($r->description)) ?></p>
                             <?php if ($r->answer) { ?><p class="m-muted-note mb-0">Coordenação: <?= htmlspecialchars($r->answer) ?></p><?php } ?>

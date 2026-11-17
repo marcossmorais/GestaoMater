@@ -93,7 +93,7 @@
                                                     <select name="schoolTermSituationAdd" id="schoolTermSituationAdd" class="form-control custom-select" required>
 
                                                         <?php foreach ($this->view->listSchoolTermStates as $i => $situation) { ?>
-                                                            <option value="<?= $situation->option_value ?>"><?= $situation->option_text ?></option>
+                                                            <option value="<?= htmlspecialchars((string) $situation->option_value) ?>"><?= htmlspecialchars((string) $situation->option_text) ?></option>
                                                         <?php } ?>
 
                                                     </select>

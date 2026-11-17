@@ -16,9 +16,9 @@ $totalRequest = 0;
 
         <form class="col-lg-12 col-sm-11 mx-auto card mt-3 p-3" id="addRematrung">
 
-            <input type="hidden" value="<?= $value->student_id ?>" name="studentId">
-            <input type="hidden" value="<?= $this->view->nextClass[0]->school_term_id ?>" name="schoolTermId">
-            <input type="hidden" value="<?= $this->view->nextClass[0]->class_id ?>" name="classId">
+            <input type="hidden" value="<?= htmlspecialchars((string) $value->student_id) ?>" name="studentId">
+            <input type="hidden" value="<?= htmlspecialchars((string) $this->view->nextClass[0]->school_term_id) ?>" name="schoolTermId">
+            <input type="hidden" value="<?= htmlspecialchars((string) $this->view->nextClass[0]->class_id) ?>" name="classId">
 
             <div class="form-row">
 
@@ -30,7 +30,7 @@ $totalRequest = 0;
                             <img class="miniature-photo" src='<?= $value->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $value->profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>" ' style="width: 30px;">
                         </div>
 
-                        <div class="col-10 text-left font-weight-bold"><?= $value->student_name ?></div>
+                        <div class="col-10 text-left font-weight-bold"><?= htmlspecialchars((string) $value->student_name) ?></div>
 
                     </div>
 
@@ -41,7 +41,7 @@ $totalRequest = 0;
                     <div class="row d-flex justify-content-end mr-2">
 
                         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-light border border-info mr-2"><?= $value->student_situation_school_year ?></button>
+                            <button type="button" class="btn btn-light border border-info mr-2"><?= htmlspecialchars((string) $value->student_situation_school_year) ?></button>
                             <button type="button" class="btn btn-light border border-info">Optou por <?= $value->rematrung_situation == 'Sim' ? 'continuar' : ' não continuar' ?> estudando</button>
                         </div>
 
@@ -62,7 +62,7 @@ $totalRequest = 0;
 
                         <?php foreach ($this->view->nextClass as $key => $class) { ?>
 
-                            <option value="<?= $class->class_id ?>"><?= $class->series ?> ª <?= $class->ballot ?> - <?= $class->course ?> - <?= $class->shift ?> - <?= $class->school_year ?> - Vagas: <?= $class->student_capacity - $class->student_total ?></option>
+                            <option value="<?= htmlspecialchars((string) $class->class_id) ?>"><?= htmlspecialchars((string) $class->series) ?> ª <?= htmlspecialchars((string) $class->ballot) ?> - <?= htmlspecialchars((string) $class->course) ?> - <?= htmlspecialchars((string) $class->shift) ?> - <?= htmlspecialchars((string) $class->school_year) ?> - Vagas: <?= $class->student_capacity - $class->student_total ?></option>
 
                         <?php } ?>
 

@@ -34,11 +34,11 @@ require __DIR__ . '/components/classCards.php';
                         foreach ($cards as $c) {
                             if (isset($seen[$c['classId']])) continue;
                             $seen[$c['classId']] = true; ?>
-                            <button type="button" class="card m-att-class <?= $c['subject'] ?? '' ?>" data-bd-class="<?= $c['classId'] ?>">
+                            <button type="button" class="card m-att-class <?= $c['subject'] ?? '' ?>" data-bd-class="<?= htmlspecialchars((string) $c['classId']) ?>">
                                 <span class="m-att-class-badge"><?= htmlspecialchars($c['label']) ?></span>
                                 <span class="m-att-class-body">
                                     <strong><?= htmlspecialchars($c['course']) ?> · <?= htmlspecialchars($c['shift']) ?></strong>
-                                    <small><?= $c['students'] ?> alunos</small>
+                                    <small><?= htmlspecialchars((string) $c['students']) ?> alunos</small>
                                 </span>
                                 <i class="fas fa-chevron-right m-att-class-go"></i>
                             </button>
@@ -63,7 +63,7 @@ require __DIR__ . '/components/classCards.php';
                         <span class="m-att-label">Tipo de aviso</span>
                         <div class="m-board-types" data-board-types>
                             <?php foreach ($this->view->boardTypes as $key => $t) { ?>
-                                <button type="button" class="m-board-type is-type-<?= $key ?> <?= $key === 'aviso' ? 'is-active' : '' ?>" data-type="<?= $key ?>" aria-pressed="<?= $key === 'aviso' ? 'true' : 'false' ?>"><i class="fas <?= $t['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($t['label']) ?></button>
+                                <button type="button" class="m-board-type is-type-<?= $key ?> <?= $key === 'aviso' ? 'is-active' : '' ?>" data-type="<?= $key ?>" aria-pressed="<?= $key === 'aviso' ? 'true' : 'false' ?>"><i class="fas <?= htmlspecialchars((string) $t['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($t['label']) ?></button>
                             <?php } ?>
                         </div>
                     </div>

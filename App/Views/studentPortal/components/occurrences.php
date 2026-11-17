@@ -29,10 +29,10 @@ foreach ($occurrences as $occ) {
             <div class="col-sm-11">
                 <div class="d-flex align-items-center justify-content-between flex-wrap">
                     <div>
-                        <span class="badge <?= $badgeStyle ?> mr-2"><?= $occ->categoria ?></span>
+                        <span class="badge <?= $badgeStyle ?> mr-2"><?= htmlspecialchars((string) $occ->categoria) ?></span>
                         <strong class="text-dark"><?= htmlspecialchars($occ->titulo) ?></strong>
                     </div>
-                    <small class="text-muted"><i class="fas fa-calendar-alt mr-1"></i><?= $occ->data_ocorrencia_fmt ?></small>
+                    <small class="text-muted"><i class="fas fa-calendar-alt mr-1"></i><?= htmlspecialchars((string) $occ->data_ocorrencia_fmt) ?></small>
                 </div>
                 <p class="mt-2 text-muted mb-2"><?= nl2br(htmlspecialchars($occ->descricao)) ?></p>
 
@@ -46,11 +46,11 @@ foreach ($occurrences as $occ) {
                     <small class="text-muted"><i class="fas fa-user-edit mr-1"></i>Registrado por <?= htmlspecialchars($occ->registrado_por) ?></small>
 
                     <?php if ($occ->requer_ciencia) { ?>
-                        <div id="occAckBox_<?= $occ->id_ocorrencia ?>">
+                        <div id="occAckBox_<?= htmlspecialchars((string) $occ->id_ocorrencia) ?>">
                             <?php if ($occ->ciencia_responsavel) { ?>
                                 <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Ciência dos Pais Confirmada</span>
                             <?php } else { ?>
-                                <button type="button" class="btn btn-sm btn-outline-success font-weight-bold" onclick="acknowledgeOccurrence(<?= $occ->id_ocorrencia ?>)">
+                                <button type="button" class="btn btn-sm btn-outline-success font-weight-bold" onclick="acknowledgeOccurrence(<?= htmlspecialchars((string) $occ->id_ocorrencia) ?>)">
                                     <i class="fas fa-signature mr-1"></i> Confirmar Ciência dos Responsáveis
                                 </button>
                             <?php } ?>

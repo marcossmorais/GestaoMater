@@ -4,10 +4,10 @@ if (count($this->view->listDiscipline) >= 1) {
 
     foreach ($this->view->listDiscipline as $i => $discipline) { ?>
 
-        <tr id="disciplina<?= $discipline->discipline_id ?>">
-            <td><?= $discipline->discipline_name ?></td>
-            <td><?= $discipline->acronym ?></td>
-            <td><?= $discipline->discipline_modality ?></td>
+        <tr id="disciplina<?= htmlspecialchars((string) $discipline->discipline_id) ?>">
+            <td><?= htmlspecialchars((string) $discipline->discipline_name) ?></td>
+            <td><?= htmlspecialchars((string) $discipline->acronym) ?></td>
+            <td><?= htmlspecialchars((string) $discipline->discipline_modality) ?></td>
         </tr>
 
     <?php } ?>

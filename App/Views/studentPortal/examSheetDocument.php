@@ -31,7 +31,7 @@ require __DIR__ . '/documentHead.php';
             <?php if ($all) { ?>
                 <div><span>Período das provas</span><strong><?= date('d/m', strtotime($summary['first'])) ?> a <?= date('d/m', strtotime($summary['last'])) ?></strong></div>
                 <div><span>Próxima avaliação</span><strong><?= $summary['next'] ? date('d/m', strtotime($summary['next'])) . ' · ' . htmlspecialchars(implode(', ', $summary['nextNames'])) : 'Nenhuma pela frente' ?></strong></div>
-                <div><span>Assuntos divulgados</span><strong><?= $summary['withGuide'] ?> de <?= $summary['total'] ?></strong></div>
+                <div><span>Assuntos divulgados</span><strong><?= htmlspecialchars((string) $summary['withGuide']) ?> de <?= htmlspecialchars((string) $summary['total']) ?></strong></div>
             <?php } ?>
         </div>
 
@@ -55,7 +55,7 @@ require __DIR__ . '/documentHead.php';
                                     <th scope="rowgroup" rowspan="<?= count($exams) ?>"><?= htmlspecialchars($discipline) ?><small><?= htmlspecialchars($e->teacher) ?></small></th>
                                 <?php } ?>
                                 <td class="<?= $e->recovery ? 'is-rec' : '' ?>"><strong><?= htmlspecialchars($e->label) ?></strong><?php if ($types !== '') { ?><small><?= htmlspecialchars($types) ?></small><?php } ?></td>
-                                <td class="date"><strong><?= date('d/m', $time) ?></strong> <?= $weekdays[(int) date('w', $time)] ?></td>
+                                <td class="date"><strong><?= date('d/m', $time) ?></strong> <?= htmlspecialchars((string) $weekdays[(int) date('w', $time)]) ?></td>
                                 <td>
                                     <?= $topics ? htmlspecialchars(implode('; ', $topics)) : '<em>A divulgar</em>' ?>
                                     <?php if ($e->guide) { ?><small class="note"><?= nl2br(htmlspecialchars($e->guide)) ?></small><?php } ?>

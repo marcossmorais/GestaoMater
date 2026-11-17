@@ -74,7 +74,7 @@
 
                                         <?php foreach ($this->view->availableSex as $key => $sex) { ?>
 
-                                            <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $sex->option_value) ?>"><?= htmlspecialchars((string) $sex->option_text) ?></option>
 
                                         <?php } ?>
 
@@ -123,7 +123,7 @@
 
                                         <?php foreach ($this->view->pcd as $key => $pcd) { ?>
 
-                                            <option value="<?= $pcd->option_value ?>"><?= $pcd->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $pcd->option_value) ?>"><?= htmlspecialchars((string) $pcd->option_text) ?></option>
 
                                         <?php } ?>
 
@@ -193,7 +193,7 @@
 
                                         <?php foreach ($this->view->bloodType as $key => $bloodType) { ?>
 
-                                            <option value="<?= $bloodType->option_value ?>"><?= $bloodType->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $bloodType->option_value) ?>"><?= htmlspecialchars((string) $bloodType->option_text) ?></option>
 
                                         <?php } ?>
 
@@ -264,7 +264,7 @@
                                         ?>
                                             <?php if ($totalVacancies >= 1) { ?>
 
-                                                <option value="<?= $class->class_id ?>"><?= $newName ?></option>
+                                                <option value="<?= htmlspecialchars((string) $class->class_id) ?>"><?= htmlspecialchars((string) $newName) ?></option>
 
                                             <?php } ?>
 

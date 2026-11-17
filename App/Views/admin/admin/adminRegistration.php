@@ -67,7 +67,7 @@
 
                                             <?php foreach ($this->view->availableSex as $key => $sex) { ?>
 
-                                                <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $sex->option_value) ?>"><?= htmlspecialchars((string) $sex->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -106,7 +106,7 @@
 
                                             <?php foreach ($this->view->bloodType as $key => $bloodType) { ?>
 
-                                                <option value="<?= $bloodType->option_value ?>"><?= $bloodType->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $bloodType->option_value) ?>"><?= htmlspecialchars((string) $bloodType->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -192,7 +192,7 @@
 
                                             <?php foreach ($this->view->pcd as $key => $pcd) { ?>
 
-                                                <option value="<?= $pcd->option_value ?>"><?= $pcd->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $pcd->option_value) ?>"><?= htmlspecialchars((string) $pcd->option_text) ?></option>
                                             <?php } ?>
 
                                         </select>
@@ -213,7 +213,7 @@
 
                                             <?php foreach ($this->listHierarchyFunction as $key => $value) { ?>
 
-                                                <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
                                             <?php } ?>
 
                                         </select>

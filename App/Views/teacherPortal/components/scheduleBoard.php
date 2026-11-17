@@ -37,7 +37,7 @@ $slotCard = function ($slot, $d, $compact) use ($state, $today, $time, &$nextMar
     <article class="m-slot <?= Subject::css($slot->nome_disciplina) ?> <?= $st ?>">
         <span class="m-slot-ico"><i class="fas <?= Subject::icon($slot->nome_disciplina) ?>" aria-hidden="true"></i></span>
         <div class="m-slot-body">
-            <span class="m-slot-time"><?= $slot->hora_inicio ?> – <?= $slot->hora_fim ?>
+            <span class="m-slot-time"><?= htmlspecialchars((string) $slot->hora_inicio) ?> – <?= htmlspecialchars((string) $slot->hora_fim) ?>
                 <?php if ($st === 'is-now') { ?><span class="m-pill m-pill-info">agora</span><?php } elseif ($next) { ?><span class="m-pill m-pill-warn">próxima</span><?php } ?>
             </span>
             <strong><?= htmlspecialchars($slot->nome_disciplina) ?></strong>
@@ -59,7 +59,7 @@ $slotCard = function ($slot, $d, $compact) use ($state, $today, $time, &$nextMar
             <div class="m-page-head">
                 <div>
                     <h6 class="m-0">Meu horário</h6>
-                    <p>Semana de <?= $dates[2] ?> a <?= $dates[6] ?> · <?= (int) $totalClasses ?> aula<?= $totalClasses == 1 ? '' : 's' ?> por semana</p>
+                    <p>Semana de <?= htmlspecialchars((string) $dates[2]) ?> a <?= htmlspecialchars((string) $dates[6]) ?> · <?= (int) $totalClasses ?> aula<?= $totalClasses == 1 ? '' : 's' ?> por semana</p>
                 </div>
                 <div class="m-seg" data-schedule-mode role="group" aria-label="Modo de exibição">
                     <button type="button" data-mode="week" class="is-active"><i class="fas fa-th-large mr-1"></i>Semana</button>
@@ -73,7 +73,7 @@ $slotCard = function ($slot, $d, $compact) use ($state, $today, $time, &$nextMar
                     <div class="m-week-col <?= $d === $today ? 'is-today' : '' ?>">
                         <div class="m-week-head">
                             <strong><?= htmlspecialchars($shortDayNames[$d]) ?></strong>
-                            <span><?= $dates[$d] ?></span>
+                            <span><?= htmlspecialchars((string) $dates[$d]) ?></span>
                             <?php if ($d === $today) { ?><em>hoje</em><?php } ?>
                         </div>
                         <?php if (!$slots) { ?>
@@ -90,7 +90,7 @@ $slotCard = function ($slot, $d, $compact) use ($state, $today, $time, &$nextMar
                     <?php for ($d = 2; $d <= 6; $d++) { $count = count($scheduleByDay[$d] ?? []); ?>
                         <button type="button" role="tab" class="m-day-chip <?= $d === $selected ? 'is-active' : '' ?>" data-day="<?= $d ?>" aria-selected="<?= $d === $selected ? 'true' : 'false' ?>">
                             <strong><?= htmlspecialchars($shortDayNames[$d]) ?></strong>
-                            <span><?= $dates[$d] ?></span>
+                            <span><?= htmlspecialchars((string) $dates[$d]) ?></span>
                             <small><?= $count ?> aula<?= $count === 1 ? '' : 's' ?></small>
                         </button>
                     <?php } ?>

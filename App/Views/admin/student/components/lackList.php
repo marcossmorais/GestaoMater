@@ -2,11 +2,11 @@
 
     foreach ($this->view->lackList as $key => $lack) { ?>
 
-        <tr id="lack<?= $lack->lack_id?>">
+        <tr id="lack<?= htmlspecialchars((string) $lack->lack_id) ?>">
             
-            <td class="text-left"><?= $lack->discipline_name ?></td>
-            <td><?= $lack->unity ?></td>
-            <td><?= $lack->total_lack ?></td>
+            <td class="text-left"><?= htmlspecialchars((string) $lack->discipline_name) ?></td>
+            <td><?= htmlspecialchars((string) $lack->unity) ?></td>
+            <td><?= htmlspecialchars((string) $lack->total_lack) ?></td>
 
         </tr>
 

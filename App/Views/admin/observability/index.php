@@ -89,13 +89,13 @@ $low = function ($grade) use ($passing) {
                             <?php foreach ($summary['classes'] as $c) { ?>
                                 <tr>
                                     <td data-label="Turma"><a href="<?= htmlspecialchars($classUrl($c['id'])) ?>" class="m-obs-link"><?= htmlspecialchars($c['label']) ?></a></td>
-                                    <td data-label="Alunos"><?= $c['students'] ?></td>
+                                    <td data-label="Alunos"><?= htmlspecialchars((string) $c['students']) ?></td>
                                     <td data-label="Média" class="<?= $low($c['average']) ?>"><?= obsGrade($c['average']) ?></td>
                                     <td data-label="Frequência" class="<?= $c['attendance'] !== null && $c['attendance'] < $rule['minAttendance'] ? 'is-low' : '' ?>"><?= obsPct($c['attendance']) ?></td>
                                     <td data-label="Em risco"><?= $c['atRisk'] ? '<span class="m-pill m-pill-bad">' . $c['atRisk'] . '</span>' : '0' ?></td>
                                     <td data-label="Chamadas"><?= obsPct($c['callShare']) ?></td>
                                     <td data-label="Notas pendentes"><?= $c['pendingGrades'] ? '<span class="m-pill m-pill-warn">' . $c['pendingGrades'] . '</span>' : '0' ?></td>
-                                    <td data-label="Ocorrências"><?= $c['occurrences'] ?><?= $c['pendingAck'] ? ' <small class="m-obs-note">' . $c['pendingAck'] . ' sem ciência</small>' : '' ?></td>
+                                    <td data-label="Ocorrências"><?= htmlspecialchars((string) $c['occurrences']) ?><?= $c['pendingAck'] ? ' <small class="m-obs-note">' . $c['pendingAck'] . ' sem ciência</small>' : '' ?></td>
                                 </tr>
                             <?php } ?>
                         </tbody>
@@ -112,8 +112,8 @@ $low = function ($grade) use ($passing) {
                                 <span>Média <b class="<?= $low($d['average']) ?>"><?= obsGrade($d['average']) ?></b></span>
                                 <span>Abaixo da média <b><?= obsPct($d['belowShare']) ?></b></span>
                                 <span><?= count($d['classes']) ?> turma<?= count($d['classes']) === 1 ? '' : 's' ?></span>
-                                <?php if ($d['pendingGrades']) { ?><span class="m-pill m-pill-warn"><?= $d['pendingGrades'] ?> notas pendentes</span><?php } ?>
-                                <?php if ($d['missingExams']) { ?><span class="m-pill m-pill-info"><?= $d['missingExams'] ?> avaliações a criar</span><?php } ?>
+                                <?php if ($d['pendingGrades']) { ?><span class="m-pill m-pill-warn"><?= htmlspecialchars((string) $d['pendingGrades']) ?> notas pendentes</span><?php } ?>
+                                <?php if ($d['missingExams']) { ?><span class="m-pill m-pill-info"><?= htmlspecialchars((string) $d['missingExams']) ?> avaliações a criar</span><?php } ?>
                             </span>
                         </summary>
                         <div class="m-obs-scroll"><table class="m-obs-table">
@@ -127,8 +127,8 @@ $low = function ($grade) use ($passing) {
                                         <td data-label="Professor"><?= htmlspecialchars($t['teacher']) ?></td>
                                         <td data-label="Média" class="<?= $low($t['average']) ?>"><?= obsGrade($t['average']) ?></td>
                                         <td data-label="Abaixo da média"><?= obsPct($t['belowShare']) ?></td>
-                                        <td data-label="Avaliações"><?= $t['exams'] ?> de <?= $t['expectedExams'] ?></td>
-                                        <td data-label="Notas pendentes"><?= $t['pendingGrades'] ?></td>
+                                        <td data-label="Avaliações"><?= htmlspecialchars((string) $t['exams']) ?> de <?= htmlspecialchars((string) $t['expectedExams']) ?></td>
+                                        <td data-label="Notas pendentes"><?= htmlspecialchars((string) $t['pendingGrades']) ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -147,19 +147,19 @@ $low = function ($grade) use ($passing) {
                         <summary>
                             <strong><?= htmlspecialchars($t['name']) ?></strong>
                             <span class="m-obs-stats">
-                                <span class="m-pill <?= $status[0] ?>"><?= $status[1] ?></span>
+                                <span class="m-pill <?= htmlspecialchars((string) $status[0]) ?>"><?= htmlspecialchars((string) $status[1]) ?></span>
                                 <span><?= count($t['classes']) ?> turma<?= count($t['classes']) === 1 ? '' : 's' ?> · <?= count($t['disciplines']) ?> disciplina<?= count($t['disciplines']) === 1 ? '' : 's' ?></span>
                                 <span>Chamadas <b><?= obsPct($t['callShare']) ?></b></span>
                                 <span>Última <b><?= $t['lastCall'] ?: '—' ?></b></span>
-                                <?php if ($t['pendingGrades']) { ?><span class="m-pill m-pill-warn"><?= $t['pendingGrades'] ?> notas pendentes</span><?php } ?>
+                                <?php if ($t['pendingGrades']) { ?><span class="m-pill m-pill-warn"><?= htmlspecialchars((string) $t['pendingGrades']) ?> notas pendentes</span><?php } ?>
                             </span>
                         </summary>
 
                         <div class="m-obs-facts">
-                            <span>Diário: <b><?= $t['diary'] ?></b> aula<?= $t['diary'] === 1 ? '' : 's' ?> registrada<?= $t['diary'] === 1 ? '' : 's' ?> em <?= $t['calls'] ?> chamada<?= $t['calls'] === 1 ? '' : 's' ?></span>
-                            <span>Avaliações a criar: <b><?= $t['missingExams'] ?></b></span>
-                            <span>Aulas como substituto: <b><?= $t['substitute'] ?></b></span>
-                            <span>Aulas suas com troca: <b><?= $t['exceptions'] ?></b></span>
+                            <span>Diário: <b><?= htmlspecialchars((string) $t['diary']) ?></b> aula<?= $t['diary'] === 1 ? '' : 's' ?> registrada<?= $t['diary'] === 1 ? '' : 's' ?> em <?= htmlspecialchars((string) $t['calls']) ?> chamada<?= $t['calls'] === 1 ? '' : 's' ?></span>
+                            <span>Avaliações a criar: <b><?= htmlspecialchars((string) $t['missingExams']) ?></b></span>
+                            <span>Aulas como substituto: <b><?= htmlspecialchars((string) $t['substitute']) ?></b></span>
+                            <span>Aulas suas com troca: <b><?= htmlspecialchars((string) $t['exceptions']) ?></b></span>
                             <button type="button" class="btn btn-light btn-sm" data-teacher-profile="<?= (int) $t['id'] ?>"><i class="fas fa-id-card mr-2"></i>Abrir perfil</button>
                         </div>
 
@@ -172,11 +172,11 @@ $low = function ($grade) use ($passing) {
                                     <tr>
                                         <td data-label="Turma"><a href="<?= htmlspecialchars($classUrl($a['classId'])) ?>" class="m-obs-link"><?= htmlspecialchars($a['classLabel']) ?></a></td>
                                         <td data-label="Disciplina"><?= htmlspecialchars($a['discipline']) ?></td>
-                                        <td data-label="Chamadas"><?= $a['lessons'] ?> de <?= $a['expected'] ?> <small class="m-obs-note"><?= obsPct($a['callShare']) ?></small></td>
+                                        <td data-label="Chamadas"><?= htmlspecialchars((string) $a['lessons']) ?> de <?= htmlspecialchars((string) $a['expected']) ?> <small class="m-obs-note"><?= obsPct($a['callShare']) ?></small></td>
                                         <td data-label="Última chamada"><?= $a['lastCall'] ?: '—' ?></td>
-                                        <td data-label="Diário"><?= $a['diary'] ?></td>
-                                        <td data-label="Avaliações"><?= $a['exams'] ?> de <?= $a['expectedExams'] ?></td>
-                                        <td data-label="Notas pendentes"><?= $a['pendingGrades'] ?></td>
+                                        <td data-label="Diário"><?= htmlspecialchars((string) $a['diary']) ?></td>
+                                        <td data-label="Avaliações"><?= htmlspecialchars((string) $a['exams']) ?> de <?= htmlspecialchars((string) $a['expectedExams']) ?></td>
+                                        <td data-label="Notas pendentes"><?= htmlspecialchars((string) $a['pendingGrades']) ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>

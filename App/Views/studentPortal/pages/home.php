@@ -103,7 +103,7 @@ require __DIR__ . '../../../../config/variables.php';
                             </li>
 
                             <li class="nav-item class">
-                                <a class="nav-link" aria-expanded="false" href="#"><?= $_SESSION['Student']['class'] ?></a>
+                                <a class="nav-link" aria-expanded="false" href="#"><?= htmlspecialchars((string) $_SESSION['Student']['class']) ?></a>
                             </li>
 
                             <li class="nav-item mr-2 nav-fixed">
@@ -199,16 +199,16 @@ require __DIR__ . '../../../../config/variables.php';
 
                         <div containerBulletin class="col-lg-11 mx-auto card mb-4 mt-3 p-sm-5"></div>
 
-                        <input id="name" type="hidden" value="<?= $_SESSION['Student']['name'] ?>">
-                        <input id="courseModality" value="<?= $this->view->studentDataGeneral[0]->course_modality ?>" type="hidden">
-                        <input type="hidden" id="schoolYear" value="<?= $this->view->studentDataGeneral[0]->school_year ?>">
-                        <input type="hidden" id="numberClassroom" value="<?= $this->view->studentDataGeneral[0]->number_classroom ?>">
+                        <input id="name" type="hidden" value="<?= htmlspecialchars((string) $_SESSION['Student']['name']) ?>">
+                        <input id="courseModality" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->course_modality) ?>" type="hidden">
+                        <input type="hidden" id="schoolYear" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->school_year) ?>">
+                        <input type="hidden" id="numberClassroom" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->number_classroom) ?>">
 
-                        <input type="hidden" id="classData" value="<?= $this->view->studentDataGeneral[0]->acronym_series ?> <?= $this->view->studentDataGeneral[0]->ballot ?> - <?= $this->view->studentDataGeneral[0]->course ?> - <?= $this->view->studentDataGeneral[0]->shift ?>">
+                        <input type="hidden" id="classData" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->acronym_series) ?> <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->ballot) ?> - <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->course) ?> - <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->shift) ?>">
 
                         <?php $modality = $this->view->studentDataGeneral[0]->course_modality_id == 1 ? '' : 'Técnico' ?>
 
-                        <input type="hidden" id="series" value="<?= $this->view->studentDataGeneral[0]->acronym_series ?>ª - <?= $modality ?> em <?= $this->view->studentDataGeneral[0]->course_name ?> ">
+                        <input type="hidden" id="series" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->acronym_series) ?>ª - <?= $modality ?> em <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->course_name) ?> ">
 
                     </div>
 

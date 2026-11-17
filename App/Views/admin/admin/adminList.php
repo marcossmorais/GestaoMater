@@ -34,15 +34,15 @@ require __DIR__ . '../../../../config/variables.php';
 
                                 <?php foreach ($this->view->listAdmin as $key => $value) { ?>
 
-                                    <tr id="admin<?= $value->id ?>">
+                                    <tr id="admin<?= htmlspecialchars((string) $value->id) ?>">
                                         <td class="text-right">
                                             <img class="miniature-photo" src='<?= $value->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $value->profile_photo ?>' alt="" onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>"'>
                                         </td>
 
-                                        <td class="text-left"><?= $value->name ?></td>
-                                        <td class=""><?= $value->hierarchy_function ?></td>
-                                        <td class=""><?= $value->email ?></td>
-                                        <td class=""><?= $value->account_status ?></td>
+                                        <td class="text-left"><?= htmlspecialchars((string) $value->name) ?></td>
+                                        <td class=""><?= htmlspecialchars((string) $value->hierarchy_function) ?></td>
+                                        <td class=""><?= htmlspecialchars((string) $value->email) ?></td>
+                                        <td class=""><?= htmlspecialchars((string) $value->account_status) ?></td>
 
                                     </tr>
 

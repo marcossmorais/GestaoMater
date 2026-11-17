@@ -23,25 +23,25 @@ require __DIR__ . '../../../../../config/variables.php';
                         <div class="m-prof-hero">
 
                             <div class="m-prof-avatar" data-toggle="tooltip" data-placement="bottom" title="Alterar foto">
-                                <img data-toggle="modal" data-target="#profilePhotoModal" src='<?= $student->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $student->profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>" ' alt="Foto de <?= $student->name ?>">
+                                <img data-toggle="modal" data-target="#profilePhotoModal" src='<?= $student->profile_photo == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $student->profile_photo ?>' onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>" ' alt="Foto de <?= htmlspecialchars((string) $student->name) ?>">
                                 <span class="m-prof-avatar-edit"><i class="fas fa-camera"></i></span>
                             </div>
 
-                            <span class="m-prof-name"><?= $student->name ?></span>
+                            <span class="m-prof-name"><?= htmlspecialchars((string) $student->name) ?></span>
 
                             <?php if ($this->view->schoolTermActive[0]->option_value == $enr->school_term_id) { ?>
 
-                                <span class="m-prof-sub class-data"><?= $enr->acronym_series ?> <?= $enr->ballot ?> - <?= $enr->course ?> - <?= $enr->shift ?></span>
+                                <span class="m-prof-sub class-data"><?= htmlspecialchars((string) $enr->acronym_series) ?> <?= htmlspecialchars((string) $enr->ballot) ?> - <?= htmlspecialchars((string) $enr->course) ?> - <?= htmlspecialchars((string) $enr->shift) ?></span>
 
                             <?php } else { ?>
 
-                                <span class="m-prof-sub"><?= $student->situation ?></span>
+                                <span class="m-prof-sub"><?= htmlspecialchars((string) $student->situation) ?></span>
 
                             <?php } ?>
 
                             <div class="m-prof-chips">
-                                <span class="m-prof-chip <?= $enr->situation_id == 1 ? 'is-ok' : 'is-off' ?>"><?= $enr->situation ?></span>
-                                <span class="m-prof-chip"><i class="fas fa-hashtag"></i> Matrícula <?= $enr->enrollment_id ?></span>
+                                <span class="m-prof-chip <?= $enr->situation_id == 1 ? 'is-ok' : 'is-off' ?>"><?= htmlspecialchars((string) $enr->situation) ?></span>
+                                <span class="m-prof-chip"><i class="fas fa-hashtag"></i> Matrícula <?= htmlspecialchars((string) $enr->enrollment_id) ?></span>
                             </div>
 
                         </div>
@@ -129,10 +129,10 @@ require __DIR__ . '../../../../../config/variables.php';
                                                 <i class="fas fa-print mr-1"></i> Emitir Declaração
                                             </button>
                                             <div class="dropdown-menu shadow w-100" aria-labelledby="dropdownDeclaracoes">
-                                                <a class="dropdown-item" href="/admin/aluno/declaracao/matricula?enrollmentId=<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" target="_blank">
+                                                <a class="dropdown-item" href="/admin/aluno/declaracao/matricula?enrollmentId=<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" target="_blank">
                                                     <i class="fas fa-file-contract mr-2 text-primary"></i> Declaração de Matrícula (PDF)
                                                 </a>
-                                                <a class="dropdown-item" href="/admin/aluno/declaracao/frequencia?enrollmentId=<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" target="_blank">
+                                                <a class="dropdown-item" href="/admin/aluno/declaracao/frequencia?enrollmentId=<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" target="_blank">
                                                     <i class="fas fa-calendar-check mr-2 text-success"></i> Declaração de Frequência (PDF)
                                                 </a>
                                             </div>
@@ -174,9 +174,9 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                     <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" id="">
 
-                                    <input type="hidden" id="id" value="<?= $student->id ?>" name="id">
+                                    <input type="hidden" id="id" value="<?= htmlspecialchars((string) $student->id) ?>" name="id">
 
-                                    <input type="hidden" id="oldPhoto" name="oldPhoto" value="<?= $student->profile_photo ?>">
+                                    <input type="hidden" id="oldPhoto" name="oldPhoto" value="<?= htmlspecialchars((string) $student->profile_photo) ?>">
 
                                     <div class="row">
 
@@ -220,18 +220,18 @@ require __DIR__ . '../../../../../config/variables.php';
                 $showSummary = $enr->situation_id != 4 && (isset($_SESSION['Admin']) || isset($_SESSION['Teacher']));
                 ?>
 
-                <form id="studentModal<?= $student->id ?>" class="m-prof-form" action="">
+                <form id="studentModal<?= htmlspecialchars((string) $student->id) ?>" class="m-prof-form" action="">
 
-                    <input type="hidden" value="<?= $student->id ?>" name="studentId">
-                    <input type="hidden" value="<?= $student->telephone_id ?>" name="telephoneId">
+                    <input type="hidden" value="<?= htmlspecialchars((string) $student->id) ?>" name="studentId">
+                    <input type="hidden" value="<?= htmlspecialchars((string) $student->telephone_id) ?>" name="telephoneId">
                     <input type="hidden" value="<?= $app_url ?>" name="appUrl">
-                    <input type="hidden" value="<?= $student->address_id ?>" name="addressId">
-                    <input type="hidden" value="<?= $enr->number_classroom ?>" id="classroom_number">
-                    <input value="<?= $enr->enrollment_id ?>" type="hidden" name="enrollmentId">
-                    <input value="<?= $enr->school_year ?>" type="hidden" id="schoolYear">
-                    <input id="courseModality" value="<?= $enr->course_modality ?>" type="hidden" name="courseModality">
+                    <input type="hidden" value="<?= htmlspecialchars((string) $student->address_id) ?>" name="addressId">
+                    <input type="hidden" value="<?= htmlspecialchars((string) $enr->number_classroom) ?>" id="classroom_number">
+                    <input value="<?= htmlspecialchars((string) $enr->enrollment_id) ?>" type="hidden" name="enrollmentId">
+                    <input value="<?= htmlspecialchars((string) $enr->school_year) ?>" type="hidden" id="schoolYear">
+                    <input id="courseModality" value="<?= htmlspecialchars((string) $enr->course_modality) ?>" type="hidden" name="courseModality">
                     <?php $modality = $enr->course_modality_id == 1 ? '' : 'Técnico' ?>
-                    <input type="hidden" id="series" value="<?= $enr->acronym_series ?>ª - <?= $modality ?> em <?= $enr->course_name ?> ">
+                    <input type="hidden" id="series" value="<?= htmlspecialchars((string) $enr->acronym_series) ?>ª - <?= $modality ?> em <?= htmlspecialchars((string) $enr->course_name) ?> ">
 
                     <div class="m-prof-head">
 
@@ -244,9 +244,9 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <div class="m-prof-actions">
 
-                                <span idElement="#studentModal<?= $student->id ?>" formGroup="containerListStudent" class="m-prof-btn edit-data-icon"><i class="fas fa-pen"></i> Editar</span>
+                                <span idElement="#studentModal<?= htmlspecialchars((string) $student->id) ?>" formGroup="containerListStudent" class="m-prof-btn edit-data-icon"><i class="fas fa-pen"></i> Editar</span>
 
-                                <span idElement="#studentModal<?= $student->id ?>" routeUpdate="/admin/aluno/lista/perfil-aluno/atualizar" toastData="Dados atualizados" routeData="#studentModal<?= $student->id ?>" container="containerStudentProfileModal" routeList="/admin/aluno/lista/perfil-aluno" class="m-prof-btn is-primary update-data-icon"><i class="fas fa-check"></i> Salvar</span>
+                                <span idElement="#studentModal<?= htmlspecialchars((string) $student->id) ?>" routeUpdate="/admin/aluno/lista/perfil-aluno/atualizar" toastData="Dados atualizados" routeData="#studentModal<?= htmlspecialchars((string) $student->id) ?>" container="containerStudentProfileModal" routeList="/admin/aluno/lista/perfil-aluno" class="m-prof-btn is-primary update-data-icon"><i class="fas fa-check"></i> Salvar</span>
 
                             </div>
 
@@ -299,38 +299,38 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <div class="m-prof-field m-span-2">
                                 <label for="name">Nome completo</label>
-                                <input type="text" id="name" name="name" disabled class="form-control" value="<?= $student->name ?>">
+                                <input type="text" id="name" name="name" disabled class="form-control" value="<?= htmlspecialchars((string) $student->name) ?>">
                             </div>
 
                             <?php if ($isManager) { ?>
 
                                 <div class="m-prof-field">
                                     <label for="cpf">CPF</label>
-                                    <input type="text" id="cpf" name="cpf" disabled class="form-control" value="<?= $student->cpf ?>">
+                                    <input type="text" id="cpf" name="cpf" disabled class="form-control" value="<?= htmlspecialchars((string) $student->cpf) ?>">
                                 </div>
 
                                 <div class="m-prof-field">
                                     <label for="birthDate">Data de nascimento</label>
-                                    <input type="date" id="birthDate" name="birthDate" disabled class="form-control" value="<?= $student->birth_date ?>" max="2006-01-31" min="1940-01-31">
+                                    <input type="date" id="birthDate" name="birthDate" disabled class="form-control" value="<?= htmlspecialchars((string) $student->birth_date) ?>" max="2006-01-31" min="1940-01-31">
                                 </div>
 
                                 <div class="m-prof-field m-span-2">
                                     <label for="motherName">Nome da mãe</label>
-                                    <input type="text" id="motherName" name="motherName" disabled class="form-control" value="<?= $student->mother ?>">
+                                    <input type="text" id="motherName" name="motherName" disabled class="form-control" value="<?= htmlspecialchars((string) $student->mother) ?>">
                                 </div>
 
                                 <div class="m-prof-field m-span-2">
                                     <label for="fatherName">Nome do pai</label>
-                                    <input type="text" id="fatherName" name="fatherName" disabled class="form-control" value="<?= $student->father ?>">
+                                    <input type="text" id="fatherName" name="fatherName" disabled class="form-control" value="<?= htmlspecialchars((string) $student->father) ?>">
                                 </div>
 
                                 <div class="m-prof-field">
                                     <label for="sex">Sexo</label>
                                     <select id="sex" name="sex" disabled class="form-control custom-select">
-                                        <option value="<?= $student->sex_id ?>"><?= $student->sex ?></option>
+                                        <option value="<?= htmlspecialchars((string) $student->sex_id) ?>"><?= htmlspecialchars((string) $student->sex) ?></option>
                                         <?php foreach ($this->view->availableSex as $key => $sex) { ?>
                                             <?php if ($sex->option_value != $student->sex_id) { ?>
-                                                <option value="<?= $sex->option_value ?>"><?= $sex->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $sex->option_value) ?>"><?= htmlspecialchars((string) $sex->option_text) ?></option>
                                         <?php }
                                         } ?>
                                     </select>
@@ -338,21 +338,21 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                 <div class="m-prof-field">
                                     <label for="nationality">Nacionalidade</label>
-                                    <input type="text" id="nationality" name="nationality" disabled class="form-control" value="<?= $student->nacionality ?>">
+                                    <input type="text" id="nationality" name="nationality" disabled class="form-control" value="<?= htmlspecialchars((string) $student->nacionality) ?>">
                                 </div>
 
                                 <div class="m-prof-field">
                                     <label for="naturalness">Naturalidade</label>
-                                    <input type="text" id="naturalness" name="naturalness" disabled class="form-control" value="<?= $student->naturalness ?>">
+                                    <input type="text" id="naturalness" name="naturalness" disabled class="form-control" value="<?= htmlspecialchars((string) $student->naturalness) ?>">
                                 </div>
 
                                 <div class="m-prof-field">
                                     <label for="pcd">PcD</label>
                                     <select id="pcd" name="pcd" disabled class="form-control custom-select">
-                                        <option value="<?= $student->pcd_id ?>"><?= $student->pcd ?></option>
+                                        <option value="<?= htmlspecialchars((string) $student->pcd_id) ?>"><?= htmlspecialchars((string) $student->pcd) ?></option>
                                         <?php foreach ($this->view->pcd as $key => $pcd) { ?>
                                             <?php if ($pcd->option_value != $student->pcd_id) { ?>
-                                                <option value="<?= $pcd->option_value ?>"><?= $pcd->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $pcd->option_value) ?>"><?= htmlspecialchars((string) $pcd->option_text) ?></option>
                                         <?php }
                                         } ?>
                                     </select>
@@ -363,10 +363,10 @@ require __DIR__ . '../../../../../config/variables.php';
                             <div class="m-prof-field">
                                 <label for="bloodType">Tipo sanguíneo</label>
                                 <select id="bloodType" name="bloodType" disabled class="form-control custom-select">
-                                    <option value="<?= $student->blood_type_id ?>"><?= $student->blood_type ?></option>
+                                    <option value="<?= htmlspecialchars((string) $student->blood_type_id) ?>"><?= htmlspecialchars((string) $student->blood_type) ?></option>
                                     <?php foreach ($this->view->bloodType as $key => $bloodType) { ?>
                                         <?php if ($bloodType->option_value != $student->blood_type_id) { ?>
-                                            <option value="<?= $bloodType->option_value ?>"><?= $bloodType->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $bloodType->option_value) ?>"><?= htmlspecialchars((string) $bloodType->option_text) ?></option>
                                     <?php }
                                     } ?>
                                 </select>
@@ -387,39 +387,39 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <div class="m-prof-field">
                                 <label for="telephoneNumber">Telefone</label>
-                                <input id="telephoneNumber" name="telephoneNumber" type="text" disabled class="form-control" value="<?= $student->telephone_number ?>">
+                                <input id="telephoneNumber" name="telephoneNumber" type="text" disabled class="form-control" value="<?= htmlspecialchars((string) $student->telephone_number) ?>">
                             </div>
 
                             <div class="m-prof-field m-span-2">
                                 <label for="email">E-mail</label>
-                                <input id="email" name="email" type="text" disabled class="form-control" value="<?= $student->email ?>">
+                                <input id="email" name="email" type="text" disabled class="form-control" value="<?= htmlspecialchars((string) $student->email) ?>">
                             </div>
 
                             <?php if ($isManager) { ?>
 
                                 <div class="m-prof-field">
                                     <label for="zipCode">CEP</label>
-                                    <input type="text" id="zipCode" name="zipCode" disabled class="form-control" value="<?= $student->zip_code ?>">
+                                    <input type="text" id="zipCode" name="zipCode" disabled class="form-control" value="<?= htmlspecialchars((string) $student->zip_code) ?>">
                                 </div>
 
                                 <div class="m-prof-field">
                                     <label for="uf">UF</label>
-                                    <input type="text" id="uf" name="uf" disabled class="form-control" value="<?= $student->uf ?>">
+                                    <input type="text" id="uf" name="uf" disabled class="form-control" value="<?= htmlspecialchars((string) $student->uf) ?>">
                                 </div>
 
                                 <div class="m-prof-field">
                                     <label for="county">Município</label>
-                                    <input type="text" id="county" name="county" disabled class="form-control" value="<?= $student->county ?>">
+                                    <input type="text" id="county" name="county" disabled class="form-control" value="<?= htmlspecialchars((string) $student->county) ?>">
                                 </div>
 
                                 <div class="m-prof-field">
                                     <label for="district">Bairro</label>
-                                    <input type="text" id="district" name="district" disabled class="form-control" value="<?= $student->district ?>">
+                                    <input type="text" id="district" name="district" disabled class="form-control" value="<?= htmlspecialchars((string) $student->district) ?>">
                                 </div>
 
                                 <div class="m-prof-field m-span-2">
                                     <label for="address">Endereço</label>
-                                    <input type="text" id="address" name="address" disabled class="form-control" value="<?= $student->address ?>">
+                                    <input type="text" id="address" name="address" disabled class="form-control" value="<?= htmlspecialchars((string) $student->address) ?>">
                                 </div>
 
                             <?php } ?>
@@ -440,10 +440,10 @@ require __DIR__ . '../../../../../config/variables.php';
                             <div class="m-prof-field">
                                 <label for="situationStudentGeneral">Situação na escola</label>
                                 <select id="situationStudentGeneral" name="situationStudentGeneral" disabled class="form-control custom-select">
-                                    <option value="<?= $student->general_situation_id ?>"><?= $student->general_situation ?></option>
+                                    <option value="<?= htmlspecialchars((string) $student->general_situation_id) ?>"><?= htmlspecialchars((string) $student->general_situation) ?></option>
                                     <?php foreach ($this->view->generalSituationStudent as $key => $value) { ?>
                                         <?php if ($value->option_value != $student->general_situation_id) { ?>
-                                            <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
                                     <?php }
                                     } ?>
                                 </select>
@@ -452,10 +452,10 @@ require __DIR__ . '../../../../../config/variables.php';
                             <div class="m-prof-field">
                                 <label for="situationStudent">Situação no período letivo</label>
                                 <select id="situationStudent" name="situationStudent" disabled class="form-control custom-select">
-                                    <option value="<?= $enr->situation_id ?>"><?= $enr->situation ?></option>
+                                    <option value="<?= htmlspecialchars((string) $enr->situation_id) ?>"><?= htmlspecialchars((string) $enr->situation) ?></option>
                                     <?php foreach ($this->view->studentSituation as $key => $value) { ?>
                                         <?php if ($value->option_value != $enr->situation_id) { ?>
-                                            <option value="<?= $value->option_value ?>"><?= $value->option_text ?></option>
+                                            <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
                                     <?php }
                                     } ?>
                                 </select>
@@ -466,7 +466,7 @@ require __DIR__ . '../../../../../config/variables.php';
                                 <div class="m-prof-field">
                                     <label for="accessCode">Código de acesso ao portal</label>
                                     <div class="m-prof-secret">
-                                        <input id="accessCode" name="accessCode" type="password" disabled class="form-control" value="<?= $student->access_code ?>" maxlength="30">
+                                        <input id="accessCode" name="accessCode" type="password" disabled class="form-control" value="<?= htmlspecialchars((string) $student->access_code) ?>" maxlength="30">
                                         <div class="input-group-accessCode" title="Mostrar/ocultar"><i class="fas fa-eye-slash"></i></div>
                                     </div>
                                 </div>
@@ -522,7 +522,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <form id="seekNoteExamStudent" class="mt-3 text-dark" action="">
 
-                                <input value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" type="hidden" name="enrollmentId">
+                                <input value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" type="hidden" name="enrollmentId">
 
                                 <div class="form-row mt-3">
 
@@ -531,7 +531,7 @@ require __DIR__ . '../../../../../config/variables.php';
                                         <input name="examDescription" id="examDescription" type="text" placeholder="Nome da avaliação" class="form-control">
                                     </div>
 
-                                    <input type="hidden" value="<?= $this->view->studentDataEnrollment[0]->class_id ?>" name="classId">
+                                    <input type="hidden" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->class_id) ?>" name="classId">
 
 
                                     <div class="form-group col-lg-4">
@@ -544,7 +544,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -561,7 +561,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -595,8 +595,8 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <form id="addNote" class="col-lg-12" action="">
 
-                                <input value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" type="hidden" name="enrollmentId">
-                                <input value="<?= $this->view->studentDataEnrollment[0]->class_id ?>" type="hidden" name="classId">
+                                <input value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" type="hidden" name="enrollmentId">
+                                <input value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->class_id) ?>" type="hidden" name="classId">
 
                                 <div class="form-row mt-3">
 
@@ -671,7 +671,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <form id="addDisciplineFinalData" class="col-lg-12" action="">
 
-                                <input value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" type="hidden" name="enrollmentId">
+                                <input value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" type="hidden" name="enrollmentId">
                                 <input value="" type="hidden" name="average" id="average">
 
                                 <div class="form-row">
@@ -684,7 +684,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -712,7 +712,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->listSubtitles as $key => $subtitle) { ?>
 
-                                                <option value="<?= $subtitle->option_value ?>"> <?= $subtitle->option_text ?> </option>
+                                                <option value="<?= htmlspecialchars((string) $subtitle->option_value) ?>"> <?= htmlspecialchars((string) $subtitle->option_text) ?> </option>
 
                                             <?php } ?>
 
@@ -776,7 +776,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <form id="addObservation" class="col-lg-12" action="">
 
-                                <input value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" type="hidden" name="enrollmentId">
+                                <input value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" type="hidden" name="enrollmentId">
 
                                 <div class="form-row mt-3">
 
@@ -797,7 +797,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -813,7 +813,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -881,7 +881,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <form id="seekLackStudent" class="mt-3  text-dark" action="">
 
-                                <input value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" type="hidden" name="enrollmentId">
+                                <input value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" type="hidden" name="enrollmentId">
 
                                 <div class="form-row mt-3">
 
@@ -895,7 +895,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -913,7 +913,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -966,8 +966,8 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <form id="addLack" action="" class="col-lg-12">
 
-                                <input value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" type="hidden" name="enrollmentId">
-                                <input type="hidden" value="<?= $this->view->studentDataEnrollment[0]->class_id ?>" name="classId">
+                                <input value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" type="hidden" name="enrollmentId">
+                                <input type="hidden" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->class_id) ?>" name="classId">
 
                                 <div class="form-row mt-3">
 
@@ -979,7 +979,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -995,7 +995,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -1098,7 +1098,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                     <small class="text-muted font-weight-bold">Total de Faltas</small>
 
-                                    <h3 class="mb-0 text-secondary font-weight-bold mt-1" data-sum-total><?= $sum->total_faltas ?></h3>
+                                    <h3 class="mb-0 text-secondary font-weight-bold mt-1" data-sum-total><?= htmlspecialchars((string) $sum->total_faltas) ?></h3>
 
                                     <small class="text-muted">geral no ano</small>
 
@@ -1112,7 +1112,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                     <small class="text-success font-weight-bold"><i class="fas fa-check-circle mr-1"></i>Faltas Abonadas</small>
 
-                                    <h3 class="mb-0 text-success font-weight-bold mt-1" data-sum-abonadas><?= $sum->faltas_abonadas ?></h3>
+                                    <h3 class="mb-0 text-success font-weight-bold mt-1" data-sum-abonadas><?= htmlspecialchars((string) $sum->faltas_abonadas) ?></h3>
 
                                     <small class="text-success">justificadas</small>
 
@@ -1126,7 +1126,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                     <small class="text-danger font-weight-bold"><i class="fas fa-exclamation-circle mr-1"></i>Injustificadas</small>
 
-                                    <h3 class="mb-0 text-danger font-weight-bold mt-1" data-sum-injustificadas><?= $sum->faltas_injustificadas ?></h3>
+                                    <h3 class="mb-0 text-danger font-weight-bold mt-1" data-sum-injustificadas><?= htmlspecialchars((string) $sum->faltas_injustificadas) ?></h3>
 
                                     <small class="text-danger">a recuperar</small>
 
@@ -1140,7 +1140,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                     <small class="text-primary font-weight-bold"><i class="fas fa-file-medical mr-1"></i>Atestados</small>
 
-                                    <h3 class="mb-0 text-primary font-weight-bold mt-1" data-sum-atestados><?= $sum->total_atestados ?></h3>
+                                    <h3 class="mb-0 text-primary font-weight-bold mt-1" data-sum-atestados><?= htmlspecialchars((string) $sum->total_atestados) ?></h3>
 
                                     <small class="text-primary">arquivados</small>
 
@@ -1196,17 +1196,17 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             foreach ($this->view->medicalCertificates as $cert) { ?>
 
-                                                <tr data-cert-id="<?= $cert->id_atestado ?>">
+                                                <tr data-cert-id="<?= htmlspecialchars((string) $cert->id_atestado) ?>">
 
                                                     <td>
 
-                                                        <strong><?= $cert->data_inicio_formatada ?></strong><br>
+                                                        <strong><?= htmlspecialchars((string) $cert->data_inicio_formatada) ?></strong><br>
 
-                                                        <small class="text-muted">até <?= $cert->data_fim_formatada ?></small>
+                                                        <small class="text-muted">até <?= htmlspecialchars((string) $cert->data_fim_formatada) ?></small>
 
                                                     </td>
 
-                                                    <td><span class="badge badge-light border font-weight-bold"><?= $cert->dias ?> dia<?= $cert->dias > 1 ? 's' : '' ?></span></td>
+                                                    <td><span class="badge badge-light border font-weight-bold"><?= htmlspecialchars((string) $cert->dias) ?> dia<?= $cert->dias > 1 ? 's' : '' ?></span></td>
 
                                                     <td>
 
@@ -1236,7 +1236,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                         <?php if ($cert->faltas_abonadas > 0) { ?>
 
-                                                            <span class="badge badge-success font-weight-bold"><?= $cert->faltas_abonadas ?> falta<?= $cert->faltas_abonadas > 1 ? 's' : '' ?></span>
+                                                            <span class="badge badge-success font-weight-bold"><?= htmlspecialchars((string) $cert->faltas_abonadas) ?> falta<?= $cert->faltas_abonadas > 1 ? 's' : '' ?></span>
 
                                                         <?php } else { ?>
 
@@ -1246,7 +1246,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                     </td>
 
-                                                    <td><span class="badge badge-success"><?= $cert->status ?></span></td>
+                                                    <td><span class="badge badge-success"><?= htmlspecialchars((string) $cert->status) ?></span></td>
 
                                                     <td>
 
@@ -1268,7 +1268,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                     <td class="text-center">
 
-                                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMedicalCertificate(<?= $cert->id_atestado ?>)" title="Excluir atestado">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMedicalCertificate(<?= htmlspecialchars((string) $cert->id_atestado) ?>)" title="Excluir atestado">
 
                                                             <i class="fas fa-trash-alt"></i>
 
@@ -1314,9 +1314,9 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <form id="formMedicalCertificate" enctype="multipart/form-data">
 
-                                <input type="hidden" name="enrollmentId" value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>">
+                                <input type="hidden" name="enrollmentId" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>">
 
-                                <input type="hidden" name="studentId" value="<?= $this->view->studentDataEnrollment[0]->id ?>">
+                                <input type="hidden" name="studentId" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->id) ?>">
 
 
 
@@ -1454,7 +1454,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -1472,7 +1472,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -1588,7 +1588,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                     <small class="text-muted font-weight-bold">Total Registrado</small>
 
-                                    <h3 class="mb-0 text-secondary font-weight-bold mt-1" data-sum-occ-total><?= $occSum->total ?></h3>
+                                    <h3 class="mb-0 text-secondary font-weight-bold mt-1" data-sum-occ-total><?= htmlspecialchars((string) $occSum->total) ?></h3>
 
                                     <small class="text-muted">histórico geral</small>
 
@@ -1602,7 +1602,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                     <small class="text-warning font-weight-bold"><i class="fas fa-user-times mr-1"></i>Disciplinares</small>
 
-                                    <h3 class="mb-0 text-warning font-weight-bold mt-1" data-sum-occ-disc><?= $occSum->disciplinares ?></h3>
+                                    <h3 class="mb-0 text-warning font-weight-bold mt-1" data-sum-occ-disc><?= htmlspecialchars((string) $occSum->disciplinares) ?></h3>
 
                                     <small class="text-muted">comportamentais</small>
 
@@ -1616,7 +1616,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                     <small class="text-primary font-weight-bold"><i class="fas fa-book-reader mr-1"></i>Pedagógicas</small>
 
-                                    <h3 class="mb-0 text-primary font-weight-bold mt-1" data-sum-occ-ped><?= $occSum->pedagogicas ?></h3>
+                                    <h3 class="mb-0 text-primary font-weight-bold mt-1" data-sum-occ-ped><?= htmlspecialchars((string) $occSum->pedagogicas) ?></h3>
 
                                     <small class="text-muted">desempenho/tarefas</small>
 
@@ -1630,7 +1630,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                     <small class="text-success font-weight-bold"><i class="fas fa-award mr-1"></i>Elogios / Méritos</small>
 
-                                    <h3 class="mb-0 text-success font-weight-bold mt-1" data-sum-occ-elog><?= $occSum->elogios ?></h3>
+                                    <h3 class="mb-0 text-success font-weight-bold mt-1" data-sum-occ-elog><?= htmlspecialchars((string) $occSum->elogios) ?></h3>
 
                                     <small class="text-success">reconhecimentos</small>
 
@@ -1698,11 +1698,11 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             ?>
 
-                                                <tr data-occ-id="<?= $occ->id_ocorrencia ?>">
+                                                <tr data-occ-id="<?= htmlspecialchars((string) $occ->id_ocorrencia) ?>">
 
-                                                    <td><strong><?= $occ->data_ocorrencia_fmt ?></strong></td>
+                                                    <td><strong><?= htmlspecialchars((string) $occ->data_ocorrencia_fmt) ?></strong></td>
 
-                                                    <td><span class="badge <?= $badgeCat ?>"><?= $occ->categoria ?></span></td>
+                                                    <td><span class="badge <?= $badgeCat ?>"><?= htmlspecialchars((string) $occ->categoria) ?></span></td>
 
                                                     <td>
 
@@ -1716,7 +1716,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                         <span class="badge <?= $occ->gravidade === 'Alta' || $occ->gravidade === 'Gravíssima' ? 'badge-danger' : ($occ->gravidade === 'Média' ? 'badge-warning' : 'badge-light border') ?>">
 
-                                                            <?= $occ->gravidade ?>
+                                                            <?= htmlspecialchars((string) $occ->gravidade) ?>
 
                                                         </span>
 
@@ -1732,7 +1732,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                                 <span class="badge badge-success"><i class="fas fa-check mr-1"></i> Ciente</span><br>
 
-                                                                <small class="text-muted"><?= $occ->ciencia_em_fmt ?></small>
+                                                                <small class="text-muted"><?= htmlspecialchars((string) $occ->ciencia_em_fmt) ?></small>
 
                                                             <?php } else { ?>
 
@@ -1752,7 +1752,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                     <td class="text-center">
 
-                                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteOccurrence(<?= $occ->id_ocorrencia ?>)" title="Excluir ocorrência">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteOccurrence(<?= htmlspecialchars((string) $occ->id_ocorrencia) ?>)" title="Excluir ocorrência">
 
                                                             <i class="fas fa-trash-alt"></i>
 
@@ -1798,9 +1798,9 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <form id="formOccurrence">
 
-                                <input type="hidden" name="enrollmentId" value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>">
+                                <input type="hidden" name="enrollmentId" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>">
 
-                                <input type="hidden" name="studentId" value="<?= $this->view->studentDataEnrollment[0]->id ?>">
+                                <input type="hidden" name="studentId" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->id) ?>">
 
 
 
@@ -1894,7 +1894,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -1998,7 +1998,7 @@ require __DIR__ . '../../../../../config/variables.php';
                                     foreach ($this->view->guardians as $g) { 
                                         $cleanPhone = preg_replace('/\D/', '', $g->telefone);
                                     ?>
-                                        <div class="col-md-6 mb-3" data-guardian-card="<?= $g->id_responsavel ?>">
+                                        <div class="col-md-6 mb-3" data-guardian-card="<?= htmlspecialchars((string) $g->id_responsavel) ?>">
                                             <div class="card p-3 h-100 shadow-sm border" style="border-radius: 12px; border-left: 4px solid <?= $g->autorizado_buscar ? '#16a34a' : '#dc2626' ?> !important;">
                                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                                     <div>
@@ -2037,10 +2037,10 @@ require __DIR__ . '../../../../../config/variables.php';
                                                 <?php } ?>
 
                                                 <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleGuardianStatus(<?= $g->id_responsavel ?>)">
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleGuardianStatus(<?= htmlspecialchars((string) $g->id_responsavel) ?>)">
                                                         <i class="fas fa-sync-alt mr-1"></i><?= $g->autorizado_buscar ? 'Bloquear Retirada' : 'Autorizar Retirada' ?>
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteGuardian(<?= $g->id_responsavel ?>)" title="Excluir cadastro">
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteGuardian(<?= htmlspecialchars((string) $g->id_responsavel) ?>)" title="Excluir cadastro">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </div>
@@ -2061,7 +2061,7 @@ require __DIR__ . '../../../../../config/variables.php';
                         <div class="collapse card p-4 shadow-sm" id="guardians-add" data-parent="#accordion-guardians" style="border-radius: 12px;">
                             <h6 class="font-weight-bold text-success mb-3"><i class="fas fa-user-plus mr-2"></i>Cadastrar Responsável ou Pessoa Autorizada</h6>
                             <form id="formGuardian">
-                                <input type="hidden" name="studentId" value="<?= $this->view->studentDataEnrollment[0]->id ?>">
+                                <input type="hidden" name="studentId" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->id) ?>">
 
                                 <div class="form-row">
                                     <div class="form-group col-md-8">
@@ -2160,8 +2160,8 @@ require __DIR__ . '../../../../../config/variables.php';
 
                             <form id="seekAverageStudentProfile" class="text-dark mt-3 accordion" action="">
 
-                                <input type="hidden" value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" name="enrollmentId">
-                                <input type="hidden" value="<?= $this->view->studentDataEnrollment[0]->class_id ?>" name="classId">
+                                <input type="hidden" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" name="enrollmentId">
+                                <input type="hidden" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->class_id) ?>" name="classId">
 
                                 <div class="form-row mt-3">
 
@@ -2175,7 +2175,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->linkedDisciplines as $key => $discipline) { ?>
 
-                                                <option value="<?= $discipline->option_value ?>"><?= $discipline->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $discipline->option_value) ?>"><?= htmlspecialchars((string) $discipline->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -2193,7 +2193,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                             <?php foreach ($this->view->unity as $key => $unity) { ?>
 
-                                                <option value="<?= $unity->option_value ?>"><?= $unity->option_text ?></option>
+                                                <option value="<?= htmlspecialchars((string) $unity->option_value) ?>"><?= htmlspecialchars((string) $unity->option_text) ?></option>
 
                                             <?php } ?>
 
@@ -2318,9 +2318,9 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                 <div class="form-row col-lg-12">
 
-                                    <input type="hidden" value="<?= $this->view->studentDataEnrollment[0]->enrollment_id ?>" name="enrollmentId">
-                                    <input type="hidden" value="<?= $this->view->studentDataEnrollment[0]->id ?>" name="studentId">
-                                    <input type="hidden" value="<?= $this->view->studentDataEnrollment[0]->school_term_id ?>" name="schoolTermId">
+                                    <input type="hidden" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->enrollment_id) ?>" name="enrollmentId">
+                                    <input type="hidden" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->id) ?>" name="studentId">
+                                    <input type="hidden" value="<?= htmlspecialchars((string) $this->view->studentDataEnrollment[0]->school_term_id) ?>" name="schoolTermId">
 
                                     <div class="form-group col-lg-9">
 
@@ -2334,7 +2334,7 @@ require __DIR__ . '../../../../../config/variables.php';
 
                                                     if($this->view->studentDataEnrollment[0]->class_id != $value->class_id){ ?>
 
-                                                    <option value="<?= $value->class_id ?>"><?= $value->series ?> ª <?= $value->ballot ?> - <?= $value->course ?> - <?= $value->shift ?> - <?= $value->school_year ?> - Vagas: <?= $value->student_capacity - $value->student_total ?></option>
+                                                    <option value="<?= htmlspecialchars((string) $value->class_id) ?>"><?= htmlspecialchars((string) $value->series) ?> ª <?= htmlspecialchars((string) $value->ballot) ?> - <?= htmlspecialchars((string) $value->course) ?> - <?= htmlspecialchars((string) $value->shift) ?> - <?= htmlspecialchars((string) $value->school_year) ?> - Vagas: <?= $value->student_capacity - $value->student_total ?></option>
 
                                             <?php }}
                                             } ?>

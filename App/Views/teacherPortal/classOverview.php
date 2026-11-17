@@ -59,7 +59,7 @@ $absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
                     <span class="m-att-label">Ver</span>
                     <div class="m-seg m-class-tabs">
                         <?php foreach ($tabs as $key => $t) { ?>
-                            <a href="<?= $link($unity, $key) ?>" role="button" class="btn <?= $tab === $key ? 'is-active' : '' ?>" <?= $tab === $key ? 'aria-current="page"' : '' ?>><i class="fas <?= $t[0] ?> mr-2"></i><?= $t[1] ?></a>
+                            <a href="<?= $link($unity, $key) ?>" role="button" class="btn <?= $tab === $key ? 'is-active' : '' ?>" <?= $tab === $key ? 'aria-current="page"' : '' ?>><i class="fas <?= htmlspecialchars((string) $t[0]) ?> mr-2"></i><?= htmlspecialchars((string) $t[1]) ?></a>
                         <?php } ?>
                     </div>
                 </div>

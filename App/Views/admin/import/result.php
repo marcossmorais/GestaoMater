@@ -18,7 +18,7 @@ $noun = ['alunos' => 'aluno(s) cadastrado(s)', 'professores' => 'professor(es) c
 
             <div class="m-imp-alert is-ok" role="status">
                 <i class="fas fa-check-circle"></i>
-                <span><strong><?= $result['created'] ?></strong> <?= $noun ?><?= $type === 'alunos' ? ' e <strong>' . $result['enrolled'] . '</strong> matrícula(s) no período ativo' : '' ?>.</span>
+                <span><strong><?= htmlspecialchars((string) $result['created']) ?></strong> <?= $noun ?><?= $type === 'alunos' ? ' e <strong>' . $result['enrolled'] . '</strong> matrícula(s) no período ativo' : '' ?>.</span>
             </div>
 
             <?php if ($result['codes']) { ?>

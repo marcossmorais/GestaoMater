@@ -176,15 +176,15 @@ if(count($this->view->listStudent) >= 1){
 
                         <td><img class="miniature-photo" src='<?= $value['profilePhoto'] == null ? $photoDir . "foto-vazia.jpg" : $photoDir . $value['profilePhoto'] ?>' alt="" onerror='this.src="<?= $photoDir . "foto-vazia.jpg" ?>"'></td>
 
-                        <td><?= $value['name'] ?></td>
+                        <td><?= htmlspecialchars((string) $value['name']) ?></td>
 
                     <?php } ?>
 
-                    <td class="text-left"><?= $value['discipline'] ?></td>
-                    <?php if ($this->view->averageType == 'averageUnity') { ?> <td class="text-center"><?= $value['unity'] ?></td> <?php } ?>
-                    <td class="text-center"><?= $value['note'] ?></td>
-                    <td class="text-center"><?= $value['noteSituation'] ?></td>
-                    <?php if ($this->view->averageType == 'averageUnity') { ?><td class="text-center"><?= $value['statusRegisteredExams'] ?> <?= $value['statusRegisteredExamsIcon'] ?></td> <?php } ?>
+                    <td class="text-left"><?= htmlspecialchars((string) $value['discipline']) ?></td>
+                    <?php if ($this->view->averageType == 'averageUnity') { ?> <td class="text-center"><?= htmlspecialchars((string) $value['unity']) ?></td> <?php } ?>
+                    <td class="text-center"><?= htmlspecialchars((string) $value['note']) ?></td>
+                    <td class="text-center"><?= htmlspecialchars((string) $value['noteSituation']) ?></td>
+                    <?php if ($this->view->averageType == 'averageUnity') { ?><td class="text-center"><?= htmlspecialchars((string) $value['statusRegisteredExams']) ?> <?= $value['statusRegisteredExamsIcon'] ?></td> <?php } ?>
 
                 </tr>
 

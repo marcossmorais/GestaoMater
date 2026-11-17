@@ -72,7 +72,7 @@ $weekdays = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sába
                         <div class="<?= $nextDate ? 'is-next' : '' ?>">
                             <small>Próxima avaliação</small>
                             <?php if ($nextDate) { ?>
-                                <strong><?= date('d/m', strtotime($nextDate)) ?> · <?= $weekdays[(int) date('w', strtotime($nextDate))] ?></strong>
+                                <strong><?= date('d/m', strtotime($nextDate)) ?> · <?= htmlspecialchars((string) $weekdays[(int) date('w', strtotime($nextDate))]) ?></strong>
                                 <span><?= htmlspecialchars(implode(', ', $nextNames)) ?></span>
                             <?php } else { ?>
                                 <strong>Nenhuma pela frente</strong>
@@ -118,7 +118,7 @@ $weekdays = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sába
                                         </td>
                                         <td class="m-rt-date" data-label="Data">
                                             <strong><?= date('d/m', $time) ?></strong>
-                                            <small><?= $weekdays[(int) date('w', $time)] ?></small>
+                                            <small><?= htmlspecialchars((string) $weekdays[(int) date('w', $time)]) ?></small>
                                             <?php if ($state === 'is-next') { ?><b class="m-rt-tag"><?= $e->date === $today ? 'Hoje' : 'Próxima' ?></b><?php } ?>
                                         </td>
                                         <td data-label="Conteúdo">

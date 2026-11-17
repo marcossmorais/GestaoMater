@@ -63,7 +63,7 @@ $homerooms = $this->view->homerooms;
                     <?php foreach ($this->view->notices as $n) { $nt = $noticeTypes[$n->type] ?? $noticeTypes['aviso']; ?>
                         <article class="card m-board-post is-type-<?= htmlspecialchars($n->type) ?><?= $n->pinned ? ' is-pinned' : '' ?><?= $n->read_by_me ? ' is-read' : '' ?>" data-teacher-notice="<?= (int) $n->id ?>">
                             <header>
-                                <span class="m-board-tag"><i class="fas <?= $nt['icon'] ?>" aria-hidden="true"></i><?= htmlspecialchars($nt['label']) ?></span>
+                                <span class="m-board-tag"><i class="fas <?= htmlspecialchars((string) $nt['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($nt['label']) ?></span>
                                 <?php if ($n->pinned) { ?><span class="m-board-pin"><i class="fas fa-thumbtack mr-1"></i>Fixado</span><?php } ?>
                                 <strong>Coordenação</strong>
                                 <small><?= htmlspecialchars($n->posted_at) ?></small>
@@ -137,7 +137,7 @@ $homerooms = $this->view->homerooms;
                     <div class="m-donut"><canvas id="chartBands" aria-label="Quantidade de notas por faixa"></canvas></div>
                     <ul class="m-legend">
                         <?php $i = 0; foreach ($charts['bands'] as $label => $count) { ?>
-                            <li><i style="background: <?= $bandColors[$i++] ?>"></i><span><?= $label ?></span><b><?= (int) $count ?></b></li>
+                            <li><i style="background: <?= htmlspecialchars((string) $bandColors[$i++]) ?>"></i><span><?= $label ?></span><b><?= (int) $count ?></b></li>
                         <?php } ?>
                     </ul>
                 </div>
@@ -155,7 +155,7 @@ $homerooms = $this->view->homerooms;
                             <summary><i class="fas fa-list mr-2"></i><span data-attention-title>Ver os <?= count($atRisk) ?> alunos</span></summary>
                             <ul class="m-todo">
                                 <?php foreach ($atRisk as $s) { ?>
-                                    <li data-turma="<?= htmlspecialchars($s['label']) ?>"><a href="/portal-docente/aluno?id=<?= $s['enrollmentId'] ?>">
+                                    <li data-turma="<?= htmlspecialchars($s['label']) ?>"><a href="/portal-docente/aluno?id=<?= htmlspecialchars((string) $s['enrollmentId']) ?>">
                                         <span><strong><?= htmlspecialchars($s['name']) ?></strong><small><?= htmlspecialchars($s['label'] . ' · ' . $s['discipline']) ?> · <?= htmlspecialchars(implode(' · ', $s['reasons'])) ?></small></span>
                                     </a></li>
                                 <?php } ?>
@@ -244,7 +244,7 @@ $homerooms = $this->view->homerooms;
                                 $done = $l->attendance_at && $l->lesson_done;
                             ?>
                                 <li class="m-today-item <?= \App\Tools\Subject::css($l->discipline) ?><?= $now_ ? ' is-now' : '' ?><?= $done ? ' is-done' : '' ?>">
-                                    <div class="m-today-time"><strong><?= $l->start ?></strong><span><?= $l->finish ?></span></div>
+                                    <div class="m-today-time"><strong><?= htmlspecialchars((string) $l->start) ?></strong><span><?= htmlspecialchars((string) $l->finish) ?></span></div>
                                     <span class="m-att-class-badge"><?= htmlspecialchars($l->label) ?></span>
                                     <div class="m-today-body">
                                         <strong><i class="fas <?= \App\Tools\Subject::icon($l->discipline) ?> m-subj-ico" aria-hidden="true"></i><?= htmlspecialchars($l->discipline) ?><?= $now_ ? ' <span class="m-pill m-pill-info">agora</span>' : '' ?></strong>

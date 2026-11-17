@@ -52,6 +52,7 @@ class AuditLog extends Model
         'professor' => 'Conta de professor',
         'aluno' => 'Conta de aluno',
         'auditoria' => 'Auditoria',
+        'requisicao' => 'Envio de dados',
     ];
 
     const ACTIONS = [
