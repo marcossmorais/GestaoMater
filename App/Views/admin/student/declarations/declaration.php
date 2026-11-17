@@ -334,7 +334,8 @@ $attendanceText = $attendance === null ? null : str_replace('.', ',', (string) $
                     </div>
                     <div class="m-data-item">
                         <strong>Série / Turma</strong>
-                        <span><?= htmlspecialchars((string) $enrollment->acronym_series) ?>ª Série / Ano — Turma <?= htmlspecialchars((string) $enrollment->ballot) ?></span>
+                        <?php // "3ª série" no Médio, "6º ano" no Fundamental (a sigla já traz o ordinal) ?>
+                        <span><?= htmlspecialchars((string) $enrollment->acronym_series) ?> <?= str_ends_with((string) $enrollment->acronym_series, 'ª') ? 'série' : 'ano' ?> — Turma <?= htmlspecialchars((string) $enrollment->ballot) ?></span>
                     </div>
                     <div class="m-data-item">
                         <strong>Turno de Aulas</strong>

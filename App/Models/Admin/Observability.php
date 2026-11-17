@@ -89,7 +89,7 @@ class Observability extends Model
 
         $unitParams = $params + ($unit ? [':unit' => (int) $unit] : []);
 
-        $label = "serie.sigla || 'ª ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno";
+        $label = "serie.sigla || ' ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno";
 
         $data = [];
 

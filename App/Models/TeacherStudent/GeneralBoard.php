@@ -93,7 +93,7 @@ class GeneralBoard extends Model
             "SELECT aviso_geral.id_aviso_geral AS id, aviso_geral.aviso AS text, aviso_geral.tipo AS type, aviso_geral.fixado AS pinned,
                     aviso_geral.publico AS audience,
                     TO_CHAR(aviso_geral.data_postagem, 'DD/MM/YYYY HH24:MI') AS posted_at,
-                    (SELECT STRING_AGG(serie.sigla || 'ª ' || cedula_turma.cedula || ' ' || curso.sigla, ', ' ORDER BY serie.sigla, cedula_turma.cedula)
+                    (SELECT STRING_AGG(serie.sigla || ' ' || cedula_turma.cedula || ' ' || curso.sigla, ', ' ORDER BY serie.sigla, cedula_turma.cedula)
                      FROM aviso_geral_turma agt
                      INNER JOIN turma ON (agt.fk_id_turma = turma.id_turma)
                      INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
@@ -135,7 +135,7 @@ class GeneralBoard extends Model
     {
 
         $stmt = $this->db->query(
-            "SELECT turma.id_turma AS id, serie.sigla || 'ª ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno AS label
+            "SELECT turma.id_turma AS id, serie.sigla || ' ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno AS label
              FROM turma
              INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
              INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)

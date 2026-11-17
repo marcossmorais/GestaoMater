@@ -36,7 +36,7 @@ class TeacherDashboard extends Model
                 TO_CHAR(ha.hora_inicio, 'HH24:MI') AS start,
                 TO_CHAR(ha.hora_fim, 'HH24:MI') AS finish,
                 d.nome_disciplina AS discipline,
-                serie.sigla || 'ª ' || cedula_turma.cedula AS label,
+                serie.sigla || ' ' || cedula_turma.cedula AS label,
                 curso.sigla AS course,
                 turno.nome_turno AS shift,
                 -- Fund. 1: vale a chamada do dia da turma (titular)
@@ -142,13 +142,13 @@ class TeacherDashboard extends Model
         // mais de uma disciplina na mesma turma (polivalente): o rótulo precisa dizer qual é
         $perLabel = [];
         foreach ($disciplineClasses as $dc) {
-            $label = $dc->series_acronym . 'ª ' . $dc->ballot;
+            $label = $dc->series_acronym . ' ' . $dc->ballot;
             $perLabel[$label] = ($perLabel[$label] ?? 0) + 1;
         }
 
         foreach ($disciplineClasses as $dc) {
             $id = (int) $dc->discipline_class_id;
-            $label = $dc->series_acronym . 'ª ' . $dc->ballot;
+            $label = $dc->series_acronym . ' ' . $dc->ballot;
             $mine[$id] = $dc;
             $byClass[$id] = [
                 'label' => $perLabel[$label] > 1 ? $label . ' · ' . ($dc->discipline_acronym ?: $dc->discipline_name) : $label,
@@ -232,7 +232,7 @@ class TeacherDashboard extends Model
         $notices = $this->db->query(
             "SELECT aviso_turma.id_aviso_turma AS id, LEFT(aviso_turma.aviso, 70) AS text,
                     TO_CHAR(aviso_turma.data_postagem, 'DD/MM') AS date,
-                    serie.sigla || 'ª ' || cedula_turma.cedula AS label,
+                    serie.sigla || ' ' || cedula_turma.cedula AS label,
                     (SELECT COUNT(*) FROM aviso_leitura WHERE fk_id_aviso_turma = aviso_turma.id_aviso_turma) AS read_total,
                     (SELECT COUNT(*) FROM matricula WHERE fk_id_turma_matricula = turma.id_turma AND fk_id_situacao_aluno = 1) AS students
              FROM aviso_turma
@@ -254,7 +254,7 @@ class TeacherDashboard extends Model
         $feed = $this->db->query(
             "SELECT aluno.nome_aluno AS name, matricula.id_matricula AS enrollment_id, LEFT(aviso_turma.aviso, 60) AS text,
                     TO_CHAR(aviso_leitura.lido_em, 'DD/MM HH24:MI') AS at,
-                    serie.sigla || 'ª ' || cedula_turma.cedula AS label
+                    serie.sigla || ' ' || cedula_turma.cedula AS label
              FROM aviso_leitura
              INNER JOIN aviso_turma ON (aviso_leitura.fk_id_aviso_turma = aviso_turma.id_aviso_turma)
              INNER JOIN matricula ON (aviso_leitura.fk_id_matricula = matricula.id_matricula)
@@ -285,7 +285,7 @@ class TeacherDashboard extends Model
         $ids = implode(',', array_map(function ($dc) { return (int) $dc->discipline_class_id; }, $disciplineClasses));
 
         $stmt = $this->db->prepare(
-            "SELECT matricula.id_matricula AS id, aluno.nome_aluno AS name, serie.sigla || 'ª ' || cedula_turma.cedula AS label,
+            "SELECT matricula.id_matricula AS id, aluno.nome_aluno AS name, serie.sigla || ' ' || cedula_turma.cedula AS label,
                     SUM(f.total_faltas - COALESCE(f.faltas_abonadas, 0))::int AS absences
              FROM falta_aluno f
              INNER JOIN matricula ON (matricula.id_matricula = f.fk_id_matricula_falta AND matricula.fk_id_situacao_aluno = 1)
@@ -359,7 +359,7 @@ class TeacherDashboard extends Model
                 $dc = $mine[$dcId];
                 $students[$key] = [
                     'enrollmentId' => (int) $enrollmentId, 'name' => $name, 'classId' => (int) $dc->class_id,
-                    'label' => $dc->series_acronym . 'ª ' . $dc->ballot, 'discipline' => $dc->discipline_name,
+                    'label' => $dc->series_acronym . ' ' . $dc->ballot, 'discipline' => $dc->discipline_name,
                     'reasons' => [], 'kinds' => [], 'weight' => 0,
                 ];
             }

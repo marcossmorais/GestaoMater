@@ -65,7 +65,7 @@ $enrollments = $this->view->studentEnrollment ?? [];
                     <?php foreach ($enrollments as $e) { $current = (int) $e->enrollment_id === (int) $_SESSION['Student']['enrollmentId']; ?>
                         <label class="m-enrollment <?= $current ? 'is-current' : '' ?>">
                             <input type="radio" name="enrollmentId" value="<?= (int) $e->enrollment_id ?>" <?= $current ? 'checked' : '' ?>>
-                            <span><strong><?= htmlspecialchars($e->school_year) ?></strong><small><?= htmlspecialchars($e->acronym_series) ?>ª <?= htmlspecialchars($e->ballot) ?> · <?= htmlspecialchars($e->course) ?> · <?= htmlspecialchars($e->shift) ?></small></span>
+                            <span><strong><?= htmlspecialchars($e->school_year) ?></strong><small><?= htmlspecialchars($e->acronym_series) ?> <?= htmlspecialchars($e->ballot) ?> · <?= htmlspecialchars($e->course) ?> · <?= htmlspecialchars($e->shift) ?></small></span>
                         </label>
                     <?php } ?>
                     <button type="submit" class="btn btn-primary mt-2">Ver esta matrícula</button>

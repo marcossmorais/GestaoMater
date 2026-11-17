@@ -366,7 +366,7 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
                                         <div class="m-prof-class-title">
                                             <span class="m-prof-kpi-icon"><i class="fas fa-users"></i></span>
                                             <div>
-                                                <div class="teacher-class-title mb-0"><?= htmlspecialchars((string) $data[0]) ?>ª <?= htmlspecialchars((string) $data[1]) ?> · <?= htmlspecialchars((string) $data[2]) ?></div>
+                                                <div class="teacher-class-title mb-0"><?= htmlspecialchars((string) $data[0]) ?> <?= htmlspecialchars((string) $data[1]) ?> · <?= htmlspecialchars((string) $data[2]) ?></div>
                                                 <div class="m-prof-class-meta"><?= htmlspecialchars((string) $data[3]) ?> · Sala <?= htmlspecialchars((string) $data[4]) ?></div>
                                             </div>
                                         </div>

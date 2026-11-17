@@ -509,7 +509,7 @@ class TeacherClassController extends Action
 
         // filtro de turma da barra superior
         $classFilter = [];
-        foreach ($all as $c) $classFilter[(int) $c->class_id] = $c->series_acronym . 'ª ' . $c->ballot . ' · ' . $c->course . ' · ' . $c->shift;
+        foreach ($all as $c) $classFilter[(int) $c->class_id] = $c->series_acronym . ' ' . $c->ballot . ' · ' . $c->course . ' · ' . $c->shift;
 
         // Fund. 1: a chamada é a diária, só do titular (ou do substituto no período); especialista não faz chamada
         $Daily = Container::getModel('TeacherStudent\\DailyAttendance');

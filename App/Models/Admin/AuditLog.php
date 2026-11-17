@@ -280,7 +280,7 @@ class AuditLog extends Model
         asort($entities);
 
         $classes = $this->db->query(
-            "SELECT t.id_turma AS id, serie.sigla || 'ª ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno AS label
+            "SELECT t.id_turma AS id, serie.sigla || ' ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno AS label
              FROM turma t
              INNER JOIN serie ON (serie.id_serie = t.fk_id_serie)
              INNER JOIN cedula_turma ON (cedula_turma.id_cedula_turma = t.fk_id_cedula)
@@ -373,7 +373,7 @@ class AuditLog extends Model
             if ($r->entidade === 'professor' && ctype_digit((string) $r->entidade_id)) $want['teacher'][] = (int) $r->entidade_id;
         }
 
-        $classLabel = "serie.sigla || 'ª ' || cedula_turma.cedula || ' ' || curso.sigla";
+        $classLabel = "serie.sigla || ' ' || cedula_turma.cedula || ' ' || curso.sigla";
         $classJoin = "INNER JOIN serie ON (serie.id_serie = t.fk_id_serie)
                       INNER JOIN cedula_turma ON (cedula_turma.id_cedula_turma = t.fk_id_cedula)
                       INNER JOIN curso ON (curso.id_curso = t.fk_id_curso)";

@@ -48,7 +48,7 @@ class DailyAttendance extends Model
         $stmt = $this->db->prepare(
             "SELECT DISTINCT ON (serie.sigla, cedula_turma.cedula, turma.id_turma)
                     turma.id_turma AS class_id,
-                    serie.sigla || 'ª ' || cedula_turma.cedula AS label,
+                    serie.sigla || ' ' || cedula_turma.cedula AS label,
                     serie.sigla AS series_acronym,
                     curso.sigla AS course,
                     turno.nome_turno AS shift,
@@ -288,7 +288,7 @@ class DailyAttendance extends Model
 
         $stmt = $this->db->prepare(
             "SELECT m.id_matricula AS id, m.fk_id_turma_matricula AS class_id, aluno.nome_aluno AS name,
-                    serie.sigla || 'ª ' || cedula_turma.cedula AS label, COUNT(*)::int AS absences
+                    serie.sigla || ' ' || cedula_turma.cedula AS label, COUNT(*)::int AS absences
              FROM chamada_diaria cd
              INNER JOIN matricula m ON (m.fk_id_turma_matricula = cd.fk_id_turma AND m.id_matricula = ANY (cd.matriculas_ausentes) AND m.fk_id_situacao_aluno = 1)
              INNER JOIN aluno ON (aluno.id_aluno = m.fk_id_aluno)

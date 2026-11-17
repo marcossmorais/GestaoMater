@@ -41,7 +41,7 @@ $slotCard = function ($slot, $d, $compact) use ($state, $today, $time, &$nextMar
                 <?php if ($st === 'is-now') { ?><span class="m-pill m-pill-info">agora</span><?php } elseif ($next) { ?><span class="m-pill m-pill-warn">próxima</span><?php } ?>
             </span>
             <strong><?= htmlspecialchars($slot->nome_disciplina) ?></strong>
-            <small><?= htmlspecialchars($slot->series_acronym) ?>ª <?= htmlspecialchars($slot->ballot) ?> · <?= htmlspecialchars($slot->course) ?> · sala <?= htmlspecialchars($slot->sala) ?></small>
+            <small><?= htmlspecialchars($slot->series_acronym) ?> <?= htmlspecialchars($slot->ballot) ?> · <?= htmlspecialchars($slot->course) ?> · sala <?= htmlspecialchars($slot->sala) ?></small>
         </div>
         <?php if (!$compact) { ?>
             <div class="m-slot-actions">

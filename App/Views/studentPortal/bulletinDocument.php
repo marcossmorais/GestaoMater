@@ -17,7 +17,7 @@ require __DIR__ . '/documentHead.php';
 
         <div class="meta">
             <div><span>Aluno(a)</span><strong><?= htmlspecialchars($enrollment->name) ?></strong></div>
-            <div><span>Turma</span><?= htmlspecialchars($enrollment->acronym_series) ?>ª <?= htmlspecialchars($enrollment->ballot) ?> · <?= htmlspecialchars($enrollment->course_name) ?></div>
+            <div><span>Turma</span><?= htmlspecialchars($enrollment->acronym_series) ?> <?= htmlspecialchars($enrollment->ballot) ?> · <?= htmlspecialchars($enrollment->course_name) ?></div>
             <div><span>Turno</span><?= htmlspecialchars($enrollment->shift) ?></div>
             <div><span>Matrícula</span><?= (int) $enrollment->enrollment_id ?></div>
             <?php if ($daily !== null) { ?>

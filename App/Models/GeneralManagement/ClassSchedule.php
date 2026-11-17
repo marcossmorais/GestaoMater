@@ -272,7 +272,7 @@ class ClassSchedule extends Model
         $stmt = $this->db->prepare(
             "SELECT DISTINCT p.nome_professor AS teacher, nova.dia AS day,
                     TO_CHAR(ha.hora_inicio, 'HH24:MI') AS start,
-                    serie.sigla || 'ª ' || cedula_turma.cedula || ' ' || curso.sigla AS other_class
+                    serie.sigla || ' ' || cedula_turma.cedula || ' ' || curso.sigla AS other_class
              FROM unnest(CAST(:days AS int[]), CAST(:slots AS int[]), CAST(:disciplineClasses AS int[])) AS nova (dia, faixa, td)
              INNER JOIN turma_disciplina td ON (td.id_turma_disciplina = nova.td)
              INNER JOIN professor p ON (p.id_professor = td.fk_id_professor)

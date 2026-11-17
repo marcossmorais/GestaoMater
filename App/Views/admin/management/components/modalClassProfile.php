@@ -99,7 +99,7 @@
 
                             <div class="row">
 
-                                <span class="col-12 mx-auto"><?= htmlspecialchars((string) $this->view->classData[0]->series_acronym) ?>ª <?= htmlspecialchars((string) $this->view->classData[0]->ballot) ?> <?= htmlspecialchars((string) $this->view->classData[0]->course) ?> <?= htmlspecialchars((string) $this->view->classData[0]->shift) ?> - Período Letivo <?= htmlspecialchars((string) $this->view->classData[0]->school_term) ?></span>
+                                <span class="col-12 mx-auto"><?= htmlspecialchars((string) $this->view->classData[0]->series_acronym) ?> <?= htmlspecialchars((string) $this->view->classData[0]->ballot) ?> <?= htmlspecialchars((string) $this->view->classData[0]->course) ?> <?= htmlspecialchars((string) $this->view->classData[0]->shift) ?> - Período Letivo <?= htmlspecialchars((string) $this->view->classData[0]->school_term) ?></span>
 
                             </div>
                         </div>
@@ -127,7 +127,7 @@
                         <div class="row d-flex align-items-center p-0">
 
                             <div class="col-sm-6 p-0">
-                                <h5 class="mt-2"><?= htmlspecialchars((string) $this->view->classData[0]->series_acronym) ?>ª <?= htmlspecialchars((string) $this->view->classData[0]->ballot) ?> <?= htmlspecialchars((string) $this->view->classData[0]->course) ?> <?= htmlspecialchars((string) $this->view->classData[0]->shift) ?></h5>
+                                <h5 class="mt-2"><?= htmlspecialchars((string) $this->view->classData[0]->series_acronym) ?> <?= htmlspecialchars((string) $this->view->classData[0]->ballot) ?> <?= htmlspecialchars((string) $this->view->classData[0]->course) ?> <?= htmlspecialchars((string) $this->view->classData[0]->shift) ?></h5>
                             </div>
 
                             <div class="col-sm-6 col-12 p-0">

@@ -22,7 +22,7 @@ $classes = [];
 foreach ($this->view->disciplineClasses as $c) $classes[(int) $c->discipline_class_id] = $c;
 $className = function ($id) use ($classes) {
     $c = $classes[(int) $id] ?? null;
-    return $c ? $c->series_acronym . 'ª ' . $c->ballot . ' · ' . $c->discipline_name : '';
+    return $c ? $c->series_acronym . ' ' . $c->ballot . ' · ' . $c->discipline_name : '';
 };
 
 $now = (new DateTime('now', new DateTimeZone('America/Sao_Paulo')))->format('H:i');

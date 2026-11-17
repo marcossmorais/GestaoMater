@@ -275,7 +275,7 @@ class Gradebook extends Model
                     TO_CHAR(avaliacoes.roteiro_enviado_em, 'DD/MM/YYYY \"às\" HH24:MI') AS sent_at, avaliacoes.roteiro_visto_em IS NOT NULL AS seen,
                     COALESCE((SELECT string_agg(tipo, ',' ORDER BY tipo) FROM avaliacao_tipo WHERE fk_id_avaliacao = avaliacoes.id_avaliacao), '') AS types,
                     disciplina.nome_disciplina AS discipline, COALESCE(autor.nome_professor, titular.nome_professor) AS teacher,
-                    serie.sigla || 'ª ' || cedula_turma.cedula AS class_label
+                    serie.sigla || ' ' || cedula_turma.cedula AS class_label
              FROM avaliacoes
              INNER JOIN turma_disciplina ON (avaliacoes.fk_id_turma_disciplina_avaliacao = turma_disciplina.id_turma_disciplina)
              INNER JOIN disciplina ON (turma_disciplina.fk_id_disciplina = disciplina.id_disciplina)
@@ -547,7 +547,7 @@ class Gradebook extends Model
     {
 
         $stmt = $this->db->prepare(
-            "SELECT serie.sigla || 'ª ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno
+            "SELECT serie.sigla || ' ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno
              FROM turma
              INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
              INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
