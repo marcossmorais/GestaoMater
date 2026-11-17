@@ -116,54 +116,6 @@ function createPieChart(elementId, labels, datas) {
     }
 }
 
-function createDoughnutChart(elementId, labels, datas) {
-    let ctx = document.getElementById(elementId);
-    if (ctx) {
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Total de rematrículas',
-                    borderRadius: 5,
-                    data: datas,
-                    backgroundColor: [
-                        colors['success'],
-                        colors['danger']
-                    ],
-                    padding: {
-                        top: 10,
-                        bottom: 10
-                    },
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                cutoutPercentage: 30,
-                plugins: {
-                    title: {
-                        display: false,
-                        text: 'Status das solicitações de rematrículas recebidas',
-                        color: colorLabels,
-                        padding: {
-                            top: 10,
-                            bottom: 10
-                        }
-                    },
-                    legend: {
-                        labels: {
-                            color: colorLabels
-                        }
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-    }
-}
-
 $.ajax({
     type: "GET",
     url: "/admin/gestao/curso/total-alunos-curso",
@@ -194,17 +146,3 @@ $.ajax({
     }
 });
 
-$.ajax({
-    type: "GET",
-    url: "/admin/gestao/home/situacao-rematriculas-recebidas",
-    dataType: 'json',
-    success: data => {
-        let labels = [];
-        let datas = [];
-        $.each(data, (i, item) => {
-            labels.push(`Marcaram "${item.rematrugAnswer}"`);
-            datas.push(item.totalAnswer);
-        });
-        setTimeout(() => createDoughnutChart('graphSituationEngramentesReceived', labels, datas), 1500);
-    }
-});

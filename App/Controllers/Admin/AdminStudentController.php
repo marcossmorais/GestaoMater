@@ -308,14 +308,6 @@ class AdminStudentController extends Action
     }
 
 
-    public function totalRematriumMarkedWithYesAndNo()
-    {
-
-        $StudentRematrug = Container::getModel('Student\\StudentRematrug');
-        echo json_encode($StudentRematrug->totalRematriumMarkedWithYesAndNo());
-    }
-
-
     public function divisionStudentsBySex()
     {
 
