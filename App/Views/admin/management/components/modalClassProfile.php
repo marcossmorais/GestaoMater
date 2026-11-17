@@ -868,7 +868,7 @@
 
                                     <div class="form-group col-sm-4 col-lg-3">
 
-                                        <label for="course">Curso:</label>
+                                        <label for="course">Segmento:</label>
 
                                         <select id="course" name="course" class="form-control custom-select">
 

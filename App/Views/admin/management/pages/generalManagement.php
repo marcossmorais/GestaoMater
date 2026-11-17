@@ -3,7 +3,7 @@
 $shortcuts = [
     ['/admin/gestao/periodo-letivo', 'far fa-calendar-alt', 'Período letivo', 'Defina o ano letivo atual, edite as datas ou finalize o período.'],
     ['/admin/gestao/sala', 'fas fa-door-open', 'Salas', 'Cadastre as salas de aula e a capacidade de cada uma.'],
-    ['/admin/gestao/curso', 'fas fa-graduation-cap', 'Cursos', 'Defina os cursos ofertados pela escola.'],
+    ['/admin/gestao/curso', 'fas fa-graduation-cap', 'Segmentos', 'Defina os segmentos de ensino da escola.'],
     ['/admin/gestao/disciplina', 'fas fa-book', 'Disciplinas', 'Crie as disciplinas que os docentes vão ministrar.'],
     ['/admin/gestao/turma', 'fas fa-users', 'Turmas', 'Monte as turmas do período, vincule disciplinas e acompanhe notas.'],
     ['/admin/aluno/lista', 'fas fa-user-graduate', 'Alunos', 'Busque alunos, veja perfis, boletins e matrículas.'],

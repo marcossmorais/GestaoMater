@@ -10,7 +10,7 @@ if (count($this->view->listCourse) >= 1) {
 
                 <input type="hidden" name="courseId" value="<?= htmlspecialchars((string) $course->course_id) ?>">
 
-                <div class="col-sm-8 font-weight-bold">Curso de <?= htmlspecialchars((string) $course->course_name) ?>
+                <div class="col-sm-8 font-weight-bold">Segmento: <?= htmlspecialchars((string) $course->course_name) ?>
                 </div>
 
                 <div class="col-sm-4 d-flex justify-content-end mt-2">
@@ -21,7 +21,7 @@ if (count($this->view->listCourse) >= 1) {
 
                     </span>
 
-                    <span idElement="#formCourse<?= htmlspecialchars((string) $course->course_id) ?>" routeUpdate="/admin/gestao/curso/atualizar" toastData="Curso Atualizado" container="containerListCourse" routeList="/admin/gestao/curso/lista" class="mr-2 update-data-icon" data-toggle="tooltip" data-placement="bottom" title="Atualizar">
+                    <span idElement="#formCourse<?= htmlspecialchars((string) $course->course_id) ?>" routeUpdate="/admin/gestao/curso/atualizar" toastData="Segmento atualizado" container="containerListCourse" routeList="/admin/gestao/curso/lista" class="mr-2 update-data-icon" data-toggle="tooltip" data-placement="bottom" title="Atualizar">
 
                         <i class="fas fa-check"></i>
 
@@ -34,7 +34,7 @@ if (count($this->view->listCourse) >= 1) {
             <div class="form-row mt-4 mb-2 col-lg-11 mx-auto">
 
                 <div class="form-group col-lg-5">
-                    <label for="">Nome do curso:</label>
+                    <label for="">Nome do segmento:</label>
                     <input class="form-control" disabled value="<?= htmlspecialchars((string) $course->course_name) ?>" type="text" name="courseName" id="">
                 </div>
 
@@ -67,6 +67,6 @@ if (count($this->view->listCourse) >= 1) {
     <?php }
 } else { ?>
 
-    <h5 class="mt-3">Nenhum curso adicionado</h5>
+    <h5 class="mt-3">Nenhum segmento cadastrado</h5>
 
 <?php } ?>

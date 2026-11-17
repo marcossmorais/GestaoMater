@@ -491,12 +491,6 @@ class Route extends Bootstrap
 			'action' => 'studentSituationSchoolYear'
 		);
 
-		$routes['adminTotalRematriumMarkedWithYesAndNo'] = array(
-			'route' => '/admin/gestao/home/situacao-rematriculas-recebidas',
-			'controller' => 'Admin\\AdminStudentController',
-			'action' => 'totalRematriumMarkedWithYesAndNo'
-		);
-
 		// Rotas referente a disciplina no portal do administrador
 
 		$routes['adminDisciplineManagement'] = array(

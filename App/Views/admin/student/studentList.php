@@ -20,7 +20,7 @@
                             </div>
 
                             <div class="form-group col-12 col-lg-4">
-                                <label for="">Curso:</label>
+                                <label for="">Segmento:</label>
                                 <select class="form-control custom-select" name="course" id="course">
                                     <option value="0">Todos</option>
                                     <?php foreach ($this->view->availableCourse as $key => $course) { ?>

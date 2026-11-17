@@ -68,8 +68,8 @@ $totals = $this->view->totals;
 
                 <div class="card m-panel">
                     <div class="m-panel-head">
-                        <h6>Alunos por curso</h6>
-                        <a href="/admin/gestao/curso">Ver cursos</a>
+                        <h6>Alunos por segmento</h6>
+                        <a href="/admin/gestao/curso">Ver segmentos</a>
                     </div>
                     <div class="m-chart"><canvas id="studenDivisionChartCourse"></canvas></div>
                 </div>
@@ -118,10 +118,6 @@ $totals = $this->view->totals;
                     <div class="card m-panel">
                         <div class="m-panel-head"><h6>Situação no ano letivo</h6></div>
                         <div class="m-chart-sm"><canvas id="graphCurrentStudentSituation"></canvas></div>
-                    </div>
-                    <div class="card m-panel">
-                        <div class="m-panel-head"><h6>Respostas da rematrícula</h6></div>
-                        <div class="m-chart-sm"><canvas id="graphSituationEngramentesReceived"></canvas></div>
                     </div>
                 </div>
 

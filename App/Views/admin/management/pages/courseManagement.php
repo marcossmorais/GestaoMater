@@ -10,7 +10,7 @@
 
                     <div class="row">
 
-                        <h5 class="col-sm-6">Gestão dos cursos</h5>
+                        <h5 class="col-sm-6">Gestão dos segmentos</h5>
 
                         <div class="col-sm-6">
 
@@ -18,7 +18,7 @@
 
                             <a class="font-weight-bold" aria-expanded="true" id="collapseListCourse" data-toggle="collapse" data-target="#list-courses">
 
-                                <span class="mr-2"><i class="fas fa-grip-vertical mr-2"></i> Cursos</span>
+                                <span class="mr-2"><i class="fas fa-grip-vertical mr-2"></i> Segmentos</span>
 
                             </a>
 
@@ -35,7 +35,7 @@
                         <nav class="col-lg-12 p-0" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="/admin/gestao">Gestão geral</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Cursos</li>
+                                <li class="breadcrumb-item active" aria-current="page">Segmentos</li>
                             </ol>
                         </nav>
                     </div>
@@ -68,13 +68,13 @@
 
                                         <form id="addCourse" class="card was-validated" action="" role="form">
 
-                                            <div class="font-weight-bold col-lg-11 mt-3">Adicionar novo curso:</div>
+                                            <div class="font-weight-bold col-lg-11 mt-3">Adicionar novo segmento:</div>
 
                                             <hr class="">
 
                                             <div class="form-row mt-1 mb-2 col-lg-12">
                                                 <div class="form-group col-sm-4">
-                                                    <label for="courseName">Nome do curso:</label>
+                                                    <label for="courseName">Nome do segmento:</label>
                                                     <input class="form-control is-valid" value="" type="text" name="courseName" id="courseName" required>
                                                 </div>
 
@@ -100,7 +100,7 @@
 
                                                 <div class="form-group col-sm-2">
                                                     <label for="">&nbsp;</label>
-                                                    <a id="buttonAddCourse" type="submit" class="btn btn-success w-100 text-center" href="#">Adicionar curso</a>
+                                                    <a id="buttonAddCourse" type="submit" class="btn btn-success w-100 text-center" href="#">Adicionar segmento</a>
                                                 </div>
 
                                             </div>
