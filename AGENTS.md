@@ -68,6 +68,7 @@ Smoke test precisa do login por código: suba com `CLERK_*` vazios. Antes de abr
 - `APP_SIGNING_KEY` (32+ caracteres, `openssl rand -hex 32`) assina os documentos. Nunca versionar; trocar a chave invalida todos os documentos já emitidos.
 - Documento oficial só imprime dado real do banco ou do `.env` (`SCHOOL_*`). Nada de valor padrão inventado (endereço, CNPJ, frequência).
 - LGPD: dados de menores são sensíveis. Não logar PII em arquivo; não usar dado real em seed.
+- Página pública ou login novo: usar `App/Tools/RateLimit.php` (limite por IP, guardado como hash). Arquivo novo de `public/node_modules` usado em tela: liberar o caminho em `public/node_modules/.htaccess` (o resto responde 404).
 
 ## Definição de pronto
 Rota funciona · permissão checada no servidor · auditoria gravada (se sensível) · mobile ok · smoke 0 erros · docs/PROPOSTA_ESCOPO.md atualizado.
