@@ -8,8 +8,9 @@ use App\Tools\GradeSimulator;
 /**
  * Avaliações, roteiro de provas e lançamento de notas do portal do docente.
  *
- * Regra do MATER: 4 bimestres, 3 avaliações (0 a 10) por bimestre, nota do bimestre = média;
- * abaixo de 7 tem recuperação, que substitui a nota do bimestre (ver App/Tools/GradeSimulator.php).
+ * Regra do MATER: 4 bimestres, avaliações de 0 a 10, nota do bimestre = média; abaixo de 7 tem recuperação,
+ * que substitui a nota do bimestre (ver App/Tools/GradeSimulator.php). Quantas avaliações por bimestre:
+ * 3 na regra geral; no Fund. 1 depende da disciplina (avaliacoes_disciplina_etapa, função avaliacoes_exigidas).
  * A tabela legada chama o bimestre de "unidade". Notas antigas com outro valor máximo são normalizadas para 0 a 10.
  */
 class Gradebook extends Model
@@ -32,6 +33,77 @@ class Gradebook extends Model
         'participacao' => 'Participação',
         'outro' => 'Outro',
     ];
+
+    // instrumentos avaliativos do Fund. 1 (lista consolidada da escola); códigos próprios para não confundir com os de cima
+    const EXAM_TYPES_INICIAIS = [
+        'prova_escrita' => 'Prova escrita',
+        'oral' => 'Avaliação oral',
+        'trabalho_pesquisa' => 'Trabalho de pesquisa',
+        'seminario' => 'Seminário',
+        'simulado' => 'Simulado',
+        'projeto_pedagogico' => 'Projeto pedagógico',
+        'producao_textual' => 'Produção textual',
+        'lista_exercicios' => 'Lista de exercícios',
+        'atividade_pratica' => 'Atividade prática',
+        'relatorio' => 'Relatório',
+        'portfolio' => 'Portfólio',
+        'debate' => 'Debate',
+        'estudo_caso' => 'Estudo de caso',
+        'audiovisual' => 'Produção audiovisual',
+        'mapa_conceitual' => 'Mapa conceitual',
+        'autoavaliacao' => 'Autoavaliação',
+        'atividade_sala' => 'Atividade avaliativa em sala',
+    ];
+
+
+    /**
+     * Instrumentos que o professor pode marcar, conforme a etapa da turma
+     */
+    public static function examTypesFor($stage)
+    {
+        return $stage === 'iniciais' ? self::EXAM_TYPES_INICIAIS : self::EXAM_TYPES;
+    }
+
+
+    /**
+     * Regra da turma_disciplina: etapa da turma e quantas avaliações por bimestre (função avaliacoes_exigidas)
+     *
+     * @return array ['stage' => 'iniciais'|'medio'|…, 'perBimester' => int, 'examTypes' => [...]] ou null se não existe
+     */
+    public function disciplineRule($disciplineClassId)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT curso.etapa AS stage, avaliacoes_exigidas(turma_disciplina.id_turma_disciplina) AS required
+             FROM turma_disciplina
+             INNER JOIN turma ON (turma_disciplina.fk_id_turma = turma.id_turma)
+             INNER JOIN curso ON (turma.fk_id_curso = curso.id_curso)
+             WHERE turma_disciplina.id_turma_disciplina = :id"
+        );
+
+        $stmt->execute([':id' => (int) $disciplineClassId]);
+        $row = $stmt->fetch(\PDO::FETCH_OBJ);
+
+        if (!$row) return null;
+
+        return ['stage' => $row->stage, 'perBimester' => (int) $row->required, 'examTypes' => self::examTypesFor($row->stage)];
+    }
+
+
+    /**
+     * Avaliações por bimestre de cada disciplina da turma: [id_turma_disciplina => quantidade]
+     */
+    public function requiredForClass($classId)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT id_turma_disciplina, avaliacoes_exigidas(id_turma_disciplina) FROM turma_disciplina WHERE fk_id_turma = :classId"
+        );
+
+        $stmt->execute([':classId' => (int) $classId]);
+
+        return array_map('intval', $stmt->fetchAll(\PDO::FETCH_KEY_PAIR));
+    }
 
 
     /**
@@ -263,7 +335,8 @@ class Gradebook extends Model
 
     public static function typeLabels($types)
     {
-        return implode(', ', array_map(function ($type) { return self::EXAM_TYPES[$type] ?? $type; }, array_filter(explode(',', (string) $types))));
+        $labels = self::EXAM_TYPES + self::EXAM_TYPES_INICIAIS;
+        return implode(', ', array_map(function ($type) use ($labels) { return $labels[$type] ?? $type; }, array_filter(explode(',', (string) $types))));
     }
 
 
@@ -388,7 +461,8 @@ class Gradebook extends Model
                 avaliacoes.fk_id_unidade_avaliacao AS unity,
                 COUNT(nota_avaliacao.id_nota) FILTER (WHERE NOT avaliacoes.recuperacao) AS graded,
                 AVG(nota_avaliacao.valor_nota / NULLIF(avaliacoes.valor_avaliacao, 0) * 10) FILTER (WHERE NOT avaliacoes.recuperacao) AS average,
-                MAX(nota_avaliacao.valor_nota / NULLIF(avaliacoes.valor_avaliacao, 0) * 10) FILTER (WHERE avaliacoes.recuperacao) AS recovery
+                MAX(nota_avaliacao.valor_nota / NULLIF(avaliacoes.valor_avaliacao, 0) * 10) FILTER (WHERE avaliacoes.recuperacao) AS recovery,
+                avaliacoes_exigidas(avaliacoes.fk_id_turma_disciplina_avaliacao) AS required
             FROM matricula
             INNER JOIN aluno ON (matricula.fk_id_aluno = aluno.id_aluno)
             INNER JOIN nota_avaliacao ON (nota_avaliacao.fk_id_matricula_aluno = matricula.id_matricula)
@@ -409,14 +483,14 @@ class Gradebook extends Model
 
 
     /**
-     * Aplica a regra do bimestre a uma linha de bimesterGrades()
+     * Aplica a regra do bimestre a uma linha de bimesterGrades() (que já traz quantas avaliações a disciplina exige)
      */
     public static function applyRule($row, array $rule)
     {
         return GradeSimulator::bimester(
             $row->average === null ? null : (float) $row->average,
             (int) $row->graded,
-            $rule['perBimester'],
+            isset($row->required) ? (int) $row->required : $rule['perBimester'],
             $row->recovery === null ? null : (float) $row->recovery,
             $rule['passing']
         );

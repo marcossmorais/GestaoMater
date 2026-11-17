@@ -96,7 +96,8 @@ class Observability extends Model
         $data['disciplineClasses'] = $this->fetch(
             "SELECT turma_disciplina.id_turma_disciplina AS id, turma.id_turma AS class_id, $label AS class_label,
                     disciplina.id_disciplina AS discipline_id, disciplina.nome_disciplina AS discipline,
-                    professor.id_professor AS teacher_id, professor.nome_professor AS teacher
+                    professor.id_professor AS teacher_id, professor.nome_professor AS teacher,
+                    avaliacoes_exigidas(turma_disciplina.id_turma_disciplina) AS required
              FROM turma_disciplina
              INNER JOIN turma ON (turma_disciplina.fk_id_turma = turma.id_turma)
              INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
@@ -256,7 +257,7 @@ class Observability extends Model
             $tds[(int) $td->id] = [
                 'id' => (int) $td->id, 'classId' => (int) $td->class_id, 'classLabel' => $td->class_label,
                 'disciplineId' => (int) $td->discipline_id, 'discipline' => $td->discipline,
-                'teacherId' => (int) $td->teacher_id, 'teacher' => $td->teacher,
+                'teacherId' => (int) $td->teacher_id, 'teacher' => $td->teacher, 'required' => isset($td->required) ? (int) $td->required : $rule['perBimester'],
                 'lessons' => 0, 'calls' => 0, 'lastCall' => null, 'lastCallDate' => null, 'expected' => 0,
                 'diary' => 0, 'exceptions' => 0, 'exams' => 0, 'pendingGrades' => 0,
                 'gradeSum' => 0, 'gradeCount' => 0, 'below' => 0, 'students' => 0,
@@ -307,7 +308,7 @@ class Observability extends Model
 
         $unitsConsidered = $unit ? 1 : min($openUnits, $rule['units']);
         foreach ($tds as &$t) {
-            $t['expectedExams'] = $rule['perBimester'] * $unitsConsidered;
+            $t['expectedExams'] = $t['required'] * $unitsConsidered;
             $t['missingExams'] = max(0, $t['expectedExams'] - $t['exams']);
         }
         unset($t);

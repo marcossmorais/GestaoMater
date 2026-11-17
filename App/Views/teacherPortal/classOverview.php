@@ -137,7 +137,7 @@ $absenceLabel = $isDaily ? 'dias de falta no bimestre' : 'faltas no bimestre';
                 $totals = [];
             ?>
 
-            <p class="m-muted-note">Nota do bimestre: média das <?= (int) $rule['perBimester'] ?> avaliações; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior entre o bimestre e a recuperação. Você edita as colunas com <i class="fas fa-pen fa-xs"></i>.</p>
+            <p class="m-muted-note">Nota do bimestre: média das avaliações do bimestre; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior entre o bimestre e a recuperação. Você edita as colunas com <i class="fas fa-pen fa-xs"></i>.</p>
 
             <div class="card m-panel m-overview-wrap">
                 <?php if (!$overview['students']) { ?>

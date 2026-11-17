@@ -1,15 +1,15 @@
 <?php
 // Simuladores de uma matéria (bimestre e média do ano): usados em Desempenho e no Boletim. Entrada: $d, $rule, $fmt, $counts, $studentExams.
-// simulador do bimestre: primeiro bimestre ainda aberto (sem as 3 notas), avaliação por avaliação
+// simulador do bimestre: primeiro bimestre ainda aberto (sem todas as notas), avaliação por avaliação
 $bimUnit = null;
 foreach ($d['units'] as $u => $unit) { if (!$unit['closed']) { $bimUnit = $u; break; } }
 if ($bimUnit !== null) {
     $given = array_values(array_filter($studentExams[(int) $d['id']][$bimUnit] ?? [], function ($g) { return $g !== null; }));
 ?>
-    <details class="m-perf-try" data-bim-sim data-bim='<?= htmlspecialchars(json_encode(['unit' => $bimUnit, 'grades' => $given]), ENT_QUOTES) ?>'>
+    <details class="m-perf-try" data-bim-sim data-bim='<?= htmlspecialchars(json_encode(['unit' => $bimUnit, 'grades' => $given, 'per' => (int) $d['perBimester']]), ENT_QUOTES) ?>'>
         <summary><i class="fas fa-pencil-alt mr-1"></i>Simular o <?= $bimUnit ?>º bimestre</summary>
         <div class="m-perf-try-fields">
-            <?php for ($i = 0; $i < $rule['perBimester']; $i++) { ?>
+            <?php for ($i = 0; $i < (int) $d['perBimester']; $i++) { ?>
                 <label><span><?= $i + 1 ?>ª avaliação</span>
                     <?php if (isset($given[$i])) { ?>
                         <input type="text" class="form-control" value="<?= $fmt($given[$i]) ?>" disabled aria-label="<?= $i + 1 ?>ª avaliação (nota lançada)">

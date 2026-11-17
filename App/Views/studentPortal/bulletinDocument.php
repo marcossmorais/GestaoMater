@@ -51,7 +51,7 @@ require __DIR__ . '/documentHead.php';
                 </tbody>
             </table>
         </div>
-        <p class="rule"><?= htmlspecialchars((string) $rule['units']) ?> bimestres; nota do bimestre = média das <?= (int) $rule['perBimester'] ?> avaliações (0 a <?= $fmt($rule['maxPerUnit']) ?>); média <?= $fmt($rule['passing']) ?> por bimestre. (R) = vale a recuperação (maior que a média do bimestre). * = parcial. Média do ano = soma dos <?= htmlspecialchars((string) $rule['units']) ?> bimestres ÷ <?= htmlspecialchars((string) $rule['units']) ?> (precisa de <?= $fmt($rule['passing']) ?>); aparece quando os <?= htmlspecialchars((string) $rule['units']) ?> bimestres fecham. Faltas são informativas e não entram na nota.</p>
+        <p class="rule"><?= htmlspecialchars((string) $rule['units']) ?> bimestres; nota do bimestre = média das avaliações do bimestre (0 a <?= $fmt($rule['maxPerUnit']) ?>); média <?= $fmt($rule['passing']) ?> por bimestre. (R) = vale a recuperação (maior que a média do bimestre). * = parcial. Média do ano = soma dos <?= htmlspecialchars((string) $rule['units']) ?> bimestres ÷ <?= htmlspecialchars((string) $rule['units']) ?> (precisa de <?= $fmt($rule['passing']) ?>); aparece quando os <?= htmlspecialchars((string) $rule['units']) ?> bimestres fecham. Faltas são informativas e não entram na nota.</p>
 
         <footer>
             <div>

@@ -157,7 +157,7 @@ $indexCard = function () use ($index, $tones) {
                             $regular = array_values(array_filter($list, function ($e) { return !$e->recovery; }));
                             $recovery = array_values(array_filter($list, function ($e) { return $e->recovery; }));
                             $state = $unit['grade'] === null ? '' : ($unit['grade'] < $rule['passing'] ? 'is-low' : 'is-ok');
-                            $slots = max((int) $rule['perBimester'], count($regular));
+                            $slots = max((int) ($p['perBimester'] ?? $rule['perBimester']), count($regular));
                         ?>
                             <div class="m-gradeline <?= \App\Tools\Subject::css($p['discipline']) ?>">
                                 <div class="m-gradeline-name">

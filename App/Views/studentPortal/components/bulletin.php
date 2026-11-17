@@ -19,7 +19,7 @@ $status = [
     <div class="m-page-head">
         <div>
             <h5>Boletim</h5>
-            <p>Nota de cada bimestre de 0 a 10 (média das <?= (int) $rule['perBimester'] ?> avaliações; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior nota entre o bimestre e a recuperação). Toque na matéria para ver AV1, AV2, AV3, recuperação e o simulador. Média do ano = soma dos <?= (int) $rule['units'] ?> bimestres ÷ <?= (int) $rule['units'] ?>.</p>
+            <p>Nota de cada bimestre de 0 a 10 (média das avaliações do bimestre; abaixo de <?= $fmt($rule['passing']) ?>, vale a maior nota entre o bimestre e a recuperação). Toque na matéria para ver as notas de cada AV, a recuperação e o simulador. Média do ano = soma dos <?= (int) $rule['units'] ?> bimestres ÷ <?= (int) $rule['units'] ?>.</p>
         </div>
         <a class="btn btn-primary" href="/portal-aluno/boletim/documento" target="_blank" rel="noopener"><i class="fas fa-file-download mr-2"></i>Baixar boletim</a>
     </div>
@@ -66,7 +66,7 @@ $status = [
                                         <thead>
                                             <tr>
                                                 <th>Bim.</th>
-                                                <?php for ($i = 1; $i <= (int) $rule['perBimester']; $i++) { ?><th>AV<?= $i ?></th><?php } ?>
+                                                <?php for ($i = 1; $i <= (int) $d['perBimester']; $i++) { ?><th>AV<?= $i ?></th><?php } ?>
                                                 <th>Rec.</th>
                                                 <th>Nota</th>
                                             </tr>
@@ -84,7 +84,7 @@ $status = [
                                             ?>
                                                 <tr>
                                                     <th>B<?= (int) $u ?></th>
-                                                    <?php for ($i = 0; $i < (int) $rule['perBimester']; $i++) echo $cell($regular[$i] ?? null); ?>
+                                                    <?php for ($i = 0; $i < (int) $d['perBimester']; $i++) echo $cell($regular[$i] ?? null); ?>
                                                     <?= $cell($recovery) ?>
                                                     <td class="m-bul-final <?= $unit['grade'] !== null && $unit['grade'] < $rule['passing'] ? 'is-low' : '' ?>"><?= $fmt($unit['grade']) ?></td>
                                                 </tr>
