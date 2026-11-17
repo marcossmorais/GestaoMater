@@ -87,7 +87,7 @@ $columns = Importer::columns($type);
                         <?php } elseif ($type === 'professores') { ?>
                             <p class="m-obs-note mt-3">Professor com CPF já cadastrado é ignorado. O vínculo com turmas e disciplinas continua em Gestão &gt; Turmas.</p>
                         <?php } else { ?>
-                            <p class="m-obs-note mt-3">As turmas entram no período ativo. Turma igual (mesma série, letra, curso e turno) é ignorada. A sala precisa estar cadastrada em Gestão &gt; Salas.</p>
+                            <p class="m-obs-note mt-3">As turmas entram no período ativo. Turma igual (mesma série, letra, segmento e turno) é ignorada. A sala precisa estar cadastrada em Gestão &gt; Salas.</p>
                         <?php } ?>
                     </div>
                 </div>

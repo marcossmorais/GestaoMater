@@ -53,7 +53,7 @@
 
                                     <div class="form-group col-6 col-sm-4">
 
-                                        <label for="course">Curso</label>
+                                        <label for="course">Segmento</label>
 
                                         <select id="course" name="course" class="form-control custom-select">
 
@@ -287,7 +287,7 @@
 
                                     <div class="form-group col-lg-5">
 
-                                        <label for="course">Curso:</label>
+                                        <label for="course">Segmento:</label>
 
                                         <select id="course" name="course" class="form-control custom-select">
 
