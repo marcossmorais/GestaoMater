@@ -111,7 +111,8 @@ require __DIR__ . '/components/classCards.php';
 <script>
     window.MATER_GRADES = {
         classes: <?= json_encode($classesJson, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
-        examTypes: <?= json_encode(\App\Models\TeacherStudent\Gradebook::EXAM_TYPES, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>
+        // rótulos de todos os instrumentos; a lista de cada turma vem com as avaliações (Fund. 1 tem a própria)
+        examTypes: <?= json_encode(\App\Models\TeacherStudent\Gradebook::EXAM_TYPES + \App\Models\TeacherStudent\Gradebook::EXAM_TYPES_INICIAIS, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>
     };
 </script>
 <script src="<?= asset('/assets/js/grades.js') ?>" defer></script>

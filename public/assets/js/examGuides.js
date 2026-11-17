@@ -53,6 +53,23 @@
         fill(list.find((s) => s.key === state.slot) || null);
     }
 
+    // botões de instrumento conforme a etapa da turma (Fund. 1 tem a lista própria)
+    function renderTypeChips(examTypes) {
+        const box = $('[data-guide-types]');
+        box.textContent = '';
+        Object.keys(examTypes).forEach((key) => {
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'm-att-subject';
+            chip.dataset.type = key;
+            chip.setAttribute('aria-pressed', 'false');
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-square';
+            chip.append(icon, examTypes[key]);
+            box.append(chip);
+        });
+    }
+
     function setTypes(types) {
         state.types = new Set(types);
         form.querySelectorAll('[data-type]').forEach((chip) => {
@@ -91,6 +108,7 @@
             state.exams = data.exams;
             state.units = data.units;
             state.perBimester = data.perBimester;
+            if (data.examTypes) renderTypeChips(data.examTypes);
             renderSlots();
         } catch (e) {
             toast(errors[e.message] || errors.falha, 'error');

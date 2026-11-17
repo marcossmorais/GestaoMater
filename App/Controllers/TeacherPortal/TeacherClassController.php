@@ -207,6 +207,7 @@ class TeacherClassController extends Action
 
         $Gradebook = Container::getModel('TeacherStudent\\Gradebook');
         $rule = Container::getModel('Student\\StudentPerformance')->rule();
+        $own = $Gradebook->disciplineRule($disciplineClassId);
         $units = [];
         foreach ($this->openUnits() as $u) $units[$u] = $Gradebook->examCount($disciplineClassId, $u);
         $status = $Gradebook->guideStatus($disciplineClassId);
@@ -230,14 +231,25 @@ class TeacherClassController extends Action
             }, $Gradebook->exams($disciplineClassId)),
             'openUnits' => $this->openUnits(),
             'units' => $units,
-            'perBimester' => $rule['perBimester'],
+            'perBimester' => $own['perBimester'],
+            'examTypes' => $own['examTypes'],
             'passing' => $rule['passing'],
         ]);
     }
 
 
     /**
-     * Cria avaliação de 0 a 10 (até 3 por bimestre) ou a recuperação do bimestre; com "exam", atualiza só os tipos.
+     * Os tipos marcados existem na lista da etapa da turma? (Fund. 1 tem a lista própria de instrumentos)
+     */
+    private function validTypes($disciplineClassId, array $types)
+    {
+        $own = Container::getModel('TeacherStudent\\Gradebook')->disciplineRule($disciplineClassId);
+        return $own !== null && !array_diff($types, array_keys($own['examTypes']));
+    }
+
+
+    /**
+     * Cria avaliação de 0 a 10 (até o limite da disciplina por bimestre) ou a recuperação do bimestre; com "exam", atualiza só os tipos.
      * O roteiro é escrito na aba Roteiro de Provas (guideSave).
      */
     public function examSave()
@@ -247,14 +259,18 @@ class TeacherClassController extends Action
         $Gradebook = Container::getModel('TeacherStudent\\Gradebook');
 
         $types = array_values(array_unique(array_filter((array) ($input['types'] ?? []), 'is_string')));
-        if (array_diff($types, array_keys(\App\Models\TeacherStudent\Gradebook::EXAM_TYPES))) return $this->json(['error' => 'tipo-invalido'], 422);
 
         if (!empty($input['exam'])) {
             $exam = $Gradebook->exam((int) $input['exam']);
             if (!$exam || !$this->canEdit($exam->discipline_class_id)) return $this->deny('avaliacoes', $input['exam']);
+            if (!$this->validTypes($exam->discipline_class_id, $types)) return $this->json(['error' => 'tipo-invalido'], 422);
 
             if (array_key_exists('types', $input)) $Gradebook->saveTypes($exam->id, $types);
             return $this->json(['id' => (int) $exam->id]);
+        }
+
+        if ($this->canEdit((int) ($input['disciplineClass'] ?? 0)) && !$this->validTypes((int) $input['disciplineClass'], $types)) {
+            return $this->json(['error' => 'tipo-invalido'], 422);
         }
 
         $id = $this->createExam($input, $types);
@@ -282,7 +298,7 @@ class TeacherClassController extends Action
         $recovery = !empty($input['recovery']);
 
         $count = $Gradebook->examCount($disciplineClassId, $unity);
-        $perBimester = Container::getModel('Student\\StudentPerformance')->rule()['perBimester'];
+        $perBimester = $Gradebook->disciplineRule($disciplineClassId)['perBimester'];
 
         $error = null;
         if (!in_array($unity, $this->openUnits(), true)) $error = ['error' => 'unidade-fechada'];
@@ -347,7 +363,8 @@ class TeacherClassController extends Action
         if (mb_strlen($guide['topics']) > 2000 || mb_strlen($guide['material']) > 500 || mb_strlen($guide['notes']) > 3000) {
             return $this->json(['error' => 'texto-muito-longo'], 422);
         }
-        if (array_diff($types, array_keys(\App\Models\TeacherStudent\Gradebook::EXAM_TYPES))) return $this->json(['error' => 'tipo-invalido'], 422);
+        $disciplineClassId = !empty($input['exam']) ? (int) $exam->discipline_class_id : (int) $input['disciplineClass'];
+        if (!$this->validTypes($disciplineClassId, $types)) return $this->json(['error' => 'tipo-invalido'], 422);
 
         if (!empty($input['exam'])) {
             $id = (int) $exam->id;
@@ -371,6 +388,8 @@ class TeacherClassController extends Action
         if (!$exam || !$this->canEdit($exam->discipline_class_id)) return $this->json(['error' => 'sem-permissao'], 403);
 
         $rule = Container::getModel('Student\\StudentPerformance')->rule();
+        // quantas avaliações esta disciplina tem por bimestre (no Fund. 1 varia por disciplina)
+        $rule['perBimester'] = $Gradebook->disciplineRule($exam->discipline_class_id)['perBimester'];
 
         $this->json([
             'exam' => ['id' => (int) $exam->id, 'value' => (float) $exam->value, 'unity' => (int) $exam->unity, 'description' => $exam->description, 'recovery' => (bool) $exam->recovery],
@@ -581,7 +600,7 @@ class TeacherClassController extends Action
         $this->view->performance = $Performance->byDiscipline($student->id, $student->class_id);
         $this->view->mine = $mine;
         $this->view->exams = $StudentFile->exams($student->id, array_map(function ($p) { return (int) $p['id']; }, $this->view->performance));
-        $this->view->examTypes = \App\Models\TeacherStudent\Gradebook::EXAM_TYPES;
+        $this->view->examTypes = \App\Models\TeacherStudent\Gradebook::EXAM_TYPES + \App\Models\TeacherStudent\Gradebook::EXAM_TYPES_INICIAIS;
         $this->view->notes = $StudentFile->notes($student->id);
         $this->view->guardians = $StudentFile->guardians($student->student_id);
         $this->view->classAverages = $StudentFile->classAverages($student->class_id, $this->view->rule);

@@ -380,7 +380,7 @@ class TeacherDashboard extends Model
                 if ($b['needsRecovery']) {
                     $add($row->enrollment_id, $row->name, $dcId, "Aguarda recuperação (média $grade)", 3, 'recovery');
                 } elseif (!$b['closed'] && $b['average'] < $rule['passing']) {
-                    $add($row->enrollment_id, $row->name, $dcId, "Média parcial $grade ({$row->graded} de {$rule['perBimester']})", 2, 'partial');
+                    $add($row->enrollment_id, $row->name, $dcId, "Média parcial $grade ({$row->graded} de {$row->required})", 2, 'partial');
                 }
             }
         }

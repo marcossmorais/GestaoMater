@@ -12,7 +12,9 @@
     const saveButton = $('[data-gr-save]');
 
     const state = { cls: null, exams: [], exam: null, students: [], editable: false, dirty: false, busy: false };
-    const examTypes = (window.MATER_GRADES && window.MATER_GRADES.examTypes) || {};
+    // rótulos de todos os instrumentos (para mostrar); os botões usam a lista da etapa da turma aberta
+    const typeLabels = (window.MATER_GRADES && window.MATER_GRADES.examTypes) || {};
+    let examTypes = typeLabels;
 
     function typeChips(selected) {
         return Object.keys(examTypes).map((key) => {
@@ -120,7 +122,7 @@
                     <span class="m-att-class-badge">${badge}</span>
                     <span class="m-exam-body">
                         <strong>${title}</strong>
-                        <small>${exam.date.split('-').reverse().join('/')} · ${exam.graded} nota${exam.graded === 1 ? '' : 's'}${(exam.guideTopics || exam.guideMaterial || exam.guide) ? ' · com roteiro' : ''}${custom}${exam.types.length ? ` · ${escapeHtml(exam.types.map((t) => examTypes[t] || t).join(', '))}` : ''}</small>
+                        <small>${exam.date.split('-').reverse().join('/')} · ${exam.graded} nota${exam.graded === 1 ? '' : 's'}${(exam.guideTopics || exam.guideMaterial || exam.guide) ? ' · com roteiro' : ''}${custom}${exam.types.length ? ` · ${escapeHtml(exam.types.map((t) => typeLabels[t] || t).join(', '))}` : ''}</small>
                     </span>
                     <i class="fas fa-chevron-right m-att-class-go"></i>
                 </button>`;
@@ -182,6 +184,10 @@
         try {
             const data = await api(`/portal-docente/notas/avaliacoes?disciplineClass=${state.cls.id}`);
             state.exams = data.exams;
+            if (data.examTypes) {
+                examTypes = data.examTypes;
+                newTypes.innerHTML = typeChips([]);
+            }
             renderBimesters(data);
         } catch (e) {
             $('[data-gr-bimesters]').innerHTML = `<div class="m-empty">${escapeHtml(errors[e.message] || 'Não foi possível carregar.')}</div>`;
