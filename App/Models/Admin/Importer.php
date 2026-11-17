@@ -102,7 +102,7 @@ class Importer extends Model
 
         $stmt = $this->db->prepare(
             "SELECT turma.id_turma AS id, serie.sigla AS serie, cedula_turma.cedula AS letter, curso.sigla AS course, turno.nome_turno AS shift,
-                    serie.sigla || 'ª ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno AS label
+                    serie.sigla || ' ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno AS label
              FROM turma
              INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
              INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
@@ -269,14 +269,18 @@ class Importer extends Model
         $messages = [];
         $get = function ($k) use ($item) { return trim((string) ($item[$k] ?? '')); };
 
-        $serie = $l['series'][P::compact(rtrim($get('serie'), 'ªº°'))] ?? $l['series'][P::compact($get('serie'))] ?? null;
-        if ($serie === null) $messages[] = 'Série "' . $get('serie') . '" não existe.';
+        $course = $l['courses'][P::compact($get('curso'))] ?? null;
+
+        // série do segmento da turma: "1" no Fund. 1 é o 1º ano, no Médio é a 1ª série
+        $stage = $course === null ? null : ($l['courseStage'][$course] ?? null);
+        $serie = $stage === null ? null : ($l['seriesByStage'][$stage][P::digits($get('serie'))] ?? null);
+        $serie ??= $l['series'][P::compact($get('serie'))] ?? null;
+        if ($serie === null) $messages[] = 'Série "' . $get('serie') . '" não existe' . ($stage ? ' nesse segmento.' : '.');
 
         $letter = $l['letters'][P::compact($get('turma'))] ?? null;
         if ($letter === null) $messages[] = 'Turma (letra) "' . $get('turma') . '" não existe.';
 
-        $course = $l['courses'][P::compact($get('curso'))] ?? null;
-        if ($course === null) $messages[] = 'Curso "' . $get('curso') . '" não existe.';
+        if ($course === null) $messages[] = 'Segmento "' . $get('curso') . '" não existe.';
 
         $shift = $l['shifts'][P::compact($get('turno'))] ?? null;
         if ($shift === null) $messages[] = 'Turno "' . $get('turno') . '" não existe.';
@@ -459,7 +463,7 @@ class Importer extends Model
         if ($this->lookups !== null) return $this->lookups;
 
         $l = ['sex' => [], 'blood' => [], 'classes' => [], 'students' => [], 'teachers' => [], 'enrolled' => [],
-              'series' => [], 'letters' => [], 'courses' => [], 'shifts' => [], 'rooms' => [], 'existingClasses' => []];
+              'series' => [], 'seriesByStage' => [], 'letters' => [], 'courses' => [], 'courseStage' => [], 'shifts' => [], 'rooms' => [], 'existingClasses' => []];
 
         foreach ($this->db->query("SELECT id_sexo, sexo FROM sexo")->fetchAll(\PDO::FETCH_NUM) as [$id, $name]) {
             $l['sex'][P::compact($name)] = (int) $id;
@@ -472,8 +476,10 @@ class Importer extends Model
 
         foreach ($this->activeClasses() as $c) {
             $id = [(int) $c['id'], $c['label']];
-            foreach (['ª', 'o', ''] as $ordinal) {
-                $l['classes'][P::compact($c['serie'] . $ordinal . ' ' . $c['letter'] . ' ' . $c['course'] . ' ' . $c['shift'])] = $id;
+            // a sigla já traz o ordinal ("1ª", "6º"); aceita também "1", "1a", "1o" (o segmento desempata)
+            $number = P::digits($c['serie']);
+            foreach ([$c['serie'], $number . 'ª', $number . 'º', $number . 'o', $number] as $serie) {
+                $l['classes'][P::compact($serie . ' ' . $c['letter'] . ' ' . $c['course'] . ' ' . $c['shift'])] = $id;
             }
         }
 
@@ -488,7 +494,7 @@ class Importer extends Model
         $period = $this->activePeriod();
         if ($period) {
             $stmt = $this->db->prepare(
-                "SELECT matricula.fk_id_aluno, serie.sigla || 'ª ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno
+                "SELECT matricula.fk_id_aluno, serie.sigla || ' ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno
                  FROM matricula
                  INNER JOIN turma ON (matricula.fk_id_turma_matricula = turma.id_turma)
                  INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
@@ -505,18 +511,20 @@ class Importer extends Model
             foreach ($stmt->fetchAll(\PDO::FETCH_NUM) as $c) $l['existingClasses'][implode('-', $c)] = true;
         }
 
-        foreach ($this->db->query("SELECT id_serie, sigla, nome FROM serie")->fetchAll(\PDO::FETCH_NUM) as [$id, $sigla, $name]) {
-            $l['series'][P::compact($sigla)] = (int) $id;
+        // "1" existe no Fund. 1 (1º ano) e no Médio (1ª série): a série é escolhida pela etapa do segmento da turma
+        foreach ($this->db->query("SELECT id_serie, sigla, nome, etapa FROM serie")->fetchAll(\PDO::FETCH_NUM) as [$id, $sigla, $name, $stage]) {
             $l['series'][P::compact($name)] = (int) $id;
+            $l['seriesByStage'][$stage][P::digits($sigla)] = (int) $id;
         }
 
         foreach ($this->db->query("SELECT id_cedula_turma, cedula FROM cedula_turma")->fetchAll(\PDO::FETCH_NUM) as [$id, $letter]) {
             $l['letters'][P::compact($letter)] = (int) $id;
         }
 
-        foreach ($this->db->query("SELECT id_curso, sigla, nome_curso FROM curso")->fetchAll(\PDO::FETCH_NUM) as [$id, $sigla, $name]) {
+        foreach ($this->db->query("SELECT id_curso, sigla, nome_curso, etapa FROM curso")->fetchAll(\PDO::FETCH_NUM) as [$id, $sigla, $name, $stage]) {
             $l['courses'][P::compact($sigla)] = (int) $id;
             $l['courses'][P::compact($name)] = (int) $id;
+            $l['courseStage'][(int) $id] = $stage;
         }
 
         foreach ($this->db->query("SELECT id_turno, nome_turno FROM turno")->fetchAll(\PDO::FETCH_NUM) as [$id, $name]) {

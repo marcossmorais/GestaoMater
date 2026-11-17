@@ -20,7 +20,7 @@ foreach ($periods as $p) $yearOf[(int) $p->id] = $p->year . ' · ' . mb_strtolow
 
 <div class="card m-panel">
     <div class="m-panel-head"><h6>Do período ao novo ano</h6></div>
-    <p class="m-obs-note">Copia as turmas com suas disciplinas e professores para o novo período e rematricula: aprovado sobe de série, reprovado repete, quem está na última série conclui. Alunos que já têm matrícula no destino não são mexidos. O novo período precisa estar criado em <a href="/admin/gestao/periodo-letivo">Gestão &gt; Período letivo</a>.</p>
+    <p class="m-obs-note">Copia as turmas com suas disciplinas e professores para o novo período e rematricula: aprovado sobe de série dentro do segmento, reprovado repete, quem é aprovado na última série do segmento (5º ano, 9º ano, 3ª série) conclui e é remanejado à mão para o próximo segmento depois da rematrícula. Alunos que já têm matrícula no destino não são mexidos. O novo período precisa estar criado em <a href="/admin/gestao/periodo-letivo">Gestão &gt; Período letivo</a>.</p>
 
     <form class="m-imp-rollover" method="get" action="/admin/importacao">
         <input type="hidden" name="aba" value="virada">

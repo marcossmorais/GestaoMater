@@ -54,9 +54,7 @@ class YearRollover extends Model
             if ($c['period'] === (int) $targetId) $target[$c['key']] = $c;
         }
 
-        $series = $this->series();
-        $nextSerie = [];
-        foreach ($series as $i => $id) $nextSerie[$id] = $series[$i + 1] ?? null;
+        $nextSerie = $this->nextSeries();
 
         // 1) turmas do ano de origem que ainda não existem no destino
         $toCreate = [];
@@ -226,7 +224,7 @@ class YearRollover extends Model
                 'id' => (int) $r['id_turma'], 'period' => (int) $r['fk_id_periodo_letivo'], 'serie' => (int) $r['fk_id_serie'],
                 'letter' => (int) $r['fk_id_cedula'], 'course' => (int) $r['fk_id_curso'], 'shift' => (int) $r['fk_id_turno'], 'room' => (int) $r['fk_id_sala'],
                 'letterLabel' => $r['cedula'], 'courseLabel' => $r['course_label'], 'shiftLabel' => $r['nome_turno'],
-                'label' => $r['serie_label'] . 'ª ' . $r['cedula'] . ' · ' . $r['course_label'] . ' · ' . $r['nome_turno'],
+                'label' => $r['serie_label'] . ' ' . $r['cedula'] . ' · ' . $r['course_label'] . ' · ' . $r['nome_turno'],
             ];
             $c['key'] = $this->key($c['serie'], $c['letter'], $c['course'], $c['shift']);
             $classes[$c['id']] = $c;
@@ -249,17 +247,32 @@ class YearRollover extends Model
         $sigla = $this->db->prepare("SELECT sigla FROM serie WHERE id_serie = :id");
         $sigla->execute([':id' => $serie]);
 
-        return $sigla->fetchColumn() . 'ª ' . $class['letterLabel'] . ' · ' . $class['courseLabel'] . ' · ' . $class['shiftLabel'];
+        return $sigla->fetchColumn() . ' ' . $class['letterLabel'] . ' · ' . $class['courseLabel'] . ' · ' . $class['shiftLabel'];
     }
 
 
     /**
-     * Séries em ordem; a seguinte da última não existe (aluno conclui)
+     * Série seguinte de cada série, dentro da mesma etapa (1º→2º… no Fund. 1, 6º→7º… no Fund. 2, 1ª→2ª… no Médio).
+     * A última série da etapa não tem seguinte: o aluno aprovado sai como concluinte e a coordenação o remaneja
+     * para o próximo segmento à mão, depois da rematrícula (processo externo).
+     *
+     * @return array [id_serie => id da série seguinte ou null]
      */
-    private function series()
+    private function nextSeries()
     {
 
-        return array_map('intval', $this->db->query("SELECT id_serie FROM serie ORDER BY id_serie")->fetchAll(\PDO::FETCH_COLUMN));
+        $rows = $this->db->query(
+            "SELECT id_serie, etapa FROM serie
+             ORDER BY etapa, NULLIF(regexp_replace(sigla, '\D', '', 'g'), '')::int, id_serie"
+        )->fetchAll(\PDO::FETCH_ASSOC);
+
+        $next = [];
+        foreach ($rows as $i => $row) {
+            $following = $rows[$i + 1] ?? null;
+            $next[(int) $row['id_serie']] = $following && $following['etapa'] === $row['etapa'] ? (int) $following['id_serie'] : null;
+        }
+
+        return $next;
     }
 
 
