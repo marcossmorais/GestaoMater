@@ -1547,7 +1547,8 @@ class Route extends Bootstrap
 				header('Content-Type: application/json');
 				echo json_encode(['error' => 'nao-autenticado']);
 			} else {
-				header('Location: ' . (strpos($url, '/portal-docente') === 0 ? '/portal-docente' : (strpos($url, '/portal-aluno') === 0 ? '/portal-aluno' : '/admin')));
+				$login = strpos($url, '/portal-docente') === 0 ? '/portal-docente' : (strpos($url, '/portal-aluno') === 0 ? '/portal-aluno' : '/admin');
+				header('Location: ' . $login . ($login === '/admin' && $this->adminExpired ? '?error=sessao-expirada' : ''));
 			}
 
 			exit;
@@ -1604,12 +1605,37 @@ class Route extends Bootstrap
 		return $origin === $host;
 	}
 
+	// admin: minutos sem uso até a sessão expirar (docente e aluno seguem o session.gc_maxlifetime, 8 h)
+	const ADMIN_IDLE_SECONDS = 30 * 60;
+
+	private $adminExpired = false;
+
+	/**
+	 * Encerra a sessão do admin parada há mais de 30 minutos (LOGOUT na auditoria); cada acesso renova o prazo
+	 */
+	private function expireIdleAdmin()
+	{
+		if (!isset($_SESSION['Admin'])) return;
+
+		$last = (int) ($_SESSION['Admin']['lastSeen'] ?? time());
+
+		if (time() - $last > self::ADMIN_IDLE_SECONDS) {
+			\App\Auth\PortalAccount::close('admin');
+			$this->adminExpired = true;
+			return;
+		}
+
+		$_SESSION['Admin']['lastSeen'] = time();
+	}
+
 	private function authorized($url)
 	{
 		$url = rtrim($url, '/') ?: '/';
 
 		// as views chamam session_start() depois do layout já ter enviado HTML
 		if (session_status() === PHP_SESSION_NONE) session_start();
+
+		$this->expireIdleAdmin();
 
 		if (in_array($url, self::PUBLIC_ROUTES, true)) return true;
 
