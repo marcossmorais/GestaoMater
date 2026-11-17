@@ -26,7 +26,7 @@ function createBarChart(elementId, labels, datas) {
                 plugins: {
                     title: {
                         display: false,
-                        text: 'Divisão de alunos por curso',
+                        text: 'Divisão de alunos por segmento',
                         color: colorLabels,
                         padding: {
                             top: 10,
