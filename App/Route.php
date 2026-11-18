@@ -1628,6 +1628,20 @@ class Route extends Bootstrap
 		$_SESSION['Admin']['lastSeen'] = time();
 	}
 
+	/**
+	 * Se a conta foi desativada (ou o aluno deixou de estar matriculado no ano ativo), encerra a sessão na hora
+	 */
+	private function revokeInactiveAccounts()
+	{
+		foreach (\App\Auth\PortalAccount::SESSION_KEYS as $portal => $key) {
+			if (!isset($_SESSION[$key])) continue;
+
+			if (!\App\Auth\PortalAccount::accountActive($portal, $_SESSION[$key]['id'] ?? 0)) {
+				\App\Auth\PortalAccount::close($portal);
+			}
+		}
+	}
+
 	private function authorized($url)
 	{
 		$url = rtrim($url, '/') ?: '/';
@@ -1638,6 +1652,8 @@ class Route extends Bootstrap
 		$this->expireIdleAdmin();
 
 		if (in_array($url, self::PUBLIC_ROUTES, true)) return true;
+
+		$this->revokeInactiveAccounts();
 
 		$admin = isset($_SESSION['Admin']);
 		$teacher = isset($_SESSION['Teacher']);

@@ -53,7 +53,7 @@ class Admin extends People
         $stmt->bindValue(':naturalness', $this->__get('naturalness'));
         $stmt->bindValue(':profilePhoto', $this->__get('profilePhoto'));
         $stmt->bindValue(':nationality', $this->__get('nationality'));
-        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->bindValue(':email', \App\Auth\PortalAccount::normalizeEmail($this->__get('email')));
         $stmt->bindValue(':accessCode', $this->__get('accessCode'));
         $stmt->bindValue(':fk_id_sex', $this->__get('fk_id_sex'));
         $stmt->bindValue(':fk_id_blood_type', $this->__get('fk_id_blood_type'));
@@ -229,7 +229,7 @@ class Admin extends People
         $stmt->bindValue(':fk_id_blood_type', $this->__get('fk_id_blood_type'));
         $stmt->bindValue(':fk_id_pcd', $this->__get('fk_id_pcd'));
         $stmt->bindValue(':id', $this->__get('id'));
-        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->bindValue(':email', \App\Auth\PortalAccount::normalizeEmail($this->__get('email')));
         $stmt->bindValue(':fk_id_hierarchy_function', $this->__get('fk_id_hierarchy_function'));
         $stmt->bindValue(':fk_id_account_state', $this->__get('fk_id_account_state'));
 

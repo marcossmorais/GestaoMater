@@ -99,29 +99,64 @@ class PortalAccount
         return $blocked;
     }
 
+    public static function normalizeEmail($email)
+    {
+        $email = is_string($email) ? trim($email) : '';
+
+        return $email === '' ? null : mb_strtolower($email, 'UTF-8');
+    }
+
     /**
-     * Procura o cadastro pelo id do Clerk já vinculado ou, no primeiro acesso,
-     * por um dos e-mails verificados. Retorna o id local ou null.
+     * Esse e-mail já pertence a outro cadastro do mesmo portal?
+     */
+    public static function emailInUse($portal, $email, $excludeId = 0)
+    {
+        $email = self::normalizeEmail($email);
+        if ($email === null) return false;
+
+        $c = self::config($portal);
+        if (!$c) return false;
+
+        $stmt = Connection::getDb()->prepare(
+            "SELECT 1 FROM {$c['table']} WHERE LOWER(BTRIM({$c['email']})) = :email AND {$c['id']} <> :exclude LIMIT 1"
+        );
+        $stmt->execute([':email' => $email, ':exclude' => (int) $excludeId]);
+
+        return (bool) $stmt->fetchColumn();
+    }
+
+    /**
+     * Procura o cadastro pelo id do Clerk já vinculado (desde que o e-mail local continue entre os
+     * verificados dessa conta) ou, no primeiro acesso, por um dos e-mails verificados. Retorna o id local ou null.
      */
     public static function findId($portal, $clerkUserId, array $emails)
     {
         $c = self::config($portal);
         $db = Connection::getDb();
+        $verified = array_values(array_unique(array_filter(array_map([self::class, 'normalizeEmail'], $emails))));
 
-        $stmt = $db->prepare("SELECT {$c['id']} AS id FROM {$c['table']} WHERE clerk_user_id = :clerkId");
+        $stmt = $db->prepare("SELECT {$c['id']} AS id, {$c['email']} AS email FROM {$c['table']} WHERE clerk_user_id = :clerkId");
         $stmt->bindValue(':clerkId', $clerkUserId);
         $stmt->execute();
         $row = $stmt->fetch(\PDO::FETCH_OBJ);
 
-        if ($row) return (int) $row->id;
-        if (!$emails) return null;
+        if ($row) {
+            $localEmail = self::normalizeEmail($row->email);
+            if ($localEmail !== null && in_array($localEmail, $verified, true)) {
+                return (int) $row->id;
+            }
+            $unlink = $db->prepare("UPDATE {$c['table']} SET clerk_user_id = NULL WHERE {$c['id']} = :id");
+            $unlink->execute([':id' => (int) $row->id]);
+        }
 
-        $placeholders = implode(',', array_fill(0, count($emails), '?'));
+        if (!$verified) return null;
+
+        $placeholders = implode(',', array_fill(0, count($verified), '?'));
         $stmt = $db->prepare(
             "SELECT {$c['id']} AS id FROM {$c['table']}
-             WHERE LOWER({$c['email']}) IN ($placeholders) AND clerk_user_id IS NULL"
+             WHERE LOWER(BTRIM({$c['email']})) IN ($placeholders) AND clerk_user_id IS NULL"
         );
-        $stmt->execute(array_values($emails));
+        $stmt->execute($verified);
         $rows = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
         // e-mail duplicado entre cadastros: não dá para saber quem é, recusa
@@ -131,10 +166,49 @@ class PortalAccount
 
         $stmt = $db->prepare("UPDATE {$c['table']} SET clerk_user_id = :clerkId WHERE {$c['id']} = :id");
         $stmt->bindValue(':clerkId', $clerkUserId);
-        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();
 
         return $id;
+    }
+
+    /**
+     * Confere no banco se a conta da sessão aberta continua ativa (encerra o acesso assim que a secretaria desativa)
+     */
+    public static function accountActive($portal, $id)
+    {
+        $db = Connection::getDb();
+        $id = (int) $id;
+        if ($id <= 0) return false;
+
+        switch ($portal) {
+            case 'admin':
+                $stmt = $db->prepare("SELECT fk_id_situacao_conta_administrador = 1 FROM administrador WHERE id_administrador = :id");
+                break;
+            case 'docente':
+                $stmt = $db->prepare("SELECT fk_id_situacao_conta_professor = 1 FROM professor WHERE id_professor = :id");
+                break;
+            case 'aluno':
+                $stmt = $db->prepare(
+                    "SELECT EXISTS (
+                         SELECT 1 FROM aluno
+                         INNER JOIN matricula ON (aluno.id_aluno = matricula.fk_id_aluno)
+                         INNER JOIN turma ON (matricula.fk_id_turma_matricula = turma.id_turma)
+                         INNER JOIN periodo_letivo ON (turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo)
+                         WHERE aluno.id_aluno = :id
+                           AND aluno.fk_id_situacao_geral_aluno = 1
+                           AND periodo_letivo.fk_id_situacao_periodo_letivo = 1
+                           AND matricula.fk_id_situacao_aluno <> 4
+                     )"
+                );
+                break;
+            default:
+                return false;
+        }
+
+        $stmt->execute([':id' => $id]);
+
+        return (bool) $stmt->fetchColumn();
     }
 
     /**
@@ -187,6 +261,13 @@ class PortalAccount
                 return null;
 
             case 'aluno':
+                $statusStmt = $db->prepare("SELECT fk_id_situacao_geral_aluno FROM aluno WHERE id_aluno = :id");
+                $statusStmt->execute([':id' => $id]);
+                $generalStatus = $statusStmt->fetchColumn();
+
+                if ($generalStatus === false) return 'sem-cadastro';
+                if ((int) $generalStatus !== 1) return 'conta-desativada';
+
                 $stmt = $db->prepare(
                     "SELECT aluno.id_aluno AS id, aluno.nome_aluno AS name, aluno.foto_perfil_aluno AS profile_photo,
                      aluno.fk_id_aluno_hierarquia_funcao AS hierarchy_function, matricula.id_matricula AS enrollment_id,
@@ -195,12 +276,16 @@ class PortalAccount
                      FROM aluno
                      INNER JOIN matricula ON (aluno.id_aluno = matricula.fk_id_aluno)
                      INNER JOIN turma ON (matricula.fk_id_turma_matricula = turma.id_turma)
+                     INNER JOIN periodo_letivo ON (turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo)
                      INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
                      INNER JOIN curso ON (turma.fk_id_curso = curso.id_curso)
                      INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
                      INNER JOIN turno ON (turma.fk_id_turno = turno.id_turno)
                      WHERE aluno.id_aluno = :id
-                     ORDER BY serie.id_serie DESC
+                       AND aluno.fk_id_situacao_geral_aluno = 1
+                       AND periodo_letivo.fk_id_situacao_periodo_letivo = 1
+                       AND matricula.fk_id_situacao_aluno <> 4
+                     ORDER BY (matricula.fk_id_situacao_aluno = 1) DESC, matricula.id_matricula DESC
                      LIMIT 1"
                 );
                 $stmt->execute([':id' => $id]);

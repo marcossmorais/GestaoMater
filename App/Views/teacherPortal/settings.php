@@ -28,7 +28,7 @@ $birth = $teacher->birth_date ? date('d/m/Y', strtotime($teacher->birth_date)) :
                 <section class="m-profile-box m-profile-wide">
                     <h6>Contato e endereço</h6>
                     <div class="m-form-grid">
-                        <label class="m-att-field m-span-2"><span class="m-att-label">E-mail</span><input class="form-control" name="email" type="email" value="<?= htmlspecialchars($teacher->email) ?>" disabled></label>
+                        <label class="m-att-field m-span-2"><span class="m-att-label">E-mail<?= \App\Auth\Clerk::enabled() ? ' <small>(fale com a secretaria para alterar)</small>' : '' ?></span><input class="form-control" name="email" type="email" value="<?= htmlspecialchars((string) $teacher->email) ?>" disabled<?= \App\Auth\Clerk::enabled() ? ' readonly' : '' ?>></label>
                         <label class="m-att-field"><span class="m-att-label">Telefone</span><input class="form-control" id="telephoneNumber" name="telephoneNumber" value="<?= htmlspecialchars($teacher->telephone_number) ?>" disabled inputmode="tel"></label>
                         <label class="m-att-field"><span class="m-att-label">CEP</span><input class="form-control" id="zipCode" name="zipCode" value="<?= htmlspecialchars($teacher->zip_code) ?>" disabled inputmode="numeric"></label>
                         <label class="m-att-field m-span-2"><span class="m-att-label">Endereço</span><input class="form-control" name="address" value="<?= htmlspecialchars($teacher->address) ?>" disabled></label>

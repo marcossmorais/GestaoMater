@@ -56,8 +56,14 @@ class Clerk
 
         $claims = JWT::decode($token, self::keySet());
 
-        // azp: origem que gerou o token, precisa ser uma das origens permitidas
-        if (isset($claims->azp) && !in_array($claims->azp, self::authorizedParties(), true)) {
+        $frontend = self::frontendApi();
+        if ($frontend === '' || rtrim((string) ($claims->iss ?? ''), '/') !== 'https://' . $frontend) {
+            throw new \Exception('Emissor do token inválido');
+        }
+
+        // azp: origem do navegador que gerou o token de sessão; obrigatória para recusar tokens sem origem
+        $azp = rtrim((string) ($claims->azp ?? ''), '/');
+        if ($azp === '' || !in_array($azp, self::authorizedParties(), true)) {
             throw new \Exception('Origem do token não autorizada');
         }
 
@@ -98,12 +104,22 @@ class Clerk
     private static function keySet()
     {
         $cacheFile = sys_get_temp_dir() . '/mater_clerk_jwks_' . md5(self::secretKey()) . '.json';
+        $jwks = null;
 
         if (is_file($cacheFile) && filemtime($cacheFile) > time() - self::JWKS_CACHE_TTL) {
-            $jwks = json_decode(file_get_contents($cacheFile), true);
-        } else {
+            $jwks = json_decode((string) @file_get_contents($cacheFile), true);
+        }
+
+        if (empty($jwks['keys']) || !is_array($jwks['keys'])) {
             $jwks = self::request('/jwks');
-            file_put_contents($cacheFile, json_encode($jwks));
+            if (empty($jwks['keys']) || !is_array($jwks['keys'])) {
+                throw new \Exception('JWKS do Clerk inválido');
+            }
+            $tmp = @tempnam(sys_get_temp_dir(), 'mater_jwks_');
+            if ($tmp !== false && @file_put_contents($tmp, json_encode($jwks)) !== false) {
+                @chmod($tmp, 0600);
+                if (!@rename($tmp, $cacheFile)) @unlink($tmp);
+            }
         }
 
         return JWK::parseKeySet($jwks, 'RS256');

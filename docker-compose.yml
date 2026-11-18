@@ -45,6 +45,7 @@ services:
       - ./database/32_fund1_avaliacoes_por_disciplina.sql:/docker-entrypoint-initdb.d/32_fund1_avaliacoes_por_disciplina.sql:ro
       - ./database/33_series_por_etapa.sql:/docker-entrypoint-initdb.d/33_series_por_etapa.sql:ro
       - ./database/34_limite_tentativas.sql:/docker-entrypoint-initdb.d/34_limite_tentativas.sql:ro
+      - ./database/35_vinculo_clerk_email_unico.sql:/docker-entrypoint-initdb.d/35_vinculo_clerk_email_unico.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro

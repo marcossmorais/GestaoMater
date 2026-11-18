@@ -155,6 +155,7 @@ class Importer extends Model
         }
 
         $seen = [];
+        $seenEmails = [];
         foreach ($mapped as $i => $item) {
             $line = $i + 2; // linha 1 é o cabeçalho
             $checked = $type === 'turmas' ? $this->checkClass($item) : $this->checkPerson($type, $item);
@@ -166,6 +167,16 @@ class Importer extends Model
                     $checked['messages'][] = 'Repetido no arquivo (igual à linha ' . $seen[$checked['key']] . ').';
                 } else {
                     $seen[$checked['key']] = $line;
+                }
+            }
+
+            $rowEmail = $checked['data']['email'] ?? null;
+            if ($checked['status'] === 'novo' && $rowEmail !== null) {
+                if (isset($seenEmails[$rowEmail])) {
+                    $checked['status'] = 'erro';
+                    $checked['messages'][] = 'E-mail repetido no arquivo (igual à linha ' . $seenEmails[$rowEmail] . ').';
+                } else {
+                    $seenEmails[$rowEmail] = $line;
                 }
             }
 
@@ -256,6 +267,11 @@ class Importer extends Model
             }
             $data['studentId'] = $existing;
             return ['status' => 'matricular', 'messages' => ['Aluno já cadastrado: os dados pessoais são mantidos e ele é matriculado na turma.'], 'data' => $data, 'summary' => $summary, 'key' => $cpf];
+        }
+
+        $emailMap = $type === 'alunos' ? $l['studentEmails'] : $l['teacherEmails'];
+        if ($email !== null && isset($emailMap[$email])) {
+            return ['status' => 'erro', 'messages' => ['E-mail já cadastrado em outro ' . ($type === 'alunos' ? 'aluno' : 'professor') . '.'], 'data' => null, 'summary' => $summary, 'key' => $cpf];
         }
 
         return ['status' => 'novo', 'messages' => [], 'data' => $data, 'summary' => $summary, 'key' => $cpf];
@@ -462,7 +478,7 @@ class Importer extends Model
 
         if ($this->lookups !== null) return $this->lookups;
 
-        $l = ['sex' => [], 'blood' => [], 'classes' => [], 'students' => [], 'teachers' => [], 'enrolled' => [],
+        $l = ['sex' => [], 'blood' => [], 'classes' => [], 'students' => [], 'teachers' => [], 'studentEmails' => [], 'teacherEmails' => [], 'enrolled' => [],
               'series' => [], 'seriesByStage' => [], 'letters' => [], 'courses' => [], 'courseStage' => [], 'shifts' => [], 'rooms' => [], 'existingClasses' => []];
 
         foreach ($this->db->query("SELECT id_sexo, sexo FROM sexo")->fetchAll(\PDO::FETCH_NUM) as [$id, $name]) {
@@ -483,12 +499,14 @@ class Importer extends Model
             }
         }
 
-        foreach ($this->db->query("SELECT id_aluno, cpf_aluno FROM aluno")->fetchAll(\PDO::FETCH_NUM) as [$id, $cpf]) {
+        foreach ($this->db->query("SELECT id_aluno, cpf_aluno, email_aluno FROM aluno")->fetchAll(\PDO::FETCH_NUM) as [$id, $cpf, $email]) {
             $l['students'][str_pad((string) $cpf, 11, '0', STR_PAD_LEFT)] = (int) $id;
+            if ($email !== null && trim($email) !== '') $l['studentEmails'][mb_strtolower(trim($email), 'UTF-8')] = (int) $id;
         }
 
-        foreach ($this->db->query("SELECT id_professor, cpf_professor FROM professor")->fetchAll(\PDO::FETCH_NUM) as [$id, $cpf]) {
+        foreach ($this->db->query("SELECT id_professor, cpf_professor, email_professor FROM professor")->fetchAll(\PDO::FETCH_NUM) as [$id, $cpf, $email]) {
             $l['teachers'][str_pad((string) $cpf, 11, '0', STR_PAD_LEFT)] = (int) $id;
+            if ($email !== null && trim($email) !== '') $l['teacherEmails'][mb_strtolower(trim($email), 'UTF-8')] = (int) $id;
         }
 
         $period = $this->activePeriod();

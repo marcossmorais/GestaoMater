@@ -36,15 +36,26 @@ class StudentPortalController extends Action
         $Student = Container::getModel('Student\\Student');
         $Tool = new Tools();
 
-        $Student->__set('accessCode', preg_replace('/\D/', '', $_POST['accessCode'] ?? '') ?: '0');
-        $Student->__set('name', $_POST['name']);
+        $accessCode = is_string($_POST['accessCode'] ?? null) ? $_POST['accessCode'] : '';
+        $name = is_string($_POST['name'] ?? null) ? $_POST['name'] : '';
+
+        $Student->__set('accessCode', preg_replace('/\D/', '', $accessCode) ?: '0');
+        $Student->__set('name', $name);
+
+        $accountStatus = $Student->accountStatus();
+        if (count($accountStatus) === 1 && (int) $accountStatus[0]->account_status !== 1) {
+            \App\Auth\PortalAccount::logFailure('aluno', 'conta-desativada');
+            header('Location: /portal-aluno?error=conta-desativada');
+            return;
+        }
 
         $auth = $Student->login();
 
         if (count($auth) != 1) {
 
-            \App\Auth\PortalAccount::logFailure('aluno', 'dados-incorretos');
-            header('Location: /portal-aluno?error=dados-incorretos');
+            $reason = count($accountStatus) === 1 ? 'sem-matricula' : 'dados-incorretos';
+            \App\Auth\PortalAccount::logFailure('aluno', $reason);
+            header('Location: /portal-aluno?error=' . $reason);
 
         } else {
 

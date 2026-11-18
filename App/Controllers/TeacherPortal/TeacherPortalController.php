@@ -35,8 +35,11 @@ class TeacherPortalController extends Action
         $Teacher = Container::getModel('Teacher\\Teacher');
         $Tool = new Tools();
 
-        $Teacher->__set('accessCode', preg_replace('/\D/', '', $_POST['accessCode'] ?? '') ?: '0');
-        $Teacher->__set('name', $_POST['name']);
+        $accessCode = is_string($_POST['accessCode'] ?? null) ? $_POST['accessCode'] : '';
+        $name = is_string($_POST['name'] ?? null) ? $_POST['name'] : '';
+
+        $Teacher->__set('accessCode', preg_replace('/\D/', '', $accessCode) ?: '0');
+        $Teacher->__set('name', $name);
 
         $auth = $Teacher->login();
         $account_status = $Teacher->accountStatus();
@@ -225,6 +228,22 @@ class TeacherPortalController extends Action
             return;
         }
         $data = $input['data'];
+
+        // com Clerk ativo o e-mail é a identidade de login: só a secretaria altera; em qualquer modo, não permite duplicar
+        if (\App\Auth\Clerk::enabled() && \App\Auth\PortalAccount::normalizeEmail($data['email']) !== \App\Auth\PortalAccount::normalizeEmail($own->email)) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', 'professor', $own->id, 'alteração de e-mail de login');
+            http_response_code(422);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Para alterar o e-mail de acesso, procure a secretaria.']);
+            return;
+        }
+
+        if (\App\Auth\PortalAccount::emailInUse('docente', $data['email'], (int) $own->id)) {
+            http_response_code(422);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Este e-mail já está em uso por outro professor.']);
+            return;
+        }
 
         $Address->__set('addressId', $own->address_id);
         $Address->__set('district', $data['district']);

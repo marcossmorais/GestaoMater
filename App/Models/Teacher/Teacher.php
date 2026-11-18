@@ -49,7 +49,7 @@ class Teacher extends People
         $stmt->bindValue(':profilePhoto', $this->__get('profilePhoto'));
         $stmt->bindValue(':nationality', $this->__get('nationality'));
         $stmt->bindValue(':accessCode', $this->__get('accessCode'));
-        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->bindValue(':email', \App\Auth\PortalAccount::normalizeEmail($this->__get('email')));
         $stmt->bindValue(':fk_id_sex', $this->__get('fk_id_sex'));
         $stmt->bindValue(':fk_id_blood_type', $this->__get('fk_id_blood_type'));
         $stmt->bindValue(':fk_id_pcd', $this->__get('fk_id_pcd'));
@@ -323,7 +323,7 @@ class Teacher extends People
         $stmt->bindValue(':fk_id_blood_type', $this->__get('fk_id_blood_type'));
         $stmt->bindValue(':fk_id_pcd', $this->__get('fk_id_pcd'));
         $stmt->bindValue(':teacherId', $this->__get('teacherId'));
-        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->bindValue(':email', \App\Auth\PortalAccount::normalizeEmail($this->__get('email')));
         $stmt->bindValue(':fk_id_account_state', $this->__get('fk_id_account_state'));
 
         $stmt->execute();
@@ -357,7 +357,7 @@ class Teacher extends People
         $stmt->bindValue(':fk_id_blood_type', $this->__get('fk_id_blood_type'));
         $stmt->bindValue(':fk_id_pcd', $this->__get('fk_id_pcd'));
         $stmt->bindValue(':teacherId', $this->__get('teacherId'));
-        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->bindValue(':email', \App\Auth\PortalAccount::normalizeEmail($this->__get('email')));
 
         $stmt->execute();
     }
