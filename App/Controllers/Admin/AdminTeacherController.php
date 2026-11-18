@@ -25,6 +25,12 @@ class AdminTeacherController extends Action
     public function teacherInsert()
     {
 
+        if (\App\Auth\PortalAccount::emailInUse('docente', $_POST['email'] ?? '')) {
+            http_response_code(422);
+            echo 'Este e-mail já está em uso por outro professor.';
+            return;
+        }
+
         $Address =  Container::getModel('People\\Address');
         $Telephone = Container::getModel('People\Telephone');
         $Teacher = Container::getModel('Teacher\\Teacher');
@@ -141,22 +147,37 @@ class AdminTeacherController extends Action
         $Teacher = Container::getModel('Teacher\\Teacher');
         $ClassDiscipline = Container::getModel('GeneralManagement\\ClassDiscipline');
 
-        $ClassDiscipline->__set("fk_id_teacher", $_POST['teacherId']);
+        $teacherId = (int) ($_POST['teacherId'] ?? 0);
+        $Teacher->__set('teacherId', $teacherId);
+        $current = $Teacher->dataGeneral()[0] ?? null;
+        if (!$current) {
+            http_response_code(404);
+            return;
+        }
 
-        $Address->__set('addressId', $_POST['addressId']);
+        if (\App\Auth\PortalAccount::emailInUse('docente', $_POST['email'] ?? '', $teacherId)) {
+            http_response_code(422);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Este e-mail já está em uso por outro professor.']);
+            return;
+        }
+
+        $ClassDiscipline->__set("fk_id_teacher", $teacherId);
+
+        $Address->__set('addressId', $current->address_id);
         $Address->__set('district', $_POST['district']);
         $Address->__set('address', $_POST['address']);
         $Address->__set('uf', $_POST['uf']);
         $Address->__set('county', $_POST['county']);
         $Address->__set('zipCode', preg_replace('/[^0-9]/', '', $_POST['zipCode']));
 
-        $Telephone->__set('telephoneId', $_POST['telephoneId']);
+        $Telephone->__set('telephoneId', $current->telephone_id);
         $Telephone->__set('telephoneNumber', preg_replace('/[^0-9]/', '', $_POST['telephoneNumber']));
         $Teacher->__set('email', $_POST['email']);
 
         $Teacher->__set('accessCode', $_POST['accessCode']);
         $Teacher->__set('fk_id_blood_type', $_POST['bloodType']);
-        $Teacher->__set('teacherId', $_POST['teacherId']);
+        $Teacher->__set('teacherId', $teacherId);
 
         $Teacher->__set('name', $_POST['name']);
         $Teacher->__set('birthDate', $_POST['birthDate']);

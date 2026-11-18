@@ -31,8 +31,11 @@ class AdminController extends Action
         $Admin = Container::getModel('Admin\\Admin');
         $Tool = new Tools();
 
-        $Admin->__set('accessCode', preg_replace('/\D/', '', $_POST['accessCode'] ?? '') ?: '0');
-        $Admin->__set('name', $_POST['name']);
+        $accessCode = is_string($_POST['accessCode'] ?? null) ? $_POST['accessCode'] : '';
+        $name = is_string($_POST['name'] ?? null) ? $_POST['name'] : '';
+
+        $Admin->__set('accessCode', preg_replace('/\D/', '', $accessCode) ?: '0');
+        $Admin->__set('name', $name);
 
         $auth = $Admin->login();
         $account_status = $Admin->accountStatus();
@@ -158,15 +161,46 @@ class AdminController extends Action
 
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        $Address->__set('addressId', $_POST['addressId']);
+        $isPrincipal = (int) ($_SESSION['Admin']['hierarchyFunction'] ?? 0) === 1;
+        $ownId = (int) ($_SESSION['Admin']['id'] ?? 0);
+        $targetId = (int) ($_POST['adminId'] ?? 0);
+
+        if (!$isPrincipal && $targetId !== $ownId) {
+            \App\Tools\Audit::log(\App\Connection::getDb(), 'NEGADO', 'administrador', $targetId ?: null, 'edição de outro administrador');
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Sem permissão para alterar este administrador.']);
+            return;
+        }
+
+        $Admin->__set('id', $targetId);
+        $current = $Admin->dataGeneral()[0] ?? null;
+        if (!$current) {
+            http_response_code(404);
+            return;
+        }
+
+        if (\App\Auth\PortalAccount::emailInUse('admin', $_POST['email'] ?? '', $targetId)) {
+            http_response_code(422);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Este e-mail já está em uso por outro administrador.']);
+            return;
+        }
+
+        // endereço e telefone vêm do cadastro do próprio administrador (evita sobrescrever o de outra pessoa)
+        $Address->__set('addressId', $current->address_id);
         $Address->__set('district', $_POST['district']);
         $Address->__set('address', $_POST['address']);
         $Address->__set('uf', $_POST['uf']);
         $Address->__set('county', $_POST['county']);
         $Address->__set('zipCode', $Tool->formatElement($_POST['zipCode']));
 
-        $Telephone->__set('telephoneId', $_POST['telephoneId']);
+        $Telephone->__set('telephoneId', $current->telephone_id);
         $Telephone->__set('telephoneNumber', $Tool->formatElement($_POST['telephoneNumber']));
+
+        // só o admin principal muda nível hierárquico ou situação de conta (e ninguém desativa a própria conta aberta)
+        $hierarchy = $isPrincipal ? (int) ($_POST['hierarchyFunction'] ?? $current->hierarchy_function_id) : (int) $current->hierarchy_function_id;
+        $accountState = ($isPrincipal && $targetId !== $ownId) ? (int) ($_POST['accountState'] ?? $current->account_state_id) : (int) $current->account_state_id;
 
         $Admin->__set('name', $_POST['name']);
         $Admin->__set('accessCode', $Tool->formatElement($_POST['accessCode']));
@@ -178,9 +212,9 @@ class AdminController extends Action
         $Admin->__set('fk_id_sex', $_POST['sex']);
         $Admin->__set('fk_id_blood_type', $_POST['bloodType']);
         $Admin->__set('fk_id_pcd', $_POST['pcd']);
-        $Admin->__set('fk_id_hierarchy_function', $_POST['hierarchyFunction']);
-        $Admin->__set('id', $_POST['adminId']);
-        $Admin->__set('fk_id_account_state', $_POST['accountState']);
+        $Admin->__set('fk_id_hierarchy_function', $hierarchy);
+        $Admin->__set('id', $targetId);
+        $Admin->__set('fk_id_account_state', $accountState);
 
         $Telephone->update();
         $Address->update();
@@ -190,6 +224,16 @@ class AdminController extends Action
 
     public function settingsUpdate()
     {
+
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        if ((int) ($_SESSION['Admin']['hierarchyFunction'] ?? 0) !== 1) {
+            \App\Tools\Audit::log(\App\Connection::getDb(), 'NEGADO', 'configuracao', 1, 'alteração de configurações gerais');
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Sem permissão para alterar as configurações.']);
+            return;
+        }
 
         $Settings = Container::getModel('Admin\\Settings');
 
@@ -203,6 +247,19 @@ class AdminController extends Action
     public function updateAdminProfilePicture()
     {
 
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $isPrincipal = (int) ($_SESSION['Admin']['hierarchyFunction'] ?? 0) === 1;
+        $ownId = (int) ($_SESSION['Admin']['id'] ?? 0);
+        $targetId = (int) ($_POST['id'] ?? 0);
+
+        if (!$isPrincipal && $targetId !== $ownId) {
+            \App\Tools\Audit::log(\App\Connection::getDb(), 'NEGADO', 'administrador', $targetId ?: null, 'foto de outro administrador');
+            http_response_code(403);
+            echo 'Sem permissão para alterar a foto deste administrador.';
+            return;
+        }
+
         $Admin = Container::getModel('Admin\\Admin');
         $Tool = new Tools();
         $dir = '../public/assets/img/adminProfilePhotos/';
@@ -213,15 +270,16 @@ class AdminController extends Action
             return;
         }
 
-        $Admin->__set('id', $_POST['id']);
-
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $Admin->__set('id', $targetId);
 
         // a foto antiga sai do disco só depois de a nova estar gravada e salva no banco
         $Tool->removeImage($dir, $Admin->updateProfilePicture());
-        $profilePhoto = $Admin->dataGeneral();
-        
-        $_SESSION['Admin']['profilePhoto'] = $profilePhoto[0]->profile_photo;
+        if ($targetId === $ownId) {
+            $profilePhoto = $Admin->dataGeneral();
+            if (!empty($profilePhoto[0])) {
+                $_SESSION['Admin']['profilePhoto'] = $profilePhoto[0]->profile_photo;
+            }
+        }
         
     }
 
@@ -229,12 +287,23 @@ class AdminController extends Action
     public function profile()
     {
 
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $isPrincipal = (int) ($_SESSION['Admin']['hierarchyFunction'] ?? 0) === 1;
+        $ownId = (int) ($_SESSION['Admin']['id'] ?? 0);
+        $targetId = (int) ($_GET['id'] ?? 0);
+
+        if (!$isPrincipal && $targetId !== $ownId) {
+            \App\Tools\Audit::log(\App\Connection::getDb(), 'NEGADO', 'administrador', $targetId ?: null, 'consulta de perfil de administrador');
+            http_response_code(403);
+            echo 'Sem permissão para consultar este perfil.';
+            return;
+        }
+
         $Admin = Container::getModel('Admin\\Admin');
         $HierarchyFunction = Container::getModel('GeneralManagement\\HierarchyFunction');
 
-        $Admin->__set('id', $_GET['id']);
-
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $Admin->__set('id', $targetId);
 
         $this->view->data = $Admin->dataGeneral();
         $this->view->modalType = 'data';
@@ -251,6 +320,21 @@ class AdminController extends Action
 
     public function adminInsert()
     {
+
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        if ((int) ($_SESSION['Admin']['hierarchyFunction'] ?? 0) !== 1) {
+            \App\Tools\Audit::log(\App\Connection::getDb(), 'NEGADO', 'administrador', null, 'cadastro de administrador');
+            http_response_code(403);
+            echo 'Sem permissão para cadastrar administrador.';
+            return;
+        }
+
+        if (\App\Auth\PortalAccount::emailInUse('admin', $_POST['email'] ?? '')) {
+            http_response_code(422);
+            echo 'Este e-mail já está em uso por outro administrador.';
+            return;
+        }
 
         $Tool = new Tools();
 

@@ -163,21 +163,34 @@ class AdminStudentController extends Action
             $StudentEnrollment = Container::getModel('Student\\StudentEnrollment');
 
             $Tool = new Tools();
+            $studentId = (int) ($_POST['studentId'] ?? 0);
+            $contacts = $Student->contactIds($studentId);
+            if (!$contacts) {
+                http_response_code(404);
+                return;
+            }
 
-            $Address->__set('addressId', $_POST['addressId']);
+            if (\App\Auth\PortalAccount::emailInUse('aluno', $_POST['email'] ?? '', $studentId)) {
+                http_response_code(422);
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Este e-mail já está em uso por outro aluno.']);
+                return;
+            }
+
+            $Address->__set('addressId', $contacts->address_id);
             $Address->__set('district', $_POST['district']);
             $Address->__set('address', $_POST['address']);
             $Address->__set('uf', $_POST['uf']);
             $Address->__set('county', $_POST['county']);
             $Address->__set('zipCode', $Tool->formatElement($_POST['zipCode']));
 
-            $Telephone->__set('telephoneId', $_POST['telephoneId']);
+            $Telephone->__set('telephoneId', $contacts->telephone_id);
             $Telephone->__set('telephoneNumber', $Tool->formatElement($_POST['telephoneNumber']));
 
             $Student->__set('accessCode', $_POST['accessCode']);
             $Student->__set('email', $_POST['email']);
             $Student->__set('fk_id_blood_type', $_POST['bloodType']);
-            $Student->__set('studentId', $_POST['studentId']);
+            $Student->__set('studentId', $studentId);
 
             $Student->__set('name', $_POST['name']);
             $Student->__set('birthDate', $_POST['birthDate']);
@@ -218,6 +231,12 @@ class AdminStudentController extends Action
 
     public function studentInsert()
     {
+
+        if (\App\Auth\PortalAccount::emailInUse('aluno', $_POST['email'] ?? '')) {
+            http_response_code(422);
+            echo 'Este e-mail já está em uso por outro aluno.';
+            return;
+        }
 
         $SchoolTerm = Container::getModel('GeneralManagement\\SchoolTerm');
         $activeSchoolTerm = $SchoolTerm->active();
