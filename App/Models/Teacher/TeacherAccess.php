@@ -24,6 +24,7 @@ class TeacherAccess extends Model
 
     /**
      * O professor pode lançar dados (chamada, notas, diário) nesta turma/disciplina?
+     * Só vale para turmas do período letivo ativo (anos encerrados ficam bloqueados para escrita).
      */
     public function canEdit($teacherId, $disciplineClassId)
     {
@@ -33,7 +34,9 @@ class TeacherAccess extends Model
              FROM turma_disciplina
              INNER JOIN turma ON (turma_disciplina.fk_id_turma = turma.id_turma)
              INNER JOIN curso ON (turma.fk_id_curso = curso.id_curso)
+             INNER JOIN periodo_letivo ON (turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo)
              WHERE turma_disciplina.id_turma_disciplina = :disciplineClassId
+             AND periodo_letivo.fk_id_situacao_periodo_letivo = 1
              AND " . self::EDITABLE
         );
 
@@ -46,18 +49,29 @@ class TeacherAccess extends Model
 
 
     /**
-     * O professor pode ver o desempenho geral desta turma? (leciona ao menos uma disciplina nela ou é o titular)
+     * O professor pode ver o desempenho geral desta turma? (leciona ao menos uma disciplina nela, é titular ou substituto hoje, no ano ativo)
      */
     public function canViewClass($teacherId, $classId)
     {
 
         $stmt = $this->db->prepare(
-            "SELECT 1 FROM turma_disciplina WHERE fk_id_turma = :classId AND fk_id_professor = :teacherId
-             UNION ALL
-             SELECT 1 FROM turma WHERE id_turma = :classId AND fk_id_professor_titular = :teacherId
-             UNION ALL
-             SELECT 1 FROM substituicao_titular
-              WHERE fk_id_turma = :classId AND fk_id_professor_substituto = :teacherId AND CURRENT_DATE BETWEEN data_inicio AND data_fim
+            "SELECT 1
+             FROM turma
+             INNER JOIN periodo_letivo ON (turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo)
+             WHERE turma.id_turma = :classId
+             AND periodo_letivo.fk_id_situacao_periodo_letivo = 1
+             AND (
+                 turma.fk_id_professor_titular = :teacherId
+                 OR EXISTS (
+                     SELECT 1 FROM turma_disciplina
+                     WHERE fk_id_turma = turma.id_turma AND fk_id_professor = :teacherId
+                 )
+                 OR EXISTS (
+                     SELECT 1 FROM substituicao_titular
+                     WHERE fk_id_turma = turma.id_turma AND fk_id_professor_substituto = :teacherId
+                       AND CURRENT_DATE BETWEEN data_inicio AND data_fim
+                 )
+             )
              LIMIT 1"
         );
 

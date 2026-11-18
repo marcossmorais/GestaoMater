@@ -35,6 +35,20 @@ trait DeclarationTrait
 
         $student = $studentData[0] ?? $enrollmentData[0];
         $enrollment = $enrollmentData[0];
+        $docType = 'declaracao_' . $type;
+
+        // declaração atesta matrícula e frequência ativas no ano em curso: recusa matrícula encerrada, transferida ou de aluno inativo
+        $generalActive = (int) ($student->general_situation_id ?? 0) === 1;
+        $enrollmentActive = (int) ($enrollment->situation_id ?? 0) === 1;
+        $termActive = (int) ($enrollment->school_term_situation ?? 0) === 1;
+
+        if (!$generalActive || !$enrollmentActive || !$termActive) {
+            Audit::log(\App\Connection::getDb(), 'NEGADO', $docType, $enrollmentId, ['motivo' => 'matricula-inativa']);
+            http_response_code(422);
+            echo "Declaração disponível apenas para matrícula ativa no ano letivo vigente.";
+            return;
+        }
+
         $summary = $MedicalCertificate->getSummaryByEnrollment($enrollmentId);
 
         // Fund. 1: frequência em dias (chamada diária do titular)
@@ -59,7 +73,6 @@ trait DeclarationTrait
             $attendance = $lessons > 0 ? round(100 * max(0, $lessons - $counted) / $lessons, 1) : null;
         }
 
-        $docType = 'declaracao_' . $type;
         $content = [
             'tipo' => $docType,
             'matricula' => (int) $enrollmentId,
