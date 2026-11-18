@@ -279,9 +279,12 @@ class StudentAttendance extends Model
             return;
         }
 
+        $disposition = $mime === 'application/pdf' ? 'attachment' : 'inline';
         header('Content-Type: ' . $mime);
-        header('Content-Disposition: inline; filename="anexo.' . self::MIME_TYPES[$mime] . '"');
+        header('Content-Disposition: ' . $disposition . '; filename="anexo.' . self::MIME_TYPES[$mime] . '"');
+        header("Content-Security-Policy: default-src 'none'; img-src 'self'; sandbox");
         header('X-Content-Type-Options: nosniff');
+        header('X-Frame-Options: DENY');
         header('Cache-Control: private, no-store');
         readfile($path);
     }
