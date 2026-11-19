@@ -230,8 +230,8 @@ require __DIR__ . '../../../../../config/variables.php';
                     <input value="<?= htmlspecialchars((string) $enr->enrollment_id) ?>" type="hidden" name="enrollmentId">
                     <input value="<?= htmlspecialchars((string) $enr->school_year) ?>" type="hidden" id="schoolYear">
                     <input id="courseModality" value="<?= htmlspecialchars((string) $enr->course_modality) ?>" type="hidden" name="courseModality">
-                    <?php $modality = $enr->course_modality_id == 1 ? '' : 'Técnico' ?>
-                    <input type="hidden" id="series" value="<?= htmlspecialchars((string) $enr->acronym_series) ?> - <?= $modality ?> em <?= htmlspecialchars((string) $enr->course_name) ?> ">
+                    <?php // série do boletim impresso: "3ª série — Ensino Médio" ou "6º ano — Fundamental II" (antes: "Técnico em …" para qualquer modalidade que não fosse o Médio) ?>
+                    <input type="hidden" id="series" value="<?= htmlspecialchars((string) $enr->acronym_series . (str_ends_with((string) $enr->acronym_series, 'ª') ? ' série' : ' ano') . ' — ' . $enr->course_name) ?>">
 
                     <div class="m-prof-head">
 

@@ -165,7 +165,7 @@ class StudentEnrollment extends Model
     {
 
         return $this->speedingUp(
-            "SELECT id_situacao_aluno AS option_value , situacao_aluno AS option_text FROM situacao_aluno_ano_letivo"
+            "SELECT id_situacao_aluno AS option_value , situacao_aluno AS option_text FROM situacao_aluno_ano_letivo ORDER BY id_situacao_aluno"
         );
     }
 

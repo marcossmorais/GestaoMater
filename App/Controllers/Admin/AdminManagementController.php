@@ -162,7 +162,6 @@ class AdminManagementController extends Action
         $Course = Container::getModel('GeneralManagement\\Course');
 
         $this->view->listCourse = $Course->list();
-        $this->view->courseMode = $Course->courseMode();
         
         $this->render('management/pages/courseManagement', 'AdminLayout');
     }
@@ -175,7 +174,6 @@ class AdminManagementController extends Action
 
         $Course->__set('courseName', $_POST['courseName']);
         $Course->__set('acronym', $_POST['acronym']);
-        $Course->__set('fk_id_modality', $_POST['courseMode']);
         $Course->__set('stage', isset($Course::STAGES[$_POST['stage'] ?? '']) ? $_POST['stage'] : 'medio');
 
         $Course->insert();
@@ -187,7 +185,6 @@ class AdminManagementController extends Action
         $Course = Container::getModel('GeneralManagement\\Course');
 
         $this->view->listCourse = $Course->list();
-        $this->view->courseMode = $Course->courseMode();
 
         $this->render('management/components/coursesList', 'SimpleLayout');
     }
@@ -201,7 +198,6 @@ class AdminManagementController extends Action
         $Course->__set('courseId', $_POST['courseId']);
         $Course->__set('courseName', $_POST['courseName']);
         $Course->__set('acronym', $_POST['acronym']);
-        $Course->__set('fk_id_modality', $_POST['courseMode']);
         // etapa inválida ou ausente: mantém a atual (o model também não troca se o segmento já tem turma)
         $Course->__set('stage', isset($Course::STAGES[$_POST['stage'] ?? '']) ? $_POST['stage'] : null);
 

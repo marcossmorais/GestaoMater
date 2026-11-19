@@ -117,7 +117,7 @@
                                     <div id="photoField" class="form-group col-md-8">
                                         <label for="">&nbsp;</label>
                                         <div class="custom-file">
-                                            <input type="file" accept="image/*" class="custom-file-input form-control" name="profilePhoto" id="profilePhoto">
+                                            <input type="file" accept="image/jpeg,image/png,image/webp" class="custom-file-input form-control" name="profilePhoto" id="profilePhoto">
                                             <label class="custom-file-label" for="profilePhoto" data-browse="Arquivo">Selecionar uma foto para o perfil do administrador</label>
 
                                         </div>
@@ -211,7 +211,7 @@
                                         <label for="email">Hierarquia:</label>
                                         <select id="hierarchyFunction" name="hierarchyFunction" class="form-control custom-select is-valid">
 
-                                            <?php foreach ($this->listHierarchyFunction as $key => $value) { ?>
+                                            <?php foreach ($this->view->listHierarchyFunction as $key => $value) { ?>
 
                                                 <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
                                             <?php } ?>

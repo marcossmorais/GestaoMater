@@ -16,7 +16,7 @@ class Shift extends Model
     {
         
         return $this->speedingUp(
-            "SELECT turno.id_turno AS option_value , turno.nome_turno AS option_text FROM turno"
+            "SELECT turno.id_turno AS option_value , turno.nome_turno AS option_text FROM turno ORDER BY turno.id_turno"
         );
     }
 }

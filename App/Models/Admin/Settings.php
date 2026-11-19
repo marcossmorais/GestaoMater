@@ -60,7 +60,7 @@ class Settings extends Model
     {
 
         return $this->speedingUp(
-            "SELECT id_controle_unidade AS option_value , situacao AS option_text FROM controle_unidade"
+            "SELECT id_controle_unidade AS option_value , situacao AS option_text FROM controle_unidade ORDER BY id_controle_unidade"
         );
     }
 
@@ -126,7 +126,7 @@ class Settings extends Model
             controle_rematricula.id_situacao_abertura_rematricula AS option_value , 
             controle_rematricula.situacao AS option_text 
             
-            FROM controle_rematricula"
+            FROM controle_rematricula ORDER BY controle_rematricula.id_situacao_abertura_rematricula"
 
         );
     }

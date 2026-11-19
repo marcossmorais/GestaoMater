@@ -145,7 +145,7 @@ class DisciplineAverage extends Model
     {
 
         return $this->speedingUp(
-            "SELECT legenda.id_legenda AS option_value, legenda.legenda AS option_text FROM legenda"
+            "SELECT legenda.id_legenda AS option_value, legenda.legenda AS option_text FROM legenda ORDER BY legenda.id_legenda"
         );
     }
 

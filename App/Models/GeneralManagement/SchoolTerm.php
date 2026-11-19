@@ -148,7 +148,7 @@ class SchoolTerm extends Model
              situacao_periodo_letivo.id_situacao_periodo_letivo AS option_value , 
              situacao_periodo_letivo.situacao_periodo_letivo AS option_text 
 
-             FROM situacao_periodo_letivo"
+             FROM situacao_periodo_letivo ORDER BY situacao_periodo_letivo.id_situacao_periodo_letivo"
 
         );
     }
@@ -232,7 +232,7 @@ class SchoolTerm extends Model
             
             LEFT JOIN periodo_letivo ON(periodo_disponivel.id_periodo_disponivel = periodo_letivo.fk_id_ano_letivo) 
             
-            WHERE periodo_letivo.fk_id_ano_letivo IS NULL"
+            WHERE periodo_letivo.fk_id_ano_letivo IS NULL ORDER BY periodo_disponivel.ano_letivo"
 
         );
     }

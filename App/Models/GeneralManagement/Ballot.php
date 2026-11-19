@@ -15,7 +15,7 @@ class Ballot extends Model
     {
 
         return $this->speedingUp(
-            "SELECT cedula_turma.id_cedula_turma AS option_value , cedula_turma.cedula AS option_text FROM cedula_turma"
+            "SELECT cedula_turma.id_cedula_turma AS option_value , cedula_turma.cedula AS option_text FROM cedula_turma ORDER BY cedula_turma.cedula"
         );
     }
 }

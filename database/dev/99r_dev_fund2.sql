@@ -35,3 +35,10 @@ CROSS JOIN LATERAL (
 ) sala
 WHERE curso.etapa = 'finais'
   AND NOT EXISTS (SELECT 1 FROM turma x WHERE x.fk_id_curso = curso.id_curso);
+
+-- modalidade acompanha a etapa (migração 37); no banco novo os segmentos do dev são criados depois dela
+UPDATE curso c
+SET fk_id_modalidade_curso = m.id_modalidade_curso
+FROM modalidade_curso m
+WHERE m.modalidade_curso = CASE WHEN c.etapa IN ('iniciais', 'finais') THEN 'Ensino Fundamental' ELSE 'Ensino Médio' END
+  AND c.fk_id_modalidade_curso IS DISTINCT FROM m.id_modalidade_curso;

@@ -47,17 +47,8 @@ if (count($this->view->listCourse) >= 1) {
 
                     <label for="">Modalidade:</label>
 
-                    <select name="courseMode" id="courseMode" disabled class="form-control custom-select" required>
-
-                        <option value="<?= htmlspecialchars((string) $course->course_mode_id) ?>"><?= htmlspecialchars((string) $course->course_mode) ?></option>
-
-                        <?php foreach ($this->view->courseMode as $key => $value) { ?>
-                            <?php if ($course->course_mode_id != $value->option_value) { ?>
-                                <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
-                            <?php } ?>
-                        <?php } ?>
-
-                    </select>
+                    <?php // segue a etapa do segmento (Fundamental ou Médio); não é escolhida aqui ?>
+                    <input class="form-control" disabled readonly value="<?= htmlspecialchars((string) $course->course_mode) ?>" title="Segue a etapa do segmento">
                 </div>
 
                 <div class="form-group col-lg-3">

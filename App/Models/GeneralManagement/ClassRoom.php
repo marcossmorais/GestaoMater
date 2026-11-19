@@ -120,7 +120,7 @@ class ClassRoom extends Model
             
             LEFT JOIN sala ON(numero_sala_aula.id_numero_sala_aula = sala.fk_id_numero_sala) 
             
-            WHERE sala.fk_id_numero_sala IS NULL"
+            WHERE sala.fk_id_numero_sala IS NULL ORDER BY numero_sala_aula.numero_sala_aula"
             
         );
     }
@@ -143,7 +143,7 @@ class ClassRoom extends Model
             
             FROM sala 
             
-            INNER JOIN numero_sala_aula ON(sala.fk_id_numero_sala = numero_sala_aula.id_numero_sala_aula)"
+            INNER JOIN numero_sala_aula ON(sala.fk_id_numero_sala = numero_sala_aula.id_numero_sala_aula) ORDER BY numero_sala_aula.numero_sala_aula"
 
         );
     }

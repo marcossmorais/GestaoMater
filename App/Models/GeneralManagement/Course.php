@@ -37,16 +37,26 @@ class Course extends Model
         'medio' => 'Ensino Médio (1ª à 3ª série)',
     ];
 
+    /**
+     * Modalidade que acompanha a etapa (migração 37): Fund. 1 e 2 → "Ensino Fundamental", Médio → "Ensino Médio".
+     * A modalidade não é escolhida na tela: segue sempre a etapa, para as duas nunca divergirem.
+     */
+    const MODALITY_FROM_STAGE = "COALESCE(
+        (SELECT id_modalidade_curso FROM modalidade_curso
+         WHERE modalidade_curso = CASE WHEN %s IN ('iniciais', 'finais') THEN 'Ensino Fundamental' ELSE 'Ensino Médio' END
+         LIMIT 1),
+        (SELECT MIN(id_modalidade_curso) FROM modalidade_curso))";
+
     public function insert()
     {
 
-        $query = "INSERT INTO curso(nome_curso, sigla , fk_id_modalidade_curso, etapa) VALUES (:courseName, :acronym, :fk_id_modality, :stage)";
+        $query = "INSERT INTO curso(nome_curso, sigla , fk_id_modalidade_curso, etapa)
+                  VALUES (:courseName, :acronym, " . sprintf(self::MODALITY_FROM_STAGE, ':stage::varchar') . ", :stage)";
 
         $stmt = $this->db->prepare($query);
 
         $stmt->bindValue(":courseName", $this->__get("courseName"));
         $stmt->bindValue(":acronym", $this->__get("acronym"));
-        $stmt->bindValue(":fk_id_modality", $this->__get("fk_id_modality"));
         $stmt->bindValue(":stage", $this->__get("stage"));
 
         $stmt->execute();
@@ -110,7 +120,6 @@ class Course extends Model
             
             nome_curso = :courseName , 
             sigla = :acronym , 
-            fk_id_modalidade_curso = :fk_id_modality ,
             -- a etapa só muda enquanto o segmento não tem turma (as turmas usam as séries da etapa)
             etapa = CASE WHEN :stage::varchar IS NOT NULL
                           AND NOT EXISTS (SELECT 1 FROM turma WHERE turma.fk_id_curso = curso.id_curso)
@@ -125,9 +134,15 @@ class Course extends Model
         $stmt->bindValue(":courseName", $this->__get("courseName"));
         $stmt->bindValue(":acronym", $this->__get("acronym"));
         $stmt->bindValue(":courseId", $this->__get("courseId"));
-        $stmt->bindValue(":fk_id_modality", $this->__get("fk_id_modality"));
         $stmt->bindValue(":stage", $this->__get("stage"));
 
+        $stmt->execute();
+
+        // a modalidade acompanha a etapa que ficou valendo
+        $stmt = $this->db->prepare(
+            "UPDATE curso SET fk_id_modalidade_curso = " . sprintf(self::MODALITY_FROM_STAGE, 'curso.etapa') . " WHERE curso.id_curso = :courseId"
+        );
+        $stmt->bindValue(":courseId", $this->__get("courseId"));
         $stmt->execute();
     }
 
@@ -141,7 +156,7 @@ class Course extends Model
     {
 
         return $this->speedingUp(
-            "SELECT curso.id_curso AS option_value , curso.nome_curso AS option_text FROM curso"
+            "SELECT curso.id_curso AS option_value , curso.nome_curso AS option_text FROM curso ORDER BY curso.nome_curso"
         );
     }
 
@@ -183,7 +198,7 @@ class Course extends Model
     {
 
         return $this->speedingUp(
-            "SELECT id_modalidade_curso AS option_value , modalidade_curso AS option_text FROM modalidade_curso"
+            "SELECT id_modalidade_curso AS option_value , modalidade_curso AS option_text FROM modalidade_curso ORDER BY id_modalidade_curso"
         );
     }
 }

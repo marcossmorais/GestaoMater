@@ -214,7 +214,7 @@
                                 <div id="photoField" class="form-group col-md-6">
                                     <label for="">&nbsp;</label>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input form-control" name="profilePhoto" id="profilePhoto">
+                                        <input type="file" accept="image/jpeg,image/png,image/webp" class="custom-file-input form-control" name="profilePhoto" id="profilePhoto">
                                         <label class="custom-file-label" for="profilePhoto" accept="image/*" data-browse="Arquivo">Selecionar uma foto</label>
 
                                     </div>

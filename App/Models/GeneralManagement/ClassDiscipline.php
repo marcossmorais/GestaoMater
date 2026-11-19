@@ -273,7 +273,7 @@ class ClassDiscipline extends Model
             
             LEFT JOIN disciplina ON(turma_disciplina.fk_id_disciplina = disciplina.id_disciplina) 
             
-            WHERE turma_disciplina.fk_id_turma = :fk_id_class
+            WHERE turma_disciplina.fk_id_turma = :fk_id_class ORDER BY disciplina.nome_disciplina
             
         ";
 
@@ -316,7 +316,7 @@ class ClassDiscipline extends Model
 
             AND
 
-            situacao_periodo_letivo.id_situacao_periodo_letivo = 1;
+            situacao_periodo_letivo.id_situacao_periodo_letivo = 1 ORDER BY disciplina.nome_disciplina
         ";
 
         $stmt = $this->db->prepare($query);
@@ -540,7 +540,7 @@ class ClassDiscipline extends Model
 
             AND
 
-            CASE WHEN :classDisciplineId = 0 THEN turma_disciplina.id_turma_disciplina <> 0 ELSE turma_disciplina.id_turma_disciplina = :classDisciplineId END
+            CASE WHEN :classDisciplineId = 0 THEN turma_disciplina.id_turma_disciplina <> 0 ELSE turma_disciplina.id_turma_disciplina = :classDisciplineId END ORDER BY disciplina.nome_disciplina
             
         ";
 

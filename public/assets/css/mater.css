@@ -1797,3 +1797,7 @@ html body#studentPortal #pagina .card.m-occ-pending { border: 2px solid #F5C66B 
 .m-exam-delete { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 16px 0 96px; }
 .m-exam-delete .btn { min-height: 44px; }
 .m-exam-delete small { color: var(--m-muted); }
+
+/* Admin: seta para voltar à Gestão geral nas telas de /admin/gestao/* */
+html body .m-back-title { display: flex; align-items: center; gap: 12px; }
+html body .m-back-title .m-icon-btn { flex: 0 0 auto; text-decoration: none; }
