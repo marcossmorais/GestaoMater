@@ -73,7 +73,7 @@
                                             <hr class="">
 
                                             <div class="form-row mt-1 mb-2 col-lg-12">
-                                                <div class="form-group col-sm-3">
+                                                <div class="form-group col-sm-5">
                                                     <label for="courseName">Nome do segmento:</label>
                                                     <input class="form-control is-valid" value="" type="text" name="courseName" id="courseName" required>
                                                 </div>
@@ -83,19 +83,6 @@
                                                     <input class="form-control is-valid" maxlength="4" value="" type="text" name="acronym" id="acronym" required>
                                                 </div>
 
-                                                <div class="form-group col-sm-2">
-
-                                                    <label for="courseMode">Modalidade:</label>
-
-                                                    <select name="courseMode" id="courseMode" class="form-control custom-select" required>
-
-                                                        <?php foreach ($this->view->courseMode as $key => $value) { ?>
-                                                            <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
-                                                        <?php } ?>
-
-                                                    </select>
-
-                                                </div>
 
                                                 <div class="form-group col-sm-3">
                                                     <label for="stage">Etapa:</label>

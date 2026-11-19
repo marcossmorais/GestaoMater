@@ -206,9 +206,9 @@ require __DIR__ . '../../../../config/variables.php';
 
                         <input type="hidden" id="classData" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->acronym_series) ?> <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->ballot) ?> - <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->course) ?> - <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->shift) ?>">
 
-                        <?php $modality = $this->view->studentDataGeneral[0]->course_modality_id == 1 ? '' : 'Técnico' ?>
+                        <?php // série do boletim impresso: "3ª série — Ensino Médio" ou "6º ano — Fundamental II" (antes: "Técnico em …" para qualquer modalidade que não fosse o Médio) ?>
 
-                        <input type="hidden" id="series" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->acronym_series) ?> - <?= $modality ?> em <?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->course_name) ?> ">
+                        <input type="hidden" id="series" value="<?= htmlspecialchars((string) $this->view->studentDataGeneral[0]->acronym_series . (str_ends_with((string) $this->view->studentDataGeneral[0]->acronym_series, 'ª') ? ' série' : ' ano') . ' — ' . $this->view->studentDataGeneral[0]->course_name) ?>">
 
                     </div>
 
