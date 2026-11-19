@@ -10,7 +10,7 @@
 
                     <div class="row">
 
-                        <h5 class="col-sm-6">Gestão das salas</h5>
+                        <h5 class="col-sm-6 m-back-title"><a class="m-icon-btn" href="/admin/gestao" aria-label="Voltar para a Gestão geral" title="Voltar para a Gestão geral"><i class="fas fa-arrow-left" aria-hidden="true"></i></a>Gestão das salas</h5>
 
                         <div class="col-sm-6">
 

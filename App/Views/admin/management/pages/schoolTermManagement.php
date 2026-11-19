@@ -10,7 +10,7 @@
 
                     <div class="row d-flex align-items-center">
 
-                        <h5 class="col-sm-6">Gestão dos períodos letivos</h5>
+                        <h5 class="col-sm-6 m-back-title"><a class="m-icon-btn" href="/admin/gestao" aria-label="Voltar para a Gestão geral" title="Voltar para a Gestão geral"><i class="fas fa-arrow-left" aria-hidden="true"></i></a>Gestão dos períodos letivos</h5>
 
                         <div class="col-sm-6">
 
