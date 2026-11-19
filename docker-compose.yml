@@ -48,6 +48,7 @@ services:
       - ./database/35_vinculo_clerk_email_unico.sql:/docker-entrypoint-initdb.d/35_vinculo_clerk_email_unico.sql:ro
       - ./database/36_hierarquia_coordenador.sql:/docker-entrypoint-initdb.d/36_hierarquia_coordenador.sql:ro
       - ./database/37_modalidade_fundamental.sql:/docker-entrypoint-initdb.d/37_modalidade_fundamental.sql:ro
+      - ./database/38_modalidade_disciplina_fundamental.sql:/docker-entrypoint-initdb.d/38_modalidade_disciplina_fundamental.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro
