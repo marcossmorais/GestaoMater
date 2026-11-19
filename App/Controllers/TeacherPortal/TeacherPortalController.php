@@ -26,6 +26,12 @@ class TeacherPortalController extends Action
             return;
         }
 
+        // muitos erros seguidos deste IP: espera a janela passar (App/Tools/RateLimit.php)
+        if (\App\Auth\PortalAccount::tooManyFailures('docente')) {
+            header('Location: /portal-docente?error=muitas-tentativas');
+            return;
+        }
+
         $Teacher = Container::getModel('Teacher\\Teacher');
         $Tool = new Tools();
 

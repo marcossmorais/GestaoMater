@@ -27,6 +27,12 @@ class StudentPortalController extends Action
             return;
         }
 
+        // muitos erros seguidos deste IP: espera a janela passar (App/Tools/RateLimit.php)
+        if (\App\Auth\PortalAccount::tooManyFailures('aluno')) {
+            header('Location: /portal-aluno?error=muitas-tentativas');
+            return;
+        }
+
         $Student = Container::getModel('Student\\Student');
         $Tool = new Tools();
 

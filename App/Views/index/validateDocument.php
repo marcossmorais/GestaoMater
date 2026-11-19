@@ -9,6 +9,7 @@ $states = [
     'revoked' => ['Documento cancelado', 'Este documento foi cancelado pela secretaria e não vale mais.', 'warn', 'fa-ban'],
     'tampered' => ['Documento inválido', 'O registro deste código não confere com a assinatura. Procure a secretaria.', 'bad', 'fa-exclamation-triangle'],
     'not_found' => ['Código não encontrado', 'Confira se digitou o código exatamente como está no documento.', 'bad', 'fa-question-circle'],
+    'too_many' => ['Muitas consultas', 'Foram muitas consultas seguidas deste aparelho. Aguarde alguns minutos e tente de novo.', 'warn', 'fa-hourglass-half'],
 ];
 ?>
 <!DOCTYPE html>

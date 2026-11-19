@@ -34,7 +34,12 @@ $portal = $portals[$loginPortal];
 $isAdmin = $loginPortal === 'admin';
 $tabs = $isAdmin ? [] : array_diff_key($portals, ['admin' => true]);
 $clerkEnabled = \App\Auth\Clerk::enabled();
-$error = isset($_GET['error']) ? ucfirst(str_replace('-', ' ', $_GET['error'])) : null;
+// mensagens com texto próprio; as demais viram frase a partir do código ("dados-incorretos" → "Dados incorretos")
+$errorMessages = [
+    'muitas-tentativas' => 'Muitas tentativas erradas deste aparelho. Aguarde 15 minutos e tente de novo.',
+    'sessao-expirada' => 'Sua sessão expirou por inatividade. Entre novamente.',
+];
+$error = isset($_GET['error']) ? ($errorMessages[$_GET['error']] ?? ucfirst(str_replace('-', ' ', (string) $_GET['error']))) : null;
 ?>
 <!doctype html>
 <html lang="pt-br">

@@ -22,6 +22,12 @@ class AdminController extends Action
             return;
         }
 
+        // muitos erros seguidos deste IP: espera a janela passar (App/Tools/RateLimit.php)
+        if (\App\Auth\PortalAccount::tooManyFailures('admin')) {
+            header('Location: /admin?error=muitas-tentativas');
+            return;
+        }
+
         $Admin = Container::getModel('Admin\\Admin');
         $Tool = new Tools();
 
