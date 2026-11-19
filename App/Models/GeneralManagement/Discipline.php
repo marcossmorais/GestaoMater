@@ -131,7 +131,7 @@ class Discipline extends Model
             modalidade_disciplina.id_modalidade_disciplina AS option_value , 
             modalidade_disciplina.modalidade_disciplina AS option_text 
 
-            FROM modalidade_disciplina"
+            FROM modalidade_disciplina ORDER BY modalidade_disciplina.id_modalidade_disciplina"
 
         );
     }

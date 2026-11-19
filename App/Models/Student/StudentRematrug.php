@@ -51,7 +51,7 @@ class StudentRematrug extends Model
     {
 
         return $this->speedingUp(
-            "SELECT id_situacao_rematricula AS option_value , situacao AS option_text FROM situacao_rematricula"
+            "SELECT id_situacao_rematricula AS option_value , situacao AS option_text FROM situacao_rematricula ORDER BY id_situacao_rematricula"
         );
     }
 

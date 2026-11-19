@@ -538,7 +538,7 @@ class Student extends People
     {
 
         return $this->speedingUp(
-            "SELECT id_situacao_geral AS option_value , situacao_geral AS option_text FROM situacao_geral_aluno"
+            "SELECT id_situacao_geral AS option_value , situacao_geral AS option_text FROM situacao_geral_aluno ORDER BY id_situacao_geral"
         );
     }
 

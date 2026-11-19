@@ -66,7 +66,7 @@ class Unity extends Model
             
             WHERE 
             
-            CASE WHEN :unityId = 0 THEN unidade.id_unidade <> 0 ELSE unidade.id_unidade = :unityId END
+            CASE WHEN :unityId = 0 THEN unidade.id_unidade <> 0 ELSE unidade.id_unidade = :unityId END ORDER BY unidade.id_unidade
             
         ";
 

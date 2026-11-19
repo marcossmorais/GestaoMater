@@ -141,7 +141,7 @@ class Course extends Model
     {
 
         return $this->speedingUp(
-            "SELECT curso.id_curso AS option_value , curso.nome_curso AS option_text FROM curso"
+            "SELECT curso.id_curso AS option_value , curso.nome_curso AS option_text FROM curso ORDER BY curso.nome_curso"
         );
     }
 
@@ -183,7 +183,7 @@ class Course extends Model
     {
 
         return $this->speedingUp(
-            "SELECT id_modalidade_curso AS option_value , modalidade_curso AS option_text FROM modalidade_curso"
+            "SELECT id_modalidade_curso AS option_value , modalidade_curso AS option_text FROM modalidade_curso ORDER BY id_modalidade_curso"
         );
     }
 }

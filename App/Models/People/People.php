@@ -45,7 +45,7 @@ class People extends Model
     {
 
         return $this->speedingUp(
-            "SELECT sexo.id_sexo as option_value , sexo.sexo as option_text FROM sexo"
+            "SELECT sexo.id_sexo as option_value , sexo.sexo as option_text FROM sexo ORDER BY sexo.id_sexo"
         );
     }
 
@@ -59,7 +59,7 @@ class People extends Model
     {
 
         return $this->speedingUp(
-            "SELECT pcd.id_pcd as option_value , pcd.pcd as option_text FROM pcd"
+            "SELECT pcd.id_pcd as option_value , pcd.pcd as option_text FROM pcd ORDER BY pcd.id_pcd"
         );
     }
 
@@ -79,7 +79,7 @@ class People extends Model
             tipo_sanguineo.id_tipo_sanguineo AS option_value , 
             tipo_sanguineo.tipo_sanguineo AS option_text 
             
-            FROM tipo_sanguineo"
+            FROM tipo_sanguineo ORDER BY tipo_sanguineo.id_tipo_sanguineo"
 
         );
     }
@@ -130,7 +130,7 @@ class People extends Model
             situacao_conta.id_situacao_conta AS option_value , 
             situacao_conta.situacao_conta AS option_text
             
-            FROM situacao_conta"
+            FROM situacao_conta ORDER BY situacao_conta.id_situacao_conta"
 
         );
     }

@@ -24,7 +24,7 @@ class HierarchyFunction extends Model
             
             FROM hierarquia_funcao 
             
-            WHERE id_hierarquia_funcao BETWEEN 1 AND 2"
+            WHERE id_hierarquia_funcao BETWEEN 1 AND 2 ORDER BY id_hierarquia_funcao"
 
         );
     }
