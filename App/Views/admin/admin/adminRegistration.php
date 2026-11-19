@@ -211,7 +211,7 @@
                                         <label for="email">Hierarquia:</label>
                                         <select id="hierarchyFunction" name="hierarchyFunction" class="form-control custom-select is-valid">
 
-                                            <?php foreach ($this->listHierarchyFunction as $key => $value) { ?>
+                                            <?php foreach ($this->view->listHierarchyFunction as $key => $value) { ?>
 
                                                 <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
                                             <?php } ?>

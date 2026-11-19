@@ -347,7 +347,7 @@ require __DIR__ . '../../../config/variables.php';
 
                                     if ($this->view->adminCurrentHierarchy == 1) {
 
-                                        foreach ($this->listHierarchyFunction as $key => $value) { ?>
+                                        foreach ($this->view->listHierarchyFunction as $key => $value) { ?>
                                             <?php if ($value->option_value != $admin->hierarchy_function_id) { ?>
                                                 <option value="<?= htmlspecialchars((string) $value->option_value) ?>"><?= htmlspecialchars((string) $value->option_text) ?></option>
                                     <?php }
