@@ -85,38 +85,37 @@ class Validation {
 
     // Função para verificar se a imagem recebida é valida
 
+    // A foto é opcional (sem foto o perfil usa a imagem padrão). Formatos e tamanho iguais aos do servidor
+    // (App/Tools/Tools.php: JPG, PNG ou WebP até 5 MB). Com arquivo escolhido aparece "Remover foto".
     validateImage() {
 
         let photo = $('#profilePhoto')
-        let dir = photo.val()
+        let file = photo.get(0).files[0]
         let message = ''
 
-        let extesion = /(.jpg|.jpeg)$/i;
+        $('.photo-info, .photo-remove').remove()
+        photo.removeClass('is-valid')
 
-        $('.photo-info').remove()
+        // sem arquivo: segue sem foto
+        if (!file) return
 
-        if (!extesion.exec(dir)) {
-
-            $('#profilePhoto').removeClass('is-valid')
-
-            message = 'Formato inválido - Válidos somentes jpg e jpeg'
-
+        if (!/\.(jpe?g|png|webp)$/i.test(file.name)) {
+            message = 'Formato inválido: use JPG, PNG ou WebP'
+        } else if (file.size > 5 * 1024 * 1024) {
+            message = 'A foto pode ter no máximo 5 MB'
         } else {
-
-            if (photo.get(0).files[0].size <= 10485760) {
-
-                $('#profilePhoto').addClass('is-valid')
-
-            } else {
-
-                $('#profilePhoto').removeClass('is-valid')
-
-                message = 'Anexe um arquivo com no máximo 10 MB'
-            }
+            photo.addClass('is-valid')
         }
 
-        $('#photoField').append(`<small class="text-danger text-center photo-info">${message}</small>`)
+        if (message) $('#photoField').append(`<small class="text-danger text-center photo-info">${message}</small>`)
 
+        // tira o arquivo escolhido (inclusive o recusado) para seguir sem foto
+        $('<button type="button" class="btn btn-link btn-sm photo-remove" style="min-height: 44px; margin-left: 8px;">Remover foto</button>')
+            .on('click', () => {
+                photo.val('')
+                this.validateImage()
+            })
+            .appendTo('#photoField')
     }
 
     // Função para verificar se todos os campos do formulário foram preenchidos
