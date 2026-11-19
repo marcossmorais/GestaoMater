@@ -56,7 +56,7 @@ class Student extends People
         $stmt->bindValue(':nationality', $this->__get('nationality'));
         $stmt->bindValue(':motherName', $this->__get('motherName'));
         $stmt->bindValue(':fatherName', $this->__get('fatherName'));
-        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->bindValue(':email', \App\Auth\PortalAccount::normalizeEmail($this->__get('email')));
         $stmt->bindValue(':accessCode', $this->__get('accessCode'));
         $stmt->bindValue(':fk_id_sex', $this->__get('fk_id_sex'));
         $stmt->bindValue(':fk_id_blood_type', $this->__get('fk_id_blood_type'));
@@ -115,7 +115,7 @@ class Student extends People
         $stmt->bindValue(':fk_id_blood_type', $this->__get('fk_id_blood_type'));
         $stmt->bindValue(':fk_id_pcd', $this->__get('fk_id_pcd'));
         $stmt->bindValue(':studentId', $this->__get('studentId'));
-        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->bindValue(':email', \App\Auth\PortalAccount::normalizeEmail($this->__get('email')));
         $stmt->bindValue(':fk_id_general_situation', $this->__get('fk_id_general_situation'));
 
         $stmt->execute();
@@ -149,7 +149,7 @@ class Student extends People
         $stmt->bindValue(':fk_id_blood_type', $this->__get('fk_id_blood_type'));
         $stmt->bindValue(':fk_id_pcd', $this->__get('fk_id_pcd'));
         $stmt->bindValue(':studentId', $this->__get('studentId'));
-        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->bindValue(':email', \App\Auth\PortalAccount::normalizeEmail($this->__get('email')));
         
         $stmt->execute();
     }
@@ -208,6 +208,21 @@ class Student extends People
             ORDER BY aluno.nome_aluno"
 
         );
+    }
+
+
+    /**
+     * IDs de endereço e telefone do próprio aluno (para nunca confiar nos IDs vindos do navegador)
+     */
+    public function contactIds($studentId)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT fk_id_endereco_aluno AS address_id, fk_id_telefone_aluno AS telephone_id FROM aluno WHERE id_aluno = :id"
+        );
+        $stmt->execute([':id' => (int) $studentId]);
+
+        return $stmt->fetch(\PDO::FETCH_OBJ) ?: null;
     }
 
 
@@ -475,8 +490,11 @@ class Student extends People
             INNER JOIN situacao_periodo_letivo ON(periodo_letivo.fk_id_situacao_periodo_letivo = situacao_periodo_letivo.id_situacao_periodo_letivo)        
                                    
             WHERE codigo_acesso = :accessCode AND nome_aluno = :studentName
+              AND aluno.fk_id_situacao_geral_aluno = 1
+              AND periodo_letivo.fk_id_situacao_periodo_letivo = 1
+              AND matricula.fk_id_situacao_aluno <> 4
             
-            ORDER BY serie.id_serie DESC
+            ORDER BY (matricula.fk_id_situacao_aluno = 1) DESC, matricula.id_matricula DESC
             
             LIMIT 1
         
@@ -487,6 +505,23 @@ class Student extends People
         $stmt->bindValue(':accessCode', $this->__get('accessCode'));
         $stmt->bindValue(':studentName', $this->__get('name'));
 
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+
+    /**
+     * Situação geral do cadastro do aluno pelo nome e código (para distinguir credencial inválida de aluno inativo)
+     */
+    public function accountStatus()
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT fk_id_situacao_geral_aluno AS account_status FROM aluno WHERE codigo_acesso = :accessCode AND nome_aluno = :studentName"
+        );
+        $stmt->bindValue(':accessCode', $this->__get('accessCode'));
+        $stmt->bindValue(':studentName', $this->__get('name'));
         $stmt->execute();
 
         return $stmt->fetchAll(\PDO::FETCH_OBJ);

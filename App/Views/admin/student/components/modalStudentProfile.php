@@ -2372,6 +2372,7 @@ require __DIR__ . '../../../../../config/variables.php';
 <script>
     // Gerenciamento de Atestados Médicos no Perfil do Aluno
     (function () {
+        const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
         const form = document.getElementById('formMedicalCertificate');
         const fileInput = document.getElementById('certAttachment');
 
@@ -2496,35 +2497,39 @@ require __DIR__ . '../../../../../config/variables.php';
                     return;
                 }
 
-                tbody.innerHTML = data.certificates.map(c => `
-                    <tr data-cert-id="${c.id_atestado}">
+                tbody.innerHTML = data.certificates.map(c => {
+                    const certId = parseInt(c.id_atestado, 10) || 0;
+                    const dias = parseInt(c.dias, 10) || 0;
+                    const abonadas = parseInt(c.faltas_abonadas, 10) || 0;
+                    return `
+                    <tr data-cert-id="${certId}">
                         <td>
-                            <strong>${c.data_inicio_formatada}</strong><br>
-                            <small class="text-muted">até ${c.data_fim_formatada}</small>
+                            <strong>${esc(c.data_inicio_formatada)}</strong><br>
+                            <small class="text-muted">até ${esc(c.data_fim_formatada)}</small>
                         </td>
-                        <td><span class="badge badge-light border font-weight-bold">${c.dias} dia${c.dias > 1 ? 's' : ''}</span></td>
+                        <td><span class="badge badge-light border font-weight-bold">${dias} dia${dias > 1 ? 's' : ''}</span></td>
                         <td>
-                            <strong class="text-dark">${c.motivo || ''}</strong>
-                            ${c.cid ? `<br><span class="badge badge-secondary">CID: ${c.cid}</span>` : ''}
+                            <strong class="text-dark">${esc(c.motivo || '')}</strong>
+                            ${c.cid ? `<br><span class="badge badge-secondary">CID: ${esc(c.cid)}</span>` : ''}
                         </td>
                         <td>
-                            ${c.medico_nome || '—'}
-                            ${c.medico_crm ? `<br><small class="text-muted">${c.medico_crm}</small>` : ''}
+                            ${esc(c.medico_nome || '—')}
+                            ${c.medico_crm ? `<br><small class="text-muted">${esc(c.medico_crm)}</small>` : ''}
                         </td>
                         <td>
-                            ${c.faltas_abonadas > 0 ? `<span class="badge badge-success font-weight-bold">${c.faltas_abonadas} falta${c.faltas_abonadas > 1 ? 's' : ''}</span>` : '<span class="text-muted">—</span>'}
+                            ${abonadas > 0 ? `<span class="badge badge-success font-weight-bold">${abonadas} falta${abonadas > 1 ? 's' : ''}</span>` : '<span class="text-muted">—</span>'}
                         </td>
-                        <td><span class="badge badge-success">${c.status || 'Aprovado'}</span></td>
+                        <td><span class="badge badge-success">${esc(c.status || 'Aprovado')}</span></td>
                         <td>
-                            ${c.anexo_documento && c.anexo_privado ? `<a href="/admin/pedagogico/atestado/anexo?id=${parseInt(c.id_atestado, 10)}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-paperclip mr-1"></i>Ver</a>` : '<small class="text-muted">Sem anexo</small>'}
+                            ${c.anexo_documento && c.anexo_privado ? `<a href="/admin/pedagogico/atestado/anexo?id=${certId}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary"><i class="fas fa-paperclip mr-1"></i>Ver</a>` : '<small class="text-muted">Sem anexo</small>'}
                         </td>
                         <td class="text-center">
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMedicalCertificate(${c.id_atestado})" title="Excluir atestado">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMedicalCertificate(${certId})" title="Excluir atestado">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </td>
-                    </tr>
-                `).join('');
+                    </tr>`;
+                }).join('');
 
             } catch (e) {
                 console.error(e);
@@ -2536,6 +2541,7 @@ require __DIR__ . '../../../../../config/variables.php';
 <script>
     // Gerenciamento de Ocorrências no Perfil do Aluno
     (function () {
+        const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
         const form = document.getElementById('formOccurrence');
 
         if (form) {
@@ -2652,24 +2658,25 @@ require __DIR__ . '../../../../../config/variables.php';
 
                     let badgeSev = o.gravidade === 'Alta' || o.gravidade === 'Gravíssima' ? 'badge-danger' : (o.gravidade === 'Média' ? 'badge-warning' : 'badge-light border');
 
+                    const occId = parseInt(o.id_ocorrencia, 10) || 0;
                     let cienciaHtml = o.requer_ciencia 
-                        ? (o.ciencia_responsavel ? `<span class="badge badge-success"><i class="fas fa-check mr-1"></i> Ciente</span><br><small class="text-muted">${o.ciencia_em_fmt || ''}</small>` : '<span class="badge badge-warning text-dark"><i class="fas fa-clock mr-1"></i> Pendente</span>')
+                        ? (o.ciencia_responsavel ? `<span class="badge badge-success"><i class="fas fa-check mr-1"></i> Ciente</span><br><small class="text-muted">${esc(o.ciencia_em_fmt || '')}</small>` : '<span class="badge badge-warning text-dark"><i class="fas fa-clock mr-1"></i> Pendente</span>')
                         : '<small class="text-muted">Informativo</small>';
 
                     return `
-                    <tr data-occ-id="${o.id_ocorrencia}">
-                        <td><strong>${o.data_ocorrencia_fmt}</strong></td>
-                        <td><span class="badge ${badgeCat}">${o.categoria}</span></td>
+                    <tr data-occ-id="${occId}">
+                        <td><strong>${esc(o.data_ocorrencia_fmt)}</strong></td>
+                        <td><span class="badge ${badgeCat}">${esc(o.categoria)}</span></td>
                         <td>
-                            <strong class="text-dark">${o.titulo}</strong><br>
-                            <small class="text-muted">${o.descricao}</small>
+                            <strong class="text-dark">${esc(o.titulo)}</strong><br>
+                            <small class="text-muted">${esc(o.descricao)}</small>
                         </td>
-                        <td><span class="badge ${badgeSev}">${o.gravidade}</span></td>
-                        <td><small>${o.medida_tomada || 'Nenhuma'}</small></td>
+                        <td><span class="badge ${badgeSev}">${esc(o.gravidade)}</span></td>
+                        <td><small>${esc(o.medida_tomada || 'Nenhuma')}</small></td>
                         <td>${cienciaHtml}</td>
-                        <td><small class="text-muted">${o.registrado_por || ''}</small></td>
+                        <td><small class="text-muted">${esc(o.registrado_por || '')}</small></td>
                         <td class="text-center">
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteOccurrence(${o.id_ocorrencia})" title="Excluir ocorrência">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteOccurrence(${occId})" title="Excluir ocorrência">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </td>
@@ -2686,6 +2693,7 @@ require __DIR__ . '../../../../../config/variables.php';
 <script>
     // Gerenciamento de Responsáveis e Portaria
     (function () {
+        const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
         const form = document.getElementById('formGuardian');
 
         if (form) {
@@ -2801,37 +2809,38 @@ require __DIR__ . '../../../../../config/variables.php';
                 }
 
                 container.innerHTML = list.map(g => {
-                    const cleanPhone = (g.telefone || '').replace(/\D/g, '');
+                    const guardianId = parseInt(g.id_responsavel, 10) || 0;
+                    const cleanPhone = String(g.telefone || '').replace(/\D/g, '');
                     const borderColor = g.autorizado_buscar ? '#16a34a' : '#dc2626';
                     const authBadge = g.autorizado_buscar
                         ? '<span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Autorizado a Buscar</span>'
                         : '<span class="badge badge-danger"><i class="fas fa-ban mr-1"></i> Não Autorizado</span>';
 
                     return `
-                    <div class="col-md-6 mb-3" data-guardian-card="${g.id_responsavel}">
+                    <div class="col-md-6 mb-3" data-guardian-card="${guardianId}">
                         <div class="card p-3 h-100 shadow-sm border" style="border-radius: 12px; border-left: 4px solid ${borderColor} !important;">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
-                                    <h6 class="mb-0 font-weight-bold text-dark">${g.nome}</h6>
-                                    <span class="badge badge-light border mt-1">${g.parentesco}</span>
+                                    <h6 class="mb-0 font-weight-bold text-dark">${esc(g.nome)}</h6>
+                                    <span class="badge badge-light border mt-1">${esc(g.parentesco)}</span>
                                     ${g.responsavel_pedagogico ? '<span class="badge badge-primary">Pedagógico</span>' : ''}
                                     ${g.responsavel_financeiro ? '<span class="badge badge-info">Financeiro</span>' : ''}
                                 </div>
                                 <div>${authBadge}</div>
                             </div>
                             <div class="my-2 small text-muted">
-                                <div><i class="fas fa-phone-alt mr-2 text-primary"></i><strong>Telefone:</strong> ${g.telefone}
-                                    ${cleanPhone ? `<a href="https://api.whatsapp.com/send?phone=55${cleanPhone}" target="_blank" class="ml-2 text-success font-weight-bold"><i class="fab fa-whatsapp mr-1"></i>WhatsApp</a>` : ''}
+                                <div><i class="fas fa-phone-alt mr-2 text-primary"></i><strong>Telefone:</strong> ${esc(g.telefone)}
+                                    ${cleanPhone ? `<a href="https://api.whatsapp.com/send?phone=55${esc(cleanPhone)}" target="_blank" rel="noopener" class="ml-2 text-success font-weight-bold"><i class="fab fa-whatsapp mr-1"></i>WhatsApp</a>` : ''}
                                 </div>
-                                ${g.cpf ? `<div><i class="fas fa-id-card mr-2 text-secondary"></i><strong>CPF:</strong> ${g.cpf} ${g.rg ? '· <strong>RG:</strong> ' + g.rg : ''}</div>` : ''}
-                                ${g.email ? `<div><i class="fas fa-envelope mr-2 text-secondary"></i><strong>E-mail:</strong> ${g.email}</div>` : ''}
+                                ${g.cpf ? `<div><i class="fas fa-id-card mr-2 text-secondary"></i><strong>CPF:</strong> ${esc(g.cpf)} ${g.rg ? '· <strong>RG:</strong> ' + esc(g.rg) : ''}</div>` : ''}
+                                ${g.email ? `<div><i class="fas fa-envelope mr-2 text-secondary"></i><strong>E-mail:</strong> ${esc(g.email)}</div>` : ''}
                             </div>
-                            ${g.observacao_restricao ? `<div class="p-2 my-2 rounded bg-light border small text-dark"><i class="fas fa-info-circle text-info mr-1"></i>${g.observacao_restricao}</div>` : ''}
+                            ${g.observacao_restricao ? `<div class="p-2 my-2 rounded bg-light border small text-dark"><i class="fas fa-info-circle text-info mr-1"></i>${esc(g.observacao_restricao)}</div>` : ''}
                             <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleGuardianStatus(${g.id_responsavel})">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleGuardianStatus(${guardianId})">
                                     <i class="fas fa-sync-alt mr-1"></i>${g.autorizado_buscar ? 'Bloquear Retirada' : 'Autorizar Retirada'}
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteGuardian(${g.id_responsavel})" title="Excluir cadastro">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteGuardian(${guardianId})" title="Excluir cadastro">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
