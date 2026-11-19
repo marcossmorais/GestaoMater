@@ -64,7 +64,8 @@ $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
             const retry = document.createElement('button');
             retry.type = 'button';
             retry.textContent = 'Entrar com outra conta';
-            retry.onclick = async () => { await window.Clerk.signOut(); location.reload(); };
+            // sem redirectUrl o Clerk manda para "/" (afterSignOutUrl padrão) em vez de voltar a esta tela
+            retry.onclick = () => window.Clerk.signOut({ redirectUrl: window.location.pathname });
             statusBox.appendChild(retry);
             statusBox.hidden = false;
 
@@ -106,10 +107,15 @@ $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
             await clerk.load({ localization, appearance });
 
             const params = new URLSearchParams(window.location.search);
-            // admin exige login explícito: descarta a sessão do Clerk vinda de outro portal
-            if (params.has('logout') || (requireFreshLogin && clerk.user)) {
-                await clerk.signOut();
-                history.replaceState(null, '', window.location.pathname);
+            // ?entrou=1: o Clerk acabou de devolver o usuário a esta tela depois do login feito aqui
+            const justSignedIn = params.get('entrou') === '1';
+            if (params.toString()) history.replaceState(null, '', window.location.pathname);
+
+            // admin exige login explícito: descarta a sessão do Clerk vinda de outro portal, mas não a que
+            // acabou de ser aberta nesta tela (antes descartava, e o signOut sem destino levava para "/")
+            if (params.has('logout') || (requireFreshLogin && clerk.user && !justSignedIn)) {
+                await clerk.signOut({ redirectUrl: window.location.pathname });
+                return;
             }
 
             const target = document.getElementById('clerk-sign-in');
@@ -121,10 +127,12 @@ $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
                 return;
             }
 
+            // depois do login/cadastro o Clerk volta para esta tela marcada com ?entrou=1 (ver acima)
+            const back = window.location.pathname + '?entrou=1';
             clerk.mountSignIn(target, {
                 withSignUp: allowSignUp,
-                forceRedirectUrl: window.location.pathname,
-                signUpForceRedirectUrl: window.location.pathname
+                forceRedirectUrl: back,
+                signUpForceRedirectUrl: back
             });
 
             clerk.addListener(function (resources) {
