@@ -12,6 +12,9 @@
 	// em produção, sem Clerk ou sem chave de assinatura forte o site não abre (motivo só no log)
 	\App\Tools\ProductionCheck::enforce();
 
+	// Content-Security-Policy (App/Tools/SecurityHeaders.php): só scripts e estilos do próprio site
+	\App\Tools\SecurityHeaders::send();
+
 	$route = new \App\Route;
 
 ?>
