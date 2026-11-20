@@ -189,6 +189,11 @@ class AdminImportController extends Action
 
         try {
             $result = $Rollover->execute($origin, $target, $pending, $_POST['hash'] ?? '');
+        } catch (\PDOException $e) {
+            // PDOException também é RuntimeException: o erro do banco não vai para a URL
+            error_log('virada de ano: ' . $e->getMessage());
+            header('Location: /admin/importacao?' . http_build_query($query + ['erro' => 'Nada foi gravado: houve um erro ao salvar.']));
+            return;
         } catch (\RuntimeException $e) {
             header('Location: /admin/importacao?' . http_build_query($query + ['erro' => $e->getMessage()]));
             return;
