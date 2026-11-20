@@ -64,7 +64,8 @@ class Route extends Bootstrap
 		$routes['adminImport'] = array(
 			'route' => '/admin/importacao',
 			'controller' => 'Admin\\AdminImportController',
-			'action' => 'index'
+			'action' => 'index',
+			'role' => 'principal'
 		);
 
 		$routes['adminAudit'] = array(
@@ -82,34 +83,39 @@ class Route extends Bootstrap
 		$routes['adminImportTemplate'] = array(
 			'route' => '/admin/importacao/modelo',
 			'controller' => 'Admin\\AdminImportController',
-			'action' => 'template'
+			'action' => 'template',
+			'role' => 'principal'
 		);
 
 		$routes['adminImportPreview'] = array(
 			'route' => '/admin/importacao/previa',
 			'controller' => 'Admin\\AdminImportController',
 			'action' => 'preview',
-			'method' => 'POST'
+			'method' => 'POST',
+			'role' => 'principal'
 		);
 
 		$routes['adminImportConfirm'] = array(
 			'route' => '/admin/importacao/confirmar',
 			'controller' => 'Admin\\AdminImportController',
 			'action' => 'confirm',
-			'method' => 'POST'
+			'method' => 'POST',
+			'role' => 'principal'
 		);
 
 		$routes['adminImportCodes'] = array(
 			'route' => '/admin/importacao/codigos',
 			'controller' => 'Admin\\AdminImportController',
-			'action' => 'codes'
+			'action' => 'codes',
+			'role' => 'principal'
 		);
 
 		$routes['adminRolloverConfirm'] = array(
 			'route' => '/admin/importacao/virada/confirmar',
 			'controller' => 'Admin\\AdminImportController',
 			'action' => 'rolloverConfirm',
-			'method' => 'POST'
+			'method' => 'POST',
+			'role' => 'principal'
 		);
 
 		// Rotas referente aos controles do aluno no portal do administrador
@@ -362,7 +368,8 @@ class Route extends Bootstrap
 			'route' => '/admin/gestao/periodo-letivo/inserir',
 			'controller' => 'Admin\\AdminManagementController',
 			'action' => 'schoolTermInsert',
-			'method' => 'POST'
+			'method' => 'POST',
+			'role' => 'principal'
 		);
 
 		$routes['adminSchoolTermList'] = array(
@@ -375,14 +382,8 @@ class Route extends Bootstrap
 			'route' => '/admin/gestao/periodo-letivo/atualizar',
 			'controller' => 'Admin\\AdminManagementController',
 			'action' => 'schoolTermUpdate',
-			'method' => 'POST'
-		);
-
-		$routes['adminSchoolTermDelete'] = array(
-			'route' => '/admin/gestao/periodo-letivo/deletar',
-			'controller' => 'Admin\\AdminManagementController',
-			'action' => 'schoolTermDelete',
-			'method' => 'POST'
+			'method' => 'POST',
+			'role' => 'principal'
 		);
 
 		$routes['adminSchoolTermAvailable'] = array(
@@ -1554,7 +1555,45 @@ class Route extends Bootstrap
 			exit;
 		}
 
+		// rota 'role' => 'principal': só o Administrador (hierarquia 1); o Coordenador recebe 403
+		if (!$this->roleAllowed($url)) {
+
+			\App\Tools\Audit::log(\App\Connection::getDb(), 'NEGADO', 'requisicao', null, ['motivo' => 'rota só do Administrador (' . $url . ')']);
+
+			if ($_SERVER['REQUEST_METHOD'] === 'GET' && strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') !== 'xmlhttprequest') {
+				header('Location: /admin/home');
+			} else {
+				http_response_code(403);
+				header('Content-Type: application/json');
+				echo json_encode(['error' => 'sem-permissao']);
+			}
+
+			exit;
+		}
+
 		parent::run($url);
+	}
+
+	/**
+	 * A rota exige um nível de admin? Hoje só existe 'principal' (Administrador, hierarquia 1).
+	 */
+	private function roleAllowed($url)
+	{
+		foreach ($this->getRoutes() as $route) {
+			if ($route['route'] === $url && ($route['role'] ?? null) === 'principal') {
+				return self::isPrincipal($_SESSION);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * A sessão é de um Administrador (hierarquia 1)? O Coordenador é a hierarquia 2.
+	 */
+	public static function isPrincipal(array $session)
+	{
+		return isset($session['Admin']) && (int) ($session['Admin']['hierarchyFunction'] ?? 0) === 1;
 	}
 
 	/**

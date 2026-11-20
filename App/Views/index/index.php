@@ -9,7 +9,7 @@
     <meta name="description" content="Portal do Colégio Mater: chamada, diário, notas e boletim para professores e alunos.">
     <meta name="theme-color" content="#2F6FED">
     <link rel="preload" href="<?= $app_url ?>/assets/fonts/nunito/nunito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="<?= $app_url ?>/node_modules/@fortawesome/fontawesome-free/css/all.css">
+    <link rel="stylesheet" href="<?= asset('/node_modules/@fortawesome/fontawesome-free/css/all.css') ?>">
     <link rel="stylesheet" href="<?= asset('/assets/css/auth.css') ?>">
     <link rel="icon" type="image/png" href="<?= $app_url ?>/favicon.png">
 </head>

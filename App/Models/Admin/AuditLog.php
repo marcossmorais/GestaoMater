@@ -47,6 +47,8 @@ class AuditLog extends Model
         'substituicao_titular' => 'Substituição do titular',
         'grade_horario' => 'Grade de horário',
         'matricula' => 'Matrícula',
+        'media_disciplina' => 'Média final',
+        'turma_disciplina' => 'Disciplina da turma (professor)',
         'periodo_letivo' => 'Período letivo',
         'administrador' => 'Conta de admin',
         'professor' => 'Conta de professor',
@@ -109,11 +111,26 @@ class AuditLog extends Model
         'nota_recuperacao' => 'Nota da recuperação',
         'frequencia_minima' => 'Frequência mínima',
         'revogado_em' => 'Revogado em',
+        'nota_valor' => 'Média',
+        'fk_id_legenda' => 'Legenda',
+        'fk_id_situacao_aluno' => 'Situação da matrícula',
+        'fk_id_turma_matricula' => 'Turma',
+        'fk_id_professor' => 'Professor',
+        'fk_id_disciplina' => 'Disciplina',
+        'email_aluno' => 'E-mail',
+        'email_professor' => 'E-mail',
+        'email_administrador' => 'E-mail',
+        'clerk_user_id' => 'Vínculo do login',
+        'fk_id_situacao_geral_aluno' => 'Situação do aluno',
+        'fk_id_situacao_conta_professor' => 'Situação da conta',
+        'fk_id_situacao_conta_administrador' => 'Situação da conta',
+        'fk_id_administrador_hierarquia_funcao' => 'Hierarquia',
+        'fk_id_situacao_periodo_letivo' => 'Situação do período',
     ];
 
     // onde cada tabela guarda aluno, matrícula, turma, disciplina da turma e avaliação (no JSON antes/depois)
     const STUDENT_KEYS = ['fk_id_aluno'];
-    const ENROLLMENT_KEYS = ['fk_id_matricula_aluno', 'fk_id_matricula_falta', 'fk_id_matricula_observacao', 'fk_id_matricula'];
+    const ENROLLMENT_KEYS = ['fk_id_matricula_aluno', 'fk_id_matricula_falta', 'fk_id_matricula_observacao', 'fk_id_matricula', 'fk_id_matricula_media'];
     const CLASS_KEYS = ['fk_id_turma'];
     const DISCIPLINE_CLASS_KEYS = ['fk_id_turma_disciplina', 'fk_id_turma_disciplina_falta', 'fk_id_turma_disciplina_observacao', 'fk_id_turma_disciplina_avaliacao'];
     const EXAM_KEYS = ['fk_id_avaliacao'];

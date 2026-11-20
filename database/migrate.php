@@ -118,10 +118,7 @@ if (!$applied && $hasTable('aluno')) {
         . "Confira até qual número ele está e rode: php database/migrate.php --baseline=NN");
 }
 
-if (!$pending) {
-    out('Nada pendente: o banco está em dia.');
-    exit(0);
-}
+if (!$pending) out('Nada pendente: o banco está em dia.');
 
 foreach ($pending as $f) {
     $sql = file_get_contents($f['path']);
@@ -140,4 +137,21 @@ foreach ($pending as $f) {
     out(sprintf('aplicada: %s (%d ms)', $f['name'], (microtime(true) - $started) * 1000));
 }
 
-out(count($pending) . ' migração(ões) aplicada(s).');
+if ($pending) out(count($pending) . ' migração(ões) aplicada(s).');
+
+// ---------- usuário do app (migração 40): com DB_APP_USER e DB_APP_PASSWORD, o mater_app passa a entrar com essa senha
+$appUser = (string) getenv('DB_APP_USER');
+$appPassword = (string) getenv('DB_APP_PASSWORD');
+
+if ($appUser !== '') {
+    if ($appUser !== 'mater_app') fail('DB_APP_USER precisa ser mater_app (o usuário criado pela migração 40).');
+    if (strlen($appPassword) < 16) fail('DB_APP_PASSWORD ausente ou curta (mínimo 16 caracteres; gere com openssl rand -hex 24).');
+    if ($appUser === getenv('DB_USER')) fail('DB_APP_USER não pode ser o mesmo usuário das migrações (DB_USER).');
+
+    $exists = $db->query("SELECT 1 FROM pg_roles WHERE rolname = 'mater_app'")->fetchColumn();
+    if (!$exists) fail('o usuário mater_app não existe: a migração 40 não foi aplicada.');
+
+    $db->exec('ALTER ROLE mater_app WITH LOGIN PASSWORD ' . $db->quote($appPassword));
+    $db->exec('REVOKE ALL ON schema_migrations FROM mater_app');
+    out('usuário do app: mater_app com login ativo (só lê e grava dados).');
+}

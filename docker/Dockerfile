@@ -22,6 +22,11 @@ COPY docker/apache-security.conf /etc/apache2/conf-enabled/security-mater.conf
 
 WORKDIR /var/www/html
 
-# o código vai dentro da imagem (produção); em desenvolvimento o docker-compose.yml monta a pasta por cima
-COPY --chown=www-data:www-data . /var/www/html
-RUN mkdir -p storage && chown www-data:www-data storage && chmod 750 storage
+# o código vai dentro da imagem (produção); em desenvolvimento o docker-compose.yml monta a pasta por cima.
+# O código pertence ao root (o Apache só lê): se um dia alguém conseguir executar algo pelo PHP, não reescreve o app.
+# O Apache (www-data) grava só nos anexos (storage/) e nas fotos de perfil, que em produção são volumes.
+COPY . /var/www/html
+RUN cd public/assets/img \
+    && mkdir -p /var/www/html/storage adminProfilePhotos studentProfilePhotos teacherProfilePhotos \
+    && chown www-data:www-data /var/www/html/storage adminProfilePhotos studentProfilePhotos teacherProfilePhotos \
+    && chmod 750 /var/www/html/storage

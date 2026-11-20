@@ -30,6 +30,20 @@ docker compose -f docker-compose.prod.yml exec app php database/migrate.php     
 ```
 Recriar o container é o que aplica PHP/imagem novos (o processo antigo continua na memória até lá). Conferir a versão servida, não só o CLI.
 
+## Usuário do app no banco (`mater_app`)
+O app entra no banco com o `mater_app` (migração 40), que só lê e grava dados: não cria nem altera tabela, não desliga gatilho e não altera nem apaga a auditoria. O `DB_USER` (dono, superusuário no container) fica só para as migrações.
+
+Ligar uma vez, depois do deploy que trouxer a migração 40:
+```bash
+cd /opt/mater
+echo "DB_APP_USER=mater_app" >> .env
+echo "DB_APP_PASSWORD=$(openssl rand -hex 24)" >> .env
+docker compose -f docker-compose.prod.yml up -d                                  # app recebe as variáveis
+docker compose -f docker-compose.prod.yml exec app php database/migrate.php      # liga o login do mater_app com essa senha
+docker compose -f docker-compose.prod.yml restart app                            # conexões novas já como mater_app
+```
+Conferir: `docker compose -f docker-compose.prod.yml exec db psql -U mater -d mater -c "select usename, count(*) from pg_stat_activity where datname = 'mater' group by 1"` mostra o `mater_app`. Trocar a senha: mude `DB_APP_PASSWORD` no `.env` e repita os três comandos. Com `DB_APP_USER` vazio, o app volta a usar o `DB_USER`.
+
 ## O que guardar (backup)
 Tudo o que o sistema recebe fica em volumes do Docker, fora da imagem:
 

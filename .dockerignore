@@ -21,3 +21,8 @@ public/assets/img/teacherProfilePhotos/*
 !public/assets/img/adminProfilePhotos/foto-vazia.jpg
 !public/assets/img/studentProfilePhotos/foto-vazia.jpg
 !public/assets/img/teacherProfilePhotos/foto-vazia.jpg
+
+# não são do site: manifesto do npm e fontes do Sass (o .htaccess também responde 404)
+public/package.json
+public/package-lock.json
+public/assets/sass/

@@ -461,7 +461,9 @@ class AdminStudentController extends Action
             ]);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Erro ao salvar atestado: ' . $e->getMessage()]);
+            // detalhe do banco só no log; a tela recebe a mensagem genérica
+            error_log('admin: salvar atestado: ' . $e->getMessage());
+            echo json_encode(['error' => 'Erro ao salvar atestado. Tente de novo; se continuar, avise o suporte.']);
         }
     }
 
@@ -570,7 +572,9 @@ class AdminStudentController extends Action
             echo json_encode(['status' => 'success', 'id' => $id, 'message' => 'Ocorrência registrada com sucesso!']);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Erro ao salvar ocorrência: ' . $e->getMessage()]);
+            // detalhe do banco só no log; a tela recebe a mensagem genérica
+            error_log('admin: salvar ocorrência: ' . $e->getMessage());
+            echo json_encode(['error' => 'Erro ao salvar ocorrência. Tente de novo; se continuar, avise o suporte.']);
         }
     }
 
@@ -646,7 +650,9 @@ class AdminStudentController extends Action
             echo json_encode(['status' => 'success', 'id' => $id, 'message' => 'Responsável registrado com sucesso!']);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Erro ao salvar responsável: ' . $e->getMessage()]);
+            // detalhe do banco só no log; a tela recebe a mensagem genérica
+            error_log('admin: salvar responsável: ' . $e->getMessage());
+            echo json_encode(['error' => 'Erro ao salvar responsável. Tente de novo; se continuar, avise o suporte.']);
         }
     }
 

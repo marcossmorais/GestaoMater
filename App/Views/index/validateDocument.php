@@ -19,7 +19,7 @@ $states = [
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
     <title>Validar documento | MATER</title>
-    <link href="<?= $app_url ?>/node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet">
+    <link href="<?= asset('/node_modules/@fortawesome/fontawesome-free/css/all.css') ?>" rel="stylesheet">
     <style>
         :root { --bg: #F4F7FC; --card: #fff; --text: #0F1B33; --muted: #5B6B85; --border: #DCE3EF; --primary: #1868E8;
                 --ok: #16A34A; --warn: #B45309; --bad: #DC2626; }
