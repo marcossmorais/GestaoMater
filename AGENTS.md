@@ -49,16 +49,17 @@ Smoke test precisa do login por código: suba com `CLERK_*` vazios. Antes de abr
 - Mudança de schema = **novo arquivo** `database/NN_nome.sql` (próximo número) + montar em `docker-compose.yml`. Nunca editar migração já aplicada (o `database/migrate.php` avisa pelo checksum).
 - Banco existente (produção) recebe migrações só pelo `database/migrate.php` (`schema_migrations`); o initdb do Docker só roda na criação do volume.
 - Idempotente (`IF NOT EXISTS`). Compatível com Supabase.
-- Toda tabela sensível nova (nota, falta, documento) deve gravar trilha de auditoria (ver proposta §05).
+- Toda tabela sensível nova (nota, falta, documento) deve gravar trilha de auditoria (ver proposta §05): gatilho `auditoria_registrar('pk', 'coluna_secreta'…)`; segredos (código de acesso) vão como colunas ocultas.
+- O app usa o papel `mater_app` (só DML; migração 40). Tabela nova criada por migração já nasce liberada para ele; nada de DDL em tempo de execução.
 
 ## Código
 - Seguir o estilo do arquivo vizinho. Controllers finos, SQL nos Models, sempre PDO com parâmetros (sem concatenar input).
 - Escapar toda saída em views (`htmlspecialchars`), inclusive nas telas antigas do admin. Validar permissão **no servidor**, nunca só no front.
 - Rota que grava dado leva `'method' => 'POST'` em `App/Route.php` (GET recebe 405). Todo POST vindo de outro site recebe 403 no roteador (`Route::sameOrigin`).
 - RBAC: aluno vê só os próprios dados; todo docente vê a turma inteira e edita só as disciplinas atribuídas a ele (`turma_disciplina`). Fund. 1 (`curso.etapa = 'iniciais'`): o titular (`turma.fk_id_professor_titular`) recebe as disciplinas de base e faz a chamada **diária** (frequência em dias, `chamada_diaria`); especialistas editam só a deles e não fazem chamada. Substituto (`substituicao_titular`, designado pelo admin) faz chamada e diário do dia só nas datas do período; o acesso de titular/substituto passa sempre por `DailyAttendance::homeroomFor` + `covers`.
-- Rotas `/admin` são só do admin. Docente usa `/portal-docente/*` e toda escrita passa por `App/Models/Teacher/TeacherAccess.php`; negado = 403 + `Audit::log(..., 'NEGADO', ...)`.
+- Rotas `/admin` são só do admin. Ação só do Administrador (hierarquia 1, não do Coordenador) leva `'role' => 'principal'` na rota (o roteador recusa com 403 + `NEGADO`); esconder o botão na tela não basta. Docente usa `/portal-docente/*` e toda escrita passa por `App/Models/Teacher/TeacherAccess.php`; negado = 403 + `Audit::log(..., 'NEGADO', ...)`.
 - Mobile-first: alvos de toque ≥ 44px; tabela vira card no celular.
-- Sem dependência nova sem necessidade. Sem framework JS.
+- Sem dependência nova sem necessidade. Sem framework JS. Nada de script/estilo de CDN: biblioteca entra em `public/node_modules` (npm) ou `public/assets/js/vendor/` e é carregada com `asset()`. A CSP (`App/Tools/SecurityHeaders.php`) bloqueia o que vier de fora; chamada externa nova (como o ViaCEP) precisa entrar lá.
 
 ## Segurança
 - Manter PHP e imagem base atualizados (`docker compose build --pull`). Rodar `composer audit` ao mexer em dependências.
