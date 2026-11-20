@@ -2,6 +2,8 @@
 	RewriteEngine on
 	# atestados antigos gravados em public/: nunca servir direto (dado de saúde; hoje ficam em storage/)
 	RewriteRule ^assets/uploads/atestados/ - [F,L]
+	# manifesto do npm e fontes do Sass não são do site: respondem 404 (revelavam as versões das bibliotecas)
+	RewriteRule ^(package(-lock)?\.json|assets/sass/) - [R=404,L]
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule ^(.*)$ index.php/$1 [L]
