@@ -8,7 +8,8 @@ services:
       POSTGRES_USER: ${DB_USER:-mater}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-mater}
     ports:
-      - "5433:5432"
+      # só no próprio computador: na rede (Wi-Fi da escola, café) ninguém alcança o banco de dev
+      - "127.0.0.1:5433:5432"
     volumes:
       - mater-pg-data:/var/lib/postgresql/data
       - ./database/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
@@ -107,7 +108,7 @@ services:
       SCHOOL_ADDRESS: ${SCHOOL_ADDRESS:-}
       SCHOOL_CITY: ${SCHOOL_CITY:-}
     ports:
-      - "8000:80"
+      - "127.0.0.1:8000:80"
     volumes:
       - ./:/var/www/html
     depends_on:
