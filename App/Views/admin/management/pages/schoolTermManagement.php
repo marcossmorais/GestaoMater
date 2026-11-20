@@ -20,9 +20,11 @@
                                 <span class="mr-2"><i class="fas fa-grip-vertical mr-2"></i>Períodos</span>
                             </a>
 
+                            <?php if (\App\Route::isPrincipal($_SESSION)) { /* criar e editar período: só o Administrador */ ?>
                             <a href="#" class="collapsed font-weight-bold" id="collapseAddSchoolTerm" aria-expanded="false" data-toggle="collapse" data-target="#add-school-term">
                                 <span class=""><i class="fas fa-plus mr-2"></i> Adicionar</span>
                             </a>
+                            <?php } ?>
 
                             </div>
 
@@ -56,6 +58,7 @@
                             </div>
 
 
+                            <?php if (\App\Route::isPrincipal($_SESSION)) { ?>
                             <div class="collapse" id="add-school-term" data-parent="#accordion-school-term">
 
                                 <div class="row">
@@ -114,6 +117,7 @@
                                 </div>
 
                             </div>
+                            <?php } ?>
 
                         </div>
 

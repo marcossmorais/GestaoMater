@@ -66,15 +66,6 @@ class AdminManagementController extends Action
     }
 
 
-    public function schoolTermDelete()
-    {
-
-        $SchoolTerm = Container::getModel('GeneralManagement\\SchoolTerm');
-        $SchoolTerm->__set('schoolTermId', $_POST['schoolTermId']);
-        $SchoolTerm->delete();
-    }
-
-
     public function schoolTermAvailable()
     {
         $SchoolTerm = Container::getModel('GeneralManagement\\SchoolTerm');

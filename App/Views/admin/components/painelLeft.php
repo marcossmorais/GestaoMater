@@ -28,9 +28,10 @@ require __DIR__ . '../../../../config/variables.php';
 
             <li name="observabilidade"><a href="/admin/observabilidade"><i class="fas fa-chart-line"></i><span class="link-name">Observabilidade</span></a></li>
 
+            <?php if ((int) $_SESSION['Admin']['hierarchyFunction'] === 1) { ?>
+            <!-- importação e virada de ano: só o Administrador (o roteador também bloqueia) -->
             <li name="importacao"><a href="/admin/importacao"><i class="fas fa-file-import"></i><span class="link-name">Importação</span></a></li>
 
-            <?php if ((int) $_SESSION['Admin']['hierarchyFunction'] === 1) { ?>
             <li name="auditoria"><a href="/admin/auditoria"><i class="fas fa-history"></i><span class="link-name">Auditoria</span></a></li>
             <?php } ?>
 
