@@ -39,6 +39,9 @@ services:
       DB_NAME: ${DB_NAME:-mater}
       DB_USER: ${DB_USER:-mater}
       DB_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env}
+      # usuário do app (migração 40, só lê e grava dados); vazio = o app usa o DB_USER, como antes
+      DB_APP_USER: ${DB_APP_USER:-}
+      DB_APP_PASSWORD: ${DB_APP_PASSWORD:-}
       # rede interna do docker, sem sair da VPS; banco externo (Supabase) exige require
       DB_SSLMODE: ${DB_SSLMODE:-disable}
       APP_URL: ${APP_URL:?defina APP_URL no .env (https://seu-dominio)}

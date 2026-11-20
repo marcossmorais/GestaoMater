@@ -50,6 +50,7 @@ services:
       - ./database/37_modalidade_fundamental.sql:/docker-entrypoint-initdb.d/37_modalidade_fundamental.sql:ro
       - ./database/38_modalidade_disciplina_fundamental.sql:/docker-entrypoint-initdb.d/38_modalidade_disciplina_fundamental.sql:ro
       - ./database/39_auditoria_cadastros.sql:/docker-entrypoint-initdb.d/39_auditoria_cadastros.sql:ro
+      - ./database/40_usuario_app.sql:/docker-entrypoint-initdb.d/40_usuario_app.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro
@@ -70,6 +71,7 @@ services:
       - ./database/dev/99p_dev_avisos_segmentados.sql:/docker-entrypoint-initdb.d/99p_dev_avisos_segmentados.sql:ro
       - ./database/dev/99q_dev_fund1_avaliacoes.sql:/docker-entrypoint-initdb.d/99q_dev_fund1_avaliacoes.sql:ro
       - ./database/dev/99r_dev_fund2.sql:/docker-entrypoint-initdb.d/99r_dev_fund2.sql:ro
+      - ./database/dev/99s_dev_usuario_app.sql:/docker-entrypoint-initdb.d/99s_dev_usuario_app.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${DB_USER:-mater} -d ${DB_NAME:-mater}"]
       interval: 5s
@@ -88,6 +90,9 @@ services:
       DB_NAME: ${DB_NAME:-mater}
       DB_USER: ${DB_USER:-mater}
       DB_PASSWORD: ${DB_PASSWORD:-mater}
+      # o app entra como mater_app (migração 40); a senha de dev é a do database/dev/99s_dev_usuario_app.sql
+      DB_APP_USER: ${DB_APP_USER-mater_app}
+      DB_APP_PASSWORD: ${DB_APP_PASSWORD-mater_app_somente_dev}
       DB_SSLMODE: ${DB_SSLMODE:-disable}
       PHP_DISPLAY_ERRORS: ${PHP_DISPLAY_ERRORS:-On}
       PHP_OPCACHE_REVALIDATE_FREQ: ${PHP_OPCACHE_REVALIDATE_FREQ:-2}

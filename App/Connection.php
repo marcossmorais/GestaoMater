@@ -24,8 +24,9 @@ class Connection
 
 			$conn = new \PDO(
 				"pgsql:host=$host;port=$port;dbname=$name;sslmode=$sslmode",
-				getenv('DB_USER') ?: 'postgres',
-				getenv('DB_PASSWORD') ?: '',
+				// o app usa o mater_app (migração 40, só lê e grava dados); sem ele, o usuário das migrações
+				getenv('DB_APP_USER') ?: (getenv('DB_USER') ?: 'postgres'),
+				getenv('DB_APP_USER') ? (getenv('DB_APP_PASSWORD') ?: '') : (getenv('DB_PASSWORD') ?: ''),
 				[
 					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
 					\PDO::ATTR_EMULATE_PREPARES => true
