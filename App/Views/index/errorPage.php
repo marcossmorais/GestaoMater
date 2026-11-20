@@ -8,8 +8,8 @@ require __DIR__ . '/../../config/variables.php';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title> Página não encontrada </title>
-    <link href="<?= $app_url ?>/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= $app_url ?>/node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet">
+    <link href="<?= asset('/node_modules/bootstrap/dist/css/bootstrap.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset('/node_modules/@fortawesome/fontawesome-free/css/all.css') ?>" rel="stylesheet">
     <link rel="stylesheet" href="<?= asset('/assets/css/stylesheet.css') ?>">
     <link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
     <link rel = "shortcut icon" type = "imagem/x-icon" href = "<?= $app_url?>/assets/img/logo-components/logo.png"/>
@@ -37,9 +37,9 @@ require __DIR__ . '/../../config/variables.php';
 
 </body>
 
-<script src="<?= $app_url ?>/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="<?= asset('/node_modules/jquery/dist/jquery.min.js') ?>"></script>
 
-<script src="<?= $app_url ?>/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= asset('/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') ?>"></script>
 
 
 

@@ -5,7 +5,6 @@ $clerkAllowSignUp = $clerkAllowSignUp ?? true;
 $clerkRequireFreshLogin = $clerkRequireFreshLogin ?? false;
 $clerkFrontendApi = \App\Auth\Clerk::frontendApi();
 $clerkJsVersion = getenv('CLERK_JS_VERSION') ?: '5';
-$clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
 ?>
 
 <div id="clerk-status" class="alert" role="alert" hidden></div>
@@ -94,7 +93,8 @@ $clerkLocalizationVersion = getenv('CLERK_LOCALIZATIONS_VERSION') ?: '3';
 
         async function loadLocalization() {
             try {
-                const mod = await import('https://cdn.jsdelivr.net/npm/@clerk/localizations@<?= htmlspecialchars($clerkLocalizationVersion) ?>/+esm');
+                // tradução servida pelo próprio site (antes vinha do jsDelivr, sem versão fixa, na tela onde se digita a senha)
+                const mod = await import(<?= json_encode(asset('/assets/js/vendor/clerk-localization-pt-BR.js')) ?>);
                 return mod.ptBR;
             } catch (e) {
                 return undefined; // sem tradução, o Clerk fica em inglês

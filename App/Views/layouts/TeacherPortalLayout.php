@@ -22,8 +22,8 @@ require __DIR__ . '/../../config/variables.php';
 	<script> if (localStorage.getItem('nightModeTeacher')) { document.documentElement.classList.add('nightMode') } </script>
 	<link rel="stylesheet" href="<?= asset('/assets/css/stylesheet.css') ?>">
 	<link rel="stylesheet" href="<?= asset('/assets/css/mater.css') ?>">
-	<link href="<?= $app_url ?>/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link href="<?= $app_url ?>/node_modules/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet">
+	<link href="<?= asset('/node_modules/bootstrap/dist/css/bootstrap.min.css') ?>" rel="stylesheet">
+	<link href="<?= asset('/node_modules/@fortawesome/fontawesome-free/css/all.css') ?>" rel="stylesheet">
 	<link rel="preload" href="<?= $app_url ?>/assets/fonts/nunito/nunito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="<?= asset('/assets/css/edu.css') ?>">
 
@@ -66,15 +66,15 @@ require __DIR__ . '/../../config/variables.php';
 
 </body>
 
-<script src="<?= $app_url ?>/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="<?= asset('/node_modules/jquery/dist/jquery.min.js') ?>"></script>
 
-<script src="<?= $app_url ?>/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-
+<script src="<?= asset('/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') ?>"></script>
 
 
 
-<script src="<?= $app_url ?>/node_modules/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+
+
+<script src="<?= asset('/node_modules/jquery-mask-plugin/dist/jquery.mask.min.js') ?>"></script>
 
 <script src="<?= asset('/assets/js/utilities/Tools.js') ?>"></script>
 
@@ -87,7 +87,7 @@ require __DIR__ . '/../../config/variables.php';
 <script src="<?= asset('/assets/js/utilities/style.js') ?>"></script>
 
 <?php if (in_array($this->view->page, ['home', 'studentFile'], true)) { ?>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="<?= asset('/node_modules/chart.js/dist/chart.umd.js') ?>"></script>
 <?php } ?>
 
 <script src="<?= asset('/assets/js/utilities/chartJs/config.js') ?>"></script> 
