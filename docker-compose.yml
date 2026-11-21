@@ -52,6 +52,7 @@ services:
       - ./database/38_modalidade_disciplina_fundamental.sql:/docker-entrypoint-initdb.d/38_modalidade_disciplina_fundamental.sql:ro
       - ./database/39_auditoria_cadastros.sql:/docker-entrypoint-initdb.d/39_auditoria_cadastros.sql:ro
       - ./database/40_usuario_app.sql:/docker-entrypoint-initdb.d/40_usuario_app.sql:ro
+      - ./database/41_chamada_unica_por_dia.sql:/docker-entrypoint-initdb.d/41_chamada_unica_por_dia.sql:ro
       - ./database/dev/99_dev_seed.sql:/docker-entrypoint-initdb.d/99_dev_seed.sql:ro
       - ./database/dev/99b_dev_grade_horario.sql:/docker-entrypoint-initdb.d/99b_dev_grade_horario.sql:ro
       - ./database/dev/99c_dev_07_atestado_falta.sql:/docker-entrypoint-initdb.d/99c_dev_07_atestado_falta.sql:ro
