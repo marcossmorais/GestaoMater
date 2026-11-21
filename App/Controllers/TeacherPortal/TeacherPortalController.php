@@ -341,13 +341,21 @@ class TeacherPortalController extends Action
         $MedicalCertificate = Container::getModel('TeacherStudent\\MedicalCertificate');
         $activeCertificates = $MedicalCertificate->getActiveCertificatesForClassAndDate($disciplineClass->class_id, $date);
 
-        $students = array_map(function ($s) use ($activeCertificates) {
+        // chamada da disciplina já feita nesta data: abre com as faltas salvas, para corrigir
+        $saved = $Attendance->savedAt($disciplineClassId, $date);
+        $savedAbsent = $saved ? array_flip($saved->absent) : [];
+        $savedHere = $saved && $saved->unity === $unity;
+
+        $students = array_map(function ($s) use ($activeCertificates, $savedAbsent, $savedHere, $saved) {
             $cert = $activeCertificates[(int) $s->enrollment_id] ?? null;
+            $absentOnDate = isset($savedAbsent[(int) $s->enrollment_id]);
             return [
                 'id' => (int) $s->enrollment_id,
                 'name' => $s->name,
                 'photo' => $s->photo,
-                'totalLack' => (int) $s->total_lack,
+                // sem as faltas desta chamada: a tela soma de novo as que ficarem marcadas
+                'totalLack' => max(0, (int) $s->total_lack - ($savedHere && $absentOnDate ? $saved->lessons : 0)),
+                'absentOnDate' => $absentOnDate,
                 'hasCertificate' => $cert !== null,
                 'certificateReason' => $cert ? $cert->motivo : null,
                 'certificateDoctor' => $cert ? $cert->medico_nome : null,
@@ -355,12 +363,16 @@ class TeacherPortalController extends Action
             ];
         }, $Attendance->students($disciplineClassId, $unity));
 
-        $doneAtDate = $Attendance->doneAtDate($disciplineClassId, $date);
-
         echo json_encode([
             'unity' => $unity,
             'date' => $date,
-            'doneTodayAt' => $doneAtDate,
+            'doneTodayAt' => $saved ? $saved->saved_at : null,
+            'saved' => $saved ? [
+                'unity' => $saved->unity,
+                'lessons' => $saved->lessons,
+                'absent' => $saved->absent,
+                'corrected' => $saved->corrected,
+            ] : null,
             'students' => $students,
         ]);
     }
@@ -392,10 +404,8 @@ class TeacherPortalController extends Action
         $disciplineClassId = (int) ($input['disciplineClass'] ?? 0);
         $unity = (int) ($input['unity'] ?? 0);
         $lessons = (int) ($input['lessons'] ?? 1);
-        $date = trim($input['date'] ?? '') ?: date('Y-m-d');
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || $date > date('Y-m-d')) {
-            $date = date('Y-m-d');
-        }
+        $date = is_string($input['date'] ?? null) ? trim($input['date']) : '';
+        if ($date === '') $date = date('Y-m-d');
 
         $absent = array_values(array_unique(array_map('intval', (array) ($input['absent'] ?? []))));
 
@@ -423,6 +433,14 @@ class TeacherPortalController extends Action
             return;
         }
 
+        // data da aula: até hoje e dentro do período letivo da turma (antes, data inválida virava hoje sem avisar)
+        $dateError = self::lessonDateError($date, date('Y-m-d'), $Attendance->termRange($disciplineClass->class_id));
+        if ($dateError) {
+            http_response_code(422);
+            echo json_encode(['error' => $dateError]);
+            return;
+        }
+
         // só aceita matrículas que são realmente da turma
         $enrolled = array_map(function ($s) { return (int) $s->enrollment_id; }, $Attendance->students($disciplineClassId, $unity));
 
@@ -433,12 +451,16 @@ class TeacherPortalController extends Action
         }
 
         $db = \App\Connection::getDb();
+        $corrected = false;
 
         try {
             $db->beginTransaction();
             foreach ($targets as $target) {
                 $saved = $Attendance->save($target->discipline_class_id, $unity, $teacherId, $lessons, $absent, count($enrolled) - count($absent), $date);
-                if ((int) $target->discipline_class_id === $disciplineClassId) $id = $saved;
+                if ((int) $target->discipline_class_id === $disciplineClassId) {
+                    $id = $saved['id'];
+                    $corrected = $saved['corrected'];
+                }
             }
             $db->commit();
         } catch (\Throwable $e) {
@@ -459,7 +481,27 @@ class TeacherPortalController extends Action
             'date' => $date,
             'formattedDate' => date('d/m/Y', strtotime($date)),
             'savedAt' => date('H:i'),
+            'corrected' => $corrected,
         ]);
+    }
+
+
+    /**
+     * Data da aula da chamada por disciplina: null se vale, ou o código do erro.
+     * Válida = YYYY-MM-DD real, até hoje e, se a turma tem período letivo, dentro dele.
+     *
+     * @param object|null $term start/finish (YYYY-MM-DD)
+     */
+    public static function lessonDateError($date, $today, $term)
+    {
+
+        $parts = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', (string) $date, $m) ? [(int) $m[2], (int) $m[3], (int) $m[1]] : null;
+
+        if (!$parts || !checkdate($parts[0], $parts[1], $parts[2]) || $date > $today) return 'data-invalida';
+
+        if ($term && ($date < $term->start || $date > $term->finish)) return 'data-fora-do-periodo';
+
+        return null;
     }
 
 
