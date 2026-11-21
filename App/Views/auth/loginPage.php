@@ -94,8 +94,9 @@ $error = isset($_GET['error']) ? ($errorMessages[$_GET['error']] ?? ucfirst(str_
 
                     <?php
                     $clerkPortal = $loginPortal;
-                    // admin: sem criar conta e sem reaproveitar a sessão do Clerk aberta em outro portal
-                    $clerkAllowSignUp = !$isAdmin;
+                    // admin pode criar a conta no Clerk no primeiro acesso (só entra quem tem e-mail verificado
+                    // cadastrado como administrador), mas não reaproveita a sessão do Clerk aberta em outro portal
+                    $clerkAllowSignUp = true;
                     $clerkRequireFreshLogin = $isAdmin;
                     require __DIR__ . '/clerkSignIn.php';
                     ?>
