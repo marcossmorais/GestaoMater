@@ -9,10 +9,13 @@ use MF\Model\Model;
  *
  * O professor escolhe uma turma/disciplina, todos os alunos começam presentes e ele marca só quem faltou.
  * Ao salvar, cada ausente recebe +N faltas (N = aulas seguidas) em falta_aluno na unidade escolhida,
- * e a chamada fica registrada na tabela chamada.
+ * e a chamada fica registrada na tabela chamada. Uma chamada por disciplina e dia: salvar de novo corrige, não soma.
  */
 class Attendance extends Model
 {
+
+    // pg_advisory_xact_lock(namespace, turma_disciplina); o database/migrate.php usa a chave 7461001
+    const LOCK_NAMESPACE = 7461002;
 
     /**
      * Turmas/disciplinas atribuídas ao professor no período letivo ativo, com total de alunos e a última chamada de hoje.
@@ -118,26 +121,102 @@ class Attendance extends Model
 
 
     /**
-     * Retorna o horário da última chamada feita em uma data específica para a turma (ou null)
+     * Chamada já salva da disciplina na data (uma por disciplina e dia, migração 41), ou null.
+     * absent = matrículas ausentes; saved_at = hora em que foi salva ou corrigida pela última vez
      */
-    public function doneAtDate($disciplineClassId, $date)
+    public function savedAt($disciplineClassId, $date)
     {
 
         $stmt = $this->db->prepare(
-            "SELECT TO_CHAR(MAX(chamada.criado_em), 'HH24:MI') FROM chamada
-             WHERE chamada.fk_id_turma_disciplina = :id AND chamada.data_aula = :date"
+            "SELECT id_chamada AS id, fk_id_unidade AS unity, quantidade_aulas AS lessons, matriculas_ausentes AS absent,
+                    TO_CHAR(COALESCE(corrigido_em, criado_em), 'HH24:MI') AS saved_at, (corrigido_em IS NOT NULL) AS corrected
+             FROM chamada
+             WHERE fk_id_turma_disciplina = :id AND data_aula = :date"
         );
 
         $stmt->bindValue(':id', (int) $disciplineClassId, \PDO::PARAM_INT);
         $stmt->bindValue(':date', $date);
         $stmt->execute();
 
-        return $stmt->fetchColumn() ?: null;
+        $row = $stmt->fetch(\PDO::FETCH_OBJ);
+        if (!$row) return null;
+
+        $row->id = (int) $row->id;
+        $row->unity = (int) $row->unity;
+        $row->lessons = (int) $row->lessons;
+        $row->corrected = (bool) $row->corrected;
+        $row->absent = self::intArray($row->absent);
+
+        return $row;
     }
 
 
     /**
-     * Grava a chamada: soma as faltas dos ausentes e registra o histórico, tudo em uma transação
+     * Horário em que a chamada da disciplina na data foi salva (ou null)
+     */
+    public function doneAtDate($disciplineClassId, $date)
+    {
+
+        $saved = $this->savedAt($disciplineClassId, $date);
+
+        return $saved ? $saved->saved_at : null;
+    }
+
+
+    /**
+     * Início e fim do período letivo da turma (YYYY-MM-DD), ou null
+     */
+    public function termRange($classId)
+    {
+
+        $stmt = $this->db->prepare(
+            "SELECT TO_CHAR(periodo_letivo.data_inicio, 'YYYY-MM-DD') AS start, TO_CHAR(periodo_letivo.data_fim, 'YYYY-MM-DD') AS finish
+             FROM turma
+             INNER JOIN periodo_letivo ON (periodo_letivo.id_ano_letivo = turma.fk_id_periodo_letivo)
+             WHERE turma.id_turma = :classId"
+        );
+
+        $stmt->bindValue(':classId', (int) $classId, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(\PDO::FETCH_OBJ) ?: null;
+    }
+
+
+    /**
+     * Quanto muda o total de faltas de cada aluno, por unidade: tira a chamada anterior do dia (se houver) e lança a nova.
+     * Quem não muda fica de fora (não grava nem audita à toa).
+     *
+     * @param object|null $previous chamada já salva (unity, lessons, absent[])
+     * @return array [unidade => [matrícula => diferença]]
+     */
+    public static function absenceDelta($previous, $unity, $lessons, array $absentEnrollments)
+    {
+
+        $delta = [];
+
+        if ($previous) {
+            foreach ($previous->absent as $enrollment) {
+                $delta[(int) $previous->unity][(int) $enrollment] = ($delta[(int) $previous->unity][(int) $enrollment] ?? 0) - (int) $previous->lessons;
+            }
+        }
+
+        foreach ($absentEnrollments as $enrollment) {
+            $delta[(int) $unity][(int) $enrollment] = ($delta[(int) $unity][(int) $enrollment] ?? 0) + (int) $lessons;
+        }
+
+        foreach ($delta as $u => $rows) {
+            $delta[$u] = array_filter($rows, function ($d) { return $d !== 0; });
+            if (!$delta[$u]) unset($delta[$u]);
+        }
+
+        return $delta;
+    }
+
+
+    /**
+     * Grava a chamada da disciplina no dia, tudo em uma transação. Uma por disciplina e dia: se já existe,
+     * salvar de novo corrige (as faltas da versão anterior saem e as novas entram; não soma).
      *
      * @param int         $disciplineClassId
      * @param int         $unity
@@ -147,22 +226,29 @@ class Attendance extends Model
      * @param int         $presentTotal
      * @param string|null $lessonDate         data da aula (YYYY-MM-DD), padrão hoje
      *
-     * @return int id da chamada
+     * @return array ['id' => id da chamada, 'corrected' => se corrigiu uma chamada já salva]
      */
     public function save($disciplineClassId, $unity, $teacherId, $lessons, array $absentEnrollments, $presentTotal, $lessonDate = null)
     {
 
         $date = ($lessonDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $lessonDate)) ? $lessonDate : date('Y-m-d');
+        $absentEnrollments = array_values(array_unique(array_map('intval', $absentEnrollments)));
 
-        // permite salvar várias disciplinas numa transação externa (Anos Iniciais)
+        // permite salvar várias disciplinas numa transação externa
         $ownTransaction = !$this->db->inTransaction();
         if ($ownTransaction) $this->db->beginTransaction();
 
         try {
 
+            // toque duplo ou reenvio: o segundo espera o primeiro terminar e encontra a chamada já salva
+            $lock = $this->db->prepare('SELECT pg_advisory_xact_lock(:namespace, :disciplineClass)');
+            $lock->execute([':namespace' => self::LOCK_NAMESPACE, ':disciplineClass' => (int) $disciplineClassId]);
+
+            $previous = $this->savedAt($disciplineClassId, $date);
+
             $update = $this->db->prepare(
                 "UPDATE falta_aluno
-                 SET total_faltas = total_faltas + :lessons, data_postagem = CURRENT_TIMESTAMP
+                 SET total_faltas = GREATEST(total_faltas + :delta, 0), data_postagem = CURRENT_TIMESTAMP
                  WHERE fk_id_matricula_falta = :enrollment
                  AND fk_id_turma_disciplina_falta = :disciplineClass
                  AND fk_id_unidade_falta = :unity"
@@ -170,52 +256,79 @@ class Attendance extends Model
 
             $insert = $this->db->prepare(
                 "INSERT INTO falta_aluno (total_faltas, fk_id_turma_disciplina_falta, fk_id_unidade_falta, fk_id_matricula_falta)
-                 VALUES (:lessons, :disciplineClass, :unity, :enrollment)"
+                 VALUES (:delta, :disciplineClass, :unity, :enrollment)"
             );
 
-            foreach ($absentEnrollments as $enrollment) {
+            foreach (self::absenceDelta($previous, $unity, $lessons, $absentEnrollments) as $deltaUnity => $rows) {
+                foreach ($rows as $enrollment => $delta) {
 
-                $params = [
-                    ':lessons' => (int) $lessons,
-                    ':enrollment' => (int) $enrollment,
-                    ':disciplineClass' => (int) $disciplineClassId,
-                    ':unity' => (int) $unity,
-                ];
+                    $params = [
+                        ':delta' => (int) $delta,
+                        ':enrollment' => (int) $enrollment,
+                        ':disciplineClass' => (int) $disciplineClassId,
+                        ':unity' => (int) $deltaUnity,
+                    ];
 
-                $update->execute($params);
+                    $update->execute($params);
 
-                if ($update->rowCount() === 0) $insert->execute($params);
+                    if ($update->rowCount() === 0 && $delta > 0) $insert->execute($params);
+                }
             }
 
-            $log = $this->db->prepare(
-                "INSERT INTO chamada
-                    (fk_id_turma_disciplina, fk_id_unidade, fk_id_professor, data_aula, quantidade_aulas, total_presentes, total_ausentes, matriculas_ausentes)
-                 VALUES
-                    (:disciplineClass, :unity, :teacher, :dataAula, :lessons, :present, :absent, :absentList)
-                 RETURNING id_chamada"
-            );
-
-            $log->execute([
-                ':disciplineClass' => (int) $disciplineClassId,
+            $values = [
                 ':unity' => (int) $unity,
                 ':teacher' => (int) $teacherId,
-                ':dataAula' => $date,
                 ':lessons' => (int) $lessons,
                 ':present' => (int) $presentTotal,
                 ':absent' => count($absentEnrollments),
-                ':absentList' => '{' . implode(',', array_map('intval', $absentEnrollments)) . '}',
-            ]);
+                ':absentList' => '{' . implode(',', $absentEnrollments) . '}',
+            ];
 
-            $id = (int) $log->fetchColumn();
+            if ($previous) {
+
+                $fix = $this->db->prepare(
+                    "UPDATE chamada
+                     SET fk_id_unidade = :unity, fk_id_professor = :teacher, quantidade_aulas = :lessons,
+                         total_presentes = :present, total_ausentes = :absent, matriculas_ausentes = :absentList,
+                         corrigido_em = CURRENT_TIMESTAMP
+                     WHERE id_chamada = :id"
+                );
+                $fix->execute($values + [':id' => $previous->id]);
+                $id = $previous->id;
+
+            } else {
+
+                $log = $this->db->prepare(
+                    "INSERT INTO chamada
+                        (fk_id_turma_disciplina, fk_id_unidade, fk_id_professor, data_aula, quantidade_aulas, total_presentes, total_ausentes, matriculas_ausentes)
+                     VALUES
+                        (:disciplineClass, :unity, :teacher, :dataAula, :lessons, :present, :absent, :absentList)
+                     RETURNING id_chamada"
+                );
+                $log->execute($values + [':disciplineClass' => (int) $disciplineClassId, ':dataAula' => $date]);
+                $id = (int) $log->fetchColumn();
+            }
 
             if ($ownTransaction) $this->db->commit();
 
-            return $id;
+            return ['id' => $id, 'corrected' => $previous !== null];
         } catch (\Throwable $e) {
 
             if ($ownTransaction) $this->db->rollBack();
             throw $e;
         }
+    }
+
+
+    /**
+     * Array do Postgres ("{1,2,3}") em inteiros
+     */
+    private static function intArray($value)
+    {
+
+        $value = trim((string) $value, '{}');
+
+        return $value === '' ? [] : array_map('intval', explode(',', $value));
     }
 
 

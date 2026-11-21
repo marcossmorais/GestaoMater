@@ -18,7 +18,8 @@
     const saveButton = $('[data-att-save]');
     const searchInput = $('[data-att-search]');
 
-    const state = { cls: null, unity: null, date: null, lessons: 1, students: [], absent: new Set(), subjects: new Set(), saving: false, finished: false, dirty: false };
+    // loadedSaved: a chamada desta data já estava salva e abriu com as faltas salvas (salvar de novo corrige)
+    const state = { cls: null, unity: null, date: null, lessons: 1, students: [], absent: new Set(), subjects: new Set(), saving: false, finished: false, dirty: false, loadedSaved: false };
 
     const errors = {
         'turma-nao-encontrada': 'Turma não encontrada para o seu usuário.',
@@ -27,6 +28,9 @@
         'fora-da-substituicao': 'Como substituto, você só lança nas datas da sua substituição.',
         'unidade-fechada': 'Este bimestre está fechado para lançamentos.',
         'aluno-fora-da-turma': 'A lista de alunos mudou. Abra a turma novamente.',
+        'data-invalida': 'Escolha uma data válida, até hoje.',
+        'data-fora-do-periodo': 'Essa data está fora do período letivo da turma.',
+        'quantidade-aulas-invalida': 'Informe de 1 a 6 aulas seguidas.',
         'nao-autenticado': 'Sua sessão expirou. Entre novamente.',
         'falha-ao-salvar': 'Não foi possível salvar. Tente de novo.'
     };
@@ -58,6 +62,12 @@
         return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     }
 
+    // data de hoje no fuso do aparelho (toISOString é UTC: depois das 21h já seria amanhã)
+    function localToday() {
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    }
+
     function toast(message, type) {
         // `tools` é declarado com const no main.js (escopo global, mas fora de window)
         if (typeof tools !== 'undefined' && typeof tools.showToast === 'function') {
@@ -66,7 +76,8 @@
     }
 
     // ---------- Abrir a turma/disciplina
-    async function openClass(id, keepUnity) {
+    // followSaved: se a chamada da data já foi salva em outro bimestre, abre nele (falso quando o professor troca o bimestre)
+    async function openClass(id, keepUnity, followSaved = true) {
         const cls = daily
             ? { id: daily.classId, classId: daily.classId, stage: 'iniciais', label: daily.label, discipline: 'chamada do dia', students: daily.students }
             : config.classes.find((c) => c.id === id);
@@ -75,9 +86,10 @@
         state.cls = cls;
         state.absent = new Set();
         state.dirty = false;
+        state.loadedSaved = false;
         state.lessons = 1;
         const dateInput = $('[data-att-date]');
-        state.date = dateInput ? dateInput.value : new Date().toISOString().slice(0, 10);
+        state.date = (dateInput && dateInput.value) || localToday();
         if (!keepUnity) state.unity = parseInt(($('[data-att-unity] .is-active') || {}).dataset?.value || '1', 10);
 
         if (!keepUnity) state.subjects = new Set([cls.id]);
@@ -102,16 +114,28 @@
             state.students = data.students;
             setActiveUnity(data.unity);
 
-            // chamada do dia já feita: abre com as faltas salvas, para corrigir
-            if (daily) state.absent = new Set(data.students.filter((s) => s.absentOnDate).map((s) => s.id));
+            // chamada da disciplina já salva em outro bimestre: reabre nele, com as faltas salvas
+            if (!daily && data.saved && followSaved && data.saved.unity !== data.unity) {
+                state.unity = data.saved.unity;
+                return openClass(id, true, false);
+            }
+
+            // chamada já feita nesta data: abre com as faltas (e as aulas) salvas, para corrigir
+            if (daily) {
+                state.absent = new Set(data.students.filter((s) => s.absentOnDate).map((s) => s.id));
+            } else if (data.saved) {
+                state.loadedSaved = true;
+                state.absent = new Set(data.saved.absent.filter((id) => data.students.some((s) => s.id === id)));
+                state.lessons = data.saved.lessons;
+                if (lessonsValue) lessonsValue.textContent = String(state.lessons);
+            }
 
             const warning = $('[data-att-warning]');
             if (data.doneTodayAt) {
-                const todayIso = new Date().toISOString().slice(0, 10);
-                const dayLabel = state.date === todayIso ? 'hoje' : `no dia ${state.date.split('-').reverse().join('/')}`;
+                const dayLabel = state.date === localToday() ? 'hoje' : `no dia ${state.date.split('-').reverse().join('/')}`;
                 warning.innerHTML = daily
                     ? `<i class="fas fa-info-circle mr-2"></i>A chamada de ${dayLabel} já foi salva às <strong>${escapeHtml(data.doneTodayAt)}</strong>. As faltas marcadas abaixo são as salvas; salvar de novo substitui a lista do dia.`
-                    : `<i class="fas fa-info-circle mr-2"></i>Você já fez a chamada desta turma ${dayLabel} às <strong>${escapeHtml(data.doneTodayAt)}</strong>. Salvar de novo lança as faltas de mais uma aula.`;
+                    : `<i class="fas fa-info-circle mr-2"></i>A chamada desta disciplina ${dayLabel} já foi salva às <strong>${escapeHtml(data.doneTodayAt)}</strong>. As faltas marcadas abaixo são as salvas; salvar de novo corrige a chamada (não soma). Se houve mais uma aula, aumente as aulas seguidas.`;
                 warning.hidden = false;
             } else {
                 warning.hidden = true;
@@ -237,7 +261,7 @@
         const keepDirty = state.dirty;
         state.unity = unity;
         setActiveUnity(unity);
-        openClass(state.cls.id, true).then(() => { state.absent = keepAbsent; state.dirty = keepDirty; render(); });
+        openClass(state.cls.id, true, false).then(() => { state.absent = keepAbsent; state.dirty = keepDirty; render(); });
     });
 
     function setActiveUnity(unity) {
@@ -251,14 +275,16 @@
     if (dateInput) {
         dateInput.addEventListener('change', () => {
             if (!state.cls) return;
-            state.date = dateInput.value || new Date().toISOString().slice(0, 10);
+            state.date = dateInput.value || localToday();
             // chamada do dia: outro dia abre com as faltas salvas daquele dia
             if (daily) {
                 openClass(state.cls.id, true);
                 return;
             }
+            // data com chamada salva abre com as faltas dela; sem chamada, mantém o que já foi marcado
             const keepAbsent = new Set(state.absent);
             openClass(state.cls.id, true).then(() => {
+                if (state.loadedSaved) return;
                 state.absent = keepAbsent;
                 render();
             });
@@ -268,6 +294,7 @@
     // Aulas seguidas
     $$('[data-att-lessons]').forEach((button) => button.addEventListener('click', () => {
         state.lessons = Math.max(1, Math.min(6, state.lessons + parseInt(button.dataset.attLessons, 10)));
+        state.dirty = true;
         $('[data-att-lessons-value]').textContent = state.lessons;
         render();
     }));
@@ -284,9 +311,9 @@
     $('[data-att-reset]').addEventListener('click', () => { state.absent.clear(); state.dirty = true; render(); });
 
     // Trocar de turma ou de aba com faltas marcadas: o navegador pede confirmação
-    // (na chamada do dia, só se algo mudou: ela já abre com as faltas salvas)
+    // (chamada já salva, do dia ou da disciplina, só se algo mudou: ela já abre com as faltas salvas)
     window.addEventListener('beforeunload', (event) => {
-        if (state.finished || (daily ? !state.dirty : state.absent.size === 0)) return;
+        if (state.finished || ((daily || state.loadedSaved) ? !state.dirty : state.absent.size === 0)) return;
         event.preventDefault();
         event.returnValue = '';
     });
@@ -334,7 +361,7 @@
         const lessonsText = data.lessons > 1 ? ` (${data.lessons} aulas)` : '';
         const dateStr = data.formattedDate || (state.date ? state.date.split('-').reverse().join('/') : '');
         const subject = (data.disciplines && data.disciplines.length) ? data.disciplines.join(', ') : cls.discipline;
-        const corrected = data.corrected ? ' Chamada do dia corrigida.' : '';
+        const corrected = data.corrected ? (daily ? ' Chamada do dia corrigida.' : ' Chamada corrigida: as faltas foram recalculadas, sem somar de novo.') : '';
         $('[data-att-done-summary]').textContent = data.absent === 0
             ? `${cls.label} · ${subject} (${dateStr}): todos os ${data.present} alunos presentes${lessonsText}.${corrected}`
             : `${cls.label} · ${subject} (${dateStr}): ${data.present} presentes e ${data.absent} ausente${data.absent > 1 ? 's' : ''}${lessonsText} no ${data.unity}º bimestre.${corrected}`;
