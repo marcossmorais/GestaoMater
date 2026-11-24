@@ -44,7 +44,7 @@ $pill = function ($e) use ($types) {
             <div class="m-page-head">
                 <div>
                     <h5>Cronograma escolar</h5>
-                    <p>Eventos, provas, reuniões, feriados e recessos da escola ou de uma turma. Os professores veem no planejamento; para avisar alunos, famílias ou professores, use "Notificar no mural".</p>
+                    <p>Eventos, avaliações, reuniões, feriados e recessos da escola ou de uma turma. Os professores veem no planejamento; para avisar alunos, famílias ou professores, use "Notificar no mural".</p>
                 </div>
                 <button type="button" class="btn btn-primary" data-cal-new><i class="fas fa-plus mr-2"></i>Novo evento</button>
             </div>

@@ -41,7 +41,7 @@
                 <div class="lp-blob"><img src="<?= $app_url ?>/assets/img/illustrations/students.svg" alt=""></div>
                 <span class="lp-float lp-float-1"><i class="fas fa-check-circle"></i> Chamada feita</span>
                 <span class="lp-float lp-float-2"><i class="fas fa-star"></i> Média 8,5</span>
-                <span class="lp-float lp-float-3"><i class="fas fa-thumbtack"></i> Prova na sexta!</span>
+                <span class="lp-float lp-float-3"><i class="fas fa-thumbtack"></i> Avaliação na sexta!</span>
             </div>
         </section>
 
@@ -49,7 +49,7 @@
             <article class="lp-feature lp-green"><span><i class="fas fa-clipboard-check"></i></span><h3>Chamada rápida</h3><p>Todos começam presentes. O professor toca só em quem faltou.</p></article>
             <article class="lp-feature lp-amber"><span><i class="fas fa-star"></i></span><h3>Notas por bimestre</h3><p>1ª, 2ª e 3ª avaliação, de 0 a 10, e recuperação para quem precisa.</p></article>
             <article class="lp-feature lp-coral"><span><i class="fas fa-book-open"></i></span><h3>Diário com BNCC</h3><p>Conteúdo da aula com a habilidade certa, escolhida numa busca.</p></article>
-            <article class="lp-feature lp-purple"><span><i class="fas fa-thumbtack"></i></span><h3>Mural da turma</h3><p>Avisos e roteiros de prova chegam direto para os alunos.</p></article>
+            <article class="lp-feature lp-purple"><span><i class="fas fa-thumbtack"></i></span><h3>Mural da turma</h3><p>Avisos e roteiros de avaliação chegam direto para os alunos.</p></article>
         </section>
 
         <section class="lp-who">
@@ -72,7 +72,7 @@
                     <ul>
                         <li><i class="fas fa-check"></i> Boletim e faltas de cada matéria</li>
                         <li><i class="fas fa-check"></i> Quanto falta para fechar a média</li>
-                        <li><i class="fas fa-check"></i> Horário, avisos e roteiros de prova</li>
+                        <li><i class="fas fa-check"></i> Horário, avisos e roteiros de avaliação</li>
                     </ul>
                     <a class="lp-btn lp-btn-amber" href="/portal-aluno">Entrar como aluno</a>
                 </div>

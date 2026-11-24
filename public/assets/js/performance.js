@@ -137,7 +137,7 @@
         });
     }
 
-    // ---------- Roteiro de provas: uma folha por bimestre, filtrada por avaliação e matéria
+    // ---------- Roteiro de avaliações: uma folha por bimestre, filtrada por avaliação e matéria
     const guideUnits = document.querySelector('[data-guide-unit]');
     if (guideUnits) {
         guideUnits.addEventListener('click', (event) => {

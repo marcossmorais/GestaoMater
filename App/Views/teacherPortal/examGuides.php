@@ -15,7 +15,7 @@ require __DIR__ . '/components/classCards.php';
 
             <div class="m-page-head">
                 <div>
-                    <h5>Roteiro de Provas</h5>
+                    <h5>Roteiro de Avaliações</h5>
                     <p>Escolha a turma, o bimestre e a avaliação. Ao salvar, a coordenação recebe e o aluno vê no mural.</p>
                 </div>
             </div>

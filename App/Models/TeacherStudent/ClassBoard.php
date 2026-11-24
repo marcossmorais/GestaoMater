@@ -16,7 +16,7 @@ class ClassBoard extends Model
     // tipos de aviso: cor (CSS is-type-*) e ícone nos murais
     const TYPES = [
         'aviso' => ['label' => 'Aviso', 'icon' => 'fa-bullhorn'],
-        'prova' => ['label' => 'Prova', 'icon' => 'fa-file-alt'],
+        'prova' => ['label' => 'Avaliação', 'icon' => 'fa-file-alt'],
         'tarefa' => ['label' => 'Tarefa', 'icon' => 'fa-tasks'],
         'material' => ['label' => 'Material', 'icon' => 'fa-book'],
         'evento' => ['label' => 'Evento', 'icon' => 'fa-calendar-day'],

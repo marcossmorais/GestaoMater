@@ -1,4 +1,4 @@
-// Mater — Roteiro de Provas: turma, bimestre e avaliação; ao salvar, a coordenação recebe e o aluno vê no mural
+// Mater — Roteiro de Avaliações: turma, bimestre e avaliação; ao salvar, a coordenação recebe e o aluno vê no mural
 (function () {
 
     const form = document.querySelector('[data-guide-form]');
