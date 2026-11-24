@@ -17,7 +17,7 @@ $current = $this->view->audience;
             <div class="m-page-head">
                 <div>
                     <h5>Mural geral</h5>
-                    <p>Avisos da coordenação por público. Alunos e responsáveis veem no portal do aluno (a família entra com o login do aluno), acima dos avisos de cada matéria. Professores veem no início do portal docente. Até <?= GeneralBoard::MAX_PINNED ?> fixados no topo por público.</p>
+                    <p>Avisos da coordenação por público. Alunos e responsáveis veem no portal do aluno (a família entra com o login do aluno), acima dos avisos de cada matéria. Professores veem no início do portal docente; escolha um professor para mandar uma mensagem direta, só para ele. Até <?= GeneralBoard::MAX_PINNED ?> fixados no topo por público.</p>
                 </div>
             </div>
 
@@ -39,7 +39,16 @@ $current = $this->view->audience;
                     </div>
                     <p class="m-class-picks-summary" data-board-classes-summary>Toda a escola</p>
                 </fieldset>
-                <p class="m-muted-note d-none" data-board-teachers-note>Vai para todos os professores ativos.</p>
+                <label class="m-att-field d-none" data-board-teachers>
+                    <span class="m-att-label">Professor</span>
+                    <select class="form-control" name="teacher">
+                        <option value="">Todos os professores ativos</option>
+                        <?php foreach ($this->view->teachers as $t) { ?>
+                            <option value="<?= (int) $t->id ?>" <?= (int) $t->id === $this->view->teacherId ? 'selected' : '' ?>><?= htmlspecialchars($t->name) ?></option>
+                        <?php } ?>
+                    </select>
+                    <small class="m-muted-note" data-board-teachers-note>Vai para todos os professores ativos. Escolha um professor para enviar uma mensagem direta, que só ele vê.</small>
+                </label>
                 <div class="m-att-field">
                     <span class="m-att-label">Tipo de aviso</span>
                     <div class="m-board-types" data-board-types>
@@ -53,7 +62,7 @@ $current = $this->view->audience;
                     <textarea class="form-control" name="text" rows="3" maxlength="2000" required placeholder="Ex.: Reunião de pais na quarta-feira, às 19h"></textarea>
                 </label>
                 <div class="m-post-form-actions">
-                    <label class="m-overview-low mb-0"><input type="checkbox" name="pinned"> Fixar no topo</label>
+                    <label class="m-overview-low mb-0" data-board-pin><input type="checkbox" name="pinned"> Fixar no topo</label>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane mr-2"></i>Publicar</button>
                 </div>
             </form>
@@ -63,16 +72,18 @@ $current = $this->view->audience;
                 <?php foreach ($audiences as $key => $a) { ?>
                     <a class="btn <?= $current === $key ? 'is-active' : '' ?>" href="/admin/mural?publico=<?= $key ?>"><?= htmlspecialchars($a['label']) ?></a>
                 <?php } ?>
+                <a class="btn <?= $current === 'direto' ? 'is-active' : '' ?>" href="/admin/mural?publico=direto">Mensagens diretas</a>
             </nav>
 
-            <?php if (!$posts) { ?><div class="card m-panel m-empty">Nenhum aviso geral publicado<?= $current ? ' para ' . htmlspecialchars(mb_strtolower($audiences[$current]['label'])) : '' ?>.</div><?php } ?>
+            <?php if (!$posts) { ?><div class="card m-panel m-empty"><?= $current === 'direto' ? 'Nenhuma mensagem direta enviada' : 'Nenhum aviso geral publicado' . ($current ? ' para ' . htmlspecialchars(mb_strtolower($audiences[$current]['label'])) : '') ?>.</div><?php } ?>
 
             <?php foreach ($posts as $p) {
                 $type = $types[$p->type] ?? $types['aviso'];
                 $audience = $audiences[$p->audience] ?? $audiences['alunos'];
                 $read = (int) $p->read_total;
                 $of = (int) $p->audience_total;
-                $target = $p->audience === 'professores' ? 'Todos os professores' : ($p->class_label ?: 'Toda a escola');
+                $direct = $p->teacher_name !== null;
+                $target = $direct ? 'Mensagem direta para ' . $p->teacher_name : ($p->audience === 'professores' ? 'Todos os professores' : ($p->class_label ?: 'Toda a escola'));
             ?>
                 <article class="card m-board-post is-type-<?= htmlspecialchars($p->type) ?> <?= $p->pinned ? 'is-pinned' : '' ?>" data-admin-post="<?= (int) $p->id ?>">
                     <header>
@@ -80,11 +91,15 @@ $current = $this->view->audience;
                         <span class="m-board-audience"><i class="fas <?= htmlspecialchars((string) $audience['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($audience['label']) ?></span>
                         <?php if ($p->pinned) { ?><span class="m-board-pin"><i class="fas fa-thumbtack mr-1"></i>Fixado</span><?php } ?>
                         <strong><?= htmlspecialchars($target) ?></strong>
-                        <small><?= htmlspecialchars($p->posted_at) ?> · <?= $read ?> de <?= $of ?> <?= ['professores' => 'professores', 'responsaveis' => 'famílias', 'alunos' => 'alunos'][$p->audience] ?? 'alunos' ?> leram<?= $of ? ' (' . round($read * 100 / $of) . '%)' : '' ?></small>
+                        <?php if ($direct) { ?>
+                            <small><?= htmlspecialchars($p->posted_at) ?> · <?= $read ? 'Lida' : 'Ainda não lida' ?></small>
+                        <?php } else { ?>
+                            <small><?= htmlspecialchars($p->posted_at) ?> · <?= $read ?> de <?= $of ?> <?= ['professores' => 'professores', 'responsaveis' => 'famílias', 'alunos' => 'alunos'][$p->audience] ?? 'alunos' ?> leram<?= $of ? ' (' . round($read * 100 / $of) . '%)' : '' ?></small>
+                        <?php } ?>
                     </header>
                     <p><?= nl2br(htmlspecialchars($p->text)) ?></p>
                     <footer class="m-post-actions">
-                        <button type="button" class="btn btn-sm btn-light" data-admin-pin="<?= $p->pinned ? 0 : 1 ?>"><i class="fas fa-thumbtack mr-1"></i><?= $p->pinned ? 'Desafixar' : 'Fixar' ?></button>
+                        <?php if (!$direct) { ?><button type="button" class="btn btn-sm btn-light" data-admin-pin="<?= $p->pinned ? 0 : 1 ?>"><i class="fas fa-thumbtack mr-1"></i><?= $p->pinned ? 'Desafixar' : 'Fixar' ?></button><?php } ?>
                         <button type="button" class="btn btn-sm btn-light text-danger" data-admin-delete><i class="fas fa-trash-alt mr-1"></i>Excluir</button>
                     </footer>
                 </article>
@@ -101,14 +116,26 @@ $current = $this->view->audience;
         const form = root.querySelector('[data-admin-board-form]');
         const classes = root.querySelector('[data-board-classes]');
         const summary = root.querySelector('[data-board-classes-summary]');
-        const teachersNote = root.querySelector('[data-board-teachers-note]');
+        const teachers = root.querySelector('[data-board-teachers]');
+        const teacherSelect = teachers.querySelector('select');
+        const pinField = root.querySelector('[data-board-pin]');
         let type = 'aviso';
         let audience = 'alunos';
+
+        // mensagem direta não é fixada
+        function syncTeacher() {
+            const direct = audience === 'professores' && teacherSelect.value !== '';
+            pinField.classList.toggle('d-none', direct);
+            if (direct) pinField.querySelector('input').checked = false;
+        }
+        teacherSelect.addEventListener('change', syncTeacher);
 
         const errors = {
             'limite-fixados': 'Já há 3 avisos fixados para esse público. Desafixe um antes.',
             'texto-invalido': 'Escreva o aviso (até 2.000 caracteres).',
-            'turma-invalida': 'Uma das turmas escolhidas não existe mais. Recarregue a página.'
+            'turma-invalida': 'Uma das turmas escolhidas não existe mais. Recarregue a página.',
+            'professor-invalido': 'Esse professor não está mais ativo. Recarregue a página.',
+            'direta-sem-fixar': 'Mensagem direta não pode ser fixada.'
         };
 
         async function post(url, body) {
@@ -141,8 +168,12 @@ $current = $this->view->audience;
             audience = button.dataset.audience;
             pick('data-board-audiences', 'data-audience', button);
             classes.classList.toggle('d-none', audience === 'professores');
-            teachersNote.classList.toggle('d-none', audience !== 'professores');
+            teachers.classList.toggle('d-none', audience !== 'professores');
+            syncTeacher();
         });
+
+        // aberto com ?professor=ID: já começa na mensagem direta
+        if (teacherSelect.value) root.querySelector('[data-audience="professores"]').click();
 
         classes.addEventListener('change', () => {
             const checked = classes.querySelectorAll('input:checked').length;
@@ -156,7 +187,8 @@ $current = $this->view->audience;
             if (!text) return form.querySelector('[name="text"]').focus();
             const picked = audience === 'professores' ? [] : data.getAll('classes').map((v) => parseInt(v, 10));
             try {
-                await post('/admin/mural/publicar', { text, type, audience, classes: picked, pinned: data.get('pinned') === 'on' });
+                const teacher = audience === 'professores' ? parseInt(teacherSelect.value, 10) || null : null;
+                await post('/admin/mural/publicar', { text, type, audience, classes: picked, teacher, pinned: !teacher && data.get('pinned') === 'on' });
                 window.location.reload();
             } catch (e) {
                 fail(e, 'Não foi possível publicar. Tente de novo.');

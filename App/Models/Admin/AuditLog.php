@@ -69,6 +69,7 @@ class AuditLog extends Model
         'IMPORTACAO' => 'Importou',
         'VIRADA_ANO' => 'Virou o ano letivo',
         'EXPORTAR' => 'Exportou',
+        'CONSULTA' => 'Consultou',
     ];
 
     const ACTOR_TYPES = ['admin' => 'Admin', 'docente' => 'Professor', 'aluno' => 'Aluno', 'sistema' => 'Sistema'];
@@ -381,7 +382,7 @@ class AuditLog extends Model
                 foreach (self::CLASS_KEYS as $k) if (isset($d[$k])) $want['class'][] = (int) $d[$k];
                 foreach (self::DISCIPLINE_CLASS_KEYS as $k) if (isset($d[$k])) $want['dc'][] = (int) $d[$k];
                 foreach (self::EXAM_KEYS as $k) if (isset($d[$k])) $want['exam'][] = (int) $d[$k];
-                foreach (['fk_id_professor', 'fk_id_professor_titular', 'fk_id_professor_substituto'] as $k) if (isset($d[$k])) $want['teacher'][] = (int) $d[$k];
+                foreach (['fk_id_professor', 'fk_id_professor_titular', 'fk_id_professor_substituto', 'fk_id_professor_destino'] as $k) if (isset($d[$k])) $want['teacher'][] = (int) $d[$k];
             }
             if (in_array($r->entidade, self::ENROLLMENT_ENTITIES, true) && ctype_digit((string) $r->entidade_id)) $want['enrollment'][] = (int) $r->entidade_id;
             $classInId = $r->entidade === 'turma' || ($r->acao === 'NEGADO' && in_array($r->entidade, self::CLASS_ID_ON_DENIAL, true));
@@ -441,6 +442,8 @@ class AuditLog extends Model
             return $parts(self::ENTITIES[$r->entidade] ?? $r->entidade, $who, isset($d['codigo']) ? 'código ' . $d['codigo'] : (isset($d['total']) ? $d['total'] . ' códigos' : null));
         }
         if ($r->acao === 'EXPORTAR') return 'CSV da auditoria · ' . ($d['linhas'] ?? 0) . ' registros';
+        // consulta de dado sensível (perfil pedagógico do aluno no admin)
+        if ($r->acao === 'CONSULTA') return $parts(is_string($d) ? $d : null, in_array($r->entidade, self::ENROLLMENT_ENTITIES, true) && $r->entidade_id ? $n('enrollment', $r->entidade_id) : null);
 
         switch ($r->entidade) {
             case 'nota_avaliacao':
@@ -468,6 +471,8 @@ class AuditLog extends Model
             case 'aviso_geral':
                 // desde a migração 30 as turmas ficam em aviso_geral_turma; o registro guarda só o público
                 $audience = ['alunos' => 'para os alunos', 'responsaveis' => 'para os responsáveis', 'professores' => 'para os professores'][$d['publico'] ?? ''] ?? null;
+                // mensagem direta (migração 43)
+                if (!empty($d['fk_id_professor_destino'])) $audience = 'mensagem direta: ' . $n('teacher', $d['fk_id_professor_destino']);
                 return $parts($audience ?? (isset($d['fk_id_turma']) ? $n('class', $d['fk_id_turma']) : 'toda a escola'), $this->short($d['aviso'] ?? null));
             case 'evento_escolar':
                 return $parts($d['titulo'] ?? null, $date($d['data_inicio'] ?? null));
