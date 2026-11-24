@@ -37,7 +37,9 @@ class Teacher extends People
 
             VALUES 
             
-                (:teacherName, :cpf, :birthDate, :naturalness, :profilePhoto, :nationality, :fk_id_sex, :fk_id_blood_type, :fk_id_pcd, :fk_id_address,:fk_id_telephone , :accessCode , :email , :fk_id_hierarchy_function , 1)     
+                (:teacherName, :cpf, :birthDate, :naturalness, :profilePhoto, :nationality, :fk_id_sex, :fk_id_blood_type, :fk_id_pcd, :fk_id_address,:fk_id_telephone , :accessCode , :email , :fk_id_hierarchy_function , 1)
+
+            RETURNING id_professor
         ";
 
         $stmt = $this->db->prepare($query);
@@ -59,7 +61,8 @@ class Teacher extends People
 
         $stmt->execute();
 
-        return $this->db->lastInsertId();
+        // lastInsertId() devolveria o id da auditoria (o gatilho grava depois do professor)
+        return (int) $stmt->fetchColumn();
     }
 
 
