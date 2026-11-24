@@ -56,6 +56,14 @@ check('Clerk sem secret key', count($p) === 1 && $has($p, 'Clerk'), $p);
 $p = ProductionCheck::problems(['CLERK_PUBLISHABLE_KEY' => '', 'CLERK_SECRET_KEY' => ''] + $good);
 check('Clerk desligado', count($p) === 1 && $has($p, 'Clerk'), $p);
 
+// ---------- senha do banco
+foreach (['mater', 'postgres', 'MATER'] as $password) {
+    $p = ProductionCheck::problems(['DB_PASSWORD' => $password] + $good);
+    check("banco: senha padrão '$password'", count($p) === 1 && $has($p, 'DB_PASSWORD'), $p);
+}
+$p = ProductionCheck::problems(['DB_PASSWORD' => 'k8#Lq2!vZ9rT'] + $good);
+check('banco: senha própria passa', $p === [], $p);
+
 // ---------- APP_URL
 $p = ProductionCheck::problems(['APP_URL' => 'http://portal.exemplo.com.br'] + $good);
 check('APP_URL em http', count($p) === 1 && $has($p, 'https'), $p);

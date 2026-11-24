@@ -15,6 +15,9 @@ class ProductionCheck
     // chave fixa do docker-compose.yml de desenvolvimento
     const DEV_SIGNING_KEY = 'dev-only-signing-key-change-me-in-production-0000';
 
+    // senhas padrão do docker-compose.yml de dev e da imagem do Postgres
+    const DEV_DB_PASSWORDS = ['mater', 'postgres'];
+
     /**
      * @param array $env variáveis de ambiente (nome => valor)
      * @return string[] problemas encontrados; vazio = pode rodar
@@ -38,6 +41,11 @@ class ProductionCheck
             $problems[] = 'Clerk desligado (CLERK_PUBLISHABLE_KEY e CLERK_SECRET_KEY): o login por código não vale em produção';
         }
 
+        // senha padrão do docker-compose.yml de dev (ou do Postgres): quem lê o repositório entra no banco
+        if (in_array(strtolower((string) ($env['DB_PASSWORD'] ?? '')), self::DEV_DB_PASSWORDS, true)) {
+            $problems[] = 'DB_PASSWORD é a senha padrão de desenvolvimento';
+        }
+
         if (strpos((string) ($env['APP_URL'] ?? ''), 'https://') !== 0) {
             $problems[] = 'APP_URL precisa começar com https://';
         }
@@ -53,7 +61,7 @@ class ProductionCheck
     {
         // getenv(nome), como o resto da app lê (no Apache, getenv() sem argumento pode não ver as mesmas)
         $env = [];
-        foreach (['APP_ENV', 'APP_SIGNING_KEY', 'CLERK_PUBLISHABLE_KEY', 'CLERK_SECRET_KEY', 'APP_URL'] as $name) {
+        foreach (['APP_ENV', 'APP_SIGNING_KEY', 'CLERK_PUBLISHABLE_KEY', 'CLERK_SECRET_KEY', 'APP_URL', 'DB_PASSWORD'] as $name) {
             $env[$name] = (string) getenv($name);
         }
         // Clerk aceita também o nome dos exemplos de Next.js (App/Auth/Clerk.php)
