@@ -16,6 +16,19 @@ class TeacherDashboard extends Model
     // faltas não abonadas no bimestre, por disciplina, a partir das quais o aluno entra em "Atenção"
     const ABSENCE_ALERT = 5;
 
+    private $classGrades = [];
+
+
+    /**
+     * Notas por bimestre da turma (Gradebook::bimesterGrades), uma consulta por turma mesmo que charts() e atRisk() peçam
+     */
+    private function classGrades($classId)
+    {
+        $classId = (int) $classId;
+
+        return $this->classGrades[$classId] ??= (new Gradebook($this->db))->bimesterGrades($classId);
+    }
+
 
     /**
      * Aulas do professor no dia da semana da data, com chamada e diário daquele dia.
@@ -161,9 +174,8 @@ class TeacherDashboard extends Model
 
         if (!$mine) return ['status' => $status, 'bands' => $bands, 'classes' => []];
 
-        $Gradebook = new Gradebook($this->db);
         foreach (array_unique(array_map(function ($dc) { return (int) $dc->class_id; }, $disciplineClasses)) as $classId) {
-            foreach ($Gradebook->bimesterGrades($classId) as $row) {
+            foreach ($this->classGrades($classId) as $row) {
                 $id = (int) $row->discipline_class_id;
                 if (!isset($mine[$id]) || (int) $row->unity !== (int) $unity || (int) $row->graded === 0) continue;
 
@@ -350,7 +362,6 @@ class TeacherDashboard extends Model
         $mine = [];
         foreach ($disciplineClasses as $dc) $mine[(int) $dc->discipline_class_id] = $dc;
 
-        $Gradebook = new Gradebook($this->db);
         $students = [];
 
         $add = function ($enrollmentId, $name, $dcId, $reason, $weight, $kind) use (&$students, $mine) {
@@ -370,7 +381,7 @@ class TeacherDashboard extends Model
 
         $classIds = array_unique(array_map(function ($dc) { return (int) $dc->class_id; }, $disciplineClasses));
         foreach ($classIds as $classId) {
-            foreach ($Gradebook->bimesterGrades($classId) as $row) {
+            foreach ($this->classGrades($classId) as $row) {
                 $dcId = (int) $row->discipline_class_id;
                 if (!isset($mine[$dcId]) || (int) $row->unity !== (int) $unity || (int) $row->graded === 0) continue;
 
