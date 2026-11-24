@@ -27,6 +27,7 @@ require __DIR__ . '../../../../config/variables.php';
             <li name="pedagogico"><a href="/admin/pedagogico"><i class="fas fa-inbox"></i><span class="link-name">Recebidos</span></a></li>
 
             <li name="observabilidade"><a href="/admin/observabilidade"><i class="fas fa-chart-line"></i><span class="link-name">Observabilidade</span></a></li>
+            <li name="carometro"><a href="/admin/carometro"><i class="fas fa-portrait"></i><span class="link-name">Carômetro</span></a></li>
 
             <?php if ((int) $_SESSION['Admin']['hierarchyFunction'] === 1) { ?>
             <!-- importação e virada de ano: só o Administrador (o roteador também bloqueia) -->

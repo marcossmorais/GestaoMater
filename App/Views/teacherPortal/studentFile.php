@@ -2,6 +2,8 @@
 require __DIR__ . '/../../config/variables.php';
 
 $student = $this->view->student;
+// também é o perfil do aluno no admin (AdminObservabilityController::student): só leitura, com boletim
+$admin = !empty($this->view->admin);
 $rule = $this->view->rule;
 $mine = $this->view->mine;
 $performance = $this->view->performance;
@@ -58,12 +60,15 @@ $indexCard = function () use ($index, $tones) {
         <div class="col-lg-11 mx-auto">
 
             <div class="m-att-head">
-                <a href="/portal-docente/turma?id=<?= (int) $student->class_id ?>&ver=alunos" class="m-icon-btn" aria-label="Voltar para a turma"><i class="fas fa-arrow-left"></i></a>
+                <a href="<?= htmlspecialchars($admin ? $this->view->backUrl : '/portal-docente/turma?id=' . (int) $student->class_id . '&ver=alunos') ?>" class="m-icon-btn" aria-label="Voltar para a turma"><i class="fas fa-arrow-left"></i></a>
                 <span class="m-grade-avatar m-student-avatar"><?php if ($student->photo) { ?><img src="<?= $app_url ?>/assets/img/studentProfilePhotos/<?= htmlspecialchars($student->photo) ?>" alt=""><?php } else { echo htmlspecialchars($initials); } ?></span>
                 <div class="m-att-head-title">
                     <h5><?= htmlspecialchars($student->name) ?></h5>
                     <p><?= htmlspecialchars($this->view->classLabel) ?><?= $occ->total ? ' · ' . (int) $occ->total . ' ocorrência' . ($occ->total > 1 ? 's' : '') : '' ?></p>
                 </div>
+                <?php if ($admin) { ?>
+                    <a class="btn btn-primary ml-auto" href="/admin/observabilidade/aluno/boletim?id=<?= (int) $student->id ?>" target="_blank" rel="noopener"><i class="fas fa-file-pdf mr-2"></i>Boletim</a>
+                <?php } ?>
             </div>
 
             <?php
@@ -196,7 +201,7 @@ $indexCard = function () use ($index, $tones) {
             <div class="card m-panel mb-3">
                 <div class="m-panel-head">
                     <h6>Resumo do ano</h6>
-                    <span class="m-muted-note m-0"><i class="fas fa-eye mr-1"></i>só leitura nas outras</span>
+                    <span class="m-muted-note m-0"><i class="fas fa-eye mr-1"></i><?= $admin ? 'só leitura' : 'só leitura nas outras' ?></span>
                 </div>
                 <div class="m-overview-wrap">
                     <table class="m-overview">
@@ -224,7 +229,7 @@ $indexCard = function () use ($index, $tones) {
                         </tbody>
                     </table>
                 </div>
-                <p class="m-muted-note mb-0 mt-2"><sup>R</sup> recuperação · <sup>*</sup> parcial · em vermelho: abaixo de <?= $fmt($rule['passing']) ?> · <i class="fas fa-pen fa-xs"></i> você edita</p>
+                <p class="m-muted-note mb-0 mt-2"><sup>R</sup> recuperação · <sup>*</sup> parcial · em vermelho: abaixo de <?= $fmt($rule['passing']) ?><?= $admin ? '' : ' · <i class="fas fa-pen fa-xs"></i> você edita' ?></p>
             </div>
 
             </div>
@@ -271,7 +276,7 @@ $indexCard = function () use ($index, $tones) {
 
             <div class="card m-panel mb-3">
                 <div class="m-panel-head"><h6><i class="fas fa-flag mr-2"></i>Ocorrência</h6></div>
-                <p class="m-muted-note">Para algo mais sério, positivo ou negativo. A coordenação analisa e decide se vira ocorrência; a observação rápida continua para o dia a dia.</p>
+                <p class="m-muted-note"><?= $admin ? 'Pedidos de ocorrência enviados pelos professores. Para responder, use Recebidos.' : 'Para algo mais sério, positivo ou negativo. A coordenação analisa e decide se vira ocorrência; a observação rápida continua para o dia a dia.' ?></p>
 
                 <?php if ($own) { ?>
                     <details class="m-lesson-exception" data-occ-box>
@@ -338,7 +343,7 @@ $indexCard = function () use ($index, $tones) {
 </section>
 
 <script>
-    window.MATER_STUDENT = { enrollment: <?= (int) $student->id ?>, teacher: <?= json_encode($_SESSION['Teacher']['name'], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?> };
+    window.MATER_STUDENT = { enrollment: <?= (int) $student->id ?>, teacher: <?= json_encode($_SESSION['Teacher']['name'] ?? '', JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?> };
 </script>
 <script src="<?= asset('/assets/js/quickNote.js') ?>" defer></script>
 <script src="<?= asset('/assets/js/studentFile.js') ?>" defer></script>

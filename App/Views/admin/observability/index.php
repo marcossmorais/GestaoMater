@@ -8,7 +8,13 @@ $query = $this->view->query;
 $passing = $rule['passing'];
 
 $filterAction = '/admin/observabilidade';
-$filterHidden = ['aba' => $tab];
+$filterHidden = array_filter(['aba' => $tab, 'etapa' => $this->view->filters['stage']]);
+$stageUrl = function ($stage) use ($query, $tab) {
+    $q = $query;
+    unset($q['etapa']);
+    return '/admin/observabilidade?' . http_build_query($q + array_filter(['etapa' => $stage, 'aba' => $tab]));
+};
+$charts = $summary['charts'];
 
 // números do topo
 $students = count($summary['students']);
@@ -41,6 +47,8 @@ $low = function ($grade) use ($passing) {
                 <?php require __DIR__ . '/components/filters.php' ?>
             </div>
 
+            <?php require __DIR__ . '/components/stages.php' ?>
+
             <div class="m-kpis m-obs-kpis">
                 <div class="card m-kpi">
                     <div class="m-kpi-icon"><i class="fas fa-user-graduate"></i></div>
@@ -63,6 +71,82 @@ $low = function ($grade) use ($passing) {
                     <div><div class="m-kpi-label">Docentes com atraso</div><div class="m-kpi-value"><?= $lateTeachers ?></div></div>
                 </div>
             </div>
+
+            <?php if (!$this->view->filters['stage'] && count($summary['stages']) > 1) { ?>
+                <div class="m-obs-stage-cards">
+                    <?php foreach ($summary['stages'] as $st) { ?>
+                        <a class="card m-panel m-obs-stage-card" href="<?= htmlspecialchars($stageUrl($st['key'])) ?>">
+                            <div class="m-panel-head"><h6><?= htmlspecialchars($st['label']) ?></h6><i class="fas fa-chevron-right" aria-hidden="true"></i></div>
+                            <dl class="m-obs-stage-stats">
+                                <div><dt>Turmas</dt><dd><?= (int) $st['classes'] ?></dd></div>
+                                <div><dt>Alunos</dt><dd><?= (int) $st['students'] ?></dd></div>
+                                <div><dt>Média</dt><dd class="<?= $low($st['average']) ?>"><?= obsGrade($st['average']) ?></dd></div>
+                                <div><dt>Frequência</dt><dd class="<?= $st['attendance'] !== null && $st['attendance'] < $rule['minAttendance'] ? 'is-low' : '' ?>"><?= obsPct($st['attendance']) ?></dd></div>
+                                <div><dt>Em risco</dt><dd><?= $st['atRisk'] ? '<span class="m-pill m-pill-bad">' . (int) $st['atRisk'] . '</span>' : '0' ?></dd></div>
+                                <div><dt>Notas pendentes</dt><dd><?= (int) $st['pendingGrades'] ?></dd></div>
+                            </dl>
+                        </a>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <?php if ($charts && $summary['students']) {
+                $status = $charts['status'];
+                $statusLegend = [
+                    ['Na média e frequentes', $status['ok'], '#22B07D'],
+                    ['Abaixo da média em alguma disciplina', $status['grade'], '#F2643D'],
+                    ['Só a frequência baixa', $status['attendance'], '#0EA5E9'],
+                    ['Sem nota ainda', $status['none'], '#B8C5DC'],
+                ];
+                $bandColors = ['#F2643D', '#0EA5E9', '#2F6FED', '#22B07D'];
+                $chartData = [
+                    'passing' => $charts['passing'],
+                    'status' => array_map(function ($s) { return ['label' => $s[0], 'value' => (int) $s[1], 'color' => $s[2]]; }, $statusLegend),
+                    'bands' => array_map(function ($label, $count, $color) { return [$label, (int) $count, $color]; }, array_keys($charts['bands']), $charts['bands'], $bandColors),
+                    'classes' => $charts['classes'],
+                    'disciplines' => $charts['disciplines'],
+                    'classUrl' => '/admin/observabilidade/turma?' . http_build_query($query + ['id' => '']),
+                ];
+            ?>
+                <div class="m-charts m-obs-charts">
+                    <div class="card m-panel m-chart-card">
+                        <div class="m-panel-head"><h6>Situação dos alunos</h6></div>
+                        <div class="m-donut"><canvas id="obsChartStatus" aria-label="Situação dos alunos"></canvas><div class="m-donut-center"><strong><?= $students ?></strong><small>alunos</small></div></div>
+                        <ul class="m-legend">
+                            <?php foreach ($statusLegend as [$label, $count, $color]) { ?>
+                                <li><i style="background: <?= $color ?>"></i><span><?= $label ?></span><b><?= (int) $count ?></b></li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+
+                    <div class="card m-panel m-chart-card">
+                        <div class="m-panel-head"><h6>Faixas da média geral</h6></div>
+                        <div class="m-donut"><canvas id="obsChartBands" aria-label="Alunos por faixa de média"></canvas></div>
+                        <ul class="m-legend">
+                            <?php $i = 0; foreach ($charts['bands'] as $label => $count) { ?>
+                                <li><i style="background: <?= htmlspecialchars((string) $bandColors[$i++]) ?>"></i><span><?= $label ?></span><b><?= (int) $count ?></b></li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+
+                    <div class="card m-panel m-chart-card m-chart-wide">
+                        <div class="m-panel-head"><h6>Média por turma</h6><small class="m-muted-note m-0">toque na barra para abrir · linha: média <?= obsGrade($passing) ?></small></div>
+                        <div class="m-chart-box"><canvas id="obsChartClassAverage" aria-label="Média de cada turma"></canvas></div>
+                    </div>
+
+                    <div class="card m-panel m-chart-card m-chart-wide">
+                        <div class="m-panel-head"><h6>Alunos em risco por turma</h6><span class="m-pill m-pill-bad"><?= $atRisk ?></span></div>
+                        <div class="m-chart-box"><canvas id="obsChartAtRisk" aria-label="Alunos em risco por turma"></canvas></div>
+                    </div>
+
+                    <div class="card m-panel m-chart-card m-chart-wide">
+                        <div class="m-panel-head"><h6>Média por disciplina</h6><small class="m-muted-note m-0">todas as turmas juntas</small></div>
+                        <div class="m-chart-box"><canvas id="obsChartDisciplines" aria-label="Média de cada disciplina"></canvas></div>
+                    </div>
+                </div>
+                <script>window.MATER_OBS = <?= json_encode($chartData, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;</script>
+                <script src="<?= asset('/assets/js/adminObservability.js') ?>" defer></script>
+            <?php } ?>
 
             <nav class="m-obs-tabs" aria-label="Visões">
                 <a href="<?= htmlspecialchars($tabUrl('turmas')) ?>" class="<?= $tab === 'turmas' ? 'is-active' : '' ?>" <?= $tab === 'turmas' ? 'aria-current="page"' : '' ?>><i class="fas fa-users"></i>Por turma</a>
@@ -88,7 +172,7 @@ $low = function ($grade) use ($passing) {
                         <tbody>
                             <?php foreach ($summary['classes'] as $c) { ?>
                                 <tr>
-                                    <td data-label="Turma"><a href="<?= htmlspecialchars($classUrl($c['id'])) ?>" class="m-obs-link"><?= htmlspecialchars($c['label']) ?></a></td>
+                                    <td data-label="Turma"><a href="<?= htmlspecialchars($classUrl($c['id'])) ?>" class="m-obs-link"><?= htmlspecialchars($c['label']) ?></a><?= !$this->view->filters['stage'] && isset($this->view->stages[$c['stage']]) ? ' <small class="m-obs-note">' . htmlspecialchars($this->view->stages[$c['stage']]['short']) . '</small>' : '' ?></td>
                                     <td data-label="Alunos"><?= htmlspecialchars((string) $c['students']) ?></td>
                                     <td data-label="Média" class="<?= $low($c['average']) ?>"><?= obsGrade($c['average']) ?></td>
                                     <td data-label="Frequência" class="<?= $c['attendance'] !== null && $c['attendance'] < $rule['minAttendance'] ? 'is-low' : '' ?>"><?= obsPct($c['attendance']) ?></td>
@@ -161,6 +245,7 @@ $low = function ($grade) use ($passing) {
                             <span>Aulas como substituto: <b><?= htmlspecialchars((string) $t['substitute']) ?></b></span>
                             <span>Aulas suas com troca: <b><?= htmlspecialchars((string) $t['exceptions']) ?></b></span>
                             <button type="button" class="btn btn-light btn-sm" data-teacher-profile="<?= (int) $t['id'] ?>"><i class="fas fa-id-card mr-2"></i>Abrir perfil</button>
+                            <a class="btn btn-light btn-sm" href="/admin/mural?professor=<?= (int) $t['id'] ?>"><i class="fas fa-envelope mr-2"></i>Mensagem direta</a>
                         </div>
 
                         <div class="m-obs-scroll"><table class="m-obs-table">
