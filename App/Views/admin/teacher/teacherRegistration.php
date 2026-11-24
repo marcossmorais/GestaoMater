@@ -32,7 +32,15 @@
 
                         <div class="container-option">
 
-                            <a type="button" class="collapsed" data-toggle="collapse" data-target="#teacher-registration-finishing"><span>3</span></a>
+                            <a type="button" class="collapsed" data-toggle="collapse" data-target="#teacher-registration-role"><span>3</span></a>
+
+                            <p>Atuação</p>
+
+                        </div>
+
+                        <div class="container-option">
+
+                            <a type="button" class="collapsed" data-toggle="collapse" data-target="#teacher-registration-finishing"><span>4</span></a>
 
                             <p>Finalizando</p>
 
@@ -216,7 +224,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <a type="button" class="collapsed btn text-white mt-2 collapsed" data-toggle="collapse" data-target="#teacher-registration-finishing" href="">Proximo <i class="fas fa-angle-right ml-3"></i></a>
+                                        <a type="button" class="collapsed btn text-white mt-2 collapsed" data-toggle="collapse" data-target="#teacher-registration-role" href="">Proximo <i class="fas fa-angle-right ml-3"></i></a>
                                     </div>
 
                                 </div>
@@ -224,6 +232,74 @@
                         </div>
                     </div>
 
+
+                    <?php
+                    // passo 3: atuação (opcional). Os campos não usam .form-control para não entrar na contagem do checkAllFields
+                    $assignmentClasses = $this->view->assignment['classes'];
+                    $assignmentDisciplines = $this->view->assignment['disciplines'];
+                    $earlyYears = array_filter($assignmentClasses, function ($c) { return $c['stage'] === 'iniciais'; });
+                    ?>
+
+                    <div class="row collapse" id="teacher-registration-role" data-parent="#teacher-record-accordion">
+                        <div class="col-lg-10 mx-auto">
+                            <div class="col-md-12 teacher-role">
+
+                                <p class="mt-3 mb-2 font-weight-bold">O que o professor vai lecionar?</p>
+                                <p class="text-muted small mb-3">Opcional. Se as turmas ainda não existem, deixe para depois: a disciplina também pode ser ligada no perfil da turma.</p>
+
+                                <div class="teacher-role-options mb-3" role="radiogroup">
+                                    <label class="teacher-role-option"><input type="radio" name="atuacao" value="" checked> <span><strong>Definir depois</strong><small>Só o cadastro do professor</small></span></label>
+                                    <label class="teacher-role-option"><input type="radio" name="atuacao" value="polivalente"> <span><strong>Polivalente – anos iniciais</strong><small>Titular de uma turma do Fund. 1</small></span></label>
+                                    <label class="teacher-role-option"><input type="radio" name="atuacao" value="especialista"> <span><strong>Especialista</strong><small>Fund. 2, Médio ou matéria específica</small></span></label>
+                                </div>
+
+                                <div class="teacher-role-panel" data-role-panel="polivalente" hidden>
+                                    <p class="small mb-2">Faz a chamada diária da turma. As matérias de base já vêm marcadas: tire ou acrescente as que ele leciona. Disciplina nova entra em Gestão &gt; Disciplinas e depois pode ser ligada a ele no perfil da turma.</p>
+                                    <div class="teacher-role-classes teacher-role-subjects mb-3">
+                                        <?php foreach ($assignmentDisciplines as $disciplineId => $disciplineName) { ?>
+                                            <label class="teacher-role-chip"><input type="checkbox" name="materiasTitular[]" value="<?= (int) $disciplineId ?>" <?= \App\Models\Teacher\TeacherAssignment::isBaseSubject($disciplineName) ? 'checked' : '' ?>> <?= htmlspecialchars($disciplineName) ?></label>
+                                        <?php } ?>
+                                    </div>
+                                    <label for="turmaTitular">Turma em que é titular:</label>
+                                    <select id="turmaTitular" name="turmaTitular" class="custom-select teacher-role-select">
+                                        <option value="">Escolher depois</option>
+                                        <?php foreach ($earlyYears as $id => $c) { ?>
+                                            <option value="<?= (int) $id ?>" <?= $c['homeroom'] ? 'disabled' : '' ?>><?= htmlspecialchars($c['label']) ?><?= $c['homeroom'] ? ' (titular: ' . htmlspecialchars($c['homeroom']) . ')' : '' ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <?php if (!$earlyYears) { ?><small class="text-muted d-block mt-2">Nenhuma turma do Fund. 1 no período letivo ativo.</small><?php } ?>
+                                </div>
+
+                                <div class="teacher-role-panel" data-role-panel="especialista" hidden>
+                                    <p class="small mb-2">Marque as matérias e, em cada uma, as turmas em que ele dá aula.</p>
+                                    <?php foreach ($assignmentDisciplines as $disciplineId => $disciplineName) { ?>
+                                        <div class="teacher-role-subject">
+                                            <label class="teacher-role-check"><input type="checkbox" name="materias[]" value="<?= (int) $disciplineId ?>" data-subject="<?= (int) $disciplineId ?>"> <?= htmlspecialchars($disciplineName) ?></label>
+                                            <div class="teacher-role-classes" data-subject-classes="<?= (int) $disciplineId ?>" hidden>
+                                                <?php foreach ($assignmentClasses as $classId => $c) { ?>
+                                                    <label class="teacher-role-chip"><input type="checkbox" name="turmas[<?= (int) $disciplineId ?>][]" value="<?= (int) $classId ?>"> <?= htmlspecialchars($c['label']) ?></label>
+                                                <?php } ?>
+                                                <?php if (!$assignmentClasses) { ?><small class="text-muted">Nenhuma turma no período letivo ativo.</small><?php } ?>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+
+                                <div class="form-row d-flex justify-content-end mt-3">
+
+                                    <div class="form-group mr-2">
+                                        <a type="button" data-toggle="collapse" data-target="#teacher-registration-address-and-others" class="btn bg-secondary text-white mt-2 collapsed" href=""><i class="fas fa-angle-left mr-3"></i> Voltar</a>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <a type="button" class="collapsed btn text-white mt-2" data-toggle="collapse" data-target="#teacher-registration-finishing" href="">Proximo <i class="fas fa-angle-right ml-3"></i></a>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row collapse" id="teacher-registration-finishing" data-parent="#teacher-record-accordion">
 
@@ -268,7 +344,7 @@
 
                                     <div class="row d-flex justify-content-between">
 
-                                        <a type="button" data-toggle="collapse" data-target="#teacher-registration-address-and-others" class="btn bg-secondary text-white collapsed ml-3" href=""><i class="fas fa-angle-left mr-3"></i> Voltar</a>
+                                        <a type="button" data-toggle="collapse" data-target="#teacher-registration-role" class="btn bg-secondary text-white collapsed ml-3" href=""><i class="fas fa-angle-left mr-3"></i> Voltar</a>
 
                                         <button id="buttonAddTeacher" disabled class="btn btn-success">Cadastrar docente</button>
 

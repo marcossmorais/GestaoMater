@@ -38,7 +38,10 @@ foreach ($this->view->subjectsThatTeacherTeaches as $data) {
                             </div>
 
                             <span class="m-prof-name"><?= htmlspecialchars((string) $teacher->name) ?></span>
-                            <span class="m-prof-sub">Docente</span>
+                            <span class="m-prof-sub">Docente<?= $this->view->assignment['role'] ? ' · ' . htmlspecialchars($this->view->assignment['role']) : '' ?></span>
+                            <?php if ($this->view->assignment['subjects']) { ?>
+                                <span class="m-prof-sub"><?= htmlspecialchars(implode(', ', $this->view->assignment['subjects'])) ?></span>
+                            <?php } ?>
 
                             <div class="m-prof-chips">
                                 <span class="m-prof-chip <?= $teacher->account_state_id == 1 ? 'is-ok' : 'is-off' ?>"><?= htmlspecialchars((string) $teacher->account_state) ?></span>

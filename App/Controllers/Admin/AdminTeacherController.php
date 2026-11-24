@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Tools\Tools;
 use MF\Controller\Action;
 use MF\Model\Container;
+use App\Models\Teacher\TeacherAssignment;
 
 class AdminTeacherController extends Action
 {
@@ -17,6 +18,7 @@ class AdminTeacherController extends Action
         $this->view->availableSex = $People->availableSex();
         $this->view->pcd = $People->pcd();
         $this->view->bloodType = $People->availablebloodType();
+        $this->view->assignment = Container::getModel('Teacher\\TeacherAssignment')->options();
 
         $this->render('teacher/teacherRegistration', 'AdminLayout');
     }
@@ -34,35 +36,58 @@ class AdminTeacherController extends Action
         $Address =  Container::getModel('People\\Address');
         $Telephone = Container::getModel('People\Telephone');
         $Teacher = Container::getModel('Teacher\\Teacher');
+        $Assignment = Container::getModel('Teacher\\TeacherAssignment');
 
         $Tool = new Tools();
 
-        $Address->__set('district', $_POST['district']);
-        $Address->__set('address', $_POST['address']);
-        $Address->__set('uf', $_POST['uf']);
-        $Address->__set('county', $_POST['county']);
+        // cadastro, matérias e turmas entram juntos: se a turma escolhida já tiver dono, nada é gravado
+        $db = \App\Connection::getDb();
+        $db->beginTransaction();
 
-        $Telephone->__set('telephoneNumber', $Tool->formatElement($_POST['telephoneNumber']));
-        $Address->__set('zipCode', $Tool->formatElement($_POST['zipCode']));
-        $Teacher->__set('accessCode', $Tool->formatElement($_POST['accessCode']));
-        $Teacher->__set('cpf', $Tool->formatElement($_POST['cpf']));
-        $Tool->image($Teacher, '../public/assets/img/teacherProfilePhotos/');
+        try {
 
-        $Teacher->__set('name', $_POST['name']);
-        $Teacher->__set('birthDate', $_POST['birthDate']);
-        $Teacher->__set('naturalness', $_POST['naturalness']);
-        $Teacher->__set('nationality', $_POST['nationality']);
-        $Teacher->__set('email', $_POST['email']);
-        $Teacher->__set('fk_id_sex', $_POST['sex']);
-        $Teacher->__set('fk_id_blood_type', $_POST['bloodType']);
-        $Teacher->__set('fk_id_pcd', $_POST['pcd']);
-        $Teacher->__set('fk_id_hierarchy_function', 3);
-        $Teacher->__set('fk_id_account_state', 1);
+            $plan = $Assignment->prepare(TeacherAssignment::input($_POST));
 
-        $Teacher->__set('fk_id_telephone', $Telephone->insert());
-        $Teacher->__set('fk_id_address', $Address->insert());
+            if ($plan['error']) {
+                $db->rollBack();
+                http_response_code(422);
+                echo $plan['error'];
+                return;
+            }
 
-        $Teacher->insert();
+            $Address->__set('district', $_POST['district']);
+            $Address->__set('address', $_POST['address']);
+            $Address->__set('uf', $_POST['uf']);
+            $Address->__set('county', $_POST['county']);
+
+            $Telephone->__set('telephoneNumber', $Tool->formatElement($_POST['telephoneNumber']));
+            $Address->__set('zipCode', $Tool->formatElement($_POST['zipCode']));
+            $Teacher->__set('accessCode', $Tool->formatElement($_POST['accessCode']));
+            $Teacher->__set('cpf', $Tool->formatElement($_POST['cpf']));
+            $Tool->image($Teacher, '../public/assets/img/teacherProfilePhotos/');
+
+            $Teacher->__set('name', $_POST['name']);
+            $Teacher->__set('birthDate', $_POST['birthDate']);
+            $Teacher->__set('naturalness', $_POST['naturalness']);
+            $Teacher->__set('nationality', $_POST['nationality']);
+            $Teacher->__set('email', $_POST['email']);
+            $Teacher->__set('fk_id_sex', $_POST['sex']);
+            $Teacher->__set('fk_id_blood_type', $_POST['bloodType']);
+            $Teacher->__set('fk_id_pcd', $_POST['pcd']);
+            $Teacher->__set('fk_id_hierarchy_function', 3);
+            $Teacher->__set('fk_id_account_state', 1);
+
+            $Teacher->__set('fk_id_telephone', $Telephone->insert());
+            $Teacher->__set('fk_id_address', $Address->insert());
+
+            $Assignment->save((int) $Teacher->insert(), $plan);
+
+            $db->commit();
+
+        } catch (\Throwable $e) {
+            if ($db->inTransaction()) $db->rollBack();
+            throw $e;
+        }
 
         header('Location: /admin/professor/cadastro');
     }
@@ -134,6 +159,7 @@ class AdminTeacherController extends Action
         $this->view->bloodType = $Teacher->availablebloodType();
         $this->view->subjectsThatTeacherTeaches = $ClassDiscipline->subjectsThatTeacherTeaches();
         $this->view->accountStates = $Teacher->accountStates();
+        $this->view->assignment = Container::getModel('Teacher\\TeacherAssignment')->forTeacher(!isset($_GET['id']) ? $_GET['teacherId'] : $_GET['id']);
 
         $this->render('teacher/components/modalTeacherProfile', 'SimpleLayout');
     }
