@@ -279,6 +279,19 @@ $("#addTeacher").submit(function (e) {
 })
 
 
+// cadastro do docente, passo "Atuação": mostra o painel da atuação escolhida e as turmas de cada matéria marcada
+$(document).on("change", "#addTeacher input[name='atuacao']", function () {
+    $("#addTeacher [data-role-panel]").each(function () {
+        this.hidden = this.getAttribute("data-role-panel") !== $("#addTeacher input[name='atuacao']:checked").val()
+    })
+})
+
+
+$(document).on("change", "#addTeacher input[data-subject]", function () {
+    $(`#addTeacher [data-subject-classes='${this.getAttribute("data-subject")}']`).prop("hidden", !this.checked)
+})
+
+
 $("#student-registration #addStudent").submit(function (e) {
     if (botaoClicado) {
         application.addMultipleParts(this, "/admin/aluno/cadastro/inserir")
