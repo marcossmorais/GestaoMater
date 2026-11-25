@@ -62,3 +62,14 @@ docker compose -f docker-compose.prod.yml ps
 docker compose -f docker-compose.prod.yml logs -f --tail=100 app
 docker compose -f docker-compose.prod.yml exec app php database/migrate.php --status
 ```
+
+## Login que não entra
+- **"O e-mail X não está cadastrado neste portal"**: a conta do Clerk usa outro e-mail. Corrija o e-mail no cadastro (admin, professor ou aluno) ou entre com a conta certa. O e-mail precisa estar verificado no Clerk.
+- **Conta do Clerk apagada e criada de novo, ou troca da instância de teste para a de produção**: o e-mail verificado religa o cadastro sozinho no próximo login (fica `VINCULO_TROCADO` na auditoria).
+- **"Não foi possível validar o login"**: o motivo vai para o log do app (linha `Clerk: …`). Os mais comuns são `APP_URL` diferente do endereço aberto no navegador (o token só vale para essa origem) e chave do Clerk errada.
+
+Conferir os cadastros e quem já entrou (só leitura):
+```bash
+docker compose -f docker-compose.prod.yml logs --tail=300 app | grep "Clerk:"
+docker compose -f docker-compose.prod.yml exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT id_administrador, nome_administrador, email_administrador, clerk_user_id IS NOT NULL AS ja_entrou, fk_id_situacao_conta_administrador AS situacao FROM administrador ORDER BY 1"'
+```
