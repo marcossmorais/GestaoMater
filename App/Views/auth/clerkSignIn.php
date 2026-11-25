@@ -27,7 +27,8 @@ $clerkJsVersion = getenv('CLERK_JS_VERSION') ?: '5';
             'sem-cadastro': 'Seu e-mail não está vinculado a nenhum cadastro deste portal. Procure a secretaria da escola.',
             'sem-matricula': 'Não encontramos uma matrícula ativa para o seu cadastro.',
             'conta-desativada': 'Sua conta está desativada.',
-            'token-invalido': 'Não foi possível validar o login. Tente novamente.'
+            'token-invalido': 'Não foi possível validar o login. Tente novamente.',
+            'rede': 'Sem conexão com o servidor. Confira a internet e tente de novo.'
         };
 
         // Visual da Mater no componente do Clerk
@@ -57,15 +58,36 @@ $clerkJsVersion = getenv('CLERK_JS_VERSION') ?: '5';
         };
 
         let opening = false;
+        // depois de um erro só tenta de novo quando a pessoa pedir (o Clerk renova o token a cada minuto e
+        // cada renovação abria outra tentativa, com outro LOGIN_NEGADO na auditoria)
+        let failed = false;
+
+        function signedEmail() {
+            const user = window.Clerk && window.Clerk.user;
+            return (user && user.primaryEmailAddress && user.primaryEmailAddress.emailAddress) || '';
+        }
 
         function showError(code) {
-            statusBox.textContent = messages[code] || 'Não foi possível entrar.';
+            failed = true;
+            const email = signedEmail();
+            // mostra com qual e-mail a pessoa entrou: quase sempre o problema é o cadastro com outro e-mail
+            statusBox.textContent = code === 'sem-cadastro' && email
+                ? 'O e-mail ' + email + ' não está cadastrado neste portal. Confira com a secretaria se o seu cadastro usa este e-mail ou entre com outra conta.'
+                : (messages[code] || 'Não foi possível entrar.');
             const retry = document.createElement('button');
             retry.type = 'button';
             retry.textContent = 'Entrar com outra conta';
             // sem redirectUrl o Clerk manda para "/" (afterSignOutUrl padrão) em vez de voltar a esta tela
             retry.onclick = () => window.Clerk.signOut({ redirectUrl: window.location.pathname });
             statusBox.appendChild(retry);
+            // falha passageira (internet, validação do token): tentar de novo com a mesma conta
+            if (code === 'rede' || code === 'token-invalido' || !messages[code]) {
+                const again = document.createElement('button');
+                again.type = 'button';
+                again.textContent = 'Tentar de novo';
+                again.onclick = () => { failed = false; statusBox.hidden = true; openSession(); };
+                statusBox.appendChild(again);
+            }
             statusBox.hidden = false;
 
             // limpa o "Entrando…" e monta o Clerk para permitir trocar de conta
@@ -74,15 +96,20 @@ $clerkJsVersion = getenv('CLERK_JS_VERSION') ?: '5';
         }
 
         async function openSession() {
-            if (opening) return;
+            if (opening || failed) return;
             opening = true;
-            const token = await window.Clerk.session.getToken();
-            const response = await fetch('/auth/clerk/sessao', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token, portal })
-            });
-            const data = await response.json().catch(() => ({}));
+            let data = {};
+            try {
+                const token = await window.Clerk.session.getToken();
+                const response = await fetch('/auth/clerk/sessao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, portal })
+                });
+                data = await response.json().catch(() => ({}));
+            } catch (e) {
+                data = { error: 'rede' };
+            }
             if (data.redirect) {
                 window.location.href = data.redirect;
             } else {
