@@ -7,6 +7,15 @@ const management = new Management()
 
 let botaoClicado = true
 
+// sessão expirada (admin parado 30 min, conta desativada): o servidor responde 401 às chamadas da tela;
+// em vez de "Tente novamente mais tarde" ou lista vazia, volta para o login do portal
+$(document).ajaxError(function (event, xhr) {
+    if (xhr.status !== 401) return
+    const path = window.location.pathname
+    window.location.href = path.indexOf('/portal-docente') === 0 ? '/portal-docente'
+        : (path.indexOf('/portal-aluno') === 0 ? '/portal-aluno' : '/admin?error=sessao-expirada')
+})
+
 // Iniciando o tooltip
 
 $(function () {

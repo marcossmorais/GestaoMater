@@ -127,7 +127,11 @@ class PortalAccount
 
     /**
      * Procura o cadastro pelo id do Clerk já vinculado (desde que o e-mail local continue entre os
-     * verificados dessa conta) ou, no primeiro acesso, por um dos e-mails verificados. Retorna o id local ou null.
+     * verificados dessa conta) ou por um dos e-mails verificados. Retorna o id local ou null.
+     *
+     * O e-mail verificado decide: se o cadastro ainda aponta para outra conta do Clerk (conta apagada e criada de
+     * novo, troca da instância de teste para a de produção, login pelo Google numa conta separada), o vínculo
+     * passa para a conta atual. Antes o cadastro ficava preso à conta antiga e o login respondia "sem-cadastro".
      */
     public static function findId($portal, $clerkUserId, array $emails)
     {
@@ -153,13 +157,13 @@ class PortalAccount
 
         $placeholders = implode(',', array_fill(0, count($verified), '?'));
         $stmt = $db->prepare(
-            "SELECT {$c['id']} AS id FROM {$c['table']}
-             WHERE LOWER(BTRIM({$c['email']})) IN ($placeholders) AND clerk_user_id IS NULL"
+            "SELECT {$c['id']} AS id, clerk_user_id FROM {$c['table']}
+             WHERE LOWER(BTRIM({$c['email']})) IN ($placeholders)"
         );
         $stmt->execute($verified);
         $rows = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
-        // e-mail duplicado entre cadastros: não dá para saber quem é, recusa
+        // conta com dois e-mails verificados que batem com dois cadastros: não dá para saber quem é, recusa
         if (count($rows) !== 1) return null;
 
         $id = (int) $rows[0]->id;
@@ -168,6 +172,10 @@ class PortalAccount
         $stmt->bindValue(':clerkId', $clerkUserId);
         $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();
+
+        if ($rows[0]->clerk_user_id !== null) {
+            Audit::log($db, 'VINCULO_TROCADO', $c['table'], $id, ['motivo' => 'outra conta do Clerk com o mesmo e-mail verificado']);
+        }
 
         return $id;
     }

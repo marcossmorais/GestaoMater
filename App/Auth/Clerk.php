@@ -52,9 +52,17 @@ class Clerk
      */
     public static function verifySessionToken($token)
     {
-        JWT::$leeway = 5;
+        // relógio da VPS alguns segundos fora do Clerk não pode derrubar o login (o token vale 60 s)
+        JWT::$leeway = 30;
 
-        $claims = JWT::decode($token, self::keySet());
+        try {
+            $claims = JWT::decode($token, self::keySet());
+        } catch (\UnexpectedValueException $e) {
+            // o Clerk troca as chaves de assinatura: com a chave nova fora do cache, busca o JWKS de novo uma vez
+            // (só nesse caso: token vencido ou adulterado não faz o servidor consultar o Clerk)
+            if (!self::$jwksFromCache || strpos($e->getMessage(), '"kid" invalid') === false) throw $e;
+            $claims = JWT::decode($token, self::keySet(true));
+        }
 
         $frontend = self::frontendApi();
         if ($frontend === '' || rtrim((string) ($claims->iss ?? ''), '/') !== 'https://' . $frontend) {
@@ -101,13 +109,18 @@ class Clerk
         }, explode(',', $origins));
     }
 
-    private static function keySet()
+    /** O último keySet() veio do cache em disco? */
+    private static $jwksFromCache = false;
+
+    private static function keySet($fresh = false)
     {
         $cacheFile = sys_get_temp_dir() . '/mater_clerk_jwks_' . md5(self::secretKey()) . '.json';
         $jwks = null;
+        self::$jwksFromCache = false;
 
-        if (is_file($cacheFile) && filemtime($cacheFile) > time() - self::JWKS_CACHE_TTL) {
+        if (!$fresh && is_file($cacheFile) && filemtime($cacheFile) > time() - self::JWKS_CACHE_TTL) {
             $jwks = json_decode((string) @file_get_contents($cacheFile), true);
+            self::$jwksFromCache = !empty($jwks['keys']) && is_array($jwks['keys']);
         }
 
         if (empty($jwks['keys']) || !is_array($jwks['keys'])) {
