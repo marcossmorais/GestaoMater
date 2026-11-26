@@ -19,7 +19,7 @@ $pendingCertificates = count(array_filter($certificates, function ($c) { return 
             <div class="m-page-head">
                 <div>
                     <h5>Recebidos dos professores</h5>
-                    <p>Roteiros de prova, pedidos de ocorrência e atestados para analisar.</p>
+                    <p>Roteiros de avaliação, pedidos de ocorrência e atestados para analisar.</p>
                 </div>
             </div>
 
@@ -56,7 +56,7 @@ $pendingCertificates = count(array_filter($certificates, function ($c) { return 
                                 <strong><?= htmlspecialchars($g->class_label . ' · ' . $g->discipline) ?></strong>
                                 <span class="m-pill <?= $g->seen ? 'm-pill-ok' : 'm-pill-warn' ?>" data-guide-pill><?= $g->seen ? 'Visto' : 'Novo' ?></span>
                             </div>
-                            <small><?= htmlspecialchars($g->description) ?> · <?= (int) $g->unity ?>º bimestre · prova em <?= htmlspecialchars($g->date) ?><?= $g->types ? ' · ' . htmlspecialchars($typeLabels($g->types)) : '' ?></small>
+                            <small><?= htmlspecialchars($g->description) ?> · <?= (int) $g->unity ?>º bimestre · avaliação em <?= htmlspecialchars($g->date) ?><?= $g->types ? ' · ' . htmlspecialchars($typeLabels($g->types)) : '' ?></small>
                             <small><?= htmlspecialchars($g->teacher) ?> · enviado em <?= htmlspecialchars($g->sent_at) ?></small>
                             <?php if ($g->topics) { ?>
                                 <ul class="m-inbox-topics">

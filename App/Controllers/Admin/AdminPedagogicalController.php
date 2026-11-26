@@ -6,7 +6,7 @@ use MF\Controller\Action;
 use MF\Model\Container;
 
 /**
- * Admin: o que chega dos professores. Roteiros de prova enviados e solicitações de ocorrência.
+ * Admin: o que chega dos professores. Roteiros de avaliação enviados e solicitações de ocorrência.
  */
 class AdminPedagogicalController extends Action
 {

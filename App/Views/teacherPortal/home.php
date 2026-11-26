@@ -65,6 +65,7 @@ $homerooms = $this->view->homerooms;
                             <header>
                                 <span class="m-board-tag"><i class="fas <?= htmlspecialchars((string) $nt['icon']) ?>" aria-hidden="true"></i><?= htmlspecialchars($nt['label']) ?></span>
                                 <?php if ($n->pinned) { ?><span class="m-board-pin"><i class="fas fa-thumbtack mr-1"></i>Fixado</span><?php } ?>
+                                <?php if ($n->direct) { ?><span class="m-board-audience"><i class="fas fa-envelope" aria-hidden="true"></i>Só para você</span><?php } ?>
                                 <strong>Coordenação</strong>
                                 <small><?= htmlspecialchars($n->posted_at) ?></small>
                             </header>

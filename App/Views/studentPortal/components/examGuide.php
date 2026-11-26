@@ -1,5 +1,5 @@
 <?php
-// Roteiro de provas: folha padrão por bimestre, com destaques e um bloco por matéria — portal do aluno
+// Roteiro de avaliações: folha padrão por bimestre, com destaques e um bloco por matéria — portal do aluno
 use App\Models\TeacherStudent\Gradebook;
 use App\Tools\Subject;
 
@@ -59,7 +59,7 @@ $weekdays = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sába
                 <div class="m-rt-head">
                     <div class="m-rt-head-title">
                         <?php if (getenv('SCHOOL_NAME')) { ?><small><?= htmlspecialchars(getenv('SCHOOL_NAME')) ?></small><?php } ?>
-                        <h5>Roteiro de provas</h5>
+                        <h5>Roteiro de avaliações</h5>
                     </div>
                     <dl>
                         <div><dt>Turma</dt><dd><?= htmlspecialchars($_SESSION['Student']['class']) ?></dd></div>
@@ -76,11 +76,11 @@ $weekdays = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sába
                                 <span><?= htmlspecialchars(implode(', ', $nextNames)) ?></span>
                             <?php } else { ?>
                                 <strong>Nenhuma pela frente</strong>
-                                <span>As provas deste bimestre já passaram.</span>
+                                <span>As avaliações deste bimestre já passaram.</span>
                             <?php } ?>
                         </div>
                         <div>
-                            <small>Período das provas</small>
+                            <small>Período das avaliações</small>
                             <strong><?= date('d/m', strtotime($summary['first'])) ?> a <?= date('d/m', strtotime($summary['last'])) ?></strong>
                             <span><?= count($all) ?> avaliaç<?= count($all) === 1 ? 'ão' : 'ões' ?> em <?= count($blocks) ?> matéria<?= count($blocks) === 1 ? '' : 's' ?></span>
                         </div>

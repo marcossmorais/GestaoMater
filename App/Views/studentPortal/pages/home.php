@@ -70,7 +70,7 @@ require __DIR__ . '../../../../config/variables.php';
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#examGuide"><i class="fas fa-route m-nav-ico m-subj-teal"></i>Roteiro de provas</a>
+                                <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#examGuide"><i class="fas fa-route m-nav-ico m-subj-teal"></i>Roteiro de avaliações</a>
                             </li>
 
 
@@ -298,7 +298,7 @@ require __DIR__ . '../../../../config/variables.php';
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#examGuide"><i class="fas fa-route"></i> <span>Provas</span></a>
+                            <a class="nav-link" aria-expanded="false" href="#" data-toggle="collapse" data-target="#examGuide"><i class="fas fa-route"></i> <span>Avaliações</span></a>
                         </li>
 
                     </ul>

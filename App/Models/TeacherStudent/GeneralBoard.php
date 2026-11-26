@@ -25,6 +25,9 @@ class GeneralBoard extends Model
         AND (NOT EXISTS (SELECT 1 FROM aviso_geral_turma x WHERE x.fk_id_aviso_geral = aviso_geral.id_aviso_geral)
              OR EXISTS (SELECT 1 FROM aviso_geral_turma x WHERE x.fk_id_aviso_geral = aviso_geral.id_aviso_geral AND x.fk_id_turma = :classId))";
 
+    // aviso dos professores visível para o professor :teacher: para todos ou mensagem direta para ele
+    const VISIBLE_TO_TEACHER = "(aviso_geral.fk_id_professor_destino IS NULL OR aviso_geral.fk_id_professor_destino = :teacher)";
+
 
     /**
      * Avisos de alunos e responsáveis que a turma vê, fixados primeiro. Com $enrollmentId, indica se o aluno já leu.
@@ -63,12 +66,13 @@ class GeneralBoard extends Model
         $stmt = $this->db->prepare(
             "SELECT aviso_geral.id_aviso_geral AS id, aviso_geral.aviso AS text, aviso_geral.tipo AS type, aviso_geral.fixado AS pinned,
                     TO_CHAR(aviso_geral.data_postagem, 'DD/MM/YYYY HH24:MI') AS posted_at,
+                    aviso_geral.fk_id_professor_destino IS NOT NULL AS direct,
                     EXISTS (
                         SELECT 1 FROM aviso_geral_leitura_professor
                         WHERE fk_id_aviso_geral = aviso_geral.id_aviso_geral AND fk_id_professor = :teacher
                     ) AS read_by_me
              FROM aviso_geral
-             WHERE aviso_geral.publico = 'professores'
+             WHERE aviso_geral.publico = 'professores' AND " . self::VISIBLE_TO_TEACHER . "
              ORDER BY aviso_geral.fixado DESC, aviso_geral.data_postagem DESC, aviso_geral.id_aviso_geral DESC
              LIMIT 30"
         );
@@ -87,7 +91,9 @@ class GeneralBoard extends Model
     public function all($audience = '')
     {
 
-        $where = isset(self::AUDIENCES[$audience]) ? 'WHERE aviso_geral.publico = :audience' : '';
+        // 'direto' = só as mensagens diretas a um professor
+        $where = $audience === 'direto' ? 'WHERE aviso_geral.fk_id_professor_destino IS NOT NULL'
+            : (isset(self::AUDIENCES[$audience]) ? 'WHERE aviso_geral.publico = :audience' : '');
 
         $stmt = $this->db->prepare(
             "SELECT aviso_geral.id_aviso_geral AS id, aviso_geral.aviso AS text, aviso_geral.tipo AS type, aviso_geral.fixado AS pinned,
@@ -100,6 +106,7 @@ class GeneralBoard extends Model
                      INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
                      INNER JOIN curso ON (turma.fk_id_curso = curso.id_curso)
                      WHERE agt.fk_id_aviso_geral = aviso_geral.id_aviso_geral) AS class_label,
+                    (SELECT nome_professor FROM professor WHERE id_professor = aviso_geral.fk_id_professor_destino) AS teacher_name,
                     CASE WHEN aviso_geral.publico = 'professores'
                          THEN (SELECT COUNT(*) FROM aviso_geral_leitura_professor l
                                INNER JOIN professor p ON (l.fk_id_professor = p.id_professor AND p.fk_id_situacao_conta_professor = 1)
@@ -108,7 +115,8 @@ class GeneralBoard extends Model
                                INNER JOIN matricula m ON (l.fk_id_matricula = m.id_matricula AND m.fk_id_situacao_aluno = 1)
                                WHERE l.fk_id_aviso_geral = aviso_geral.id_aviso_geral)
                     END AS read_total,
-                    CASE WHEN aviso_geral.publico = 'professores'
+                    CASE WHEN aviso_geral.fk_id_professor_destino IS NOT NULL THEN 1
+                         WHEN aviso_geral.publico = 'professores'
                          THEN (SELECT COUNT(*) FROM professor WHERE fk_id_situacao_conta_professor = 1)
                          ELSE (SELECT COUNT(*) FROM matricula m
                                WHERE m.fk_id_situacao_aluno = 1
@@ -121,7 +129,7 @@ class GeneralBoard extends Model
              LIMIT 100"
         );
 
-        if ($where) $stmt->bindValue(':audience', $audience);
+        if (isset(self::AUDIENCES[$audience])) $stmt->bindValue(':audience', $audience);
         $stmt->execute();
 
         return $stmt->fetchAll(\PDO::FETCH_OBJ);
@@ -149,13 +157,29 @@ class GeneralBoard extends Model
 
 
     /**
+     * Professores ativos, para a mensagem direta
+     */
+    public function teachers()
+    {
+
+        return $this->db->query(
+            "SELECT id_professor AS id, nome_professor AS name
+             FROM professor
+             WHERE fk_id_situacao_conta_professor = 1
+             ORDER BY nome_professor"
+        )->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+
+    /**
      * Publica o aviso. As regras (até 3 fixados por público, professor sem turma) são do banco.
      *
      * @param int[] $classIds turmas de destino; vazio = toda a escola (ignorado para professores)
+     * @param int|null $teacherId mensagem direta para um professor (só com $audience = 'professores'; não é fixada)
      * @return int id do aviso
      * @throws \PDOException 'limite-fixados'
      */
-    public function post($adminId, $text, $type, $pinned, $audience, array $classIds)
+    public function post($adminId, $text, $type, $pinned, $audience, array $classIds, $teacherId = null)
     {
 
         // dentro de uma transação de quem chamou (ex.: Notificar no mural do cronograma), quem fecha é ela
@@ -164,8 +188,8 @@ class GeneralBoard extends Model
 
         try {
             $stmt = $this->db->prepare(
-                "INSERT INTO aviso_geral (aviso, tipo, fixado, publico, fk_id_administrador)
-                 VALUES (:text, :type, :pinned, :audience, :admin)
+                "INSERT INTO aviso_geral (aviso, tipo, fixado, publico, fk_id_administrador, fk_id_professor_destino)
+                 VALUES (:text, :type, :pinned, :audience, :admin, :teacher)
                  RETURNING id_aviso_geral"
             );
 
@@ -174,6 +198,7 @@ class GeneralBoard extends Model
             $stmt->bindValue(':pinned', (bool) $pinned, \PDO::PARAM_BOOL);
             $stmt->bindValue(':audience', $audience);
             $stmt->bindValue(':admin', $adminId === null ? null : (int) $adminId, $adminId === null ? \PDO::PARAM_NULL : \PDO::PARAM_INT);
+            $stmt->bindValue(':teacher', $teacherId ? (int) $teacherId : null, $teacherId ? \PDO::PARAM_INT : \PDO::PARAM_NULL);
             $stmt->execute();
 
             $id = (int) $stmt->fetchColumn();
@@ -247,7 +272,7 @@ class GeneralBoard extends Model
 
         $stmt = $this->db->prepare(
             "INSERT INTO aviso_geral_leitura_professor (fk_id_aviso_geral, fk_id_professor)
-             SELECT id_aviso_geral, :teacher FROM aviso_geral WHERE id_aviso_geral = :id AND publico = 'professores'
+             SELECT id_aviso_geral, :teacher FROM aviso_geral WHERE id_aviso_geral = :id AND publico = 'professores' AND " . self::VISIBLE_TO_TEACHER . "
              ON CONFLICT DO NOTHING"
         );
         $stmt->execute([':id' => (int) $id, ':teacher' => (int) $teacherId]);
@@ -255,8 +280,8 @@ class GeneralBoard extends Model
         if ($stmt->rowCount()) return true;
 
         // já lido antes também conta
-        $check = $this->db->prepare("SELECT 1 FROM aviso_geral WHERE id_aviso_geral = :id AND publico = 'professores'");
-        $check->execute([':id' => (int) $id]);
+        $check = $this->db->prepare("SELECT 1 FROM aviso_geral WHERE id_aviso_geral = :id AND publico = 'professores' AND " . self::VISIBLE_TO_TEACHER);
+        $check->execute([':id' => (int) $id, ':teacher' => (int) $teacherId]);
 
         return (bool) $check->fetchColumn();
     }

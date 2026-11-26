@@ -12,7 +12,7 @@
 
     const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
     const weekdays = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-    const eventTypes = { feriado: 'Feriado', recesso: 'Recesso', prova: 'Prova', reuniao: 'Reunião', evento: 'Evento', outro: 'Evento' };
+    const eventTypes = { feriado: 'Feriado', recesso: 'Recesso', prova: 'Avaliação', reuniao: 'Reunião', evento: 'Evento', outro: 'Evento' };
 
     const errors = {
         'sem-permissao': 'Você não tem permissão nesta turma/disciplina.',

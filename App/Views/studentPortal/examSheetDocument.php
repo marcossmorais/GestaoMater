@@ -1,5 +1,5 @@
 <?php
-// Roteiro de provas em folha A4: uma tabela por bimestre, com colunas fixas e cada matéria inteira na mesma folha
+// Roteiro de avaliações em folha A4: uma tabela por bimestre, com colunas fixas e cada matéria inteira na mesma folha
 use App\Models\TeacherStudent\Gradebook;
 
 $unit = $this->view->unit;
@@ -21,15 +21,15 @@ $today = (new DateTime('now', new DateTimeZone('America/Sao_Paulo')))->format('Y
 $summary = Gradebook::examSummary($all, $today);
 $weekdays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 
-$docTitle = 'Roteiro de provas — ' . $unit . 'º bimestre';
-$docHeading = 'Roteiro de provas · ' . $unit . 'º bimestre';
+$docTitle = 'Roteiro de avaliações — ' . $unit . 'º bimestre';
+$docHeading = 'Roteiro de avaliações · ' . $unit . 'º bimestre';
 require __DIR__ . '/documentHead.php';
 ?>
 
         <div class="meta">
             <div><span>Turma</span><strong><?= htmlspecialchars($_SESSION['Student']['class']) ?></strong></div>
             <?php if ($all) { ?>
-                <div><span>Período das provas</span><strong><?= date('d/m', strtotime($summary['first'])) ?> a <?= date('d/m', strtotime($summary['last'])) ?></strong></div>
+                <div><span>Período das avaliações</span><strong><?= date('d/m', strtotime($summary['first'])) ?> a <?= date('d/m', strtotime($summary['last'])) ?></strong></div>
                 <div><span>Próxima avaliação</span><strong><?= $summary['next'] ? date('d/m', strtotime($summary['next'])) . ' · ' . htmlspecialchars(implode(', ', $summary['nextNames'])) : 'Nenhuma pela frente' ?></strong></div>
                 <div><span>Assuntos divulgados</span><strong><?= htmlspecialchars((string) $summary['withGuide']) ?> de <?= htmlspecialchars((string) $summary['total']) ?></strong></div>
             <?php } ?>

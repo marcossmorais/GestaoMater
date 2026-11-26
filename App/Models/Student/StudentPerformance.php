@@ -18,12 +18,16 @@ class StudentPerformance extends Model
     public function rule()
     {
 
+        // a regra não muda durante a requisição e as telas pedem várias vezes (a home do aluno, 3)
+        static $rule = null;
+        if ($rule !== null) return $rule;
+
         $row = $this->db->query(
             "SELECT total_unidades, pontos_por_unidade, media_aprovacao, avaliacoes_por_bimestre, nota_recuperacao
              FROM regra_aprovacao WHERE id_regra_aprovacao = 1"
         )->fetch(\PDO::FETCH_ASSOC);
 
-        return [
+        return $rule = [
             'units' => (int) ($row['total_unidades'] ?? 4),
             'maxPerUnit' => (float) ($row['pontos_por_unidade'] ?? 10),
             'passing' => (float) ($row['media_aprovacao'] ?? 7),

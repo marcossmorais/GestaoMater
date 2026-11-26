@@ -6,7 +6,7 @@ use MF\Model\Model;
 use App\Tools\GradeSimulator;
 
 /**
- * Avaliações, roteiro de provas e lançamento de notas do portal do docente.
+ * Avaliações, roteiro de avaliações e lançamento de notas do portal do docente.
  *
  * Regra do MATER: 4 bimestres, avaliações de 0 a 10, nota do bimestre = média; abaixo de 7 tem recuperação,
  * que substitui a nota do bimestre (ver App/Tools/GradeSimulator.php). Quantas avaliações por bimestre:
@@ -20,7 +20,7 @@ class Gradebook extends Model
 
     // o que pode valer ponto em uma avaliação; o professor marca um ou mais
     const EXAM_TYPES = [
-        'prova' => 'Prova',
+        'prova' => 'Avaliação escrita',
         'teste' => 'Teste ou simulado',
         'atividade' => 'Atividade em sala',
         'tarefa' => 'Lista ou tarefa',
@@ -36,7 +36,7 @@ class Gradebook extends Model
 
     // instrumentos avaliativos do Fund. 1 (lista consolidada da escola); códigos próprios para não confundir com os de cima
     const EXAM_TYPES_INICIAIS = [
-        'prova_escrita' => 'Prova escrita',
+        'prova_escrita' => 'Avaliação escrita',
         'oral' => 'Avaliação oral',
         'trabalho_pesquisa' => 'Trabalho de pesquisa',
         'seminario' => 'Seminário',
@@ -350,7 +350,7 @@ class Gradebook extends Model
 
 
     /**
-     * Nomes dos tipos a partir da lista gravada ("prova,trabalho" => "Prova, Trabalho escrito")
+     * Nomes dos tipos a partir da lista gravada ("prova,trabalho" => "Avaliação escrita, Trabalho escrito")
      */
     /** Assuntos do roteiro, um por linha */
     public static function guideTopics($text)
@@ -358,7 +358,7 @@ class Gradebook extends Model
         return array_values(array_filter(array_map('trim', explode("\n", (string) $text)), 'strlen'));
     }
 
-    /** Destaques de uma folha de provas: próxima data, período e quantas têm assuntos */
+    /** Destaques de uma folha de avaliações: próxima data, período e quantas têm assuntos */
     public static function examSummary(array $exams, $today)
     {
         $dates = array_column($exams, 'date');
@@ -383,7 +383,7 @@ class Gradebook extends Model
 
 
     /**
-     * Troca os tipos da avaliação (prova, trabalho, apresentação…)
+     * Troca os tipos da avaliação (avaliação escrita, trabalho, apresentação…)
      */
     public function saveTypes($examId, array $types)
     {

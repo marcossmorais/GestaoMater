@@ -38,6 +38,8 @@ class AdminBoardController extends Action
         foreach (['limite-fixados', 'professores-sem-turma'] as $rule) {
             if (strpos($e->getMessage(), $rule) !== false) return $this->json(['error' => $rule], 422);
         }
+        // database/43_mensagem_direta_professor.sql
+        if (strpos($e->getMessage(), 'aviso_geral_direto_sem_fixar') !== false) return $this->json(['error' => 'direta-sem-fixar'], 422);
 
         throw $e;
     }
@@ -48,9 +50,12 @@ class AdminBoardController extends Action
         $Board = Container::getModel('TeacherStudent\\GeneralBoard');
         $audience = (string) ($_GET['publico'] ?? '');
 
-        $this->view->audience = isset(GeneralBoard::AUDIENCES[$audience]) ? $audience : '';
+        $this->view->audience = isset(GeneralBoard::AUDIENCES[$audience]) || $audience === 'direto' ? $audience : '';
         $this->view->posts = $Board->all($this->view->audience);
         $this->view->classes = $Board->classes();
+        $this->view->teachers = $Board->teachers();
+        // link "Enviar mensagem" do perfil/observabilidade: já abre com o professor escolhido
+        $this->view->teacherId = (int) ($_GET['professor'] ?? 0);
 
         $this->render('board', 'AdminLayout');
     }
@@ -70,16 +75,23 @@ class AdminBoardController extends Action
         if (!isset(GeneralBoard::AUDIENCES[$audience])) return $this->json(['error' => 'publico-invalido'], 422);
         if ($audience === 'professores') $classIds = [];
 
+        // mensagem direta: um professor ativo, só para o público professores, sem fixar
+        $teacherId = (int) ($input['teacher'] ?? 0) ?: null;
+        if ($teacherId && $audience !== 'professores') return $this->json(['error' => 'publico-invalido'], 422);
+
         $Board = Container::getModel('TeacherStudent\\GeneralBoard');
 
         if (array_diff($classIds, array_map(function ($c) { return (int) $c->id; }, $Board->classes()))) {
             return $this->json(['error' => 'turma-invalida'], 422);
         }
+        if ($teacherId && !in_array($teacherId, array_map(function ($t) { return (int) $t->id; }, $Board->teachers()), true)) {
+            return $this->json(['error' => 'professor-invalido'], 422);
+        }
 
         if (!isset($_SESSION)) session_start();
 
         try {
-            $id = $Board->post($_SESSION['Admin']['id'] ?? null, $text, $type, !empty($input['pinned']), $audience, $classIds);
+            $id = $Board->post($_SESSION['Admin']['id'] ?? null, $text, $type, !$teacherId && !empty($input['pinned']), $audience, $classIds, $teacherId);
         } catch (\PDOException $e) {
             return $this->ruleError($e);
         }

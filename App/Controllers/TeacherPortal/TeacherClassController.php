@@ -7,7 +7,7 @@ use MF\Model\Container;
 use App\Tools\Audit;
 
 /**
- * Portal do docente: mural da turma, avaliações/roteiro de provas, notas e desempenho geral da turma.
+ * Portal do docente: mural da turma, avaliações/roteiro de avaliações, notas e desempenho geral da turma.
  * Toda escrita passa por TeacherAccess (Anos Iniciais = turma inteira; demais = própria disciplina).
  */
 class TeacherClassController extends Action
@@ -95,12 +95,17 @@ class TeacherClassController extends Action
         $posts = Container::getModel('TeacherStudent\\ClassBoard')->forClass($classId);
         $access = Container::getModel('Teacher\\TeacherAccess');
         $teacherId = $this->teacherId();
+        $canManage = [];
 
         $general = Container::getModel('TeacherStudent\\GeneralBoard')->forClass($classId);
 
         $this->json(['general' => array_map(function ($p) {
             return ['id' => (int) $p->id, 'text' => $p->text, 'type' => $p->type, 'pinned' => (bool) $p->pinned, 'audience' => $p->audience, 'postedAt' => $p->posted_at];
-        }, $general), 'posts' => array_map(function ($p) use ($access, $teacherId) {
+        }, $general), 'posts' => array_map(function ($p) use ($access, $teacherId, &$canManage) {
+            // uma consulta por disciplina da turma, não uma por aviso
+            $dc = (int) $p->discipline_class_id;
+            $canManage[$dc] = $canManage[$dc] ?? $access->canEdit($teacherId, $dc);
+
             return [
                 'id' => (int) $p->id,
                 'text' => $p->text,
@@ -110,7 +115,7 @@ class TeacherClassController extends Action
                 'teacher' => $p->teacher,
                 'postedAt' => $p->posted_at,
                 'readTotal' => (int) $p->read_total,
-                'canManage' => $access->canEdit($teacherId, $p->discipline_class_id),
+                'canManage' => $canManage[$dc],
             ];
         }, $posts)]);
     }
@@ -273,7 +278,7 @@ class TeacherClassController extends Action
 
     /**
      * Cria avaliação de 0 a 10 (até o limite da disciplina por bimestre) ou a recuperação do bimestre; com "exam", atualiza só os tipos.
-     * O roteiro é escrito na aba Roteiro de Provas (guideSave).
+     * O roteiro é escrito na aba Roteiro de Avaliações (guideSave).
      */
     public function examSave()
     {
@@ -345,7 +350,7 @@ class TeacherClassController extends Action
     }
 
 
-    // ------------------------------------------------------------------ Roteiro de provas
+    // ------------------------------------------------------------------ Roteiro de avaliações
 
     public function guides()
     {

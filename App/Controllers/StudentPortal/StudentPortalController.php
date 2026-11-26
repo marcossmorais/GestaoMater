@@ -423,7 +423,7 @@ class StudentPortalController extends Action
     }
 
     /**
-     * Roteiro de provas em folha A4, de um bimestre, só da turma do aluno
+     * Roteiro de avaliações em folha A4, de um bimestre, só da turma do aluno
      */
     public function examSheetDocument()
     {

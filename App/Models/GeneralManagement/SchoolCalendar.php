@@ -14,7 +14,7 @@ class SchoolCalendar extends Model
     // rótulo, ícone e tipo de aviso usado ao notificar no mural
     const TYPES = [
         'evento' => ['label' => 'Evento', 'icon' => 'fa-star', 'notice' => 'evento'],
-        'prova' => ['label' => 'Prova', 'icon' => 'fa-file-alt', 'notice' => 'prova'],
+        'prova' => ['label' => 'Avaliação', 'icon' => 'fa-file-alt', 'notice' => 'prova'],
         'reuniao' => ['label' => 'Reunião', 'icon' => 'fa-users', 'notice' => 'evento'],
         'feriado' => ['label' => 'Feriado', 'icon' => 'fa-umbrella-beach', 'notice' => 'aviso'],
         'recesso' => ['label' => 'Recesso', 'icon' => 'fa-bed', 'notice' => 'aviso'],

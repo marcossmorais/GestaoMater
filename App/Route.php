@@ -59,6 +59,24 @@ class Route extends Bootstrap
 			'action' => 'classDetail'
 		);
 
+		$routes['adminObservabilityStudent'] = array(
+			'route' => '/admin/observabilidade/aluno',
+			'controller' => 'Admin\\AdminObservabilityController',
+			'action' => 'student'
+		);
+
+		$routes['adminObservabilityBulletin'] = array(
+			'route' => '/admin/observabilidade/aluno/boletim',
+			'controller' => 'Admin\\AdminObservabilityController',
+			'action' => 'bulletin'
+		);
+
+		$routes['adminFaceBook'] = array(
+			'route' => '/admin/carometro',
+			'controller' => 'Admin\\AdminObservabilityController',
+			'action' => 'faceBook'
+		);
+
 		// Importação por CSV/JSON e virada de ano
 
 		$routes['adminImport'] = array(

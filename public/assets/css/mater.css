@@ -1643,6 +1643,24 @@ html body .m-obs-kpis .m-kpi-value { font-size: 20px; }
   html body #pagina .m-obs-filters select.form-control { flex: 1 1 40%; width: auto; height: 44px; font-size: 14px !important; padding: 0 26px 0 12px !important; }
 }
 
+/* etapas (Fund. 1, Fund. 2, Médio): abas, cartões e gráficos da escola */
+.m-obs-stages { display: inline-flex; flex-wrap: wrap; }
+body#admin .m-obs-stages a.btn { min-height: 44px; height: 44px; display: inline-flex; align-items: center; }
+.m-obs-stage-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 16px; }
+a.m-obs-stage-card { color: var(--m-text); text-decoration: none; margin: 0; }
+a.m-obs-stage-card:hover { text-decoration: none; color: var(--m-text); box-shadow: 0 2px 10px rgba(16, 32, 72, .12); }
+.m-obs-stage-card .m-panel-head i { color: var(--m-muted); }
+.m-obs-stage-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; margin: 0; }
+.m-obs-stage-stats dt { font-size: 11px; font-weight: 600; color: var(--m-muted); text-transform: uppercase; letter-spacing: .03em; }
+.m-obs-stage-stats dd { margin: 0; font-size: 18px; font-weight: 700; }
+.m-obs-stage-stats dd.is-low { color: var(--m-danger); }
+.m-obs-charts .m-chart-box { height: 240px; }
+.m-obs-mail { min-width: 44px; justify-content: center; color: var(--m-muted); }
+@media (max-width: 767.98px) {
+  .m-obs-stages { display: flex; width: 100%; }
+  body#admin .m-obs-stages a.btn { flex: 1 1 0; justify-content: center; padding: 0 6px; }
+  .m-obs-charts .m-chart-card, .m-obs-charts .m-chart-card.m-chart-wide { grid-column: span 6; }
+}
 /* ---------- Importação e virada de ano (admin) */
 .m-imp-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 16px; margin-bottom: 16px; }
 #import .card.m-panel { margin-bottom: 16px; }

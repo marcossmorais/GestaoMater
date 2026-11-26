@@ -4,6 +4,7 @@ namespace App\Models\Admin;
 
 use MF\Model\Model;
 use App\Models\TeacherStudent\Gradebook;
+use App\Models\TeacherStudent\DailyAttendance;
 
 /**
  * Observabilidade 360° do admin: desempenho, frequência e pendências por turma, disciplina e professor.
@@ -13,6 +14,13 @@ use App\Models\TeacherStudent\Gradebook;
  */
 class Observability extends Model
 {
+
+    // etapas de ensino (curso.etapa, database/11): rótulo curto e longo
+    const STAGES = [
+        'iniciais' => ['short' => 'Fund. 1', 'label' => 'Fundamental 1 (anos iniciais)'],
+        'finais' => ['short' => 'Fund. 2', 'label' => 'Fundamental 2 (anos finais)'],
+        'medio' => ['short' => 'Médio', 'label' => 'Ensino Médio'],
+    ];
 
     /**
      * Períodos letivos, o ativo primeiro
@@ -59,6 +67,48 @@ class Observability extends Model
 
 
     /**
+     * Turmas do período (com etapa), para o seletor do carômetro
+     */
+    public function classList($periodId, $shiftId = null, $stage = null)
+    {
+
+        $where = "turma.fk_id_periodo_letivo = :period";
+        $params = [':period' => (int) $periodId];
+        if ($shiftId) { $where .= " AND turma.fk_id_turno = :shift"; $params[':shift'] = (int) $shiftId; }
+        if ($stage && isset(self::STAGES[$stage])) { $where .= " AND curso.etapa = :stage"; $params[':stage'] = (string) $stage; }
+
+        return $this->fetch(
+            "SELECT turma.id_turma AS id, serie.sigla || ' ' || cedula_turma.cedula || ' · ' || curso.sigla || ' · ' || turno.nome_turno AS label,
+                    curso.etapa AS stage,
+                    (SELECT COUNT(*) FROM matricula WHERE matricula.fk_id_turma_matricula = turma.id_turma AND matricula.fk_id_situacao_aluno = 1)::int AS students
+             FROM turma
+             INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
+             INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
+             INNER JOIN curso ON (turma.fk_id_curso = curso.id_curso)
+             INNER JOIN turno ON (turma.fk_id_turno = turno.id_turno)
+             WHERE $where
+             ORDER BY CASE curso.etapa WHEN 'iniciais' THEN 1 WHEN 'finais' THEN 2 ELSE 3 END, serie.sigla, cedula_turma.cedula",
+            $params
+        );
+    }
+
+
+    /**
+     * Disciplinas da turma (turma_disciplina), para somar as faltas no carômetro
+     *
+     * @return int[]
+     */
+    public function disciplineClassIds($classId)
+    {
+
+        return array_map('intval', array_column($this->fetch(
+            "SELECT id_turma_disciplina AS id FROM turma_disciplina WHERE fk_id_turma = :class",
+            [':class' => (int) $classId]
+        ), 'id'));
+    }
+
+
+    /**
      * Bimestres liberados para lançamento (configuração do admin: 1 = só o primeiro … 4 = todos)
      */
     public function openUnits()
@@ -69,9 +119,9 @@ class Observability extends Model
 
 
     /**
-     * Dados brutos do período. $unit null = ano inteiro. $classId restringe a uma turma.
+     * Dados brutos do período. $unit null = ano inteiro. $classId restringe a uma turma; $stage, a uma etapa (STAGES).
      */
-    public function collect($periodId, $unit = null, $shiftId = null, $classId = null)
+    public function collect($periodId, $unit = null, $shiftId = null, $classId = null, $stage = null)
     {
 
         $where = "turma.fk_id_periodo_letivo = :period";
@@ -80,6 +130,11 @@ class Observability extends Model
         if ($shiftId) {
             $where .= " AND turma.fk_id_turno = :shift";
             $params[':shift'] = (int) $shiftId;
+        }
+
+        if ($stage && isset(self::STAGES[$stage])) {
+            $where .= " AND turma.fk_id_curso IN (SELECT id_curso FROM curso WHERE etapa = :stage)";
+            $params[':stage'] = (string) $stage;
         }
 
         if ($classId) {
@@ -112,7 +167,7 @@ class Observability extends Model
         );
 
         $data['classes'] = $this->fetch(
-            "SELECT turma.id_turma AS id, $label AS label, turno.nome_turno AS shift
+            "SELECT turma.id_turma AS id, $label AS label, turno.nome_turno AS shift, curso.etapa AS stage
              FROM turma
              INNER JOIN serie ON (turma.fk_id_serie = serie.id_serie)
              INNER JOIN cedula_turma ON (turma.fk_id_cedula = cedula_turma.id_cedula_turma)
@@ -222,6 +277,39 @@ class Observability extends Model
              INNER JOIN turma_disciplina ON (aula.fk_id_turma_disciplina = turma_disciplina.id_turma_disciplina)
              INNER JOIN turma ON (turma_disciplina.fk_id_turma = turma.id_turma)
              WHERE $where
+             GROUP BY 1",
+            $params
+        );
+
+        // Fund. 1: a frequência é por dia (chamada_diaria do titular), não por aula de cada disciplina
+        $data['dailyDays'] = $this->fetch(
+            "SELECT cd.fk_id_turma AS class_id, COUNT(*) AS days
+             FROM chamada_diaria cd
+             INNER JOIN turma ON (cd.fk_id_turma = turma.id_turma)
+             WHERE $where " . ($unit ? "AND cd.fk_id_unidade = :unit" : "") . "
+             GROUP BY 1",
+            $unitParams
+        );
+
+        $data['dailyAbsences'] = $this->fetch(
+            "SELECT m.id_matricula AS enrollment_id, COUNT(*) AS absences,
+                    COUNT(*) FILTER (WHERE " . sprintf(DailyAttendance::EXCUSED, 'm.id_matricula') . ") AS excused
+             FROM chamada_diaria cd
+             INNER JOIN turma ON (cd.fk_id_turma = turma.id_turma)
+             INNER JOIN matricula m ON (m.fk_id_turma_matricula = cd.fk_id_turma AND m.id_matricula = ANY (cd.matriculas_ausentes) AND m.fk_id_situacao_aluno = 1)
+             WHERE $where " . ($unit ? "AND cd.fk_id_unidade = :unit" : "") . "
+             GROUP BY 1",
+            $unitParams
+        );
+
+        // dias letivos previstos (segunda a sexta, do início do período até hoje; feriados não são descontados)
+        $data['dailyExpected'] = $this->fetch(
+            "SELECT turma.id_turma AS class_id, COUNT(*) AS expected
+             FROM turma
+             INNER JOIN periodo_letivo ON (turma.fk_id_periodo_letivo = periodo_letivo.id_ano_letivo)
+             INNER JOIN LATERAL generate_series(periodo_letivo.data_inicio, LEAST(periodo_letivo.data_fim, CURRENT_DATE), interval '1 day') AS dia(d)
+                ON (EXTRACT(ISODOW FROM dia.d) BETWEEN 1 AND 5)
+             WHERE $where AND turma.fk_id_curso IN (SELECT id_curso FROM curso WHERE etapa = 'iniciais')
              GROUP BY 1",
             $params
         );
@@ -350,6 +438,14 @@ class Observability extends Model
         $classTds = [];
         foreach ($tds as $t) $classTds[$t['classId']][] = $t['id'];
 
+        // Fund. 1: dias com chamada por turma e dias de falta (sem os abonados) por aluno
+        $classStage = [];
+        foreach ($data['classes'] as $c) $classStage[(int) $c->id] = $c->stage;
+        $dailyDays = [];
+        foreach ($data['dailyDays'] ?? [] as $r) $dailyDays[(int) $r->class_id] = (int) $r->days;
+        $dailyAbsences = [];
+        foreach ($data['dailyAbsences'] ?? [] as $r) $dailyAbsences[(int) $r->enrollment_id] = max(0, (int) $r->absences - (int) $r->excused);
+
         foreach ($students as &$s) {
             $grades = $s['grades'];
             $s['average'] = $grades ? round(array_sum($grades) / count($grades), 2) : null;
@@ -367,6 +463,13 @@ class Observability extends Model
             }
             $s['absenceTotal'] = $absences;
             $s['attendance'] = $lessons > 0 ? round(100 * ($lessons - $counted) / $lessons, 1) : null;
+            $s['stage'] = $classStage[$s['classId']] ?? null;
+            if ($s['stage'] === 'iniciais') {
+                $days = $dailyDays[$s['classId']] ?? 0;
+                $missed = min($days, $dailyAbsences[$s['id']] ?? 0);
+                $s['absenceTotal'] = $missed;
+                $s['attendance'] = $days > 0 ? round(100 * ($days - $missed) / $days, 1) : null;
+            }
             $s['lowAttendance'] = $s['attendance'] !== null && $s['attendance'] < $rule['minAttendance'];
             $s['atRisk'] = $s['below'] > 0 || $s['lowAttendance'];
         }
@@ -379,8 +482,15 @@ class Observability extends Model
         }
         unset($t);
 
+        $dailyExpected = [];
+        foreach ($data['dailyExpected'] ?? [] as $r) $dailyExpected[(int) $r->class_id] = (int) $r->expected;
+
+        $classes = $this->byClass($data['classes'], $tds, $students, $dailyDays, $dailyExpected);
+
         return [
-            'classes' => $this->byClass($data['classes'], $tds, $students),
+            'classes' => $classes,
+            'stages' => $this->byStage($classes, $students),
+            'charts' => $this->charts($classes, $students, $tds, $passing),
             'disciplines' => $this->byDiscipline($tds),
             'teachers' => $this->byTeacher($tds, $data['substitutions']),
             'disciplineClasses' => $tds,
@@ -389,13 +499,13 @@ class Observability extends Model
     }
 
 
-    private function byClass(array $classes, array $tds, array $students)
+    private function byClass(array $classes, array $tds, array $students, array $dailyDays = [], array $dailyExpected = [])
     {
 
         $rows = [];
         foreach ($classes as $c) {
             $rows[(int) $c->id] = [
-                'id' => (int) $c->id, 'label' => $c->label, 'students' => 0, 'avgSum' => 0, 'avgCount' => 0,
+                'id' => (int) $c->id, 'label' => $c->label, 'stage' => $c->stage ?? null, 'students' => 0, 'avgSum' => 0, 'avgCount' => 0,
                 'attSum' => 0, 'attCount' => 0, 'atRisk' => 0, 'occurrences' => 0, 'pendingAck' => 0,
                 'pendingGrades' => 0, 'lessons' => 0, 'expected' => 0,
             ];
@@ -420,12 +530,105 @@ class Observability extends Model
             $rows[$t['classId']]['expected'] += $t['expected'];
         }
 
+        // Fund. 1: chamadas = dias com chamada diária ÷ dias letivos previstos
+        foreach ($rows as $id => &$r) {
+            if ($r['stage'] !== 'iniciais') continue;
+            $r['lessons'] = min($dailyDays[$id] ?? 0, $dailyExpected[$id] ?? 0);
+            $r['expected'] = $dailyExpected[$id] ?? 0;
+        }
+        unset($r);
+
         return array_values(array_map(function ($r) {
             $r['average'] = $r['avgCount'] ? round($r['avgSum'] / $r['avgCount'], 2) : null;
             $r['attendance'] = $r['attCount'] ? round($r['attSum'] / $r['attCount'], 1) : null;
             $r['callShare'] = $r['expected'] > 0 ? min(100, round(100 * $r['lessons'] / $r['expected'])) : null;
             return $r;
         }, $rows));
+    }
+
+
+    /**
+     * Números por etapa (Fund. 1, Fund. 2, Médio), só das etapas que têm turma
+     */
+    private function byStage(array $classes, array $students)
+    {
+
+        $rows = [];
+        foreach (self::STAGES as $key => $s) {
+            $rows[$key] = ['key' => $key, 'short' => $s['short'], 'label' => $s['label'], 'classes' => 0, 'students' => 0,
+                           'atRisk' => 0, 'pendingGrades' => 0, 'occurrences' => 0, 'avgSum' => 0, 'avgCount' => 0, 'attSum' => 0, 'attCount' => 0];
+        }
+
+        foreach ($classes as $c) {
+            if (!isset($rows[$c['stage']])) continue;
+            $rows[$c['stage']]['classes']++;
+            $rows[$c['stage']]['pendingGrades'] += $c['pendingGrades'];
+            $rows[$c['stage']]['occurrences'] += $c['occurrences'];
+        }
+
+        foreach ($students as $s) {
+            if (!isset($rows[$s['stage'] ?? ''])) continue;
+            $r = &$rows[$s['stage']];
+            $r['students']++;
+            if ($s['atRisk']) $r['atRisk']++;
+            if ($s['average'] !== null) { $r['avgSum'] += $s['average']; $r['avgCount']++; }
+            if ($s['attendance'] !== null) { $r['attSum'] += $s['attendance']; $r['attCount']++; }
+            unset($r);
+        }
+
+        $rows = array_filter($rows, function ($r) { return $r['classes'] > 0; });
+
+        return array_values(array_map(function ($r) {
+            $r['average'] = $r['avgCount'] ? round($r['avgSum'] / $r['avgCount'], 2) : null;
+            $r['attendance'] = $r['attCount'] ? round($r['attSum'] / $r['attCount'], 1) : null;
+            return $r;
+        }, $rows));
+    }
+
+
+    /**
+     * Dados dos gráficos (mesmos da home do professor, da escola toda): situação dos alunos,
+     * faixas da média geral, média e alunos em risco por turma, média por disciplina
+     */
+    private function charts(array $classes, array $students, array $tds, $passing)
+    {
+
+        $status = ['ok' => 0, 'grade' => 0, 'attendance' => 0, 'none' => 0];
+        $bands = ['0 a 4,9' => 0, '5 a 6,9' => 0, '7 a 8,9' => 0, '9 a 10' => 0];
+
+        foreach ($students as $s) {
+            if ($s['below'] > 0) $status['grade']++;
+            elseif ($s['lowAttendance']) $status['attendance']++;
+            elseif ($s['average'] === null) $status['none']++;
+            else $status['ok']++;
+
+            if ($s['average'] === null) continue;
+            $g = $s['average'];
+            $bands[$g < 5 ? '0 a 4,9' : ($g < 7 ? '5 a 6,9' : ($g < 9 ? '7 a 8,9' : '9 a 10'))]++;
+        }
+
+        // média por disciplina (nome), juntando as turmas
+        $disciplines = [];
+        foreach ($tds as $t) {
+            $name = $t['discipline'];
+            $disciplines[$name] = $disciplines[$name] ?? ['sum' => 0, 'count' => 0];
+            $disciplines[$name]['sum'] += $t['gradeSum'];
+            $disciplines[$name]['count'] += $t['gradeCount'];
+        }
+        ksort($disciplines);
+
+        return [
+            'passing' => (float) $passing,
+            'status' => $status,
+            'bands' => $bands,
+            'classes' => array_map(function ($c) {
+                return ['id' => $c['id'], 'label' => $c['label'], 'average' => $c['average'] === null ? null : round($c['average'], 1),
+                        'atRisk' => $c['atRisk'], 'students' => $c['students'], 'attendance' => $c['attendance']];
+            }, $classes),
+            'disciplines' => array_values(array_map(function ($name, $d) {
+                return ['name' => $name, 'average' => $d['count'] ? round($d['sum'] / $d['count'], 1) : null];
+            }, array_keys($disciplines), $disciplines)),
+        ];
     }
 
 
@@ -510,7 +713,7 @@ class Observability extends Model
     {
 
         $stmt = $this->db->prepare($sql);
-        foreach ($params as $key => $value) $stmt->bindValue($key, $value, \PDO::PARAM_INT);
+        foreach ($params as $key => $value) $stmt->bindValue($key, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
         $stmt->execute();
 
         return $stmt->fetchAll(\PDO::FETCH_OBJ);
